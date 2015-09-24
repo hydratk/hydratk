@@ -1,0 +1,21 @@
+pypy install
+
+1. wget https://bitbucket.org/pypy/pypy/downloads/pypy-2.2.1-src.tar.bz2 | hg clone https://bitbucket.org/pypy/pypy
+2. unpack /usr/install/pypy-2.x
+3. cd /usr/install/pypy-2.x/pypy/goal
+4. pypy ../../rpython/bin/rpython -Ojit targetpypystandalone
+5. cd /usr/install/src/pypy-2.x/pypy/tool/release/
+6. pypy package.py  --without-tk ../../.. pypy-2.x                                                                                                                                   cd 
+
+Pip install
+
+$ wget http://python-distribute.org/distribute_setup.py
+
+$ wget https://raw.github.com/pypa/pip/master/contrib/get-pip.py
+
+$ pypy distribute_setup.py
+
+$ pypy get-pip.py
+
+Issue #1293
+

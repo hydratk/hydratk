@@ -1,0 +1,7 @@
+setproctitle
+xtermcolor
+pyzmq
+pyyaml
+psutil
+jsonpickle
+sphinxcontrib-mscgen
