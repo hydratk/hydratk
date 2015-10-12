@@ -4,8 +4,8 @@
 
 .. module:: masterhead
    :platform: Unix
-   :synopsis: Hydra master module.
-.. moduleauthor:: Petr Czaderna <pc@headz.cz>
+   :synopsis: HydraTK master module.
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
 import sys;
@@ -54,18 +54,21 @@ HIGHLIGHT_END = chr(27) + chr(91) + "0m";
 SHORT_DESC = HIGHLIGHT_START + const.APP_NAME + " v" + const.APP_VERSION + const.APP_REVISION + HIGHLIGHT_END + " load, performacne and stress testing tool";
 
 class MasterHead(PropertyHead, CoreHead):
-    """Class MasterHead extends from EventHandler, Debugger and Profiler           
+    """Class MasterHead extends from CoreHead decorated by EventHandler, Debugger and Profiler           
     """
     _instance = None;
     _instance_created = False;                 
         
-    def __init__(self):         
+    def __init__(self):
                   
         if MasterHead._instance_created == False:            
             raise ValueError("For creating class instance please use the get_head method instead!");
         if MasterHead._instance is not None:
             raise ValueError("A Class instantiation already exists, use get_head method instead!");
         
+        '''Setting up global exception handler for uncaught exceptions''' 
+        
+        sys.excepthook = self.exception_handler;
           
         self._runlevel = const.RUNLEVEL_BASEINIT;
             
@@ -79,10 +82,7 @@ class MasterHead(PropertyHead, CoreHead):
         
         self._import_global_messages();
                 
-        # self.dmsg('htk_on_warning', self._trn.msg('htk_cs', 'print_short_desc'), self.fromhere());
-        '''Setting up global exception handler for uncaught exceptions''' 
-        
-        sys.excepthook = self.exception_handler;
+        # self.dmsg('htk_on_warning', self._trn.msg('htk_cs', 'print_short_desc'), self.fromhere());        
         
         self._reg_self_fn_hooks();
         self._reg_self_command_hooks();
@@ -90,10 +90,17 @@ class MasterHead(PropertyHead, CoreHead):
         if (len(sys.argv) > 1 and sys.argv[1] != 'help'):
             self.check_config();
                                           
-        # self.initOPrivMsgQueue();        
-        # self.initIntMsgQueue();    
-    
     def exception_handler(self, extype, value, traceback):
+        """Exception handler hook
+           
+           This method is registered as sys.excepthook callback and transforms unhandled exceptions to the HydraTK Event  
+           
+           Args:
+              extype (str): Exception type           
+              value (str): Exception message info
+              traceback (obj) Exception traceback object        
+        
+        """
         try:
             ev = event.Event('htk_on_uncaught_exception', extype, value, traceback);                
             ev.set_data('type', extype);
@@ -102,19 +109,40 @@ class MasterHead(PropertyHead, CoreHead):
             self.fire_event(ev);
         
         except Exception as e:
-            #import traceback
+            # import traceback
             print('Fatal error - Unhandled exception thrown in exception handler:')
             print('Type: %s' % extype)
             print('value: %s' % value)
-            #print(repr(traceback.format_tb(traceback)))
-    
-        
+            # print(repr(traceback.format_tb(traceback)))
         
     def get_translator(self):
+        """Method returns current traslator object initialized from hydratrk.lib.translation.translator.Translator 
+        
+           Returns:            
+              Translator (obj)
+               
+        """
         return self._trn;
     
     @staticmethod
     def get_head():                
+        """Method is primary connector to HydraTK core
+           
+           This method returns current active MasterHead instance or creates a new one
+           For preventing inner conflicts it's designed as singleton   
+        
+        Returns:            
+           MasterHead (obj)
+           
+        Example:
+        
+        .. code-block:: python
+        
+            from hydratk.core.masterhead import MasterHead;        
+                      
+            mh = MasterHead.get_head();        
+        
+        """
         if MasterHead._instance is None:           
             MasterHead._instance_created = True;
             try:             
@@ -126,17 +154,32 @@ class MasterHead(PropertyHead, CoreHead):
                 print("-"*60) 
                 MasterHead._instance_created = False;
                 raise e;                                            
-        return MasterHead._instance;
-    
+        return MasterHead._instance;    
+        
     def get_config(self):
+        """Method return current loaded configuration  
+        
+        Returns:            
+              self._config (dict)
+           
+        Example:
+        
+        .. code-block:: python
+        
+              from hydratk.core.masterhead import MasterHead;        
+                      
+              mh = MasterHead.get_head();
+              config = mh.get_config();         
+        """        
         return self._config;
-    
-     
-
-    
-    
-                            
+                                
     def check_language(self):
+        """Method checks for language change input parameters from command line and validates if it's supported 
+        
+        Returns:            
+              language_changed (bool) - True in case if it's supported otherwise False 
+        
+        """        
         from hydratk.translation import info;
         language_changed = False;
         i = 0;
@@ -155,9 +198,17 @@ class MasterHead(PropertyHead, CoreHead):
                     self.dmsg('htk_on_warning', self._trn.msg('htk_opt_ignore', 'Language', lang), self.fromhere());                    
             i = i + 1;
         return language_changed;
-                    
+                
     def check_config(self):
+        """Method checks for config file change input parameters from command line and validates its existence
+           If the new config file exists, then current config file path will be replaced by new one 
+        
+        Returns:            
+           config_changed (bool) - True in case if config file exists otherwise False 
+        
+        """        
         i = 0;
+        config_changed = False;
         for o in sys.argv:
             if o == 'help': break;
             if o == '-c' or o == '--config':                
@@ -165,6 +216,7 @@ class MasterHead(PropertyHead, CoreHead):
                     config_file = sys.argv[i + 1];
                     if (os.path.exists(config_file)):
                         self._config_file = config_file;
+                        config_changed = True;
                         break;
                     else:
                         self.dmsg('htk_on_warning', self._trn.msg('htk_conf_not_exists', config_file), self.fromhere());
@@ -172,9 +224,20 @@ class MasterHead(PropertyHead, CoreHead):
                     self.dmsg('htk_on_warning', self._trn.msg('htk_opt_ignore', 'Config', ''), self.fromhere());
                     
             i = i + 1; 
-                               
-   
+        return config_changed;
+
     def match_short_option(self, opt, value_expected=False):
+        """Method registers command line short option check       
+    
+        Args:
+           opt (str): Short option string           
+           value_expected (bool): Whether the option value is expected or not           
+           
+        Raises:            
+           ValueError if the option is already registered for matching
+           ValueError if the option is an empty string 
+        
+        """
         if opt != '': 
             if commands.short_opts.find(opt) < 0:
                 commands.short_opts = commands.short_opts + opt;
@@ -183,8 +246,18 @@ class MasterHead(PropertyHead, CoreHead):
                 raise ValueError("Short option " + opt + " is already registered for matching");
         else:
             raise ValueError("Short option " + opt + " is not valid string");
-    
+        
     def match_long_option(self, opt, value_expected=False):
+        """Method registers command line long option check       
+    
+        Args:
+           opt (str): Short option string           
+           value_expected (bool): Whether the option value is expected or not           
+           
+        Raises:            
+           ValueError: if the option is already registered for matching or the option is an empty string            
+        
+        """
         if opt != '': 
             if opt not in commands.long_opts:                
                 commands.long_opts.append(opt);
@@ -196,6 +269,14 @@ class MasterHead(PropertyHead, CoreHead):
             raise ValueError("Long option " + opt + " is not valid option string");
             
     def match_command(self, cmd):
+        """Method registers command line command check       
+    
+        Args:
+           cmd (str): Command string                                 
+           
+        Raises:            
+           ValueError: if the command is already registered for matching or the command is an empty string           
+        """        
         if cmd != '': 
             if cmd not in commands.commands:
                 commands.commands.append(cmd);
@@ -205,7 +286,7 @@ class MasterHead(PropertyHead, CoreHead):
             raise ValueError("Command " + cmd + " is not valid string");
                 
     
-    def register_fn_hook(self, fn_id, callback = ''):
+    def register_fn_hook(self, fn_id, callback=''):
         """Method adds/replaces functionality hook
         
            Only one callback can be registered.
@@ -216,12 +297,12 @@ class MasterHead(PropertyHead, CoreHead):
            callback (callable): User defined callback
                
         Returns:
-           bool - register success
-           int  - number of successfully registered fn hooks in case that fn_id is list of dictionaries with multiple defined hooks            
+           bool: register success in case that fn_id is non-empty string
+           int: number of successfully registered fn hooks in case that fn_id is list of dictionaries with multiple defined hooks            
              
         Example:
          
-         .. code-block:: python  
+        .. code-block:: python  
          
              from hydratk.core.MasterHead import MasterHead;                                                        
              
@@ -233,7 +314,7 @@ class MasterHead(PropertyHead, CoreHead):
         if (type(fn_id).__name__ == 'list'):            
             result = 0;
             for fnh in fn_id:                              
-                if (fnh['fn_id'] != '' and hasattr(fnh['callback'],'__call__')): 
+                if (fnh['fn_id'] != '' and hasattr(fnh['callback'], '__call__')): 
                     self._fn_hooks[fnh['fn_id']] = fnh['callback'];                   
                     result = result + 1;    
                     
@@ -249,7 +330,7 @@ class MasterHead(PropertyHead, CoreHead):
         
         Args:
            fn_id (str): functionality id
-        
+                   
         Returns:            
            void
            
@@ -268,9 +349,7 @@ class MasterHead(PropertyHead, CoreHead):
             if self._fn_hooks[fn_id]() != True:            
                 raise Exception('Functionality Hook error, have to return True') 
             
-    
-    
-    def register_command_hook(self, cmd, callback = ''):
+    def register_command_hook(self, cmd, callback=''):
         """Method adds command hook
         
            This method is usable for functionality extending, replacement, notification purposes etc.
@@ -280,12 +359,12 @@ class MasterHead(PropertyHead, CoreHead):
            callback (callable): User defined callback
                
         Returns:
-           bool - in case that cmd is defined by string 
-           int  - number of successfully added hooks in case that cmd is dictionary with multiple defined callbacks
+           bool: in case that cmd is defined by string 
+           int: number of successfully added hooks in case that cmd is dictionary with multiple defined callbacks
              
         Example:
          
-         .. code-block:: python  
+        .. code-block:: python  
          
              from hydratk.core.MasterHead import MasterHead;                                           
                           
@@ -304,7 +383,7 @@ class MasterHead(PropertyHead, CoreHead):
         if (type(cmd).__name__ == 'list'):            
             result = 0;
             for ch in cmd:                              
-                if (ch['command'] != '' and hasattr(ch['callback'],'__call__')): 
+                if (ch['command'] != '' and hasattr(ch['callback'], '__call__')): 
                     record = {
                        'callback' : ch['callback']
                     };
@@ -328,24 +407,34 @@ class MasterHead(PropertyHead, CoreHead):
            
            This method is usable for functionality extending, replacement, notification purposes etc. 
         
-        Args:
-           cmd_opt (list or string): Command option
-           callback (callable): Function callback 
+           Args:
+              cmd_opt (list or string): Command option
+              callback (callable): Function callback 
         
-        Returns:
-           bool - in case that cmd_opt is defined by string 
-           int  - number of successfully added hooks in case that cmd_opt is dictionary with multiple defined callbacks
+           Returns:
+              bool - in case that cmd_opt is defined by string 
+              int  - number of successfully added hooks in case that cmd_opt is dictionary with multiple defined callbacks
            
-        Example:
+           Example:
            
-           mh.  
+           .. code-block:: python
+        
+              from hydratk.core.MasterHead import MasterHead;
+              
+              multi_hook = [
+                           {'command_option' : 'option', 'callback' : obj1.fc_command_handler1 }, # you can specify multiple command hooks
+                           {'command_option' : 'mycommand2', 'callback' : obj2.fc_command_handler2 },
+                           {'command_option' : 'mycommand3', 'callback' : fc_command_handler3 }
+                          ];
+                          
+              mh = MasterHead.get_head();.  
            
         """
         result = False;
         if (type(cmd_opt).__name__ == 'list'):            
             result = 0;
             for ch in cmd_opt:                
-                if (ch['command_option'] != '' and hasattr(ch['callback'],'__call__')): 
+                if (ch['command_option'] != '' and hasattr(ch['callback'], '__call__')): 
                     record = {
                        'callback' : ch['callback']
                     };
@@ -354,7 +443,7 @@ class MasterHead(PropertyHead, CoreHead):
                     self._cmd_opt_hooks[cmd_opt].append(record);  
                     result = result + 1; 
                                 
-        elif (cmd_opt != '' and hasattr(callback,'__call__')):
+        elif (cmd_opt != '' and hasattr(callback, '__call__')):
             record = {
               'callback' : callback
             };
@@ -365,7 +454,7 @@ class MasterHead(PropertyHead, CoreHead):
         return result;
         
         
-    def register_event_hook(self, event, callback = '', unpack_args=False, priority = const.EVENT_HOOK_PRIORITY):
+    def register_event_hook(self, event, callback='', unpack_args=False, priority=const.EVENT_HOOK_PRIORITY):
         """Methods registers event listener.
            
            This method is useful for extending the system functionality
@@ -401,9 +490,9 @@ class MasterHead(PropertyHead, CoreHead):
         if (type(event).__name__ == 'list'):                       
             result = 0;
             for eh in event:                
-                if (eh['event'] != '' and hasattr(eh['callback'],'__call__')): 
+                if (eh['event'] != '' and hasattr(eh['callback'], '__call__')): 
                     record = {
-                       'callback' : eh['callback'],                       
+                       'callback' : eh['callback'],
                        'unpack_args' : eh['unpack_args'] if 'unpack_args' in eh else False
                     };
                     
@@ -416,11 +505,11 @@ class MasterHead(PropertyHead, CoreHead):
                                                                                    
                     self._event_hooks[eh['event']][priority].append(record);
                     result = result + 1; 
-                #todo silently notify invalid hook
+                # todo silently notify invalid hook
                                 
-        elif (event != '' and hasattr(callback,'__call__')):
+        elif (event != '' and hasattr(callback, '__call__')):
             record = {
-              'callback'    : callback,              
+              'callback'    : callback,
               'unpack_args' : unpack_args
             };
             priority = priority if priority >= 0 else const.EVENT_HOOK_PRIORITY;
@@ -430,7 +519,7 @@ class MasterHead(PropertyHead, CoreHead):
                         self._event_hooks[event][priority] = [];                                                                                                 
             self._event_hooks[event][priority].append(record);                                                           
             result = True;
-        #todo silently notify invalid hook                    
+        # todo silently notify invalid hook                    
         return result;                 
                     
     def fire_event(self, oevent):
@@ -461,8 +550,8 @@ class MasterHead(PropertyHead, CoreHead):
           
         fe_count = 0;
         event_id = oevent.id();                
-        before_event_id = '^{0}'.format(event_id.replace('^',''));         
-        after_event_id  = '${0}'.format(event_id.replace('$',''));     
+        before_event_id = '^{0}'.format(event_id.replace('^', ''));         
+        after_event_id = '${0}'.format(event_id.replace('$', ''));     
                    
         if event_id not in (before_event_id, after_event_id) and event_id in self._event_hooks and oevent.skip_before_hook is False:            
             hbh_ev = event.Event(before_event_id, oevent);                                     
@@ -473,7 +562,7 @@ class MasterHead(PropertyHead, CoreHead):
         
         if event_id in self._event_hooks and oevent.propagate():                                             
             i = 0;
-            for _, records in sorted(self._event_hooks[event_id].items(),key=operator.itemgetter(0)): # _ unused priority
+            for _, records in sorted(self._event_hooks[event_id].items(), key=operator.itemgetter(0)):  # _ unused priority
                 for record in records:
                     if oevent.propagate() == False: return fe_count;
                     cb = record['callback']; 
@@ -516,10 +605,7 @@ class MasterHead(PropertyHead, CoreHead):
                 lang_value = self._option_param['--language'][0].__str__() if self._option_param['--language'][0] != {} else '';                 
                 self.dmsg('htk_on_warning', self._trn.msg('htk_opt_ignore', 'Debug level', lang_value), self.fromhere());
                 
-   
-    def print_usage(self):
-        print(SHORT_DESC);
-        print("   Usage: " + HIGHLIGHT_START + sys.argv[0] + " [-short-opt, --long-opt] command" + HIGHLIGHT_END);                     
+                       
               
     def get_language(self):
         return self._language;
@@ -620,7 +706,7 @@ class MasterHead(PropertyHead, CoreHead):
         nexti = len(self._thr) + 1 if i == None else i;
         status = multiprocessing.Value('i', const.CORE_THREAD_WORK);
         action_status = multiprocessing.Value('i', const.CORE_THREAD_ACTION_NONE);  
-        is_alive_check  = multiprocessing.Value('d',time.time());             
+        is_alive_check = multiprocessing.Value('d', time.time());             
         parent_conn, child_conn = multiprocessing.Pipe();               
         current = multiprocessing.Process(target=self.c_worker, name=nexti, args=(nexti, status, action_status, child_conn, is_alive_check));
         

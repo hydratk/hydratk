@@ -5,7 +5,7 @@
 .. module:: corehead
    :platform: Unix
    :synopsis: Hydra core module.
-.. moduleauthor:: Petr Czaderna <pc@headz.cz>
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
 import os;
