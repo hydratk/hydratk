@@ -10,8 +10,7 @@ classifiers = [
     "Environment :: Other Environment",
     "Intended Audience :: Developers",
     "License :: Freely Distributable",
-    "Operating System :: OS Independent",
-    "Framework :: HydraTk",
+    "Operating System :: OS Independent",   
     "License :: OSI Approved :: BSD License",
     "Programming Language :: Python",    
     "Programming Language :: Python :: 2.7",
@@ -49,11 +48,13 @@ requires = [
            'pyzmq',
            'pyyaml',
            'psutil',
+           'cherrypy',
+           'tornado',
          ];                
          
 setup(
       name='HydraTk',
-      version='0.3.0',
+      version='0.1.0',
       description='Fully extendable object oriented application toolkit with nice modular architecture',
       long_description=readme,
       author='Petr Czaderna',

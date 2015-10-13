@@ -46,7 +46,6 @@ from hydratk.lib.array import multidict;
 from hydratk.lib.exceptions.inputerror import InputError;
 import hydratk.core.dbconfig as dbconfig;
 
-
 class CoreHead(EventHandler, Debugger, Profiler):
     """Class CoreHead extends from EventHandler, Debugger and Profiler           
     """
