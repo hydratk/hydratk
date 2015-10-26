@@ -14,11 +14,11 @@ language = {
   'ISO-639-1' : 'cs'
 }
 
-from hydratk.core import const;
+from hydratk.core import const
 
-HIGHLIGHT_START = chr(27)+chr(91)+"1m";
-HIGHLIGHT_US    = chr(27)+chr(91)+"4m";
-HIGHLIGHT_END   = chr(27)+chr(91)+"0m";
+HIGHLIGHT_START = chr(27)+chr(91)+"1m"
+HIGHLIGHT_US    = chr(27)+chr(91)+"4m"
+HIGHLIGHT_END   = chr(27)+chr(91)+"0m"
 
 msg = {      
     'htk_print_short_desc' : HIGHLIGHT_START + const.APP_NAME +" v"+ const.APP_VERSION + const.APP_REVISION + HIGHLIGHT_END + " pro Unixové operační systémy",

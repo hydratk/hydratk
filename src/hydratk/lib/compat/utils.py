@@ -7,12 +7,12 @@
 
 """
 
-import sys;
+import sys
 
-PYTHON_MAJOR_VERSION = sys.version_info[0];
+PYTHON_MAJOR_VERSION = sys.version_info[0]
 
 if PYTHON_MAJOR_VERSION == 2:
-    range = xrange;   
+    range = xrange   
     
 if PYTHON_MAJOR_VERSION == 3:    
-    range = range;
+    range = range

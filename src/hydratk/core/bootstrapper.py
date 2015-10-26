@@ -1,42 +1,43 @@
 # -*- coding: utf-8 -*-
 
-"""This code is a part of Hydra framework
+"""This code is a part of Hydra Toolkit
 
 .. module:: bootstrapper
    :platform: Unix
    :synopsis: Hydra core bootstrapper.
-.. moduleauthor:: Petr Czaderna <pc@headz.cz>
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
-import sys;
-from hydratk.lib.system.utils import Utils;
+import sys
+from hydratk.lib.system.utils import Utils
 from hydratk.core.dependencies import dep_modules
 
-PYTHON_MAJOR_VERSION = sys.version_info[0];
+
+PYTHON_MAJOR_VERSION = sys.version_info[0]
 if PYTHON_MAJOR_VERSION == 2:
-    reload(sys);
-    sys.setdefaultencoding('UTF8');
+    reload(sys)
+    sys.setdefaultencoding('UTF8')
     
 def _check_dependencies():
-    result = True;
+    result = True
     for mod, modinfo in dep_modules.items():
         if Utils.module_loaded(mod):
-            lmod = __import__(mod);
+            lmod = __import__(mod)
             if 'min-version' in modinfo:
                 if not Utils.module_version_ok(modinfo['min-version'], lmod.__version__):
                     print("Dependency error: module %s found with version: %s, but at least version %s is required" % (mod, lmod.__version__, modinfo['min-version']))
-                    result = False;  
+                    result = False  
         else:
             print("Dependency error: missing module %s" % mod)
-            result = False;
-    return result;
+            result = False
+    return result
 
 def run_app():
     if (_check_dependencies()):        
-        from hydratk.core.masterhead import MasterHead;
+        from hydratk.core.masterhead import MasterHead
         
-        mh = MasterHead.get_head();
-        mh.run_fn_hook('h_bootstrap');
-        trn = mh.get_translator();  
-        mh.dmsg('htk_on_debug_info', trn.msg('htk_app_exit'), mh.fromhere());
-    sys.exit(0);
+        mh = MasterHead.get_head()
+        mh.run_fn_hook('h_bootstrap')
+        trn = mh.get_translator()  
+        mh.dmsg('htk_on_debug_info', trn.msg('htk_app_exit'), mh.fromhere())
+    sys.exit(0)

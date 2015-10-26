@@ -5,8 +5,8 @@ Created on 17.11.2009
 '''
 
 def int2bool(intvar):
-    result = False;
-    intvar = int(intvar);    
+    result = False
+    intvar = int(intvar)    
     if intvar > 0:
-        result = True;
-    return result;    
+        result = True
+    return result    

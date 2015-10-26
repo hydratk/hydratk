@@ -1,14 +1,15 @@
-"""This code is a part of Pyx application framework
+# -*- coding: utf-8 -*-
+"""This code is a part of Hydra Toolkit
 
 .. module:: system.utils
    :platform: Unix
    :synopsis: A useful module for misc utils.
-.. moduleauthor:: Petr Czaderna <pc@headz.cz>
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
-import pkgutil;
-import pkg_resources;
-import pprint;
+import pkgutil
+import pkg_resources
+
 
 class Utils():
     
@@ -18,12 +19,12 @@ class Utils():
         
     @staticmethod
     def module_loaded(module):
-        result = False;
-        for importer, modname, ispkg in pkgutil.iter_modules():
+        result = False
+        for _, modname, _ in pkgutil.iter_modules(): #unused importer and ispkg
             if modname == module:
-                result = True;
-                break;                 
-        return result;
+                result = True
+                break                 
+        return result
     
     @staticmethod
     def module_exists(module_name):        

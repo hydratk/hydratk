@@ -13,6 +13,6 @@ class DependencyError(Exception):
         '''
         Constructor
         '''
-        self.error_num = error_num;
-        self.args      = args;        
-        self.message   = msg;
+        self.error_num = error_num
+        self.args      = args        
+        self.message   = msg

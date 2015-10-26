@@ -5,7 +5,7 @@ Created on Nov 8, 2012
 '''
 
 class Profiler():
-    _profiling = False;    
+    _profiling = False    
     def __init__(self):
         '''
         Constructor

@@ -26,14 +26,14 @@ def check_auth(user, password):
 
     salt_pattern = compile_regex(r"\$.*\$.*\$")
     passwd = "/etc/shadow" if path.exists("/etc/shadow") else "/etc/passwd"
-    result = False;
+    result = False
     
     with open(passwd, "r") as f:
         rows = (line.strip().split(":") for line in f)
         records = [row for row in rows if row[0] == user]
     '''check if user exists'''    
     if (isinstance(records, list) and len(records) > 0 and records[0][0] == user): 
-        hashv = records and records[0][1];
-        salt = salt_pattern.match(hashv).group();
+        hashv = records and records[0][1]
+        salt = salt_pattern.match(hashv).group()
         result = crypt.crypt(password, salt) == hashv
-    return result;
+    return result

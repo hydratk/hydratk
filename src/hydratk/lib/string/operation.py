@@ -3,7 +3,7 @@ Created on 28.10.2009
 
 @author: CzadernaP
 '''
-import re;
+import re
 
 def mreplace(text, dic): 
     """ Replace in 'text' all occurences of any key in the given
@@ -14,7 +14,3 @@ def mreplace(text, dic):
 
 def str_split(string, split_length=1):
     return filter(None, re.split('(.{1,%d})' % split_length, string))
-
-def file_get_contents(filename):
-    with open(filename) as f:
-        return f.read()

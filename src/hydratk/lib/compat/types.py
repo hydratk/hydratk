@@ -6,9 +6,9 @@
 .. moduleauthor:: Petr Czaderna <pc@headz.cz>
 
 """
-import sys;
+import sys
 
-PYTHON_MAJOR_VERSION = sys.version_info[0];
+PYTHON_MAJOR_VERSION = sys.version_info[0]
 
 if PYTHON_MAJOR_VERSION == 2:
     str = str

@@ -8,87 +8,88 @@
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
-import sys;
-import os;
-import errno;
-import signal;
-import threading;
-import time;
-import multiprocessing;
-import pprint;
+import sys
+import os
+import errno
+import signal
+import threading
+import time
+import multiprocessing
+import pprint
 
-import inspect;
-import imp;
+import inspect
+import imp
 
 
-import traceback;
-import yaml;
-import operator;
+import traceback
+import yaml
+import operator
+
     
-PYTHON_MAJOR_VERSION = sys.version_info[0];
+PYTHON_MAJOR_VERSION = sys.version_info[0]
 
 if PYTHON_MAJOR_VERSION == 2:
-    import ConfigParser as configparser;    
+    import ConfigParser as configparser    
     
 if PYTHON_MAJOR_VERSION == 3:    
-    import configparser;      
+    import configparser      
 
-from hydratk.core.propertyhead import PropertyHead;
-from hydratk.core.corehead import CoreHead;
+from hydratk.core.propertyhead import PropertyHead
+from hydratk.core.corehead import CoreHead
 
-from hydratk.core import const, commands, event, events, message, messagerouter;
-from hydratk.core.eventhandler import EventHandler; 
-from hydratk.core.extension import Extension;
-from hydratk.lib.compat import types;
+from hydratk.core import const, commands, event, events, message, messagerouter
+from hydratk.core.eventhandler import EventHandler 
+from hydratk.core.extension import Extension
+from hydratk.lib.compat import types
 
-from hydratk.lib.profiling.profiler import Profiler;
-from hydratk.lib.array import multidict;
-from hydratk.lib.console.commandlinetool import CommandlineTool;
-from hydratk.lib.number import conversion;
-from hydratk.lib.translation import translator;
-from hydratk.translation import info;
+from hydratk.lib.profiling.profiler import Profiler
+from hydratk.lib.array import multidict
+from hydratk.lib.console.commandlinetool import CommandlineTool
+from hydratk.lib.number import conversion
+from hydratk.lib.translation import translator
+from hydratk.translation import info
 
-HIGHLIGHT_START = chr(27) + chr(91) + "1m";
-HIGHLIGHT_US = chr(27) + chr(91) + "4m";
-HIGHLIGHT_END = chr(27) + chr(91) + "0m";
-SHORT_DESC = HIGHLIGHT_START + const.APP_NAME + " v" + const.APP_VERSION + const.APP_REVISION + HIGHLIGHT_END + " load, performacne and stress testing tool";
+HIGHLIGHT_START = chr(27) + chr(91) + "1m"
+HIGHLIGHT_US = chr(27) + chr(91) + "4m"
+HIGHLIGHT_END = chr(27) + chr(91) + "0m"
+SHORT_DESC = HIGHLIGHT_START + const.APP_NAME + " v" + const.APP_VERSION + const.APP_REVISION + HIGHLIGHT_END + " load, performacne and stress testing tool"
 
 class MasterHead(PropertyHead, CoreHead):
     """Class MasterHead extends from CoreHead decorated by EventHandler, Debugger and Profiler           
     """
-    _instance = None;
-    _instance_created = False;                 
+    _instance = None
+    _instance_created = False                 
         
     def __init__(self):
                   
         if MasterHead._instance_created == False:            
-            raise ValueError("For creating class instance please use the get_head method instead!");
+            raise ValueError("For creating class instance please use the get_head method instead!")
         if MasterHead._instance is not None:
-            raise ValueError("A Class instantiation already exists, use get_head method instead!");
+            raise ValueError("A Class instantiation already exists, use get_head method instead!")
         
         '''Setting up global exception handler for uncaught exceptions''' 
         
-        sys.excepthook = self.exception_handler;
+        sys.excepthook = self.exception_handler
           
-        self._runlevel = const.RUNLEVEL_BASEINIT;
+        self._runlevel = const.RUNLEVEL_BASEINIT
             
-        current = threading.currentThread();
-        current.status = const.CORE_THREAD_ALIVE;
+        current = threading.currentThread()
+        current.status = const.CORE_THREAD_ALIVE
                             
-        self._trn = translator.Translator();
+        self._trn = translator.Translator()
         """Checking for the --lang param presence"""
         if self.check_language() == False:          
-            self._trn.set_language(self._language);
+            self._trn.set_language(self._language)
         
-        self._import_global_messages();
+        self._import_global_messages()
                 
-        # self.dmsg('htk_on_warning', self._trn.msg('htk_cs', 'print_short_desc'), self.fromhere());        
+        # self.dmsg('htk_on_warning', self._trn.msg('htk_cs', 'print_short_desc'), self.fromhere())        
         
-        self._reg_self_fn_hooks();
-        self._reg_self_command_hooks();
-        self._reg_self_event_hooks();        
+        self._reg_self_fn_hooks()
+        self._reg_self_command_hooks()
+        self._reg_self_event_hooks()        
         if (len(sys.argv) > 1 and sys.argv[1] != 'help'):
-            self.check_config();
+            self.check_config()
                                           
     def exception_handler(self, extype, value, traceback):
         """Exception handler hook
@@ -102,11 +103,11 @@ class MasterHead(PropertyHead, CoreHead):
         
         """
         try:
-            ev = event.Event('htk_on_uncaught_exception', extype, value, traceback);                
-            ev.set_data('type', extype);
-            ev.set_data('value', value);
-            ev.set_data('traceback', traceback);        
-            self.fire_event(ev);
+            ev = event.Event('htk_on_uncaught_exception', extype, value, traceback)                
+            ev.set_data('type', extype)
+            ev.set_data('value', value)
+            ev.set_data('traceback', traceback)        
+            self.fire_event(ev)
         
         except Exception as e:
             # import traceback
@@ -122,7 +123,7 @@ class MasterHead(PropertyHead, CoreHead):
               Translator (obj)
                
         """
-        return self._trn;
+        return self._trn
     
     @staticmethod
     def get_head():                
@@ -138,23 +139,23 @@ class MasterHead(PropertyHead, CoreHead):
         
         .. code-block:: python
         
-            from hydratk.core.masterhead import MasterHead;        
+            from hydratk.core.masterhead import MasterHead        
                       
-            mh = MasterHead.get_head();        
+            mh = MasterHead.get_head()        
         
         """
         if MasterHead._instance is None:           
-            MasterHead._instance_created = True;
+            MasterHead._instance_created = True
             try:             
-                MasterHead._instance = MasterHead();
+                MasterHead._instance = MasterHead()
             except Exception as e:
                 print("Exception in user code:")
                 print("-"*60)
                 traceback.print_exc(file=sys.stdout)
                 print("-"*60) 
-                MasterHead._instance_created = False;
-                raise e;                                            
-        return MasterHead._instance;    
+                MasterHead._instance_created = False
+                raise e                                            
+        return MasterHead._instance    
         
     def get_config(self):
         """Method return current loaded configuration  
@@ -166,12 +167,12 @@ class MasterHead(PropertyHead, CoreHead):
         
         .. code-block:: python
         
-              from hydratk.core.masterhead import MasterHead;        
+              from hydratk.core.masterhead import MasterHead        
                       
-              mh = MasterHead.get_head();
-              config = mh.get_config();         
+              mh = MasterHead.get_head()
+              config = mh.get_config()         
         """        
-        return self._config;
+        return self._config
                                 
     def check_language(self):
         """Method checks for language change input parameters from command line and validates if it's supported 
@@ -180,24 +181,24 @@ class MasterHead(PropertyHead, CoreHead):
               language_changed (bool) - True in case if it's supported otherwise False 
         
         """        
-        from hydratk.translation import info;
-        language_changed = False;
-        i = 0;
+        from hydratk.translation import info
+        language_changed = False
+        i = 0
         for o in sys.argv:            
             if o == '-l' or o == '--language':                
                 if sys.argv.index(o) < (len(sys.argv) - 1):                    
-                    lang = sys.argv[i + 1];                    
+                    lang = sys.argv[i + 1]                    
                     if (lang in info.languages):                        
-                        self._language = lang;
-                        self._trn.set_language(self._language);                        
-                        language_changed = True;
-                        break;
+                        self._language = lang
+                        self._trn.set_language(self._language)                        
+                        language_changed = True
+                        break
                     else:
-                        self.dmsg('htk_on_warning', self._trn.msg('htk_invalid_lang_set', lang), self.fromhere());
+                        self.dmsg('htk_on_warning', self._trn.msg('htk_invalid_lang_set', lang), self.fromhere())
                 else:
-                    self.dmsg('htk_on_warning', self._trn.msg('htk_opt_ignore', 'Language', lang), self.fromhere());                    
-            i = i + 1;
-        return language_changed;
+                    self.dmsg('htk_on_warning', self._trn.msg('htk_opt_ignore', 'Language', lang), self.fromhere())                    
+            i = i + 1
+        return language_changed
                 
     def check_config(self):
         """Method checks for config file change input parameters from command line and validates its existence
@@ -207,25 +208,50 @@ class MasterHead(PropertyHead, CoreHead):
            config_changed (bool) - True in case if config file exists otherwise False 
         
         """        
-        i = 0;
-        config_changed = False;
+        i = 0
+        config_changed = False
         for o in sys.argv:
-            if o == 'help': break;
+            if o == 'help': break
             if o == '-c' or o == '--config':                
                 if sys.argv.index(o) < (len(sys.argv) - 1):
-                    config_file = sys.argv[i + 1];
+                    config_file = sys.argv[i + 1]
                     if (os.path.exists(config_file)):
-                        self._config_file = config_file;
-                        config_changed = True;
-                        break;
+                        self._config_file = config_file
+                        config_changed = True
+                        break
                     else:
-                        self.dmsg('htk_on_warning', self._trn.msg('htk_conf_not_exists', config_file), self.fromhere());
+                        self.dmsg('htk_on_warning', self._trn.msg('htk_conf_not_exists', config_file), self.fromhere())
                 else:
-                    self.dmsg('htk_on_warning', self._trn.msg('htk_opt_ignore', 'Config', ''), self.fromhere());
+                    self.dmsg('htk_on_warning', self._trn.msg('htk_opt_ignore', 'Config', ''), self.fromhere())
                     
-            i = i + 1; 
-        return config_changed;
+            i = i + 1 
+        return config_changed
 
+    def check_debug(self):
+        """Method checks for language change input parameters from command line and validates if it's supported 
+        
+        Returns:            
+              language_changed (bool) - True in case if it's supported otherwise False 
+        
+        """                
+        debug_changed = False
+        i = 0
+        for o in sys.argv:            
+            if o == '-d' or o == '--debug':                
+                if sys.argv.index(o) < (len(sys.argv) - 1):                    
+                    debug_level = sys.argv[i + 1]  
+                    if unicode(debug_level,'utf-8').isnumeric():
+                        self._debug_level = int(debug_level) 
+                        self._debug = True                
+                        self.dmsg('htk_on_debug_info', self._trn.msg('htk_debug_level_set', self._debug_level), self.fromhere())                  
+                        debug_changed = True
+                    else:
+                        self.dmsg('htk_on_warning', self._trn.msg('htk_invalid_debug_level_set', debug_level), self.fromhere())
+                else:
+                    self.dmsg('htk_on_warning', self._trn.msg('htk_opt_ignore', 'Debug', ''), self.fromhere())                    
+            i = i + 1
+        return debug_changed
+         
     def match_short_option(self, opt, value_expected=False):
         """Method registers command line short option check       
     
@@ -240,12 +266,12 @@ class MasterHead(PropertyHead, CoreHead):
         """
         if opt != '': 
             if commands.short_opts.find(opt) < 0:
-                commands.short_opts = commands.short_opts + opt;
-                commands.getopt_short_opts = commands.getopt_short_opts + opt if value_expected == False else commands.getopt_short_opts + opt + ':';  
+                commands.short_opts = commands.short_opts + opt
+                commands.getopt_short_opts = commands.getopt_short_opts + opt if value_expected == False else commands.getopt_short_opts + opt + ':'  
             else:                
-                raise ValueError("Short option " + opt + " is already registered for matching");
+                raise ValueError("Short option " + opt + " is already registered for matching")
         else:
-            raise ValueError("Short option " + opt + " is not valid string");
+            raise ValueError("Short option " + opt + " is not valid string")
         
     def match_long_option(self, opt, value_expected=False):
         """Method registers command line long option check       
@@ -260,13 +286,13 @@ class MasterHead(PropertyHead, CoreHead):
         """
         if opt != '': 
             if opt not in commands.long_opts:                
-                commands.long_opts.append(opt);
-                add_opt = opt if value_expected == False else opt + '=';
-                commands.getopt_long_opts.append(add_opt);  
+                commands.long_opts.append(opt)
+                add_opt = opt if value_expected == False else opt + '='
+                commands.getopt_long_opts.append(add_opt)  
             else:                
-                raise ValueError("Long option " + opt + " is already registered for matching");
+                raise ValueError("Long option " + opt + " is already registered for matching")
         else:
-            raise ValueError("Long option " + opt + " is not valid option string");
+            raise ValueError("Long option " + opt + " is not valid option string")
             
     def match_command(self, cmd):
         """Method registers command line command check       
@@ -279,11 +305,12 @@ class MasterHead(PropertyHead, CoreHead):
         """        
         if cmd != '': 
             if cmd not in commands.commands:
-                commands.commands.append(cmd);
+                commands.commands.append(cmd)                
+                
             else:                
-                raise ValueError("Command " + cmd + " is already registered for matching");
+                raise ValueError("Command " + cmd + " is already registered for matching")
         else:
-            raise ValueError("Command " + cmd + " is not valid string");
+            raise ValueError("Command " + cmd + " is not valid string")
                 
     
     def register_fn_hook(self, fn_id, callback=''):
@@ -304,24 +331,24 @@ class MasterHead(PropertyHead, CoreHead):
          
         .. code-block:: python  
          
-             from hydratk.core.MasterHead import MasterHead;                                                        
+             from hydratk.core.MasterHead import MasterHead                                                        
              
-             mh = MasterHead.get_head();                                  
-             mh.register_fn_hook('mh_bootstrap', my_bootstrapper);              
+             mh = MasterHead.get_head()                                  
+             mh.register_fn_hook('mh_bootstrap', my_bootstrapper)              
              
         """
-        result = False;
+        result = False
         if (type(fn_id).__name__ == 'list'):            
-            result = 0;
+            result = 0
             for fnh in fn_id:                              
                 if (fnh['fn_id'] != '' and hasattr(fnh['callback'], '__call__')): 
-                    self._fn_hooks[fnh['fn_id']] = fnh['callback'];                   
-                    result = result + 1;    
+                    self._fn_hooks[fnh['fn_id']] = fnh['callback']                   
+                    result = result + 1    
                     
         elif (fn_id != '' and hasattr(callback, '__call__')):
-            self._fn_hooks[fn_id] = callback;                                                          
-            result = True;            
-        return result;
+            self._fn_hooks[fn_id] = callback                                                          
+            result = True            
+        return result
     
     def run_fn_hook(self, fn_id):
         """Method is processing registered callback for specified fn_id.
@@ -338,11 +365,11 @@ class MasterHead(PropertyHead, CoreHead):
         
         .. code-block:: python
         
-           from hydratk.core.masterhead import MasterHead;
-           from hydratk.core.event import Event;
+           from hydratk.core.masterhead import MasterHead
+           from hydratk.core.event import Event
                       
-           mh = MasterHead.get_head();
-           mh.run_fn_hook('mh_bootstrap');
+           mh = MasterHead.get_head()
+           mh.run_fn_hook('mh_bootstrap')
         
         """
         if fn_id in self._fn_hooks:
@@ -366,41 +393,41 @@ class MasterHead(PropertyHead, CoreHead):
          
         .. code-block:: python  
          
-             from hydratk.core.MasterHead import MasterHead;                                           
+             from hydratk.core.MasterHead import MasterHead                                           
                           
              multi_hook = [
                            {'command' : 'mycommand1', 'callback' : obj1.fc_command_handler1 }, # you can specify multiple command hooks
                            {'command' : 'mycommand2', 'callback' : obj2.fc_command_handler2 },
                            {'command' : 'mycommand3', 'callback' : fc_command_handler3 }
-                          ];
+                          ]
              
-             mh = MasterHead.get_head();                                  
-             mh.register_command_hook(multi_hook); # register all hooks at once
-             mh.register_command_hook('mycommand4', fc_command_handler); # single registration  
+             mh = MasterHead.get_head()                                  
+             mh.register_command_hook(multi_hook) # register all hooks at once
+             mh.register_command_hook('mycommand4', fc_command_handler) # single registration  
              
         """
-        result = False;
+        result = False
         if (type(cmd).__name__ == 'list'):            
-            result = 0;
+            result = 0
             for ch in cmd:                              
                 if (ch['command'] != '' and hasattr(ch['callback'], '__call__')): 
                     record = {
                        'callback' : ch['callback']
-                    };
+                    }
                     if ch['command'] not in self._cmd_hooks:
-                        self._cmd_hooks[ch['command']] = [];
-                    self._cmd_hooks[ch['command']].append(record);                    
-                    result = result + 1;                 
+                        self._cmd_hooks[ch['command']] = []
+                    self._cmd_hooks[ch['command']].append(record)                    
+                    result = result + 1                 
                                     
         elif (cmd != '' and hasattr(callback, '__call__')):
             record = {
               'callback' : callback
-            };
+            }
             if cmd not in self._cmd_hooks:
-                self._cmd_hooks[cmd] = [];                                                                                          
-            self._cmd_hooks[cmd].append(record);                                               
-            result = True;            
-        return result;
+                self._cmd_hooks[cmd] = []                                                                                          
+            self._cmd_hooks[cmd].append(record)                                               
+            result = True            
+        return result
     
     def register_command_option_hook(self, cmd_opt, callback=''):
         """Methods adds command option listener.
@@ -419,39 +446,39 @@ class MasterHead(PropertyHead, CoreHead):
            
            .. code-block:: python
         
-              from hydratk.core.MasterHead import MasterHead;
+              from hydratk.core.MasterHead import MasterHead
               
               multi_hook = [
                            {'command_option' : 'option', 'callback' : obj1.fc_command_handler1 }, # you can specify multiple command hooks
                            {'command_option' : 'mycommand2', 'callback' : obj2.fc_command_handler2 },
                            {'command_option' : 'mycommand3', 'callback' : fc_command_handler3 }
-                          ];
+                          ]
                           
-              mh = MasterHead.get_head();.  
+              mh = MasterHead.get_head().  
            
         """
-        result = False;
+        result = False
         if (type(cmd_opt).__name__ == 'list'):            
-            result = 0;
+            result = 0
             for ch in cmd_opt:                
                 if (ch['command_option'] != '' and hasattr(ch['callback'], '__call__')): 
                     record = {
                        'callback' : ch['callback']
-                    };
+                    }
                     if cmd_opt not in self._cmd_opt_hooks:
-                        self._cmd_opt_hooks[cmd_opt] = [];                                                                          
-                    self._cmd_opt_hooks[cmd_opt].append(record);  
-                    result = result + 1; 
+                        self._cmd_opt_hooks[cmd_opt] = []                                                                          
+                    self._cmd_opt_hooks[cmd_opt].append(record)  
+                    result = result + 1 
                                 
         elif (cmd_opt != '' and hasattr(callback, '__call__')):
             record = {
               'callback' : callback
-            };
+            }
             if cmd_opt not in self._cmd_opt_hooks:
-                self._cmd_opt_hooks[cmd_opt] = [];                                                                          
-            self._cmd_opt_hooks[cmd_opt].append(record);                                                
-            result = True;            
-        return result;
+                self._cmd_opt_hooks[cmd_opt] = []                                                                          
+            self._cmd_opt_hooks[cmd_opt].append(record)                                                
+            result = True            
+        return result
         
         
     def register_event_hook(self, event, callback='', unpack_args=False, priority=const.EVENT_HOOK_PRIORITY):
@@ -462,7 +489,7 @@ class MasterHead(PropertyHead, CoreHead):
         Args:
            event (list or string): event 
            callback (callable): function callback
-           unpack_args (bool): optional request that arguments from event object will be passed directly to listener, default false
+           unpack_args (bool): optional request that arguments from event object will be passed directly to the listener, default false
            priority (int): optional priority number > 0, lower number means higher priority, default value is const.EVENT_HOOK_PRIORITY 
         
         Returns:
@@ -473,54 +500,54 @@ class MasterHead(PropertyHead, CoreHead):
         
         .. code-block:: python   
         
-           from hydratk.core.masterhead import MasterHead;
-           from hydratk.core import const;                      
+           from hydratk.core.masterhead import MasterHead
+           from hydratk.core import const                      
            
-           mh = MasterHead.get_head();
+           mh = MasterHead.get_head()
            
            hook = [
                    {'event' : 'htk_on_error', 'callback' : self.my_error_handler, 'unpack_args' : True, 'priority' : const.EVENT_HOOK_PRIORITY - 1}, # will be prioritized        
                    {'event' : 'htk_on_warning', 'callback' : self.my_warning_handler, 'unpack_args' : False}
-                  ];            
+                  ]            
                       
-           mh.register_event_hook(hook);
+           mh.register_event_hook(hook)
            
         """
-        result = False;
+        result = False
         if (type(event).__name__ == 'list'):                       
-            result = 0;
+            result = 0
             for eh in event:                
                 if (eh['event'] != '' and hasattr(eh['callback'], '__call__')): 
                     record = {
                        'callback' : eh['callback'],
                        'unpack_args' : eh['unpack_args'] if 'unpack_args' in eh else False
-                    };
+                    }
                     
-                    priority = eh['priority'] if 'priority' in eh and eh['priority'] >= 0 else const.EVENT_HOOK_PRIORITY;
+                    priority = eh['priority'] if 'priority' in eh and eh['priority'] >= 0 else const.EVENT_HOOK_PRIORITY
                     
                     if eh['event'] not in self._event_hooks:
-                        self._event_hooks[eh['event']] = {};
+                        self._event_hooks[eh['event']] = {}
                     if priority not in self._event_hooks[eh['event']]:
-                        self._event_hooks[eh['event']][priority] = [];
+                        self._event_hooks[eh['event']][priority] = []
                                                                                    
-                    self._event_hooks[eh['event']][priority].append(record);
-                    result = result + 1; 
+                    self._event_hooks[eh['event']][priority].append(record)
+                    result = result + 1 
                 # todo silently notify invalid hook
                                 
         elif (event != '' and hasattr(callback, '__call__')):
             record = {
               'callback'    : callback,
               'unpack_args' : unpack_args
-            };
-            priority = priority if priority >= 0 else const.EVENT_HOOK_PRIORITY;
+            }
+            priority = priority if priority >= 0 else const.EVENT_HOOK_PRIORITY
             if eh['event'] not in self._event_hooks:
-                self._event_hooks[eh['event']] = {};    
+                self._event_hooks[eh['event']] = {}    
             if priority not in self._event_hooks[event]:
-                        self._event_hooks[event][priority] = [];                                                                                                 
-            self._event_hooks[event][priority].append(record);                                                           
-            result = True;
+                        self._event_hooks[event][priority] = []                                                                                                 
+            self._event_hooks[event][priority].append(record)                                                           
+            result = True
         # todo silently notify invalid hook                    
-        return result;                 
+        return result                 
                     
     def fire_event(self, oevent):
         """Method is processing specified event callbacks.
@@ -537,118 +564,115 @@ class MasterHead(PropertyHead, CoreHead):
         
         .. code-block:: python
         
-           from hydratk.core.masterhead import MasterHead;
-           from hydratk.core.event import Event;
+           from hydratk.core.masterhead import MasterHead
+           from hydratk.core.event import Event
                       
-           mh = MasterHead.get_head();
-           event_id = 'myprefix_on_something_important';
-           oevent = Event('event_id');
-           oevent.set_data('alert','I just finished work');
-           print('This event was processed %d times' % mh.fire_event(oevent));
+           mh = MasterHead.get_head()
+           event_id = 'myprefix_on_something_important'
+           oevent = Event('event_id')
+           oevent.set_data('alert','I just finished work')
+           print('This event was processed %d times' % mh.fire_event(oevent))
            
         """
           
-        fe_count = 0;
-        event_id = oevent.id();                
-        before_event_id = '^{0}'.format(event_id.replace('^', ''));         
-        after_event_id = '${0}'.format(event_id.replace('$', ''));     
+        fe_count = 0
+        event_id = oevent.id()                
+        before_event_id = '^{0}'.format(event_id.replace('^', ''))         
+        after_event_id = '${0}'.format(event_id.replace('$', ''))     
                    
         if event_id not in (before_event_id, after_event_id) and event_id in self._event_hooks and oevent.skip_before_hook is False:            
-            hbh_ev = event.Event(before_event_id, oevent);                                     
-            hbh_ev.set_data('target_event', oevent);                           
-            self.fire_event(hbh_ev);
+            hbh_ev = event.Event(before_event_id, oevent)                                     
+            hbh_ev.set_data('target_event', oevent)                           
+            self.fire_event(hbh_ev)
             if hbh_ev.will_run_default() == False:
-                return fe_count;
+                return fe_count
         
         if event_id in self._event_hooks and oevent.propagate():                                             
-            i = 0;
+            i = 0
             for _, records in sorted(self._event_hooks[event_id].items(), key=operator.itemgetter(0)):  # _ unused priority
                 for record in records:
-                    if oevent.propagate() == False: return fe_count;
-                    cb = record['callback']; 
+                    if oevent.propagate() == False: return fe_count
+                    cb = record['callback'] 
                     if record['unpack_args']:
-                        cb(oevent, *oevent.args());
+                        cb(oevent, *oevent.args())
                     else:
-                        cb(oevent);
-                    i += 1;
-                fe_count = i;                                    
+                        cb(oevent)
+                    i += 1
+                fe_count = i                                    
                                     
         if event_id not in (before_event_id, after_event_id) and event_id in self._event_hooks and oevent.propagate() and oevent.skip_after_hook is False:
-            hah_ev = event.Event(after_event_id, oevent);                
-            hah_ev.set_data('source_event', oevent);        
-            self.fire_event(hah_ev);
+            hah_ev = event.Event(after_event_id, oevent)                
+            hah_ev.set_data('source_event', oevent)        
+            self.fire_event(hah_ev)
         
-        return fe_count;
+        return fe_count
                 
     def apply_command_options(self):
         if ('--debug' in self._option_param):
-            if (type(self._option_param['--debug'][0]).__name__ == 'str' and self._option_param['--debug'][0].isdigit()):                            
-                self._debug = conversion.int2bool(self._option_param['--debug'][0]);
-                self.dmsg('htk_on_debug_info', self._trn.msg('htk_opt_set', 'Debug', self._debug.__str__()), self.fromhere());            
+            if (type(self._option_param['--debug'][0]).__name__ == 'str' and self._option_param['--debug'][0].isdigit()):
+                if int(self._option_param['--debug'][0]) > 0:
+                    self._debug = True
+                    self._debug_level = int(self._option_param['--debug'][0])                              
+                else:
+                    self._debug = False
+                self.dmsg('htk_on_debug_info', self._trn.msg('htk_opt_set', 'Debug', self._debug.__str__()), self.fromhere())
+                self.dmsg('htk_on_debug_info', self._trn.msg('htk_opt_set', 'Debug level', self._debug_level.__str__()), self.fromhere())            
             else:
-                debug_value = self._option_param['--debug'][0].__str__() if self._option_param['--debug'][0] != {} else ''; 
-                self.dmsg('htk_on_warning', self._trn.msg('htk_opt_ignore', 'Debug', debug_value), self.fromhere());
-                
-        if ('--debug-level' in self._option_param):    
-            if (type(self._option_param['--debug-level'][0]).__name__ == 'str' and self._option_param['--debug-level'][0].isdigit() and int(self._option_param['--debug-level'][0]) > 0):            
-                self._debug_level = int(self._option_param['--debug-level'][0]);
-                self.dmsg('htk_on_debug_info', self._trn.msg('htk_opt_set', 'Debug level', self._debug_level.__str__()), self.fromhere());                            
-            else:
-                debug_level_value = self._option_param['--debug-level'][0].__str__() if self._option_param['--debug-level'][0] != {} else '';                 
-                self.dmsg('htk_on_warning', self._trn.msg('htk_opt_ignore', 'Debug level', debug_level_value), self.fromhere());
+                debug_value = self._option_param['--debug'][0].__str__() if self._option_param['--debug'][0] != {} else '' 
+                self.dmsg('htk_on_warning', self._trn.msg('htk_opt_ignore', 'Debug', debug_value), self.fromhere())                        
                     
         if ('--language' in self._option_param):               
             if (type(self._option_param['--language'][0]).__name__ == 'str' and self._option_param['--language'][0] != {} and self._option_param['--language'][0] in info.languages):            
-                self._language = self._option_param['--language'][0];
-                self.dmsg('htk_on_debug_info', self._trn.msg('htk_opt_set', 'Language', self._language), self.fromhere());                            
+                self._language = self._option_param['--language'][0]
+                self.dmsg('htk_on_debug_info', self._trn.msg('htk_opt_set', 'Language', self._language), self.fromhere())                            
             else:
-                lang_value = self._option_param['--language'][0].__str__() if self._option_param['--language'][0] != {} else '';                 
-                self.dmsg('htk_on_warning', self._trn.msg('htk_opt_ignore', 'Debug level', lang_value), self.fromhere());
+                lang_value = self._option_param['--language'][0].__str__() if self._option_param['--language'][0] != {} else ''                 
+                self.dmsg('htk_on_warning', self._trn.msg('htk_opt_ignore', 'Debug level', lang_value), self.fromhere())
                 
                        
               
     def get_language(self):
-        return self._language;
+        return self._language
     
     def have_command_action(self):        
         return True if self._command != None else False
     
     def get_command_action(self):
-        return self._command;
+        return self._command
     '''
     def get_opt_alias_str(self, opt):             
-        result = '';
+        result = ''
         for a, o in commands.command_opt_alias.items():            
             if (opt == o):
-                result = result + a + ',';
-        return result;
+                result = result + a + ','
+        return result
     '''    
     
     def service_registered(self, service_name):        
         for service in self._app_service:
-            if service_name == service.name: return True;
-        return False;    
+            if service_name == service.name: return True
+        return False    
         
     def register_service(self, service_name, description, cb):
         if not isinstance(service_name, types.basestring) or service_name == '':
-            raise TypeError('Service name must be a valid string, your input was: ' + service_name);
+            raise TypeError('Service name must be a valid string, your input was: ' + service_name)
         if self.service_registered(service_name):
-            raise SystemError('Service with name: "' + service_name + '" already registered');
+            raise SystemError('Service with name: "' + service_name + '" already registered')
         if (description == ''): 
-            raise ValueError('Service description has to be specified');
+            raise ValueError('Service description has to be specified')
         if not callable(cb):
-            raise ValueError('Callback parameter must be a callable object');
-        service_status = multiprocessing.Value('i', const.SERVICE_STATUS_STOPPED);                                
-        parent_conn, child_conn = multiprocessing.Pipe(); 
-        service_starter = self._service_starter;              
-        service = multiprocessing.Process(target=service_starter, name=service_name, args=(cb, service_status, child_conn));
-        service.pipe_conn = parent_conn;
-        service.service_name = service_name;
-        service.service_desc = description;
-        service.service_status = service_status;
-        self._app_service.append(service);
-        self.dmsg('htk_on_debug_info', self._trn.msg('htk_app_service_reg_ok', service_name, description), self.fromhere());
-        return True;
+            raise ValueError('Callback parameter must be a callable object')
+        service_status = multiprocessing.Value('i', const.SERVICE_STATUS_STOPPED)                                
+        parent_conn, child_conn = multiprocessing.Pipe() 
+        service_starter = self._service_starter              
+        service = multiprocessing.Process(target=service_starter, name=service_name, args=(cb, service_status, child_conn))
+        service.pipe_conn = parent_conn
+        service.service_name = service_name
+        service.service_desc = description
+        service.service_status = service_status
+        self._app_service.append(service)
+        self.dmsg('htk_on_debug_info', self._trn.msg('htk_app_service_reg_ok', service_name, description), self.fromhere())
+        return True
     
     def unregister_service(self, service_name):
         pass
@@ -656,17 +680,17 @@ class MasterHead(PropertyHead, CoreHead):
     def start_service(self, service_name):
         for service in self._app_service:
             if service_name == service.name and not service.is_alive():
-                service.start();                
+                service.start()                
                 if service.is_alive():
-                    self.dmsg('htk_on_debug_info', self._trn.msg('htk_app_service_start_ok', service_name), self.fromhere());
-                    return True;
+                    self.dmsg('htk_on_debug_info', self._trn.msg('htk_app_service_start_ok', service_name), self.fromhere())
+                    return True
                 else:
-                    # raise Exception("Failed to start application service "+service_name);    
-                    self.dmsg('htk_on_debug_info', "Failed to start service", self.fromhere());
+                    # raise Exception("Failed to start application service "+service_name)    
+                    self.dmsg('htk_on_debug_info', "Failed to start service", self.fromhere())
             else:
-                self.dmsg('htk_on_debug_info', self._trn.msg('htk_app_service_start_ok', service_name), self.fromhere());
+                self.dmsg('htk_on_debug_info', self._trn.msg('htk_app_service_start_ok', service_name), self.fromhere())
                     
-        return False;
+        return False
     
     def stop_service(self, service_name):        
         pass
@@ -677,51 +701,365 @@ class MasterHead(PropertyHead, CoreHead):
     def stop_services(self):
         for service in self._app_service:
             if service.pid != None:
-                service_name = service.service_name;                          
-                service.service_status.value = const.SERVICE_STATUS_STOPPED;                
-                os.kill(int(service.pid), signal.SIGINT);
-                self.dmsg('htk_on_debug_info', self._trn.msg('htk_app_service_stop', service_name), self.fromhere());
-                service.join(const.PROCESS_JOIN_TIMEOUT);
+                service_name = service.service_name                          
+                service.service_status.value = const.SERVICE_STATUS_STOPPED                
+                os.kill(int(service.pid), signal.SIGINT)
+                self.dmsg('htk_on_debug_info', self._trn.msg('htk_app_service_stop', service_name), self.fromhere())
+                service.join(const.PROCESS_JOIN_TIMEOUT)
                 if service.is_alive():
-                    self.dmsg('htk_on_debug_info', self._trn.msg('htk_app_service_stop_failed', service_name), self.fromhere());
-                    self.dmsg('htk_on_debug_info', self._trn.msg('htk_app_service_stop_hard', service_name), self.fromhere()); 
-                    os.kill(int(service.pid), signal.SIGKILL);
-            else: self.dmsg('htk_on_debug_info', self._trn.msg('htk_app_service_inactive_skip', service.service_name), self.fromhere());
+                    self.dmsg('htk_on_debug_info', self._trn.msg('htk_app_service_stop_failed', service_name), self.fromhere())
+                    self.dmsg('htk_on_debug_info', self._trn.msg('htk_app_service_stop_hard', service_name), self.fromhere()) 
+                    os.kill(int(service.pid), signal.SIGKILL)
+            else: self.dmsg('htk_on_debug_info', self._trn.msg('htk_app_service_inactive_skip', service.service_name), self.fromhere())
                 
                     
     def init_core_threads(self): 
-        i = 1;       
+        i = 1       
         while i <= self._num_threads:
-            self.add_core_thread(i);
-            i = i + 1;        
+            self.add_core_thread(i)
+            i = i + 1        
     
     def destroy_core_threads(self):
         for thread in self._thr:
-            name = thread.name;
-            thread.status.value = const.CORE_THREAD_EXIT;
-            self.dmsg('htk_on_debug_info', self._trn.msg('htk_cthread_destroy', name), self.fromhere());
-            thread.join();
+            name = thread.name
+            thread.status.value = const.CORE_THREAD_EXIT
+            self.dmsg('htk_on_debug_info', self._trn.msg('htk_cthread_destroy', name), self.fromhere())
+            thread.join()
                 
     def add_core_thread(self, i=None):        
-        nexti = len(self._thr) + 1 if i == None else i;
-        status = multiprocessing.Value('i', const.CORE_THREAD_WORK);
-        action_status = multiprocessing.Value('i', const.CORE_THREAD_ACTION_NONE);  
-        is_alive_check = multiprocessing.Value('d', time.time());             
-        parent_conn, child_conn = multiprocessing.Pipe();               
-        current = multiprocessing.Process(target=self.c_worker, name=nexti, args=(nexti, status, action_status, child_conn, is_alive_check));
+        nexti = len(self._thr) + 1 if i == None else i
+        status = multiprocessing.Value('i', const.CORE_THREAD_WORK)
+        action_status = multiprocessing.Value('i', const.CORE_THREAD_ACTION_NONE)  
+        is_alive_check = multiprocessing.Value('d', time.time())             
+        parent_conn, child_conn = multiprocessing.Pipe()               
+        current = multiprocessing.Process(target=self.c_worker, name=nexti, args=(nexti, status, action_status, child_conn, is_alive_check))
         
-        current.last_ping_response = 0;
-        current.next_check_time = time.time() + const.CORE_THREAD_PING_TIME;
-        current.response_alert_level = 0;
-        current.status = status;  
-        current.action_status = action_status;      
-        current.pipe_conn = parent_conn;
-        current.is_alive_check = is_alive_check;
-        current.num = nexti;                        
-        self._thr.append(current); 
-        self.dmsg('htk_on_debug_info', self._trn.msg('htk_cthread_init', nexti), self.fromhere());
-        current.start();
+        current.last_ping_response = 0
+        current.next_check_time = time.time() + const.CORE_THREAD_PING_TIME
+        current.response_alert_level = 0
+        current.status = status  
+        current.action_status = action_status      
+        current.pipe_conn = parent_conn
+        current.is_alive_check = is_alive_check
+        current.num = nexti                        
+        self._thr.append(current) 
+        self.dmsg('htk_on_debug_info', self._trn.msg('htk_cthread_init', nexti), self.fromhere())
+        current.start()
     
 
+    def create_ext_skel(self):
+        from hydratk.core import template;
+        from os.path import expanduser
+        default_install_path = "{0}/hydratk".format(expanduser("~"));
+        result               = False
+        force_cmd            = True if CommandlineTool.get_input_option('-f') or  CommandlineTool.get_input_option('--force') == True else False
+        interactive          = True if CommandlineTool.get_input_option('-i') or  CommandlineTool.get_input_option('--interactive') == True else False
+        ext_skel_path        = CommandlineTool.get_input_option('--ext-skel-path')         
+        ext_skel_path        = default_install_path if ext_skel_path in (False,'') else ext_skel_path
+        '''Default data'''
+        ext_name     = template.extension_default_user_data['ext_name']
+        ext_ucname   = template.extension_default_user_data['ext_ucname'] 
+        ext_desc     = template.extension_default_user_data['ext_desc']
+        ext_year     = template.extension_default_user_data['ext_year']
+        author_name  = template.extension_default_user_data['author_name']
+        author_email = template.extension_default_user_data['author_email']
+        ext_license  = template.extension_default_user_data['ext_license']
         
+        if interactive:
+            try:
+                print('****************************************')
+                print('*   Extension skeleton create wizard   *')
+                print('****************************************')
+                print('This wizard will create HydraTK extension development skeleton in following 6 steps')
+                print('Hit ENTER for default value, CTRL + C to exit')
+                
+                print('1. Enter the directory, where the extension structure will be created');
+                read_ext_skel_path = raw_input("[{0}]:".format(default_install_path))
+                ext_skel_path = read_ext_skel_path if len(read_ext_skel_path) > 0 else ext_skel_path
+                print("Extension skeleton directory set to: %s" % ext_skel_path)
+                
+                print('2. Enter the extension module name, must be one word short unique string');
+                read_ext_name = raw_input("[{0}]:".format(template.extension_default_user_data['ext_name']))
+                ext_name = read_ext_name.lower() if len(read_ext_name) > 0 and read_ext_name.isalpha() else template.extension_default_user_data['ext_name']
+                ext_ucname = ext_name.capitalize()
+                print("Extension module name set to: %s" % ext_name)
+                
+                print('3. Enter the extension description');
+                read_ext_desc = raw_input("[{0}]:".format(template.extension_default_user_data['ext_desc']))
+                ext_desc = read_ext_desc if len(read_ext_desc) > 0 else template.extension_default_user_data['ext_desc']
+                print("Extension description set to: %s" % ext_desc)
+                
+                print('4. Enter the extension athor name');
+                read_author_name = raw_input("[{0}]:".format(template.extension_default_user_data['author_name']))
+                author_name = read_author_name if len(read_author_name) > 0 else template.extension_default_user_data['author_name']
+                print("Extension author name set to: %s" % author_name)
+                
+                print('5. Enter the extension author email');
+                read_author_email = raw_input("[{0}]:".format(template.extension_default_user_data['author_email']))
+                author_email = read_author_email if len(read_author_email) > 0 else template.extension_default_user_data['author_email']
+                print("Extension author email set to: %s" % author_email)
+                
+                print('6. Select extension usage and distribution license, currently supported are: BSD'); #TODO put the dynamic listing here
+                read_ext_license = raw_input("[{0}]:".format(template.extension_default_user_data['ext_license']))
+                ext_license = read_ext_license if len(read_ext_license) > 0 and read_ext_license in template.ext_license else template.extension_default_user_data['ext_license']
+                print("Extension usage and distribution license set to: %s" % ext_license)
+                                
+            except:
+                print("\nInterrupted.")
+                exit(1);
+        
+        if not os.path.exists(ext_skel_path):
+            try:
+                os.makedirs(ext_skel_path)
+            except:
+                print("Cannot create directory %s" % ext_skel_path)
+                                        
+        if os.access(ext_skel_path, os.W_OK):            
+            for create_path_str in template.extension_dir_struct:
+                try:
+                    create_path = ("{0}/{1}".format(ext_skel_path,create_path_str)).format(extension=ext_name)
+                    if not os.path.exists(create_path):
+                        self.dmsg('htk_on_debug_info', "Creating path %s" % create_path, self.fromhere())
+                        os.makedirs(create_path)
+                except:
+                    raise
+                                            
+            from hydratk.lib.system.fs import file_put_contents
             
+            for create_package_init_file_str in template.extension_package_files:
+                try:
+                    create_package_init_file = ("{0}/{1}".format(ext_skel_path,create_package_init_file_str)).format(extension=ext_name)                    
+                    self.dmsg('htk_on_debug_info', "Creating package init file %s" % create_package_init_file, self.fromhere())
+                    file_put_contents(create_package_init_file,"")
+                except:
+                    raise
+            
+            try:
+                ext_config_file = ("{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.config'])).format(extension=ext_name)                    
+                self.dmsg('htk_on_debug_info', "Creating config file %s" % ext_config_file, self.fromhere())
+                config_file_data = template.extension_config.format(uc_extension=ext_ucname, extension=ext_name)
+                file_put_contents(ext_config_file,config_file_data)
+                
+                ext_module_file = ("{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.module'])).format(extension=ext_name)                    
+                self.dmsg('htk_on_debug_info', "Creating extension module file %s" % ext_module_file, self.fromhere())
+                ext_module_file_data = template.extension.format(
+                                                                   ext_ucname=ext_ucname, 
+                                                                   extension=ext_name,
+                                                                   author_name=author_name,
+                                                                   author_email=author_email,
+                                                                   ext_desc=ext_desc,
+                                                                   ext_year=ext_year
+                                                                )                                                                
+                file_put_contents(ext_module_file,ext_module_file_data)
+                
+                ext_translation_en_messages_file = ("{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.translation.en.messages'])).format(extension=ext_name)                    
+                self.dmsg('htk_on_debug_info', "Creating extension translation English messages file %s" % ext_translation_en_messages_file, self.fromhere())
+                ext_translation_en_messages_file_data = template.ext_translation_en_messages.format(
+                                                                   ext_ucname=ext_ucname,
+                                                                   extension=ext_name,
+                                                                   author_name=author_name,
+                                                                   author_email=author_email                                                                                                                                       
+                                                                )                                                                
+                file_put_contents(ext_translation_en_messages_file, ext_translation_en_messages_file_data)
+                
+                ext_translation_cs_messages_file = ("{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.translation.cs.messages'])).format(extension=ext_name)                    
+                self.dmsg('htk_on_debug_info', "Creating extension translation Czech messages file %s" % ext_translation_cs_messages_file, self.fromhere())
+                ext_translation_cs_messages_file_data = template.ext_translation_cs_messages.format(
+                                                                   ext_ucname=ext_ucname, 
+                                                                   extension=ext_name,
+                                                                   author_name=author_name,
+                                                                   author_email=author_email                                                                  
+                                                                )                                                                
+                file_put_contents(ext_translation_cs_messages_file, ext_translation_cs_messages_file_data)
+                
+                ext_translation_en_help_file = ("{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.translation.en.help'])).format(extension=ext_name)                    
+                self.dmsg('htk_on_debug_info', "Creating extension translation English help file %s" % ext_translation_en_help_file, self.fromhere())
+                ext_translation_en_help_file_data = template.ext_translation_en_help.format(
+                                                                   ext_ucname=ext_ucname,
+                                                                   extension=ext_name,
+                                                                   author_name=author_name,
+                                                                   author_email=author_email                                                                                                                                       
+                                                                )                                                                
+                file_put_contents(ext_translation_en_help_file, ext_translation_en_help_file_data)
+                
+                ext_translation_cs_help_file = ("{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.translation.cs.help'])).format(extension=ext_name)                    
+                self.dmsg('htk_on_debug_info', "Creating extension translation Czech help file %s" % ext_translation_cs_help_file, self.fromhere())
+                ext_translation_cs_help_file_data = template.ext_translation_cs_help.format(
+                                                                   ext_ucname=ext_ucname,
+                                                                   extension=ext_name,
+                                                                   author_name=author_name,
+                                                                   author_email=author_email                                                                                                                                       
+                                                                )                                                                
+                file_put_contents(ext_translation_cs_help_file, ext_translation_cs_help_file_data)
+                
+                ext_setup_py_file = ("{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.setup.py'])).format(extension=ext_name)                    
+                self.dmsg('htk_on_debug_info', "Creating extension setup file %s" % ext_setup_py_file, self.fromhere())
+                ext_setup_py_file_data = template.ext_setup_py.format(
+                                                                   extension=ext_name,
+                                                                   ext_ucname=ext_ucname,                                                                
+                                                                   author_name=author_name,
+                                                                   author_email=author_email,
+                                                                   ext_desc=ext_desc                                                                                                                                       
+                                                                )                                                                
+                file_put_contents(ext_setup_py_file, ext_setup_py_file_data)
+                
+                ext_setup_cfg_file = ("{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.setup.cfg'])).format(extension=ext_name)                    
+                self.dmsg('htk_on_debug_info', "Creating extension additional setup config file %s" % ext_setup_cfg_file, self.fromhere())                                                                        
+                file_put_contents(ext_setup_cfg_file, template.ext_setup_cfg)
+                
+                ext_license_file = ("{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.license'])).format(extension=ext_name)                    
+                self.dmsg('htk_on_debug_info', "Creating extension license file %s" % ext_license_file, self.fromhere())                                                                        
+                file_put_contents(ext_license_file, template.ext_license[ext_license].format(ext_year=ext_year, author_name=author_name, author_email=author_email))
+                
+                ext_readme_file = ("{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.readme'])).format(extension=ext_name)                    
+                self.dmsg('htk_on_debug_info', "Creating extension readme file %s" % ext_readme_file, self.fromhere())                                                                        
+                file_put_contents(ext_readme_file, template.ext_readme_rst.format(ext_ucname=ext_ucname,ext_desc=ext_desc))
+                
+                result = True
+                
+            except:
+                raise
+                
+        else:
+            print("Cannot create extension skeleton in path %s" % ext_skel_path)
+            print(os.access(ext_skel_path, os.W_OK))
+        
+        
+        print("Completed.")
+        return result  
+            
+    def create_lib_skel(self):
+        from hydratk.core import template;
+        from os.path import expanduser
+        default_install_path = "{0}/hydratk".format(expanduser("~"));
+        result               = False
+        force_cmd            = True if CommandlineTool.get_input_option('-f') or  CommandlineTool.get_input_option('--force') == True else False
+        interactive          = True if CommandlineTool.get_input_option('-i') or  CommandlineTool.get_input_option('--interactive') == True else False
+        lib_skel_path        = CommandlineTool.get_input_option('--lib-skel-path')         
+        lib_skel_path        = default_install_path if lib_skel_path in (False,'') else lib_skel_path
+        '''Default data'''
+        lib_name     = template.lib_default_user_data['lib_name']
+        lib_ucname   = template.lib_default_user_data['lib_ucname'] 
+        lib_desc     = template.lib_default_user_data['lib_desc']
+        lib_year     = template.lib_default_user_data['lib_year']
+        author_name  = template.lib_default_user_data['author_name']
+        author_email = template.lib_default_user_data['author_email']
+        lib_license  = template.lib_default_user_data['lib_license']
+        
+        if interactive:
+            try:
+                print('**************************************')
+                print('*   Library skeleton create wizard   *')
+                print('**************************************')
+                print('This wizard will create HydraTK shared library development skeleton in following 6 steps')
+                print('Hit ENTER for default value, CTRL + C to exit')
+                
+                print('1. Enter the directory, where the library structure will be created');
+                read_lib_skel_path = raw_input("[{0}]:".format(default_install_path))
+                lib_skel_path = read_lib_skel_path if len(read_lib_skel_path) > 0 else lib_skel_path
+                print("Library skeleton directory set to: %s" % lib_skel_path)
+                
+                print('2. Enter the library module name, must be one word short unique string');
+                read_lib_name = raw_input("[{0}]:".format(template.lib_default_user_data['lib_name']))
+                lib_name = read_lib_name.lower() if len(read_lib_name) > 0 and read_lib_name.isalpha() else template.lib_default_user_data['lib_name']
+                lib_ucname = lib_name.capitalize()
+                print("Library module name set to: %s" % lib_name)
+                
+                print('3. Enter the library description');
+                read_lib_desc = raw_input("[{0}]:".format(template.lib_default_user_data['lib_desc']))
+                lib_desc = read_lib_desc if len(read_lib_desc) > 0 else template.lib_default_user_data['lib_desc']
+                print("Library description set to: %s" % lib_desc)
+                
+                print('4. Enter the lib athor name');
+                read_author_name = raw_input("[{0}]:".format(template.lib_default_user_data['author_name']))
+                author_name = read_author_name if len(read_author_name) > 0 else template.lib_default_user_data['author_name']
+                print("lib author name set to: %s" % author_name)
+                
+                print('5. Enter the library author email');
+                read_author_email = raw_input("[{0}]:".format(template.lib_default_user_data['author_email']))
+                author_email = read_author_email if len(read_author_email) > 0 else template.lib_default_user_data['author_email']
+                print("Library author email set to: %s" % author_email)
+                
+                print('6. Select lib usage and distribution license, currently supported are: BSD'); #TODO put the dynamic listing here
+                read_lib_license = raw_input("[{0}]:".format(template.lib_default_user_data['lib_license']))
+                lib_license = read_lib_license if len(read_lib_license) > 0 and read_lib_license in template.ext_license else template.lib_default_user_data['lib_license']
+                print("Library usage and distribution license set to: %s" % lib_license)
+                                
+            except:
+                print("\nInterrupted.")
+                exit(1);
+        
+        if not os.path.exists(lib_skel_path):
+            try:
+                os.makedirs(lib_skel_path)
+            except:
+                print("Cannot create directory %s" % lib_skel_path)
+                                        
+        if os.access(lib_skel_path, os.W_OK):            
+            for create_path_str in template.lib_dir_struct:
+                try:
+                    create_path = ("{0}/{1}".format(lib_skel_path,create_path_str)).format(lib_name=lib_name)
+                    if not os.path.exists(create_path):
+                        self.dmsg('htk_on_debug_info', "Creating path %s" % create_path, self.fromhere())
+                        os.makedirs(create_path)
+                except:
+                    raise
+                                            
+            from hydratk.lib.system.fs import file_put_contents
+            
+            for create_package_init_file_str in template.lib_package_files:
+                try:
+                    create_package_init_file = ("{0}/{1}".format(lib_skel_path,create_package_init_file_str)).format(lib_name=lib_name)                    
+                    self.dmsg('htk_on_debug_info', "Creating package init file %s" % create_package_init_file, self.fromhere())
+                    file_put_contents(create_package_init_file,"")
+                except:
+                    raise
+            
+            try:                                
+                lib_module_file = ("{0}/{1}".format(lib_skel_path, template.lib_data_files['lib.module'])).format(lib_name=lib_name)                    
+                self.dmsg('htk_on_debug_info', "Creating library module file %s" % lib_module_file, self.fromhere())
+                lib_module_file_data = template.library.format(
+                                                                   lib_ucname=lib_ucname, 
+                                                                   lib_name=lib_name,
+                                                                   author_name=author_name,
+                                                                   author_email=author_email,
+                                                                   lib_desc=lib_desc
+                                                                  
+                                                                )                                                                
+                file_put_contents(lib_module_file,lib_module_file_data)                
+                
+                lib_setup_py_file = ("{0}/{1}".format(lib_skel_path, template.lib_data_files['lib.setup.py'])).format(lib_name=lib_name)                    
+                self.dmsg('htk_on_debug_info', "Creating library setup file %s" % lib_setup_py_file, self.fromhere())
+                lib_setup_py_file_data = template.lib_setup_py.format(
+                                                                   lib_name=lib_name,
+                                                                   lib_ucname=lib_ucname,                                                                
+                                                                   author_name=author_name,
+                                                                   author_email=author_email,
+                                                                   lib_desc=lib_desc                                                                                                                                       
+                                                                )                                                                
+                file_put_contents(lib_setup_py_file, lib_setup_py_file_data)
+                
+                lib_setup_cfg_file = ("{0}/{1}".format(lib_skel_path, template.lib_data_files['lib.setup.cfg'])).format(lib_name=lib_name)                    
+                self.dmsg('htk_on_debug_info', "Creating library additional setup config file %s" % lib_setup_cfg_file, self.fromhere())                                                                        
+                file_put_contents(lib_setup_cfg_file, template.lib_setup_cfg)
+                
+                lib_license_file = ("{0}/{1}".format(lib_skel_path, template.lib_data_files['lib.license'])).format(lib_name=lib_name)                    
+                self.dmsg('htk_on_debug_info', "Creating lib license file %s" % lib_license_file, self.fromhere())                                                                        
+                file_put_contents(lib_license_file, template.ext_license[lib_license].format(ext_year=lib_year, author_name=author_name, author_email=author_email))
+                
+                lib_readme_file = ("{0}/{1}".format(lib_skel_path, template.lib_data_files['lib.readme'])).format(lib_name=lib_name)                    
+                self.dmsg('htk_on_debug_info', "Creating library readme file %s" % lib_readme_file, self.fromhere())                                                                        
+                file_put_contents(lib_readme_file, template.lib_readme_rst.format(lib_ucname=lib_ucname,lib_desc=lib_desc))
+                
+                result = True
+                
+            except:
+                raise
+                
+        else:
+            print("Cannot create library skeleton in path %s" % lib_skel_path)
+            print(os.access(lib_skel_path, os.W_OK))
+        
+        
+        print("Completed.")
+        return result  

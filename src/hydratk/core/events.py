@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """This code is a part of Hydra Toolkit
 
 .. module:: hydratk.core.events
@@ -22,4 +23,4 @@ event = {
   'htk_on_sigpipe'            : 'hydratk.core.masterhead',  '''htk_on_sigpipe'''
   'htk_on_msg_recv'           : 'hydratk.core.masterhead',  '''htk_on_msg_recv: msg'''
   'htk_on_privmsg_recv'       : 'hydratk.core.masterhead'   '''htk_on_privmsg_recv: msg'''
-};
+}

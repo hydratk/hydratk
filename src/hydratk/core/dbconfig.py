@@ -1,24 +1,24 @@
-"""This code is a part of Hydra toolbox
+"""This code is a part of Hydra Toolkit
 
 .. module:: dbconfig
    :platform: Unix
    :synopsis: Database configuration and settings module.
-.. moduleauthor:: Petr Czaderna <pc@headz.cz>
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
-import unicodedata;
-import sqlite3 as cfgdb;
+import unicodedata
+import sqlite3 as cfgdb
 
 """
 This structure contains all necessary commands for creating configuration database structure
 """
 db_struct = {
              "table config" : "CREATE TABLE config(grp VARCHAR NOT NULL, obj VARCHAR NOT NULL, key VARCHAR NOT NULL, value VARCHAR, enabled INTEGER)"
-            };
+            }
 
 class DBConfig():
-    _db_file = None;
-    _conn    = None;
+    _db_file = None
+    _conn    = None
     
     def __init__(self, db_file):
         """Class constructor.
@@ -29,13 +29,13 @@ class DBConfig():
            db_file (str): database file path           
            
         """        
-        self._db_file = db_file;
+        self._db_file = db_file
     
     def connect(self):
         """Method connects configuration database
                 
         """        
-        self._conn = cfgdb.connect(self._db_file);
+        self._conn = cfgdb.connect(self._db_file)
                 
     def writedb(self, base_config):
         """Method writes configuration database using basic configuration
@@ -47,19 +47,19 @@ class DBConfig():
            bool - result 
                 
         """
-        result = False;
-        global db_struct;
+        result = False
+        global db_struct
         with self._conn:
-            cur = self._conn.cursor();
+            cur = self._conn.cursor()
             for action, query in db_struct.items():                
-                cur.execute(query);
-            cfg = self.cfg2db(base_config);            
-            cur.execute("begin");
+                cur.execute(query)
+            cfg = self.cfg2db(base_config)            
+            cur.execute("begin")
             for itm in cfg:                
-                cur.execute("insert into config values(?,?,?,?,?)",(itm['grp'], itm['obj'], itm['key'], itm['value'], 1));
-            self._conn.commit();
-            result = True;
-        return result;    
+                cur.execute("insert into config values(?,?,?,?,?)",(itm['grp'], itm['obj'], itm['key'], itm['value'], 1))
+            self._conn.commit()
+            result = True
+        return result    
 
     def cfg2db(self,d):
         """Method converts base config data to the database input format
@@ -71,12 +71,12 @@ class DBConfig():
            dict - cfg 
                 
         """                
-        cfg = [];    
+        cfg = []    
         for gk, gv in d.items():
             for ok, ov in gv.items():
                 for kk, kv in ov.items():
-                    cfg.append({'grp' : gk, 'obj' : ok, 'key' : kk, 'value' : kv});
-        return cfg;
+                    cfg.append({'grp' : gk, 'obj' : ok, 'key' : kk, 'value' : kv})
+        return cfg
 
  
     def db2cfg(self, active_only = False):
@@ -89,10 +89,10 @@ class DBConfig():
            list - records 
                 
         """               
-        enabled_filter = "enabled = 1" if active_only == True else ""; 
+        enabled_filter = "enabled = 1" if active_only == True else "" 
         with self._conn:
-            cur = self._conn.cursor();
-            cur.execute("select * from config where %s" % (enabled_filter));
-            return cur.fetchall();
+            cur = self._conn.cursor()
+            cur.execute("select * from config where %s" % (enabled_filter))
+            return cur.fetchall()
          
 
