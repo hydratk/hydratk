@@ -6,3 +6,5 @@ psutil
 jsonpickle
 sphinxcontrib-mscgen
 tornado
+paramiko
+tftpy

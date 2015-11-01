@@ -32,6 +32,8 @@ requires = [
            'psutil',
            'cherrypy',
            'tornado',
+           'paramiko',
+           'tftpy'
          ]
          
 data_files=[
