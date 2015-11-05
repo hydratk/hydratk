@@ -9,7 +9,7 @@
 
 """
 from hydratk.core import const
-from hydratk.translation import info
+from hydratk.translation.core import info
 
 class PropertyHead():
     

@@ -34,6 +34,7 @@ if PYTHON_MAJOR_VERSION == 2:
 if PYTHON_MAJOR_VERSION == 3:    
     import configparser      
 
+from hydratk.core.hookhead import TranslationMsgLoader
 from hydratk.core.propertyhead import PropertyHead
 from hydratk.core.corehead import CoreHead
 
@@ -47,14 +48,14 @@ from hydratk.lib.array import multidict
 from hydratk.lib.console.commandlinetool import CommandlineTool
 from hydratk.lib.number import conversion
 from hydratk.lib.translation import translator
-from hydratk.translation import info
+from hydratk.translation.core import info
 
 HIGHLIGHT_START = chr(27) + chr(91) + "1m"
 HIGHLIGHT_US = chr(27) + chr(91) + "4m"
 HIGHLIGHT_END = chr(27) + chr(91) + "0m"
 SHORT_DESC = HIGHLIGHT_START + const.APP_NAME + " v" + const.APP_VERSION + const.APP_REVISION + HIGHLIGHT_END + " load, performacne and stress testing tool"
 
-class MasterHead(PropertyHead, CoreHead):
+class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
     """Class MasterHead extends from CoreHead decorated by EventHandler, Debugger and Profiler           
     """
     _instance = None
@@ -70,6 +71,9 @@ class MasterHead(PropertyHead, CoreHead):
         '''Setting up global exception handler for uncaught exceptions''' 
         
         sys.excepthook = self.exception_handler
+        
+        '''Setting up dynamic translation messages import hook'''
+        sys.meta_path.append(self)
           
         self._runlevel = const.RUNLEVEL_BASEINIT
             
@@ -115,7 +119,7 @@ class MasterHead(PropertyHead, CoreHead):
             print('Type: %s' % extype)
             print('value: %s' % value)
             # print(repr(traceback.format_tb(traceback)))
-        
+    
     def get_translator(self):
         """Method returns current traslator object initialized from hydratrk.lib.translation.translator.Translator 
         
@@ -181,7 +185,7 @@ class MasterHead(PropertyHead, CoreHead):
               language_changed (bool) - True in case if it's supported otherwise False 
         
         """        
-        from hydratk.translation import info
+        from hydratk.translation.core import info
         language_changed = False
         i = 0
         for o in sys.argv:            

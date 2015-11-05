@@ -391,7 +391,7 @@ class CoreHead(EventHandler, Debugger, Profiler):
             print("Missing global config file %s" % self._config_file)
             
     def _apply_config(self):               
-        from hydratk.translation import info
+        from hydratk.translation.core import info
         
         if (not self.check_debug()):
             try:                                             
@@ -546,10 +546,21 @@ class CoreHead(EventHandler, Debugger, Profiler):
         except ImportError as e:
             self.dmsg('htk_on_error', self._trn.msg('htk_load_ext_help_failed', self._language, str(e)), self.fromhere())   
             
-    
+    def _import_package_messages(self, import_package, msg_package):
+        msg_package  = msg_package+'.'+self._language+'.messages'
+        
+        try:            
+            self.dmsg('htk_on_debug_info', self._trn.msg('htk_load_package_msg', import_package, self._language), self.fromhere())                          
+            lang = importlib.import_module(msg_package)
+            self._trn.add_msg(lang.msg)
+            self.dmsg('htk_on_debug_info', self._trn.msg('htk_load_package_msg_success', import_package, self._language), self.fromhere())                        
+        except ImportError as e:
+            self.dmsg('htk_on_error', self._trn.msg('htk_load_package_msg_failed', import_package, self._language, str(e)), self.fromhere())  
+        
+        
     def _import_global_messages(self):
-        msg_package  = 'hydratk.translation.'+self._language+'.messages'
-        help_package = 'hydratk.translation.'+self._language+'.help'
+        msg_package  = 'hydratk.translation.core.'+self._language+'.messages'
+        help_package = 'hydratk.translation.core.'+self._language+'.help'
         try:            
             self.dmsg('htk_on_debug_info', self._trn.msg('htk_load_global_msg', self._language, msg_package), self.fromhere())                          
             self._trn.msg_mod = importlib.import_module(msg_package)

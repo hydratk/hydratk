@@ -3,7 +3,7 @@
 .. module:: translator
    :platform: Unix
    :synopsis: A useful module for application multilangue support.
-.. moduleauthor:: Petr Czaderna <pc@headz.cz>
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
 import sys
@@ -18,7 +18,6 @@ if PYTHON_MAJOR_VERSION == 2:
 if PYTHON_MAJOR_VERSION == 3:    
     from builtins import len
 
-from hydratk.lib.array.multidict import MultiDict
 
 class Translator():
     '''
