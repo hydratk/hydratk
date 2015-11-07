@@ -33,7 +33,8 @@ requires = [
            'cherrypy',
            'tornado',
            'paramiko',
-           'tftpy'
+           'tftpy',
+           'pycurl'
          ]
          
 data_files=[
@@ -48,11 +49,11 @@ entry_points={
          
 setup(
       name='HydraTK',
-      version='0.1.0a.dev2',
+      version='0.1.0a.dev3',
       description='Fully extendable object oriented application toolkit with nice modular architecture',
       long_description=readme,
-      author='Petr Czaderna',
-      author_email='pc@hydratk.org',
+      author='Petr Czaderna, HydraTK Team',
+      author_email='team@hydratk.org',
       url='http://www.hydratk.org',
       license='BSD',
       packages=find_packages('src'),

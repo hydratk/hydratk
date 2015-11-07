@@ -423,13 +423,15 @@ class CoreHead(EventHandler, Debugger, Profiler):
             self.dmsg('htk_on_warning', self._trn.msg('htk_conf_opt_missing', 'General', 'language'), self.fromhere())
             
         
-                    
+        '''
+        TODO: temporary disabled, will be redesigned            
         if 'extensions_dir' in self._config['System']['Extending'] and os.path.exists(self._config['System']['Extending']['extensions_dir']):
             sys.path.append(self._config['System']['Extending']['extensions_dir'])
         else: 
-            self._use_extensions = False            
+            self._use_extensions = False
+                        
             self.dmsg('htk_on_warning', self._trn.msg('htk_ext_ext_dir_not_exists', self._config['System']['Extending']['extensions_dir']), self.fromhere())   
-         
+        ''' 
         try:
             msg_router_id = self._config['Core']['MessageRouter']['id']            
             if (msg_router_id != ''):

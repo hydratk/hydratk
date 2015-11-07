@@ -8,3 +8,4 @@ sphinxcontrib-mscgen
 tornado
 paramiko
 tftpy
+pycurl
