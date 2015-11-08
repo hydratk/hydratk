@@ -34,7 +34,10 @@ requires = [
            'tornado',
            'paramiko',
            'tftpy',
-           'pycurl'
+           'pycurl',
+           'cx_Oracle',
+           'MySQLdb',
+           'psycopg2
          ]
          
 data_files=[
