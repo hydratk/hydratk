@@ -169,7 +169,7 @@ class SoapRequestMessage():
                 self._content = content  
                 
     @property
-    def content(self):
+    def content(self):        
         return self._content
     
     @content.setter
@@ -177,7 +177,7 @@ class SoapRequestMessage():
         self._content = content
     
     def load_from_file(self,msg_file):
-        self._content = fs.file_get_contents(msg_file)        
+        self._content = fs.file_get_contents(msg_file)             
         
     def bind_var(self,**kwargs):
         if self._content is not None:

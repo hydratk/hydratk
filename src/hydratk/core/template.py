@@ -26,9 +26,15 @@ lib_dir_struct             = [
                           ]
 
 lib_package_files          = [                            
-                            
+                            'hydratk-lib-{lib_name}/src/hydratk/__init__.py',
+                            'hydratk-lib-{lib_name}/src/hydratk/lib/__init__.py',
                             'hydratk-lib-{lib_name}/src/hydratk/lib/{lib_name}/__init__.py',                            
                           ]
+
+lib_package_init_content = '''
+from pkgutil import extend_path
+__path__ = extend_path(__path__, __name__)
+'''
 
 lib_data_files   =  {                            
                             'lib.module'       : 'hydratk-lib-{lib_name}/src/hydratk/lib/{lib_name}/{lib_name}.py',                            
@@ -160,6 +166,11 @@ extension_package_files = [
                             'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/translation/en/__init__.py',
                             'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/translation/cs/__init__.py',
                           ]
+
+extension_package_init_content = '''
+from pkgutil import extend_path
+__path__ = extend_path(__path__, __name__)
+'''
 
 extension_data_files   =  {
                             'ext.config' : 'hydratk-ext-{extension}/etc/hydratk/conf.d/hydratk-ext-{extension}.conf',

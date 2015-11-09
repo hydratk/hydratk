@@ -829,12 +829,12 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
                     raise
                                             
             from hydratk.lib.system.fs import file_put_contents
-            
+                        
             for create_package_init_file_str in template.extension_package_files:
                 try:
                     create_package_init_file = ("{0}/{1}".format(ext_skel_path,create_package_init_file_str)).format(extension=ext_name)                    
                     self.dmsg('htk_on_debug_info', "Creating package init file %s" % create_package_init_file, self.fromhere())
-                    file_put_contents(create_package_init_file,"")
+                    file_put_contents(create_package_init_file,template.extension_package_init_content)
                 except:
                     raise
             
@@ -1015,7 +1015,7 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
                 try:
                     create_package_init_file = ("{0}/{1}".format(lib_skel_path,create_package_init_file_str)).format(lib_name=lib_name)                    
                     self.dmsg('htk_on_debug_info', "Creating package init file %s" % create_package_init_file, self.fromhere())
-                    file_put_contents(create_package_init_file,"")
+                    file_put_contents(create_package_init_file,template.lib_package_init_content)
                 except:
                     raise
             
