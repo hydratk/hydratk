@@ -9,3 +9,6 @@ tornado
 paramiko
 tftpy
 pycurl
+cx_Oracle
+MySQLdb
+psycopg2
