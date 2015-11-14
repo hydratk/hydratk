@@ -12,3 +12,6 @@ pycurl
 cx_Oracle
 MySQLdb
 psycopg2
+httplib2
+jsonlib2
+lxml

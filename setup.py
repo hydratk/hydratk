@@ -37,7 +37,10 @@ requires = [
            'pycurl',
            'cx_Oracle',
            'MySQLdb',
-           'psycopg2
+           'psycopg2,
+           'httplib2',
+           'jsonlib2',
+           'lxml'
          ]
          
 data_files=[

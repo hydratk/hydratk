@@ -4,7 +4,7 @@
 
 .. module:: hydratk.translation.lib.network.email.client.en.messages
    :platform: Unix
-   :synopsis: English language translation for DB client messages
+   :synopsis: English language translation for EMAIL client messages
 .. moduleauthor:: Petr Rašek <bowman@hydratk.org>
 
 """
