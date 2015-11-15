@@ -40,7 +40,8 @@ requires = [
            'psycopg2,
            'httplib2',
            'jsonlib2',
-           'lxml'
+           'lxml',
+           'suds'
          ]
          
 data_files=[

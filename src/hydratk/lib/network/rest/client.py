@@ -53,7 +53,8 @@ class RESTClient:
         else:
             self._client = httplib2.Http(disable_ssl_certificate_validation=ignore_cert)     
         
-        if (verbose):
+        self.verbose = verbose
+        if (self.verbose):
             httplib2.debuglevel = 2
         
     def send_request(self, host, protocol='HTTP', port=None, path='/', user=None, passw=None, 
@@ -138,7 +139,7 @@ class RESTClient:
                 
             return self.res_header.status, self.res_body
             
-        except (httplib2.HttpLib2Error, Exception), ex:
+        except httplib2.HttpLib2Error, ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
             return None   
         
