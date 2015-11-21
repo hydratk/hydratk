@@ -28,6 +28,7 @@ requires = [
            'setproctitle',
            'xtermcolor',
            'pyzmq',
+           'pytz'
            'pyyaml',
            'psutil',
            'cherrypy',
@@ -37,7 +38,7 @@ requires = [
            'pycurl',
            'cx_Oracle',
            'MySQLdb',
-           'psycopg2,
+           'psycopg2',
            'httplib2',
            'jsonlib2',
            'lxml',
@@ -56,7 +57,7 @@ entry_points={
          
 setup(
       name='HydraTK',
-      version='0.1.0a.dev3',
+      version='0.1.0a.dev4',
       description='Fully extendable object oriented application toolkit with nice modular architecture',
       long_description=readme,
       author='Petr Czaderna, HydraTK Team',

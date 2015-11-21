@@ -7,8 +7,10 @@
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
-
 import pycurl
+import pytz
+import datetime
+
 from hydratk.lib.system import fs
 try:
     from io import BytesIO
@@ -53,6 +55,8 @@ curl_info_map  = {
                        'activesocket'            : 'ACTIVESOCKET',                       
                        'tls_session'             : 'TLS_SESSION',                                                   
 }
+
+HTTP_AUTH_BASIC = pycurl.HTTPAUTH
 
 class SoapResponse():
     _msg          = None
@@ -208,7 +212,12 @@ class SoapClient():
         return self._response    
              
     def __init__(self):
-        self._curl = pycurl.Curl()        
+        self._curl = pycurl.Curl()
+    
+    def set_auth(self, username, password, auth_type = HTTP_AUTH_BASIC):
+        self._curl.setopt(self._curl.HTTPAUTH, auth_type)
+        if auth_type == HTTP_AUTH_BASIC:
+            self._curl.setopt(self._curl.USERPWD, "{username}:{password}".format(username=username,password=password))                   
     
     def send(self, timeout = _connection_timeout):        
         
@@ -222,4 +231,8 @@ class SoapClient():
         self._response = SoapResponse(self._curl)
         self._response.msg = SoapResponseMessage(buff.getvalue())
         self._curl.close()          
-        
+    
+     
+     
+def xml_timestamp(location = 'Europe/Prague'):
+    return datetime.datetime.now(pytz.timezone(location)).isoformat()
