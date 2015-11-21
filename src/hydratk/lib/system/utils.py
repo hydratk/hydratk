@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit
+"""This code is a part of Hydra Toolkit library
 
-.. module:: system.utils
+.. module:: lib.system.utils
    :platform: Unix
    :synopsis: A useful module for misc utils.
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
+
 import pkgutil
 import pkg_resources
 

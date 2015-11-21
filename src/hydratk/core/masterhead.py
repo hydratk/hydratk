@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-
 """This code is a part of Hydra framework
 
-.. module:: masterhead
+.. module:: core.masterhead
    :platform: Unix
-   :synopsis: HydraTK master module.
+   :synopsis: HydraTK master module
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
+
 import sys
 import os
 import errno
@@ -273,9 +273,9 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
                 commands.short_opts = commands.short_opts + opt
                 commands.getopt_short_opts = commands.getopt_short_opts + opt if value_expected == False else commands.getopt_short_opts + opt + ':'  
             else:                
-                raise ValueError("Short option " + opt + " is already registered for matching")
+                raise ValueError(self._trn.msg('htk_short_opt_registered', opt))
         else:
-            raise ValueError("Short option " + opt + " is not valid string")
+            raise ValueError(self._trn.msg('htk_short_opt_invalid', opt))
         
     def match_long_option(self, opt, value_expected=False):
         """Method registers command line long option check       
@@ -294,9 +294,9 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
                 add_opt = opt if value_expected == False else opt + '='
                 commands.getopt_long_opts.append(add_opt)  
             else:                
-                raise ValueError("Long option " + opt + " is already registered for matching")
+                raise ValueError(self._trn.msg('htk_long_opt_registered', opt))
         else:
-            raise ValueError("Long option " + opt + " is not valid option string")
+            raise ValueError(self._trn.msg('htk_long_opt_invalid', opt))
             
     def match_command(self, cmd):
         """Method registers command line command check       
@@ -312,9 +312,9 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
                 commands.commands.append(cmd)                
                 
             else:                
-                raise ValueError("Command " + cmd + " is already registered for matching")
+                raise ValueError(self._trn.msg('htk_cmd_registered', cmd))
         else:
-            raise ValueError("Command " + cmd + " is not valid string")
+            raise ValueError(self._trn.msg('htk_cmd_invalid', cmd))
                 
     
     def register_fn_hook(self, fn_id, callback=''):
@@ -378,7 +378,7 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
         """
         if fn_id in self._fn_hooks:
             if self._fn_hooks[fn_id]() != True:            
-                raise Exception('Functionality Hook error, have to return True') 
+                raise Exception(self._trn.msg('htk_fn_hook_invalid')) 
             
     def register_command_hook(self, cmd, callback=''):
         """Method adds command hook
@@ -659,13 +659,13 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
         
     def register_service(self, service_name, description, cb):
         if not isinstance(service_name, types.basestring) or service_name == '':
-            raise TypeError('Service name must be a valid string, your input was: ' + service_name)
+            raise TypeError(self._trn.msg('htk_app_service_invalid', service_name))
         if self.service_registered(service_name):
-            raise SystemError('Service with name: "' + service_name + '" already registered')
+            raise SystemError(self._trn.msg('htk_app_service_registered', service_name))
         if (description == ''): 
-            raise ValueError('Service description has to be specified')
+            raise ValueError(self._trn.msg('htk_app_service_desc_missing'))
         if not callable(cb):
-            raise ValueError('Callback parameter must be a callable object')
+            raise ValueError(self._trn.msg('htk_cb_not_callable'))
         service_status = multiprocessing.Value('i', const.SERVICE_STATUS_STOPPED)                                
         parent_conn, child_conn = multiprocessing.Pipe() 
         service_starter = self._service_starter              
@@ -690,7 +690,7 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
                     return True
                 else:
                     # raise Exception("Failed to start application service "+service_name)    
-                    self.dmsg('htk_on_debug_info', "Failed to start service", self.fromhere())
+                    self.dmsg('htk_on_debug_info', self._trn('htk_app_service_start_failed', service_name), self.fromhere())
             else:
                 self.dmsg('htk_on_debug_info', self._trn.msg('htk_app_service_start_ok', service_name), self.fromhere())
                     

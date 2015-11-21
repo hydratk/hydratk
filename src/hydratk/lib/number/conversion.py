@@ -1,8 +1,12 @@
-'''
-Created on 17.11.2009
+# -*- coding: utf-8 -*-
+"""This code is a part of Hydra Toolkit library
 
-@author: CzadernaP
-'''
+.. module:: lib.number.conversion
+   :platform: Unix
+   :synopsis: Module for number conversions
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
+
+"""
 
 def int2bool(intvar):
     result = False

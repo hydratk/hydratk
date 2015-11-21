@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit
+"""This code is part of Hydra Toolkit library
 
-.. module:: hydratk.lib.network.dbi.client
+.. module:: network.dbi.client
    :platform: Unix
    :synopsis: Generic DB client for databases: SQLite, Oracle, MySQL, PostgreSQL
 .. moduleauthor:: Petr Rašek <bowman@hydratk.org>
@@ -49,48 +49,61 @@ class DBClient:
     
     _mh = None
     _client = None
-    engine = None;
-    host = None;
-    port = None;
-    sid = None;
-    user = None;
-    passw = None;
-    db_file = None;
+    _engine = None;
+    _host = None;
+    _port = None;
+    _sid = None;
+    _user = None;
+    _passw = None;
+    _db_file = None;
     
     def __init__(self, engine='SQLITE'):
+        """Class constructor
+           
+        Called when the object is initialized 
+        
+        Args:
+           engine (str): database engine, SQLITE|ORACLE|MYSQL|POSTGRESQL           
+           
+        """         
         
         self._mh = MasterHead.get_head()
-        self.engine = engine.upper() 
+        self._engine = engine.upper() 
         
-        if (self.engine not in ('SQLITE', 'ORACLE', 'MYSQL', 'POSTGRESQL')):
-            self._mh.dmsg('htk_on_error', self._mh.trn.msg('htk_dbi_unknown_engine', self.engine), self._mh.fromhere())
+        if (self._engine not in ('SQLITE', 'ORACLE', 'MYSQL', 'POSTGRESQL')):
+            self._mh.dmsg('htk_on_error', self._mh.trn.msg('htk_dbi_unknown_engine', self._engine), self._mh.fromhere())
             return None        
         
     def connect(self, host=None, port=None, sid=None, user=None, passw=None, db_file=None):
         """Method connects to database
         
         Args:            
-           host - hostname, string, optional, used for Oracle, MySQL, PostgreSQL only
-           port - port, int, optional, used for Oracle, MySQL, PostgreSQL only
-           sid - db instance, string, optional, used for Oracle, MySQL, PostgreSQL only
-           user - username, string, optional, used for Oracle, MySQL, PostgreSQL only
-           passw - password, string, optional, used for Oracle, MySQL, PostgreSQL only 
-           db_file - path to database file, string, optional, used for SQLite only  
+           host (str): hostname, used for Oracle, MySQL, PostgreSQL only
+           port (int): port, used for Oracle, MySQL, PostgreSQL only
+           sid (str): db instance, used for Oracle, MySQL, PostgreSQL only
+           user (str): username, used for Oracle, MySQL, PostgreSQL only
+           passw (str): password, used for Oracle, MySQL, PostgreSQL only 
+           db_file (str): path to database file, used for SQLite only
+             
         Returns:
-           result - bool
+           bool: result
+           
+        Raises:
+           event: dbi_before_connect
+           event: dbi_after_connect
                 
         """        
         
         try:
                     
-            if (self.engine != 'SQLITE'):
-                self.port = port if (port != None) else default_ports[self.engine]
-                message = '{0}/{1}@{2}:{3}/{4}'.format(user, passw, host, self.port, sid)
+            if (self._engine != 'SQLITE'):
+                self._port = port if (port != None) else default_ports[self._engine]
+                message = '{0}/{1}@{2}:{3}/{4}'.format(user, passw, host, self._port, sid)
             else:
                 message = '{0}'.format(db_file)
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_dbi_connecting', message), self._mh.fromhere())
             
-            ev = event.Event('dbi_before_connect', host, self.port, sid, user, passw, db_file)
+            ev = event.Event('dbi_before_connect', host, self._port, sid, user, passw, db_file)
             if (self._mh.fire_event(ev) > 0):
                 host = ev.argv(0)
                 self.port = ev.argv(1)
@@ -100,25 +113,25 @@ class DBClient:
                 db_file = ev.argv(5)               
             
             if (ev.will_run_default()):
-                if (self.engine == 'SQLITE'):
-                    self.db_file = db_file
-                    self._client = sqlite3.connect(self.db_file)
+                if (self._engine == 'SQLITE'):
+                    self._db_file = db_file
+                    self._client = sqlite3.connect(self._db_file)
                     self._client.execute('PRAGMA foreign_keys = ON')
                 else:
-                    self.host = host                
-                    self.sid = sid
-                    self.user = user
-                    self.passw = passw
+                    self._host = host                
+                    self._sid = sid
+                    self._user = user
+                    self._passw = passw
                 
-                    if (self.engine == 'ORACLE'):
-                        dsn_str = cx_Oracle.makedsn(self.host, self.port, self.sid)
-                        self._client = cx_Oracle.connect(dsn=dsn_str, user=self.user, password=self.passw)
-                    elif (self.engine == 'MYSQL'):
-                        self._client = MySQLdb.connect(host=self.host, port=self.port, db=self.sid, user=self.user, 
-                                                       passwd=self.passw)
-                    elif (self.engine == 'POSTGRESQL'):
-                        self._client = psycopg2.connect(host=self.host, port=self.port, database=self.sid,
-                                                        user=self.user, password=self.passw)
+                    if (self._engine == 'ORACLE'):
+                        dsn_str = cx_Oracle.makedsn(self._host, self.port, self._sid)
+                        self._client = cx_Oracle.connect(dsn=dsn_str, user=self._user, password=self._passw)
+                    elif (self._engine == 'MYSQL'):
+                        self._client = MySQLdb.connect(host=self._host, port=self.port, db=self._sid, user=self._user, 
+                                                       passwd=self._passw)
+                    elif (self._engine == 'POSTGRESQL'):
+                        self._client = psycopg2.connect(host=self._host, port=self.port, database=self._sid,
+                                                        user=self._user, password=self._passw)
 
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_dbi_connected'), self._mh.fromhere())
             ev = event.Event('dbi_after_connect')
@@ -136,7 +149,7 @@ class DBClient:
         Args:            
              
         Returns:
-          result - bool 
+           bool: result
                 
         """        
         
@@ -155,13 +168,16 @@ class DBClient:
         """Method executes query
         
         Args:            
-          query - query, string, mandatory, binded variables are marked with ?
-          bindings - query bindings, list, optional 
-          fetch_one - fetch one row only, bool, optional, default False
+           query (str): query, binded variables are marked with ?
+           bindings (list): query bindings 
+           fetch_one (bool): fetch one row only
              
         Returns:
-          result - bool
-          rows - record rows accessible by column 
+           tuple: result (bool), rows (list) (accessible by column name)
+          
+        Raises:
+           event: dbi_before_exec_query
+           event: dbi_after_exec_query   
                 
         """        
         
@@ -177,35 +193,35 @@ class DBClient:
                 fetch_one = ev.argv(2)          
 
             if (ev.will_run_default()):
-                if (self.engine == 'SQLITE'):
+                if (self._engine == 'SQLITE'):
                     self._client.row_factory = sqlite3.Row
             
                 cur = self._client.cursor()    
                 
                 if (bindings != None):
-                    if (self.engine == 'ORACLE'):
+                    if (self._engine == 'ORACLE'):
                         for i in xrange(0, len(bindings)):
                             query = string.replace(query, '?', ':{0}'.format(i+1), 1)
-                    elif (self.engine in ('MYSQL', 'POSTGRESQL')):
+                    elif (self._engine in ('MYSQL', 'POSTGRESQL')):
                         query = string.replace(query, '?', '%s')
 
                     cur.execute(query, tuple(bindings))
                 else:
                     cur.execute(query)
                 
-                if (self.engine in ('ORACLE', 'MYSQL', 'POSTGRESQL')):
+                if (self._engine in ('ORACLE', 'MYSQL', 'POSTGRESQL')):
                     if (cur.description == None):
                         return True, None
                     columns = [i[0].lower() for i in cur.description]
                     rows = [dict(zip(columns, row)) for row in cur]           
                 
                 if (fetch_one):
-                    if (self.engine == 'SQLITE'):
+                    if (self._engine == 'SQLITE'):
                         rows = cur.fetchone()
                     else:
                         rows = rows[0]
                 else:
-                    if (self.engine == 'SQLITE'):
+                    if (self._engine == 'SQLITE'):
                         rows = cur.fetchall()                
             
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_dbi_query_executed'), self._mh.fromhere())
@@ -219,19 +235,23 @@ class DBClient:
         
     def call_proc(self, p_name, param_names=[], i_values={}, o_types={}, type='proc', ret_type=None):
         """Method calls procedure/function from database
-           Supported for ORACLE, MySQL only
+        
+        Supported for ORACLE, MySQL only
         
         Args:
-          p_name - procedure name, string, mandatory
-          param_names - parameter names (input, output), list of string, optional
-          i_values - input parameter values, dictionary name:value, optional
-          o_types - output parameter types, dictionary name:type, optional  
-          type - code type, func|function|proc|procedure, optional, default proc
-          ret_type - return type, string, optional, used for function only                    
+           p_name (str): procedure name
+           param_names (list): parameter names (input, output)
+           i_values (dict): input parameter values
+           o_types (dict): output parameter types  
+           type (str): code type, func|function|proc|procedure
+           ret_type (str): return type, string, optional, used for function only                    
              
         Returns:
-          result - bool, used for function only 
-          params - parameters, dictionary name:value
+           tuple: result (bool) (for function only), params (list)
+           
+        Raises:
+           event: dbi_before_call_proc
+           event: dbi_after_call_proc
                 
         """        
         
@@ -250,8 +270,8 @@ class DBClient:
                 ret_type = ev.argv(5)                          
             
             if (ev.will_run_default()):
-                if (self.engine in ('SQLITE', 'POSTGRESQL')):
-                    self._mh.dmsg('htk_on_error', self._mh._trn.msg('htk_dbi_unknown_method', self.engine), self._mh.fromhere())
+                if (self._engine in ('SQLITE', 'POSTGRESQL')):
+                    self._mh.dmsg('htk_on_error', self._mh._trn.msg('htk_dbi_unknown_method', self._engine), self._mh.fromhere())
                     return None
                 elif (type not in ('func', 'function', 'proc', 'procedure')):
                     self._mh.dmsg('htk_on_error', self._mh._trn.msg('htk_dbi_unknown_type', self.type), self._mh.fromhere())
@@ -263,17 +283,17 @@ class DBClient:
                 for name in param_names:
                     if (i_values.has_key(name)):
                         params.append(i_values[name])
-                    elif (self.engine == 'ORACLE' and o_types.has_key(name)):
-                        params.append(cur.var(data_types[self.engine][o_types[name].lower()])) 
+                    elif (self._engine == 'ORACLE' and o_types.has_key(name)):
+                        params.append(cur.var(data_types[self._engine][o_types[name].lower()])) 
                     else:
                         params.append(None)                               
                 
                 if (type in ('func', 'function')):
-                    result = cur.callfunc(p_name, data_types[self.engine][ret_type.lower()], params) 
+                    result = cur.callfunc(p_name, data_types[self._engine][ret_type.lower()], params) 
                 else:
                     cur.callproc(p_name, params)
                 
-                    if (self.engine == 'MYSQL'):
+                    if (self._engine == 'MYSQL'):
                         query = 'SELECT '                    
                         for i in xrange(0, len(params)):
                             query += '@_{0}_{1},'.format(p_name, i)   
@@ -285,7 +305,7 @@ class DBClient:
                 for param in params:
                     name = param_names[i]
                 
-                    if (self.engine == 'ORACLE'):                                        
+                    if (self._engine == 'ORACLE'):                                        
                         if (param.__class__.__module__ == 'cx_Oracle'):
                             param = param.getvalue()
                         if (o_types.has_key(name) and o_types[name] == 'int' and param != None):

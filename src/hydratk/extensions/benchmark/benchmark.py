@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit
+"""This code is a part of Benchmark extension
 
-.. module:: hydratk.extensions.benchmark
+.. module:: benchmark.benchmark
    :platform: Unix
    :synopsis: Benchmark extension for tuning and testing hydra toolkit performance.
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>

@@ -1,8 +1,12 @@
-'''
-Created on Nov 8, 2012
+# -*- coding: utf-8 -*-
+"""This code is a part of Hydra Toolkit library
 
-@author: czadpet
-'''
+.. module:: lib.profiling.profiler
+   :platform: Unix
+   :synopsis: Module for profiler definition
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
+
+"""
 
 class Profiler():
     _profiling = False    

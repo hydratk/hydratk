@@ -1,9 +1,10 @@
-"""This code is a part of Pyx application framework
+# -*- coding: utf-8 -*-
+"""This code is a part of Hydra Toolkit library
 
-.. module:: firelogger
+.. module:: lib.system.time
    :platform: Unix
-   :synopsis: An implementation of firelogger protocol
-.. moduleauthor:: Petr Czaderna <pc@headz.cz>
+   :synopsis: Module for time unit operations
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
 

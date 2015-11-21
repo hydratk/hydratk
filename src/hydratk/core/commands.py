@@ -1,8 +1,13 @@
-'''
-Created on 3.11.2009
+# -*- coding: utf-8 -*-
+"""This code is a part of Hydra Toolkit
 
-@author: CzadernaP
-'''
+.. module:: core.commands
+   :platform: Unix
+   :synopsis: HydraTK commands and options
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
+
+"""
+
 commands          = [
                     'create-config-db',
                     'create-ext-skel',

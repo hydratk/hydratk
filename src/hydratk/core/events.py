@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 """This code is a part of Hydra Toolkit
 
-.. module:: hydratk.core.events
+.. module:: core.events
    :platform: Unix
-   :synopsis: Default events definition.
+   :synopsis: HydraTK default events definition
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
+
 event = {  
   'htk_on_stop'               : 'hydratk.core.masterhead',  '''htk_on_stop'''
   'htk_on_help'               : 'hydratk.core.masterhead',  '''htk_on_help: help_commands'''

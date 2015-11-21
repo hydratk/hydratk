@@ -1,11 +1,13 @@
+# -*- coding: utf-8 -*-
 """This code is a part of Hydra Toolkit
 
-.. module:: dbconfig
+.. module:: core.dbconfig
    :platform: Unix
-   :synopsis: Database configuration and settings module.
+   :synopsis: HydraTK database configuration and settings module
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
+
 import unicodedata
 import sqlite3 as cfgdb
 

@@ -1,8 +1,12 @@
-'''
-Created on 23. 10. 2015
+# -*- coding: utf-8 -*-
+"""This code is a part of Hydra Toolkit library
 
-@author: Petr
-'''
+.. module:: lib.console.interactive
+   :platform: Unix
+   :synopsis: Module for interactive input
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
+
+"""
 
 class InteractiveInput(object):
     '''

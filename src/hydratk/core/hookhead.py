@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-
 """This code is a part of Hydra toolkit
 
-.. module:: hookhead
+.. module:: core.hookhead
    :platform: Unix
-   :synopsis: Python system hooks.
+   :synopsis: HydraTK python system hooks
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
+
 from hydratk.translation.config import packages_map
 
 class TranslationMsgLoader():

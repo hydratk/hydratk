@@ -1,8 +1,12 @@
-'''
-Created on 23. 10. 2015
+# -*- coding: utf-8 -*-
+"""This code is part of Hydra Toolkit library
 
-@author: Petr
-'''
+.. module:: network.jms.simplejms
+   :platform: Unix
+   :synopsis: Simple JMS client
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
+
+"""
 
 class SimpleJMS(object):
     '''

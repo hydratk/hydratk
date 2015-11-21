@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-
 """This code is a part of Hydra Toolkit
 
-.. module:: debugger
+.. module:: core.debugger
    :platform: Unix
-   :synopsis: Hydra core integrated debugger.
+   :synopsis: HydraTK core integrated debugger
 .. moduleauthor:: Petr Czaderna <pc@headz.cz>
 
 """
+
 import sys, os, multiprocessing, inspect,traceback
 import pprint
 from hydratk.core import const, event

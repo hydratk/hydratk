@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
-'''
-Created on 9.3.2014
+"""This code is a part of Hydra Toolkit library
 
-@author: Petr
-'''
+.. module:: lib.system.auth
+   :platform: Unix
+   :synopsis: Module for user authentication
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
+
+"""
+
 from os import path
 import crypt
 from re import compile as compile_regex

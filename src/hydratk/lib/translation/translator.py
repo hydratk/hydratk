@@ -1,11 +1,13 @@
+# -*- coding: utf-8 -*-
 """This code is a part of Hydra Toolkit library
 
 .. module:: translator
    :platform: Unix
-   :synopsis: A useful module for application multilangue support.
+   :synopsis: A useful module for application multilanguagee support.
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
+
 import sys
 import pprint
 

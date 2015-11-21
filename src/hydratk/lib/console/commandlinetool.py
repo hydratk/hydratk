@@ -1,11 +1,13 @@
+# -*- coding: utf-8 -*-
 """This code is a part of Hydra Toolkit library
 
-.. module:: commandlinetool
+.. module:: lib.console.commandlinetool
    :platform: Unix
-   :synopsis: A useful module for commandline input parameters handling.
+   :synopsis: Useful module for commandline input parameters handling
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
+
 import sys, getopt
 import pprint
 from hydratk.lib.array import multidict

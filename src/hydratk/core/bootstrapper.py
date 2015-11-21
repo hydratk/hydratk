@@ -1,13 +1,13 @@
-# -*- coding: utf-8 -*-
-
+# -*- coding: utf-8 -*
 """This code is a part of Hydra Toolkit
 
-.. module:: bootstrapper
+.. module:: core.bootstrapper
    :platform: Unix
-   :synopsis: Hydra core bootstrapper.
+   :synopsis: HydraTK core bootstrapper
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
+
 import sys
 from hydratk.lib.system.utils import Utils
 from hydratk.core.dependencies import dep_modules

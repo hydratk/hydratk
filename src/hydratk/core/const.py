@@ -1,7 +1,13 @@
-'''
-Created on 28.10.2009
-@author: czadpet
-'''
+# -*- coding: utf-8 -*-
+"""This code is a part of Hydra Toolkit
+
+.. module:: core.const
+   :platform: Unix
+   :synopsis: HydraTK constants
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
+
+"""
+
 APP_NAME               = "HydraTK"
 APP_VERSION            = "0.1.0a.dev3"
 APP_REVISION           = ""

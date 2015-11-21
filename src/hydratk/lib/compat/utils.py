@@ -1,9 +1,10 @@
-"""This code is a part of Pyx application framework
+# -*- coding: utf-8 -*-
+"""This code is a part of Hydra Toolkit library
 
-.. module:: types
+.. module:: lib.compat.utils
    :platform: Unix
-   :synopsis: A useful module for solving Python 2 and 3 compatibility problems
-.. moduleauthor:: Petr Czaderna <pc@headz.cz>
+   :synopsis: Useful module for solving Python 2 and 3 compatibility problems
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
 

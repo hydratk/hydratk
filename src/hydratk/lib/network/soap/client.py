@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit
+"""This code is part of Hydra Toolkit library
 
-.. module:: hydratk.lib.network.soap.client
+.. module:: network.soap.client
    :platform: Unix
    :synopsis: Generic SOAP client
 .. moduleauthor:: Petr Rašek <bowman@hydratk.org>
@@ -29,21 +29,29 @@ class SOAPClient:
     
     _mh = None
     _client = None
-    wsdl = None
-    url = None
-    location = None
-    user = None
-    passw = None
-    endpoint = None
-    headers = None
-    verbose = None
+    _wsdl = None
+    _url = None
+    _location = None
+    _user = None
+    _passw = None
+    _endpoint = None
+    _headers = None
+    _verbose = None
     
     def __init__(self, verbose=False):
+        """Class constructor
+           
+        Called when the object is initialized 
+        
+        Args:       
+           verbose (bool): verbose mode
+           
+        """          
         
         self._mh = MasterHead.get_head()          
         
-        self.verbose = verbose
-        if (self.verbose):
+        self._verbose = verbose
+        if (self._verbose):
             handler = logging.StreamHandler(sys.stderr)
             logger = logging.getLogger('suds.transport.http')
             logger.setLevel(logging.DEBUG), handler.setLevel(logging.DEBUG)
@@ -53,15 +61,19 @@ class SOAPClient:
         """Method loads wsdl
         
         Args:
-           url - WSDL URL, string, mandatory, URL for remote, file path for local
-           location - WSDL location, string remote|local, optional, default remote
-           user - username, string, optional
-           passw - password, string, optional
-           endpoint - service endpoint, string, optional, default endpoint from WSDL 
-           headers - HTTP headers, dictionary of name:value, optional
+           url (str): WSDL URL, URL for remote, file path for local
+           location (str): WSDL location, remote|local
+           user (str): username
+           passw (str): password
+           endpoint (str): service endpoint, default endpoint from WSDL 
+           headers (dict): HTTP headers
 
         Returns:
-           result - bool        
+           bool: result
+           
+        Raises:
+           event: soap_before_load_wsdl
+           event: soap_after_load_wsdl      
                 
         """          
         
@@ -79,28 +91,28 @@ class SOAPClient:
                 endpoint = ev.argv(4)
                 headers = ev.argv(5)         
         
-            self.url = url
-            self.location = location
-            self.user = user
-            self.passw = passw
-            self.endpoint = endpoint  
-            self.headers = headers
+            self._url = url
+            self._location = location
+            self._user = user
+            self._passw = passw
+            self._endpoint = endpoint  
+            self._headers = headers
         
             if (ev.will_run_default()): 
                 
                 options = {}
-                if (self.location == 'local'):
-                    self.url = 'file://' + self.url
-                if (self.user != None):
-                    options['username'] = self.user
-                    options['password'] = self.password
-                if (self.endpoint != None):
-                    options['location'] = self.endpoint
-                if (self.headers != None):
-                    options['headers'] = self.headers
+                if (self._location == 'local'):
+                    self._url = 'file://' + self._url
+                if (self._user != None):
+                    options['username'] = self._user
+                    options['password'] = self._password
+                if (self._endpoint != None):
+                    options['location'] = self._endpoint
+                if (self._headers != None):
+                    options['headers'] = self._headers
         
-                self._client = suds.client.Client(self.url, **options)  
-                self.wsdl = self._client.wsdl
+                self._client = suds.client.Client(self._url, **options)  
+                self._wsdl = self._client.wsdl
                 
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_soap_wsdl_loaded'), self._mh.fromhere())
             ev = event.Event('soap_after_load_wsdl')
@@ -118,13 +130,13 @@ class SOAPClient:
         Args:           
 
         Returns:
-           operations - list of string
+           list: operations
                 
         """           
                                
-        if (self.wsdl != None):
+        if (self._wsdl != None):
             operations = []
-            for operation in self.wsdl.services[0].ports[0].methods.values():       
+            for operation in self._wsdl.services[0].ports[0].methods.values():       
                 operations.append(operation.name)  
             return operations
         
@@ -132,13 +144,16 @@ class SOAPClient:
         """Method sends request
         
         Args:   
-           operation - operation name, string, mandatory
-           body - request body, string or xml, mandatory
-           headers - HTTP headers, dictionary name:value, optional 
-                   - headers SOAPAction, Content-Type are set automatically       
+           operation (str): operation name
+           body (str|xml): request body
+           headers (dict): HTTP headers, SOAPAction, Content-Type are set automatically       
 
         Returns:
-           response - response body, xml object
+           xml: response body
+           
+        Raises:
+           event: soap_before_request
+           event: soap_after_request
                 
         """    
         

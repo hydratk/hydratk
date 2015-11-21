@@ -1,8 +1,13 @@
-'''
-Created on 3.12.2009
+# -*- coding: utf-8 -*-
+"""This code is a part of Hydra toolkit
 
-@author: CzadernaP
-'''
+.. module:: core.signal
+   :platform: Unix
+   :synopsis: HydraTK signals
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
+
+"""
+
 import signal
 
 sig2event = {

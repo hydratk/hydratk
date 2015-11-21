@@ -1,6 +1,7 @@
-"""This code is a part of Hydra Toolkit
+# -*- coding: utf-8 -*-
+"""This code is a part of Wings extension
 
-.. module:: hydratk.extensions.wings
+.. module:: wings.wings
    :platform: Unix
    :synopsis: Web frontend functionality
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>

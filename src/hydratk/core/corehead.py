@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 """This code is a part of Hydra Toolkit
 
-.. module:: corehead
+.. module:: core.corehead
    :platform: Unix
-   :synopsis: HydraTK core module.
+   :synopsis: HydraTK core module
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
+
 import os
 import sys
 import signal
@@ -100,21 +101,21 @@ class CoreHead(EventHandler, Debugger, Profiler):
             dir_name = os.path.dirname(create_db_file)   
             if os.access(dir_name, os.W_OK):
                 if os.path.isfile(create_db_file) == False: 
-                    print("Creating config file %s" % create_db_file)
+                    self.dmsg('htk_on_debug_info', self._trn.msg('htk_create_cfg_db', create_db_file), self.fromhere())
                     self._write_config_db(create_db_file)
                 else:
                     if force_cmd == True:
-                        print("Removing previous database file")
+                        self.dmsg('htk_on_debug_info', self._trn.msg('htk_remove_cfg_db'), self.fromhere())
                         os.remove(create_db_file)
                         self._write_config_db(create_db_file)
                     else:
-                        print("Previous database file exists, use --force to to overwrite")    
+                        self.dmsg('htk_on_debug_info', self._trn.msg('htk_cfg_db_exists'), self.fromhere())   
             else:
-                print("Cannot create config database file %s" % create_db_file)
+                self.dmsg('htk_on_error', self._trn.msg('htk_create_cfg_db_error', create_db_file), self.fromhere())
                 print(os.access(create_db_file, os.W_OK))
         
         else:
-            print("Config db file not specified")
+            self.dmsg('htk_on_error', self._trn.msg('htk_cfg_db_not_spec'), self.fromhere())
         
         return result    
     
@@ -193,7 +194,7 @@ class CoreHead(EventHandler, Debugger, Profiler):
                     self._remove_pid_file(self._pid_file)
                                              
                 except InputError as desc:
-                    self.dmsg('htk_on_error', 'Failed to register message service: ' + desc, self.fromhere())
+                    self.dmsg('htk_on_error', self._trn.msg('htk_reg_msg_service_failed', desc), self.fromhere())
                     self._stop_app()                                                         
             else: raise ValueError                                                                            
         except configparser.NoOptionError:
@@ -253,7 +254,7 @@ class CoreHead(EventHandler, Debugger, Profiler):
     def _write_config_db(self, db_file):        
         db = dbconfig.DBConfig(db_file)
         db.connect()
-        print("Writing configuration database") 
+        self.dmsg('htk_on_debug_info', self._trn.msg('htk_write_cfg_db'), self.fromhere())
         db.writedb(self._config)             
         
     def _dopoll(self, poller):
@@ -280,7 +281,7 @@ class CoreHead(EventHandler, Debugger, Profiler):
         return q_empty      
     
     def _check_cw_privmsg(self):
-        self.dmsg('htk_on_debug_info', 'checking privmsg', self.fromhere(), 1) 
+        self.dmsg('htk_on_debug_info', self._trn.msg('htk_cworker_check_priv_msg'), self.fromhere(), 1) 
         current = multiprocessing.current_process()
         try:
             while (self._dopoll(current.pipe_conn)):
@@ -305,7 +306,7 @@ class CoreHead(EventHandler, Debugger, Profiler):
                 if thr.next_check_time >= time.time():
                     activity_time = time.time() - thr.is_alive_check.value
                     #self.__send_ping(thr)
-                    self.dmsg('htk_on_debug_info', 'checking live status on thread: ' +str(thr.num) + ', last activity before: '+activity_time.__str__(), self.fromhere(), 1)
+                    self.dmsg('htk_on_debug_info', self._trn.msg('htk_cworker_check_activity', str(thr.num), activity_time.__str__()), self.fromhere(), 1)
                 else:
                     thr.response_alert_level += 1                    
             thr.next_check_time = time.time() + const.CORE_THREAD_PING_TIME
@@ -353,11 +354,11 @@ class CoreHead(EventHandler, Debugger, Profiler):
     def _append_extension_config_from_file(self, ext_config_file):
         if (os.path.exists(self._ext_confd)):
             try:
-                self.dmsg('htk_on_debug_info', 'Trying to load extension config ' + ext_config_file, self.fromhere())
+                self.dmsg('htk_on_debug_info', self._trn.msg('htk_loading_ext_cfg', ext_config_file), self.fromhere())
                 with open(ext_config_file, 'r') as f:                    
                     ext_config = yaml.load(f)
                     self._merge_base_config(ext_config)                                                            
-                self.dmsg('htk_on_debug_info', 'Loaded config ' + ext_config_file, self.fromhere())   
+                self.dmsg('htk_on_debug_info', self._trn.msg('htk_ext_cfg_loaded', ext_config_file), self.fromhere())   
                 
             except Exception as detail:
                 self.errmsg(detail)
@@ -377,10 +378,10 @@ class CoreHead(EventHandler, Debugger, Profiler):
     def _load_base_config(self):                       
         if (os.path.exists(self._config_file)):            
             try:
-                self.dmsg('htk_on_debug_info', 'Trying to load config ' + self._config_file, self.fromhere())
+                self.dmsg('htk_on_debug_info', self._trn.msg('htk_loading_base_cfg', self._config_file), self.fromhere())
                 with open(self._config_file, 'r') as f:                    
                     self._config = yaml.load(f)                                                            
-                self.dmsg('htk_on_debug_info', 'Loaded config ' + self._config_file, self.fromhere())                
+                self.dmsg('htk_on_debug_info', self._trn.msg('htk_base_cfg_loaded', self._config_file), self.fromhere())                
             except Exception as detail:
                 print('except here')
                 self.errmsg(detail)
@@ -388,7 +389,7 @@ class CoreHead(EventHandler, Debugger, Profiler):
                 traceback.print_tb(tb)
                 sys.exit(1)
         else:
-            print("Missing global config file %s" % self._config_file)
+            self.dmsg('htk_on_error', self._trn.msg('htk_loading_base_cfg', self._config_file), self.fromhere())
             
     def _apply_config(self):               
         from hydratk.translation.core import info
@@ -463,16 +464,16 @@ class CoreHead(EventHandler, Debugger, Profiler):
                     if 'file' in ext_cfg:
                         if os.path.exists(ext_cfg['file']) and os.path.isfile(ext_cfg['file']):
                             sys.path.append(ext_cfg['file'])
-                            print('%s is archive file...loading from %s' % (ext_name,ext_cfg['file']))
+                            self.dmsg('htk_on_debug_info', self._trn.msg('htk_loading_extension', ext_name, ext_cfg['file']), self.fromhere())
                         else:
-                            self.dmsg('htk_on_debug_info', 'ADDTRN: Found not properly configured extension %s, file %s is not valid' % (ext_name, ext_cfg['file']), self.fromhere())
+                            self.dmsg('htk_on_debug_info', self._trn.msg('htk_extension_wrong_cfg_file', ext_name, ext_cfg['file']), self.fromhere())
                             break 
                         '''Internal extension'''
                     if 'module' in ext_cfg and 'package' in ext_cfg:
                         self._load_extension(ext_name, ext_cfg)
                                 
                     else:
-                        self.dmsg('htk_on_debug_info', 'ADDTRN: Found not properly configured extension: '+ext_name, self.fromhere())
+                        self.dmsg('htk_on_debug_info', self._trn.msg('htk_extension_wrong_cfg', ext_name), self.fromhere())
                                         
         
             except Exception as detail:                        
@@ -506,7 +507,7 @@ class CoreHead(EventHandler, Debugger, Profiler):
                 pprint.pprint(tb) 
                 pprint.pprint(sys.path)
         else:
-            raise Exception("Extension '{1}' load duplicate").format(ext_name)         
+            raise Exception(self._trn.msg('htk_duplicate_extension', ext_name))         
 
     def _extension_module_import(self, ext_full_path):
         mod = __import__(ext_full_path)
@@ -683,12 +684,12 @@ class CoreHead(EventHandler, Debugger, Profiler):
         for cmd in commands.commands: 
             if cmd in self._trn.help_mod.help_cmd:
                 cmd_text[cmd] = self._trn.help_mod.help_cmd[cmd]
-            else: print('Missing help command %s definition, languague %s' % (cmd, self._language))                            
+            else: self.dmsg('htk_on_warning', self._trn.msg('htk_help_cmd_def_missing', cmd, self._language), self.fromhere())                            
         opt_text = {}
         for opt in commands.long_opts:
             if opt in self._trn.help_mod.help_opt:
                 opt_text.update(self._trn.help_mod.help_opt[opt])
-            else: print('Missing option %s definition, languague %s' % (opt, self._language))
+            else: self.dmsg('htk_on_warning', self._trn.msg('htk_option_def_missing', opt, self._language), self.fromhere())   
                                                
         CommandlineTool.set_help(help_title, cp_string, cmd_text, opt_text)            
     
@@ -804,7 +805,7 @@ class CoreHead(EventHandler, Debugger, Profiler):
                     r_speed = float(msg['time']) - float(thr.last_ping)
                 except Exception as e:
                     print(e)
-                self.dmsg('htk_on_debug_info', 'PONG from thread ' + str(thr.num) + ', speed: ' + str(r_speed), self.fromhere()) 
+                self.dmsg('htk_on_debug_info', self._trn.msg('htp_cworker_prcess_msg', str(thr.num), str(r_speed)), self.fromhere()) 
     
     def _process_msg(self, msg):        
         self.fire_event(event.Event('h_msg_recv', msg))        

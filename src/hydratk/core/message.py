@@ -1,10 +1,12 @@
-'''
-Created on 23.10.2009
+# -*- coding: utf-8 -*-
+"""This code is a part of Hydra Toolkit
 
-@author: CzadernaP
+.. module:: core.message
+   :platform: Unix
+   :synopsis: HydraTK core commmunication messages definition
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
-Core communication messages definitions
-'''
+"""
 
 '''request'''
 REQUEST          = 1   

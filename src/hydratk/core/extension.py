@@ -1,11 +1,13 @@
+# -*- coding: utf-8 -*-
 """This code is a part of Hydra Toolkit
 
-.. module:: hydratk.core.extension
+.. module:: core.extension
    :platform: Unix
-   :synopsis: Hydra Toolkit extensions implementation class.
+   :synopsis: HydraTK extensions implementation class
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
+
 from hydratk.lib.exceptions import *
 
 class Extension:
