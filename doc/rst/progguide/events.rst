@@ -1,13 +1,9 @@
-.. Programmer’s Guide
+.. Events
 
-Programmer’s Guide
-==================
-
-programming, extending
-
-
+======
 Events
-------
+======
+
 
 * Event processing
  
@@ -58,9 +54,3 @@ Events
 .. note::
 
    Some note.
-
-
-Extensions
-----------
-
-How to create extensions

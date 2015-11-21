@@ -36,8 +36,8 @@ requires = [
            'tftpy',
            'pycurl',
            'cx_Oracle',
-           'MySQLdb',
-           'psycopg2,
+           'MySQL-python',
+           'psycopg2',
            'httplib2',
            'jsonlib2',
            'lxml',
@@ -45,7 +45,8 @@ requires = [
          ]
          
 data_files=[
-            ('/etc/hydratk', ['etc/hydratk/hydratk.conf'])            
+            ('/etc/hydratk', ['etc/hydratk/hydratk.conf']), 
+            ('/var/local/hydratk/dbconfig', ['var/local/hydratk/dbconfig/__init__.py'])           
            ]
 
 entry_points={

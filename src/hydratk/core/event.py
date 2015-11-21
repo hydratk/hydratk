@@ -1,11 +1,13 @@
+# -*- coding: utf-8 -*-
 """This code is a part of Hydra Toolkit
 
-.. module:: hydratk.core.event
+.. module:: core.event
    :platform: Unix
-   :synopsis: Default event class.
+   :synopsis: HydraTK default event class
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
+
 import pprint
 
 class Event(object):

@@ -1,8 +1,12 @@
-'''
-Created on 1.8.2011
+# -*- coding: utf-8 -*-
+"""This code is a part of Hydra Toolkit library
 
-@author: CzadernaP
-'''
+.. module:: lib.exceptions.dependencyerror
+   :platform: Unix
+   :synopsis: Class for dependency error exception
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
+
+"""
 
 class DependencyError(Exception):
     '''

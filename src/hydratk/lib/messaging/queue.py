@@ -1,9 +1,10 @@
-"""This code is a part of Pyx application framework
+# -*- coding: utf-8 -*-
+"""This code is a part of Hydra Toolkit library
 
-.. module:: messaging.queue
+.. module:: lib.messaging.queue
    :platform: Unix
-   :synopsis: A Message queue general factory class.
-.. moduleauthor:: Petr Czaderna <pc@headz.cz>
+   :synopsis: Message queue general factory class
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
 

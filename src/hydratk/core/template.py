@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """This code is a part of Hydra Toolkit
 
-.. module:: hydratk.core.template
+.. module:: core.template
    :platform: Unix
-   :synopsis: Template repository.
+   :synopsis: HydraTK template repository
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """

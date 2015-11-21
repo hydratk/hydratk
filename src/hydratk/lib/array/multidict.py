@@ -1,8 +1,13 @@
-'''
-Created on 24.10.2009
+# -*- coding: utf-8 -*-
+"""This code is a part of Hydra Toolkit library
 
-@author: CzadernaP
-'''
+.. module:: lib.array.multidict
+   :platform: Unix
+   :synopsis: Multi-level dictionary
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
+
+"""
+
 from collections import defaultdict
 
 class MultiDict(defaultdict):

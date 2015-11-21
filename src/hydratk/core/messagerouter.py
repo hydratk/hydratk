@@ -1,8 +1,13 @@
-'''
-Created on 31.7.2011
+# -*- coding: utf-8 -*-
+"""This code is a part of Hydra Toolkit
 
-@author: CzadernaP
-'''
+.. module:: core.messagerouter
+   :platform: Unix
+   :synopsis: HydraTK message router
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
+
+"""
+
 import os
 from hydratk.core import const, message
 from hydratk.lib.exceptions.inputerror import InputError

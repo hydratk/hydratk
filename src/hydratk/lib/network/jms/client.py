@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit
+"""This code is part of Hydra Toolkit library
 
-.. module:: hydratk.lib.network.jms.client
+.. module:: network.jms.client
    :platform: Unix
    :synopsis: Generic JMS client
 .. moduleauthor:: Petr Rašek <bowman@hydratk.org>

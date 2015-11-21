@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit
+"""This code is part of Hydra Toolkit library
 
-.. module:: hydratk.lib.network.email.client
+.. module:: network.email.client
    :platform: Unix
    :synopsis: Generic EMAIL client for protocols: SMTP, SMTPS, IMAP, IMAPS, POP, POPS
 .. moduleauthor:: Petr Rašek <bowman@hydratk.org>
@@ -15,8 +15,6 @@ email_before_connect
 email_after_connect
 email_before_send_email
 email_after_send_email
-email_before_list_emails
-email_after_list_emails
 email_before_receive_email
 email_after_receive_email
 
@@ -42,14 +40,23 @@ class EmailClient:
     
     _mh = None
     _client = None
-    protocol = None
-    host = None    
-    port = None
-    user = None
-    passw = None
-    verbose = None
+    _protocol = None
+    _host = None    
+    _port = None
+    _user = None
+    _passw = None
+    _verbose = None
     
     def __init__(self, protocol='SMTP', verbose=False):
+        """Class constructor
+           
+        Called when the object is initialized 
+        
+        Args:
+           protocol (str):  EMAIL protocol, SMTP|SMTPS|IMAP|IMAP|POP|POPS          
+           verbose (bool): verbose mode
+           
+        """         
         
         self._mh = MasterHead.get_head()
         self.protocol = protocol.upper()  
@@ -71,13 +78,17 @@ class EmailClient:
         """Method connects to server
         
         Args:
-           host - server host, string, mandatory
-           port - server port, int, optional, default protocol port
-           user - username, string, optional
-           passw - password, string, optional
+           host (str): server host
+           port (str): server port, default protocol port
+           user (str): username
+           passw (str): password
 
         Returns:
-           result - bool         
+           bool: result         
+             
+        Raises:
+           event: email_before_connect
+           event: email_after_connect     
                 
         """                  
         
@@ -139,7 +150,7 @@ class EmailClient:
         """Method disconnects from server
            
         Returns:
-           result - bool         
+           bool: result         
                 
         """           
          
@@ -160,18 +171,23 @@ class EmailClient:
     def send_email(self, subject, message, sender='hydra@hydratk.org', recipients=['hydra@hydratk.org'],
                    cc=[], bcc=[]):   
         """Method sends email
-           Supported for SMTP, SMTPS protocols only
+        
+        Supported for SMTP, SMTPS protocols only
         
         Args:
-           subject - email subject, string, mandatory
-           message - email content, string, mandatory
-           sender - from email address, string, optional, default hydra@hydratk.org 
-           recipients - to email addresses, list of string, optional, default to:hydra@hydratk.org   
-           cc - carbon copy email addresses, list of string, optional
-           bcc - blind carbon copy email addresses, list of string, optional  
+           subject (str): email subject
+           message (str): email content, string, mandatory
+           sender (str): from email address 
+           recipients (list): to email addresses   
+           cc (list): carbon copy email addresses
+           bcc (list): blind carbon copy email addresses  
            
         Returns:
-           result - bool         
+           bool: result       
+           
+        Raises:
+           event: email_before_send_email
+           event: email_after_send_email
                 
         """  
         
@@ -212,11 +228,12 @@ class EmailClient:
             return False 
         
     def email_count(self):
-        """Method email count
-           Supported for POP, POPS, IMAP, IMAPS protocols only
+        """Method gets email count
+        
+        Supported for POP, POPS, IMAP, IMAPS protocols only
            
         Returns: 
-           count - count of emails, int       
+           int: count       
                 
         """         
                 
@@ -241,10 +258,11 @@ class EmailClient:
         
     def list_emails(self):
         """Method gets email list
-           Supported for POP, POPS, IMAP, IMAPS protocols only
+        
+        Supported for POP, POPS, IMAP, IMAPS protocols only
            
         Returns: 
-           emails - email ids, list of string       
+           list: email ids       
                 
         """         
                 
@@ -273,17 +291,18 @@ class EmailClient:
         
     def receive_email(self, msg_id):  
         """Method receives email
-           Supported for POP, POPS, IMAP, IMAPS protocols only
+        
+        Supported for POP, POPS, IMAP, IMAPS protocols only
            
         Args:
-           msg_id - email id, string, mandatory 
+           msg_id (str) - email id 
            
         Returns: 
-          sender - from email address, string
-          recipients - to email addresses, list of string
-          cc - carbon copy email addresses, list of string 
-          subject - email subject, string
-          message - email contect, string      
+           tuple: sender (str), recipients (list), cc (list), subject (str), message (str)     
+           
+        Raises:
+           event: email_before_receive_email
+           event: email_after_receive_email   
                 
         """         
                 

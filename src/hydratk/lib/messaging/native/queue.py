@@ -1,11 +1,13 @@
-"""This code is a part of Pyx application framework
+# -*- coding: utf-8 -*-
+"""This code is a part of Hydra Toolkit library
 
-.. module:: messaging.native
+.. module:: lib.messaging.native.queue
    :platform: Unix
-   :synopsis: A Python native multiprocessing Managed queue driver.
-.. moduleauthor:: Petr Czaderna <pc@headz.cz>
+   :synopsis: A Python native multiprocessing Managed queue driver
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
+
 from pyx.messaging import queue
 from multiprocessing import Queue
 from multiprocessing.managers import SyncManager

@@ -1,12 +1,14 @@
+# -*- coding: utf-8 -*-
 """This code is a part of Hydra Toolkit library
 
-.. module:: firepot
+.. module:: lib.debugging.firepot
    :platform: Unix
    :synopsis: Raw implementation of FireLogger protocol for debugging purposes.
               Basic info was taken from https://github.com/binaryage/firelogger/wiki
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
+
 from hydratk.lib.string.operation import str_split,file_get_contents
 import time
 import math

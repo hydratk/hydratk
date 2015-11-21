@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-
 """This code is a part of Hydra Toolkit
 
-.. module:: hydratk.core.dependencies
+.. module:: core.dependencies
    :platform: Unix
-   :synopsis: HydraTK core module dependency definitions.
+   :synopsis: HydraTK core module dependency definitions
 .. moduleauthor:: Petr Czaderna <pc@headz.cz>
 
 """
+
 dep_modules = {
                  'zmq' : {
                           'min-version' : '14.3.1',

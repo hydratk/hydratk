@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit
+"""This code is a part of Hydra Toolkit library
 
-.. module:: hydratk.lib.network.soap.sim
+.. module:: network.soap.simplesoap
    :platform: Unix
    :synopsis: Pycurl wrapped object oriented soap client solution
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>

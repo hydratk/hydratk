@@ -1,8 +1,13 @@
-'''
-Created on 28.10.2009
+# -*- coding: utf-8 -*-
+"""This code is a part of Hydra Toolkit library
 
-@author: CzadernaP
-'''
+.. module:: lib.string.operation
+   :platform: Unix
+   :synopsis: Module for string operations
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
+
+"""
+
 import re
 
 def mreplace(text, dic): 

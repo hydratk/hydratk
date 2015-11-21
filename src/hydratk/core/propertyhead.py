@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-
 """This code is a part of Hydra framework
 
-.. module:: propertyhead
+.. module:: core.propertyhead
    :platform: Unix
-   :synopsis: Hydra properties module.
+   :synopsis: HydraTK properties module
 .. moduleauthor:: Petr Czaderna <pc@headz.cz>
 
 """
+
 from hydratk.core import const
 from hydratk.translation.core import info
 

@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 """This code is a part of Hydra Toolkit
 
-.. module:: hydratk.core.event_handler
+.. module:: core.eventhandler
    :platform: Unix
-   :synopsis: Core event handling implementation class.
+   :synopsis: HydraTK core event handling implementation class
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
+
 from hydratk.core import hsignal
 
 class EventHandler:

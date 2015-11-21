@@ -1,11 +1,13 @@
-"""This code is a part of Pyx application framework
+# -*- coding: utf-8 -*-
+"""This code is a part of Hydra Toolkit library
 
-.. module:: messaging.zmq
+.. module:: lib.messaging.zmq.queue
    :platform: Unix
-   :synopsis: A Zeromq queue driver.
-.. moduleauthor:: Petr Czaderna <pc@headz.cz>
+   :synopsis: A Zeromq queue driver
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
+
 import zmq
 from pyx.messaging import queue
 

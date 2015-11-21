@@ -1,8 +1,13 @@
-'''
-Created on 24. 10. 2015
+# -*- coding: utf-8 -*-
+"""This code is a part of Hydra Toolkit library
 
-@author: Petr
-'''
+.. module:: lib.system.fs
+   :platform: Unix
+   :synopsis: Module for operation with file system
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
+
+"""
+
 import os
 
 def rmkdir(path):
