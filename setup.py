@@ -28,7 +28,6 @@ requires = [
            'setproctitle',
            'xtermcolor',
            'pyzmq',
-           'pytz'
            'pyyaml',
            'psutil',
            'cherrypy',
@@ -37,7 +36,7 @@ requires = [
            'tftpy',
            'pycurl',
            'cx_Oracle',
-           'MySQLdb',
+           'MySQL-python',
            'psycopg2',
            'httplib2',
            'jsonlib2',
@@ -46,7 +45,8 @@ requires = [
          ]
          
 data_files=[
-            ('/etc/hydratk', ['etc/hydratk/hydratk.conf'])            
+            ('/etc/hydratk', ['etc/hydratk/hydratk.conf']), 
+            ('/var/local/hydratk/dbconfig', ['var/local/hydratk/dbconfig/__init__.py'])           
            ]
 
 entry_points={
@@ -57,7 +57,7 @@ entry_points={
          
 setup(
       name='HydraTK',
-      version='0.1.0a.dev4',
+      version='0.1.0a.dev3',
       description='Fully extendable object oriented application toolkit with nice modular architecture',
       long_description=readme,
       author='Petr Czaderna, HydraTK Team',
