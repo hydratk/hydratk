@@ -50,8 +50,9 @@ class Debugger:
     def errmsg(self,*args):
         print(args)
     
-    def dmsg(self,event_id,*args):        
-        self.fire_event(event.Event(event_id,*args))
+    def dmsg(self,event_id,*args):
+        if (self._debug):        
+            self.fire_event(event.Event(event_id,*args))
         
             
     ''' msg, location, level, channel'''
