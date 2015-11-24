@@ -46,7 +46,9 @@ requires = [
          
 data_files=[
             ('/etc/hydratk', ['etc/hydratk/hydratk.conf']), 
-            ('/var/local/hydratk/dbconfig', ['var/local/hydratk/dbconfig/__init__.py'])           
+            ('/var/local/hydratk/dbconfig', ['var/local/hydratk/dbconfig/__init__.py']),
+            ('/var/local/hydratk/java', ['var/local/hydratk/java/JMSClient.java']), 
+            ('/var/local/hydratk/java', ['var/local/hydratk/java/javaee.jar'])            
            ]
 
 entry_points={
