@@ -183,9 +183,13 @@ class SoapRequestMessage():
     def load_from_file(self,msg_file):
         self._content = fs.file_get_contents(msg_file)             
         
-    def bind_var(self,**kwargs):
+    def bind_var(self,*args,**kwargs):
         if self._content is not None:
             content = str(self._content)
+            for bdata in args:
+                for var,value in bdata.items():
+                    bind_var = '{bind_lchr}{var}{bind_rchr}'.format(bind_lchr=self._bind_lchr,var=var,bind_rchr=self._bind_rchr)                
+                    content = content.replace(str(bind_var), str(value))
             for var, value in kwargs.items():
                 bind_var = '{bind_lchr}{var}{bind_rchr}'.format(bind_lchr=self._bind_lchr,var=var,bind_rchr=self._bind_rchr)                
                 content = content.replace(str(bind_var), str(value))                

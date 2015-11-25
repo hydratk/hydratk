@@ -10,7 +10,7 @@ paramiko
 tftpy
 pycurl
 cx_Oracle
-MySQLdb
+MySQL-python
 psycopg2
 httplib2
 jsonlib2
