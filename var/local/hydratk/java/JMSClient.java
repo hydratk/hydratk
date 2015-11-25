@@ -1,5 +1,3 @@
-package jmsclient;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.HashMap;
@@ -16,7 +14,7 @@ import javax.jms.TextMessage;
 
 /**
 * Generic wrapper to JMS clients
-* Specific client libraries are located in lib folder
+* Specific client libraries are located on classpath
 * Supported clients - WebLogic (weblogic.jar)
 * 
 * @author  Petr Rašek
@@ -83,7 +81,7 @@ public class JMSClient {
         }
         catch (Exception ex) {
             
-            System.out.println(ex);
+            System.out.println("ERR - " + ex.getMessage());
             
         }
         
@@ -121,7 +119,7 @@ public class JMSClient {
         }
         catch (Exception ex) {
             
-            System.out.println("ERR - " + ex);         
+            System.out.println("ERR - " + ex.getMessage());         
             
         }
         
@@ -152,7 +150,7 @@ public class JMSClient {
         } 
         catch (Exception ex) {
             
-            System.out.println("ERR - " + ex); 
+            System.out.println("ERR - " + ex.getMessage()); 
             
         }
         
@@ -182,7 +180,7 @@ public class JMSClient {
         }
         catch (Exception ex) {
             
-            System.out.println("ERR - " + ex); 
+            System.out.println("ERR - " + ex.getMessage()); 
             
         }
         
