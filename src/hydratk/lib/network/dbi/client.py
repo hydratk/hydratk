@@ -106,7 +106,7 @@ class DBClient:
             ev = event.Event('dbi_before_connect', host, self._port, sid, user, passw, db_file)
             if (self._mh.fire_event(ev) > 0):
                 host = ev.argv(0)
-                self.port = ev.argv(1)
+                self._port = ev.argv(1)
                 sid = ev.argv(2)
                 user = ev.argv(3)
                 passw = ev.argv(4)
@@ -124,13 +124,13 @@ class DBClient:
                     self._passw = passw
                 
                     if (self._engine == 'ORACLE'):
-                        dsn_str = cx_Oracle.makedsn(self._host, self.port, self._sid)
+                        dsn_str = cx_Oracle.makedsn(self._host, self._port, self._sid)
                         self._client = cx_Oracle.connect(dsn=dsn_str, user=self._user, password=self._passw)
                     elif (self._engine == 'MYSQL'):
-                        self._client = MySQLdb.connect(host=self._host, port=self.port, db=self._sid, user=self._user, 
+                        self._client = MySQLdb.connect(host=self._host, port=self._port, db=self._sid, user=self._user, 
                                                        passwd=self._passw)
                     elif (self._engine == 'POSTGRESQL'):
-                        self._client = psycopg2.connect(host=self._host, port=self.port, database=self._sid,
+                        self._client = psycopg2.connect(host=self._host, port=self._port, database=self._sid,
                                                         user=self._user, password=self._passw)
 
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_dbi_connected'), self._mh.fromhere())

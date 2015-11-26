@@ -64,5 +64,9 @@ class Pocket(object):
 class Pile(object):
     def __init__(self):
         pass
-    
-my = My()
+
+_my_set = False
+if _my_set == False:
+    my = My()
+    _my_set = True
+
