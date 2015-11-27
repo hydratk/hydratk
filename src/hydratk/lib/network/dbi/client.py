@@ -124,8 +124,8 @@ class DBClient:
                     self._passw = passw
                 
                     if (self._engine == 'ORACLE'):
-                        dsn_str = cx_Oracle.makedsn(self._host, self._port, self._sid)
-                        self._client = cx_Oracle.connect(dsn=dsn_str, user=self._user, password=self._passw)
+                        dsn_str = '{0}:{1}/{2}'.format(self._host, self._port, self._sid)
+                        self._client = cx_Oracle.connect(user=self._user, password=self._passw, dsn=dsn_str)
                     elif (self._engine == 'MYSQL'):
                         self._client = MySQLdb.connect(host=self._host, port=self._port, db=self._sid, user=self._user, 
                                                        passwd=self._passw)
@@ -219,14 +219,16 @@ class DBClient:
                     if (self._engine == 'SQLITE'):
                         rows = cur.fetchone()
                     else:
-                        rows = rows[0]
+                        rows = rows[0] if (len(rows) > 0) else []
                 else:
                     if (self._engine == 'SQLITE'):
                         rows = cur.fetchall()                
             
+            cur.close()  
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_dbi_query_executed'), self._mh.fromhere())
             ev = event.Event('dbi_after_exec_query', True, rows)
-            self._mh.fire_event(ev)                             
+            self._mh.fire_event(ev) 
+                                      
             return True, rows
         
         except (sqlite3.Error, cx_Oracle.Error, MySQLdb.Error, psycopg2.Error), ex:
@@ -314,7 +316,9 @@ class DBClient:
                     output[name] = param
                     i = i+1              
             
+            cur.close()  
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_dbi_proc_called'), self._mh.fromhere())
+            
             if (type in ('func', 'function')): 
                 ev = event.Event('dbi_after_call_proc', result, output) 
                 self._mh.fire_event(ev)               

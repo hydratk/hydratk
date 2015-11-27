@@ -36,14 +36,13 @@ class JMSClient:
     _security_principal = None
     _security_credentials = None
     
-    def __init__(self, provider, verbose=False):
+    def __init__(self, verbose=False):
         """Class constructor
            
         Called when the object is initialized
         Uses wrapped Java client program to access JMS provider 
         
         Args:                   
-           provider (str): JMS provider, params are taken from global config 
            verbose (bool): verbose mode
            
         """         
@@ -53,7 +52,6 @@ class JMSClient:
         
         self._java = self._mh.cfg['Libraries']['hydratk.lib.network.jms']['java']      
         self._classpath = self._mh.cfg['Libraries']['hydratk.lib.network.jms']['classpath'] 
-        self._provider = provider.lower()
         command = [self._java, '-cp', self._classpath, 'JMSClient']    
         self._wrapper = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)          
         
@@ -88,30 +86,34 @@ class JMSClient:
         
         result = False
         for line in output:
-            if ('OK' in line):
+            if ('OK - ' in line):
                 result = True
-            elif ('ERR' in line):
+            elif ('ERR - ' in line):
                 result = False
         
         return result
         
-    def connect(self):
-        """Method sends command connect
+    def connect(self, connection_factory, initial_context_factory, provider_url,
+                security_principal=None, security_credentials=None):
+        """Method sends command connect  
         
-        Following JMS properties are used:
-        connectionFactory, initialContectFactory, providerURL, securityPrincipal, securityCredentials        
+        Args:
+           connection_factory (str): connection factory, JMS specific
+           initial_context_factory (str): initial context factory, provider specific
+           provider_url (str): URL
+           security_principal (str): user
+           security_credentials (str): password     
 
         Returns:
            bool: result
                 
         """  
-        
-        cfg = self._mh.cfg['Libraries']['hydratk.lib.network.jms'][self._provider]    
-        self._connection_factory = cfg['connection_factory']
-        self._initial_context_factory = cfg['initial_context_factory']
-        self._provider_url = cfg['provider_url']                 
-        self._security_principal = cfg['security_principal'] if (cfg.has_key('security_principal')) else None
-        self._security_credentials = cfg['security_credentials'] if (cfg.has_key('security_credentials')) else None        
+          
+        self._connection_factory = connection_factory
+        self._initial_context_factory = initial_context_factory
+        self._provider_url = provider_url              
+        self._security_principal = security_principal
+        self._security_credentials = security_credentials       
         
         msg = 'connection_factory:{0}, initial_context_factory:{1}, provider_url:{2}, security_principal:{3}, security_credentials:{4}'.format(
                self._connection_factory, self._initial_context_factory, self._provider_url, self._security_principal, self._security_credentials)       
@@ -135,14 +137,17 @@ class JMSClient:
                 command += '{0}securityPrincipal{1}{2}'.format(self._separator, self._separator, self._security_principal) + \
                            '{0}securityCredentials{1}{2}'.format(self._separator, self._separator, self._security_credentials)
             
-            command += '\n'              
+            command += '\n'             
             self._wrapper.stdin.write(command)
             
             result = self._get_result(self._read_stdout())
         
-        self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_jms_connected'), self._mh.fromhere()) 
-        ev = event.Event('jms_after_connect')
-        self._mh.fire_event(ev)         
+        if (result):
+            self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_jms_connected'), self._mh.fromhere()) 
+            ev = event.Event('jms_after_connect')
+            self._mh.fire_event(ev)         
+        else:
+            print 'ERROR'         
         
         return result
         
@@ -159,14 +164,20 @@ class JMSClient:
         self._wrapper.stdin.write(command)  
                 
         result = self._get_result(self._read_stdout())
-        self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_jms_disconnected'), self._mh.fromhere())        
+        if (result):
+            self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_jms_disconnected'), self._mh.fromhere())     
+        else:
+            print 'ERROR'   
         return result  
         
     def send(self, destination, jms_type, message, jms_correlation_id):
         """Method sends command send
         
-        Following JMS properties are used:
-        destination, JMSType, JMSCorrelationID     
+        Args:
+           destination (str): queue
+           jms_type (str): message type
+           message (str): message
+           jms_correlation_id (str): correlation id
 
         Returns:
            bool: result
@@ -193,9 +204,12 @@ class JMSClient:
             self._wrapper.stdin.write(command)
             
             result = self._get_result(self._read_stdout())
-          
-        self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_jms_msg_sent'), self._mh.fromhere())  
-        ev = event.Event('jms_after_send')
-        self._mh.fire_event(ev)             
+        
+        if (result):  
+            self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_jms_msg_sent'), self._mh.fromhere())  
+            ev = event.Event('jms_after_send')
+            self._mh.fire_event(ev)    
+        else:
+            print 'ERROR'                  
        
         return result

@@ -57,7 +57,8 @@ class SOAPClient:
             logger.setLevel(logging.DEBUG), handler.setLevel(logging.DEBUG)
             logger.addHandler(handler)
             
-    def load_wsdl(self, url, location='remote', user=None, passw=None, endpoint=None, headers=None): 
+    def load_wsdl(self, url, location='remote', user=None, passw=None, endpoint=None, headers=None,
+                  transport=None): 
         """Method loads wsdl
         
         Args:
@@ -67,6 +68,7 @@ class SOAPClient:
            passw (str): password
            endpoint (str): service endpoint, default endpoint from WSDL 
            headers (dict): HTTP headers
+           transport (obj): HTTP transport
 
         Returns:
            bool: result
@@ -82,14 +84,15 @@ class SOAPClient:
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_soap_loading_wsdl', url,
                           user, passw, endpoint, headers), self._mh.fromhere())
             
-            ev = event.Event('soap_before_load_wsdl', url, location, user, passw, endpoint, headers)
+            ev = event.Event('soap_before_load_wsdl', url, location, user, passw, endpoint, headers, transport)
             if (self._mh.fire_event(ev) > 0):
                 url = ev.argv(0)
                 location = ev.argv(1)
                 user = ev.argv(2)
                 passw = ev.argv(3)
                 endpoint = ev.argv(4)
-                headers = ev.argv(5)         
+                headers = ev.argv(5)
+                transport = ev.args(6)         
         
             self._url = url
             self._location = location
@@ -110,6 +113,8 @@ class SOAPClient:
                     options['location'] = self._endpoint
                 if (self._headers != None):
                     options['headers'] = self._headers
+                if (transport != None):
+                    options['transport'] = transport
         
                 self._client = suds.client.Client(self._url, **options)  
                 self._wsdl = self._client.wsdl
