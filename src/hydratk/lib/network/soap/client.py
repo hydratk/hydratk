@@ -25,6 +25,8 @@ import lxml
 import logging
 import sys
 
+logging.getLogger('suds.client').setLevel(logging.CRITICAL)
+
 class SOAPClient:
     
     _mh = None
@@ -108,7 +110,7 @@ class SOAPClient:
                     self._url = 'file://' + self._url
                 if (self._user != None):
                     options['username'] = self._user
-                    options['password'] = self._password
+                    options['password'] = self._passw
                 if (self._endpoint != None):
                     options['location'] = self._endpoint
                 if (self._headers != None):
@@ -154,7 +156,7 @@ class SOAPClient:
            headers (dict): HTTP headers, SOAPAction, Content-Type are set automatically       
 
         Returns:
-           xml: response body
+           obj: response body, objectified xml
            
         Raises:
            event: soap_before_request
@@ -194,9 +196,8 @@ class SOAPClient:
             ev = event.Event('soap_after_request')
             self._mh.fire_event(ev)        
         
-            response = lxml.etree.fromstring(str(response)) 
             return response
             
-        except (suds.WebFault, Exception), ex:
+        except suds.WebFault, ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
             return None                     
