@@ -41,7 +41,8 @@ requires = [
            'httplib2',
            'jsonlib2',
            'lxml',
-           'suds'
+           'suds',
+           'python-ntlm'
          ]
          
 data_files=[

@@ -16,3 +16,4 @@ httplib2
 jsonlib2
 lxml
 suds
+python-ntlm
