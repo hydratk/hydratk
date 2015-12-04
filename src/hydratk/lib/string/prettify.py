@@ -1,6 +1,4 @@
 def xml_prettify(xml_str):
-    import xml.dom.minidom
-    xml = xml.dom.minidom.parseString(xml_str)
-    return xml.toprettyxml()
-    
-    
+    from xml.dom.minidom import parseString
+    reparsed = parseString(xml_str)
+    return '\n'.join([line for line in reparsed.toprettyxml(indent=' '*2).split('\n') if line.strip()])
