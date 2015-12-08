@@ -9,7 +9,7 @@
 """
 
 APP_NAME               = "HydraTK"
-APP_VERSION            = "0.1.0a.dev3"
+APP_VERSION            = "0.2.0a.dev0"
 APP_REVISION           = ""
 APP_DEVEL_YEAR         = "2009 - 2015"
 APP_AUTHORS            = "Petr Czaderna <pc@hydratk.org>, HydraTK Team"
