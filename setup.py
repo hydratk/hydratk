@@ -42,7 +42,8 @@ requires = [
            'jsonlib2',
            'lxml',
            'suds',
-           'python-ntlm'
+           'python-ntlm',
+           'jpype'
          ]
          
 data_files=[
