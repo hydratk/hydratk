@@ -60,7 +60,7 @@ entry_points={
          
 setup(
       name='HydraTK',
-      version='0.1.0a.dev5',
+      version='0.2.0a.dev0',
       description='Fully extendable object oriented application toolkit with nice modular architecture',
       long_description=readme,
       author='Petr Czaderna, HydraTK Team',
