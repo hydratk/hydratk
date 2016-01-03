@@ -17,4 +17,5 @@ jsonlib2
 lxml
 suds
 python-ntlm
-jpype
+JPype1
+scapy

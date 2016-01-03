@@ -20,19 +20,21 @@ java_after_stop
 
 from hydratk.core.masterhead import MasterHead
 from hydratk.core import event
-import jpype
-import os
+from jpype import JByte, JShort, JInt, JLong, JFloat, JDouble, JChar, JString, JBoolean
+from jpype import get_default_jvm_path, isJVMStarted, startJVM, shutdownJVM, JavaException
+from jpype import JClass, JPackage
+from os import path, walk
 
 java_types = {
-  'byte'  : jpype.JByte,
-  'short' : jpype.JShort,
-  'int'   : jpype.JInt,
-  'long'  : jpype.JLong,
-  'float' : jpype.JFloat,
-  'double': jpype.JDouble,
-  'char'  : jpype.JChar,
-  'string': jpype.JString,
-  'bool'  : jpype.JBoolean
+  'byte'  : JByte,
+  'short' : JShort,
+  'int'   : JInt,
+  'long'  : JLong,
+  'float' : JFloat,
+  'double': JDouble,
+  'char'  : JChar,
+  'string': JString,
+  'bool'  : JBoolean
 }
 
 class JavaBridge:
@@ -59,7 +61,7 @@ class JavaBridge:
             self._jvm_path = jvm_path
         else: 
             cfg = self._mh.cfg['Libraries']['hydratk.lib.bridge.java']['jvm_path']
-            self._jvm_path = cfg if (cfg != 'default') else jpype.get_default_jvm_path()
+            self._jvm_path = cfg if (cfg != 'default') else get_default_jvm_path()
              
         self._classpath = self._set_classpath(classpath)   
         
@@ -94,7 +96,7 @@ class JavaBridge:
             if (self._status):
                 self._mh.dmsg('htk_on_warning', self._mh._trn.msg('htk_java_already_started'), self._mh.fromhere())
                 return False
-            elif (jpype.isJVMStarted()):
+            elif (isJVMStarted()):
                 self._mh.dmsg('htk_on_warning', self._mh._trn.msg('htk_java_restart_tried'), self._mh.fromhere())
                 return False
                                                       
@@ -109,7 +111,7 @@ class JavaBridge:
                 if (self._classpath != None):
                     options.append('-Djava.class.path={0}'.format(self._classpath))
                 
-                jpype.startJVM(self._jvm_path, *options)
+                startJVM(self._jvm_path, *options)
                     
                 self._status = True
                 result = True
@@ -120,7 +122,7 @@ class JavaBridge:
                 
             return result
             
-        except (RuntimeError, jpype.JavaException), ex:
+        except (RuntimeError, JavaException), ex:
             self._mh.dmsg('htk_on_error', ex, self._mh.fromhere())
             return None         
     
@@ -142,7 +144,7 @@ class JavaBridge:
             ev = event.Event('java_before_stop')
             self._mh.fire_event(ev)
                         
-            jpype.shutdownJVM()
+            shutdownJVM()
             self._status = False
             result = True
                 
@@ -152,7 +154,7 @@ class JavaBridge:
                 
             return result
           
-        except (RuntimeError, jpype.JavaException), ex:
+        except (RuntimeError, JavaException), ex:
             self._mh.dmsg('htk_on_error', ex, self._mh.fromhere())
             return None         
     
@@ -176,7 +178,7 @@ class JavaBridge:
             else: 
                 return java_types[datatype](value)
             
-        except (RuntimeError, jpype.JavaException), ex:
+        except (RuntimeError, JavaException), ex:
             self._mh.dmsg('htk_on_error', ex, self._mh.fromhere())
             return None            
         
@@ -194,11 +196,11 @@ class JavaBridge:
         
         try:
 
-            return jpype.JClass(name)(*attrs)
+            return JClass(name)(*attrs)
         
-        except (RuntimeError, jpype.JavaException), ex:
+        except (RuntimeError, JavaException), ex:
             self._mh.dmsg('htk_on_error', ex, self._mh.fromhere())
-            return None
+            return None    
         
     def desc_class(self, name):
         """Method describes Java class
@@ -216,7 +218,7 @@ class JavaBridge:
             attrs = []
             methods = []
             
-            for name, type in jpype.JClass(name).__dict__.items():
+            for name, type in JClass(name).__dict__.items():
                 if (type.__class__.__name__ == 'property'):
                     attrs.append(name)
                 elif (type.__class__.__name__ == 'JavaMethod'):
@@ -224,9 +226,53 @@ class JavaBridge:
             
             return attrs, methods
         
-        except (RuntimeError, jpype.JavaException), ex:
+        except (RuntimeError, JavaException), ex:
             self._mh.dmsg('htk_on_error', ex, self._mh.fromhere())
-            return None     
+            return None   
+        
+    def get_package(self, name):
+        """Method returns package
+        
+        Args:
+           name (str): package name
+            
+        Returns:
+           obj: method
+                
+        """  
+                
+        try:
+
+            package =  JPackage(name)
+            return package
+        
+        except (RuntimeError, JavaException), ex:
+            self._mh.dmsg('htk_on_error', ex, self._mh.fromhere())
+            return None             
+        
+    def init_arraylist(self, array):
+        """Method initializes Java ArrayList
+        
+        Args:
+           list (list): Python list
+            
+        Returns:
+           obj: Java ArrayList
+                
+        """          
+        
+        try:
+            
+            arraylist = self.get_class('java.util.ArrayList')
+            for value in array:
+                arraylist.add(str(value))  
+                
+            return arraylist 
+        
+        except (RuntimeError, JavaException), ex:
+            self._mh.dmsg('htk_on_error', ex, self._mh.fromhere())
+            return None           
+          
         
     def init_hashmap(self, dictionary):
         """Method initializes Java hashmap
@@ -235,7 +281,7 @@ class JavaBridge:
            dictionary (dict): Python dictionary
             
         Returns:
-           obj: Java hashmap
+           obj: Java HashMap
                 
         """          
         
@@ -247,7 +293,7 @@ class JavaBridge:
                 
             return hashmap 
         
-        except (RuntimeError, jpype.JavaException), ex:
+        except (RuntimeError, JavaException), ex:
             self._mh.dmsg('htk_on_error', ex, self._mh.fromhere())
             return None   
         
@@ -270,14 +316,14 @@ class JavaBridge:
         exp_classpath = ''             
         for entry in cfg.split(':'):
             
-            if (os.path.isfile(entry)):
+            if (path.isfile(entry)):
                 exp_classpath += entry + ':'
             else:
                                 
-                for dirname, _, filelist in os.walk(entry):   
+                for dirname, _, filelist in walk(entry):   
                     exp_classpath += dirname + ':'    
                     for filename in filelist:
                         if (filename.split('.')[1] == 'jar'):
-                            exp_classpath += os.path.join(dirname, filename) + ':'
+                            exp_classpath += path.join(dirname, filename) + ':'
                             
         return exp_classpath[:-1]                                         

@@ -20,12 +20,12 @@ soap_after_request
 
 from hydratk.core.masterhead import MasterHead
 from hydratk.core import event
-import suds
-import lxml
-import logging
-import sys
+from suds import client, WebFault
+from lxml.etree import Element, SubElement, fromstring, tostring
+from logging import getLogger, StreamHandler, CRITICAL, DEBUG
+from sys import stderr
 
-logging.getLogger('suds.client').setLevel(logging.CRITICAL)
+getLogger('suds.client').setLevel(CRITICAL)
 
 class SOAPClient:
     
@@ -54,9 +54,9 @@ class SOAPClient:
         
         self._verbose = verbose
         if (self._verbose):
-            handler = logging.StreamHandler(sys.stderr)
-            logger = logging.getLogger('suds.transport.http')
-            logger.setLevel(logging.DEBUG), handler.setLevel(logging.DEBUG)
+            handler = StreamHandler(stderr)
+            logger = getLogger('suds.transport.http')
+            logger.setLevel(DEBUG), handler.setLevel(DEBUG)
             logger.addHandler(handler)
             
     def load_wsdl(self, url, location='remote', user=None, passw=None, endpoint=None, headers=None,
@@ -118,7 +118,7 @@ class SOAPClient:
                 if (transport != None):
                     options['transport'] = transport
         
-                self._client = suds.client.Client(self._url, **options)  
+                self._client = client.Client(self._url, **options)  
                 self._wsdl = self._client.wsdl
                 
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_soap_wsdl_loaded'), self._mh.fromhere())
@@ -127,7 +127,7 @@ class SOAPClient:
                 
             return True
             
-        except suds.WebFault, ex:
+        except WebFault, ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
             return False 
         
@@ -182,15 +182,15 @@ class SOAPClient:
             
                 nsmap = {'soapenv': 'http://schemas.xmlsoap.org/soap/envelope/'}
                 ns = '{%s}' % nsmap['soapenv']
-                root = lxml.etree.Element(ns+'Envelope', nsmap=nsmap)
-                lxml.etree.SubElement(root, ns+'Header')
-                elem = lxml.etree.SubElement(root, ns+'Body')
+                root = Element(ns+'Envelope', nsmap=nsmap)
+                SubElement(root, ns+'Header')
+                elem = SubElement(root, ns+'Body')
             
                 if (isinstance(body, str)):
-                    body = lxml.etree.fromstring(body) 
+                    body = fromstring(body) 
                 elem.append(body)           
             
-                response = getattr(self._client.service, operation)(__inject = {'msg': lxml.etree.tostring(root)})                
+                response = getattr(self._client.service, operation)(__inject = {'msg': tostring(root)})                
         
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_soap_response', response), self._mh.fromhere()) 
             ev = event.Event('soap_after_request')
@@ -198,6 +198,6 @@ class SOAPClient:
         
             return response
             
-        except suds.WebFault, ex:
+        except WebFault, ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
             return None                     

@@ -36,7 +36,7 @@ msg = {
     'htk_ftp_unknown_file'     : "Unknown file: '%s'",
     'htk_ftp_file_uploaded'    : "File uploaded",  
     'htk_ftp_deleting_file'    : "Deleting file: '%s'",
-    'htp_ftp_file_deleted'     : "File deleted",
+    'htk_ftp_file_deleted'     : "File deleted",
     'htk_ftp_making_dir'       : "Making directory: '%s'",
     'htk_ftp_dir_made'         : "Directory made",
     'htk_ftp_removing_dir'     : "Removing directory: '%s'",

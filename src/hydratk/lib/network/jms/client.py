@@ -100,6 +100,10 @@ class JMSClient:
 
         Returns:
            bool: result
+           
+        Raises:
+           event: jms_before_connect
+           event: htk_jms_connected            
                 
         """        
         
@@ -168,6 +172,10 @@ class JMSClient:
 
         Returns:
            bool: result
+           
+        Raises:
+           event: jms_before_send
+           event: jms_after_send             
                 
         """   
         
@@ -214,6 +222,10 @@ class JMSClient:
 
         Returns:
            list: messages
+           
+        Raises:
+           event: jms_before_receive
+           event: jms_after_receive             
                 
         """           
         

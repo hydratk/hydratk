@@ -36,7 +36,7 @@ msg = {
     'htk_ftp_unknown_file'     : "Neznámý soubor: '%s'",
     'htk_ftp_file_uploaded'    : "Nahrávání souboru dokončeno",  
     'htk_ftp_deleting_file'    : "Mažu soubor: '%s'",
-    'htp_ftp_file_deleted'     : "Soubor smazán",
+    'htk_ftp_file_deleted'     : "Soubor smazán",
     'htk_ftp_making_dir'       : "Vytvářím adresář: '%s'",
     'htk_ftp_dir_made'         : "Adresář vytvořen",
     'htk_ftp_removing_dir'     : "Mažu adresář: '%s'",

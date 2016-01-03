@@ -18,10 +18,10 @@ rest_after_request
 
 from hydratk.core.masterhead import MasterHead
 from hydratk.core import event
-import httplib2
-import urllib
-import jsonlib2
-import lxml
+from httplib2 import Http, debuglevel, HttpLib2Error
+from urllib import urlencode
+from jsonlib2 import read
+from lxml import objectify
 
 default_ports = {
   'HTTP' : 80,
@@ -59,13 +59,13 @@ class RESTClient:
         self._mh = MasterHead.get_head() 
         
         if (cache):
-            self._client = httplib2.Http('.cache', disable_ssl_certificate_validation=ignore_cert)
+            self._client = Http('.cache', disable_ssl_certificate_validation=ignore_cert)
         else:
-            self._client = httplib2.Http(disable_ssl_certificate_validation=ignore_cert)     
+            self._client = Http(disable_ssl_certificate_validation=ignore_cert)     
         
         self._verbose = verbose
         if (self._verbose):
-            httplib2.debuglevel = 2
+            debuglevel = 2
         
     def send_request(self, host, protocol='HTTP', port=None, path='/', user=None, passw=None, 
                      method='GET', headers=None, body=None, params=None, content_type=None):
@@ -124,9 +124,9 @@ class RESTClient:
             
                 if (params != None):                
                     if (method in ('GET', None)):
-                        url = '{0}?{1}'.format(url, urllib.urlencode(params))  
+                        url = '{0}?{1}'.format(url, urlencode(params))  
                     elif (method in ('POST', 'PUT', 'DELETE')):
-                        body = urllib.urlencode(params)  
+                        body = urlencode(params)  
                         content_type = 'form'        
                 if (body != None and method in ('GET', None)):
                     method = 'POST'                    
@@ -139,9 +139,9 @@ class RESTClient:
             
             content_type = self.get_header('Content-Type')
             if ('json' in content_type):
-                self._res_body = jsonlib2.read(self._res_body)
+                self._res_body = read(self._res_body)
             elif ('xml' in content_type):               
-                self._res_body = lxml.objectify.fromstring(self._res_body)
+                self._res_body = objectify.fromstring(self._res_body)
              
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_rest_response', self._res_header), self._mh.fromhere()) 
             ev = event.Event('rest_after_request')
@@ -149,7 +149,7 @@ class RESTClient:
                 
             return self._res_header.status, self._res_body
             
-        except httplib2.HttpLib2Error, ex:
+        except HttpLib2Error, ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
             return None   
         
