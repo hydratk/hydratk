@@ -63,8 +63,8 @@ public class DBClient {
             
             if (conn != null) {
                 
-                System.out.println("ERR - Client is already connected to database");
-                return false;
+                System.out.println("INFO - Client is already connected to database");
+                return true;
                 
             }   
             
@@ -106,8 +106,8 @@ public class DBClient {
             
             if (conn == null) {
                 
-                System.out.println("ERR - Client is not connected to database");
-                return false;
+                System.out.println("INFO - Client is not connected to database");
+                return true;
                 
             }
             

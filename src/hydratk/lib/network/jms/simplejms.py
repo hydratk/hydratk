@@ -32,9 +32,9 @@ class JMSClient(client.JMSClient, object):
         return client.JMSClient.send(
                                self, 
                                self._request.destination_queue, 
-                               self._request.jms_type, 
                                self._request.message.content, 
-                               jms_correlation_id
+                               headers={'JMSType': self._request.jms_type, 
+                                        'JMSCorrelationID': jms_correlation_id}
                              )
                
 class JMSRequest(object):

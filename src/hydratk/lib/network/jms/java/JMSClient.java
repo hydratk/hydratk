@@ -85,8 +85,8 @@ public class JMSClient {
             
             if (connected) {
                 
-                System.out.println("ERR - Client is already connected to JMS server");
-                return false;
+                System.out.println("INFO - Client is already connected to JMS server");
+                return true;
                 
             }            
             
@@ -142,8 +142,8 @@ public class JMSClient {
             
             if (!connected) {
                 
-                System.out.println("ERR - Client is not connected to JMS server");
-                return false;
+                System.out.println("INFO - Client is not connected to JMS server");
+                return true;
                 
             }            
         

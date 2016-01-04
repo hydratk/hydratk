@@ -21,8 +21,8 @@ HIGHLIGHT_US    = chr(27)+chr(91)+"4m"
 HIGHLIGHT_END   = chr(27)+chr(91)+"0m"
 
 msg = {
-    'htk_rpc_init_proxy'        : "Inicializuji proxy ke vzdálenému objektu na URL: '%s'",
+    'htk_rpc_init_proxy'        : "Inicializuji proxy ke vzdálenému objektu na URL: '{0}'",
     'htk_rpc_proxy_initialized' : "Proxy inicializována",
-    'htk_rpc_call_method'       : "Volám vzdálenou metodu: '%s' s parametry: '%s'",
-    'htk_rpc_method_called'     : "Metoda vrátila: '%s'"
+    'htk_rpc_call_method'       : "Volám vzdálenou metodu: '{0}' s parametry: '{1}'",
+    'htk_rpc_method_called'     : "Metoda vrátila: '{0}'"
 }
