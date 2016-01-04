@@ -42,14 +42,17 @@ requires = [
            'jsonlib2',
            'lxml',
            'suds',
-           'python-ntlm'
+           'python-ntlm',
+           'JPype1',
+           'scapy'
          ]
          
 data_files=[
             ('/etc/hydratk', ['etc/hydratk/hydratk.conf']), 
             ('/var/local/hydratk/dbconfig', ['var/local/hydratk/dbconfig/__init__.py']),
-            ('/var/local/hydratk/java', ['var/local/hydratk/java/JMSClient.java']), 
-            ('/var/local/hydratk/java', ['var/local/hydratk/java/javaee.jar'])            
+            ('/var/local/hydratk/java', ['src/hydratk/lib/network/jms/java/JMSClient.java']), 
+            ('/var/local/hydratk/java', ['src/hydratk/lib/network/jms/java/javaee.jar']),
+            ('/var/local/hydratk/java', ['src/hydratk/lib/network/dbi/java/DBClient.java'])            
            ]
 
 entry_points={

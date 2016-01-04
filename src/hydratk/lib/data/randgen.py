@@ -8,21 +8,60 @@
 
 """
 
-import time;
-import random;
+from time import time, strftime
+from random import randint
 
 def gen_systimestamp():
+    """Method generates system timestamp
+        
+    Args:
+        
+    Returns:
+        str: timestamp in format YYYY-MM-DDTHH24:MI:SS    
+                
+    """    
     
-    return time.strftime('%Y-%m-%dT%H:%M:%S');
+    return strftime('%Y-%m-%dT%H:%M:%S')
 
 def gen_sysdate():
+    """Method generates system data
+        
+    Args:
+        
+    Returns:
+        str: date in format YYYY-MM-DD   
+                
+    """       
     
-    return time.strftime('%Y-%m-%d');
+    return strftime('%Y-%m-%d')
 
 def gen_message_id():
+    """Method generates random message id
+        
+    Args:
+        
+    Returns:
+        str: message id in format hydratk-time-random 3-digit number  
+                
+    """       
     
-    return 'hydratk-{0}-{1}'.format(time.time(), gen_id(3));
+    return 'hydratk-{0}-{1}'.format(time(), gen_id(3))
 
 def gen_id(n=10):
+    """Method generates random number
+        
+    Args:
+        n (int): number of digits
+        
+    Returns:
+        str: random n-digit number
+        
+    Raises:
+        error: ValueError
+                
+    """  
     
-    return str(random.randint(10**(n-1), 10**n-1));
+    if (n > 0):     
+        return str(randint(10**(n-1), 10**n-1))
+    else:
+        raise ValueError('n must be positive integer')
