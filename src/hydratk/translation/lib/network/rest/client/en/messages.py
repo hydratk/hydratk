@@ -21,7 +21,7 @@ HIGHLIGHT_US    = chr(27)+chr(91)+"4m"
 HIGHLIGHT_END   = chr(27)+chr(91)+"0m"
 
 msg = {
-    'htk_rest_request'  : "Sending request na server: '%s', user:'%s', passw:'%s', method:'%s', " + \
-                          "headers: '%s', body: '%s', params:'%s'",
-    'htk_rest_response' : "Received response from server: '%s'" 
+    'htk_rest_request'  : ["Sending request na server: '{0}', user:'{1}', passw:'', method:'{2}', " + \
+                          "headers: '{3}', body: '{4}', params:'{5}'"],
+    'htk_rest_response' : ["Received response from server: '{0}'"] 
 }

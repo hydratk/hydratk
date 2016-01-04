@@ -28,7 +28,8 @@ class EventHandler:
         self.dout(*args)       
     
     def _eh_htk_on_warning(self, oevent, *args):
-        self.wout(*args)
+        if int(self.cfg['System']['Warnings']['display']) == 1:
+            self.wout(*args)
     
     def _eh_htk_on_extension_warning(self, oevent, *args):
         self.wout(*args) 
@@ -41,7 +42,10 @@ class EventHandler:
     
     def _eh_htk_on_extension_error(self, oevent, *args):
         self.errout(*args)
-            
+    
+    def _eh_htk_on_cprint(self, oevent, *args):        
+        self.spout(*args)
+                
     def _ec_sig_handler(self, oevent, signum):
         signal = hsignal.sigint2string[signum] if signum in hsignal.sigint2string else signum 
         self.dmsg('htk_on_debug_info', self._trn.msg('htk_sig_recv', signal), self.fromhere())    

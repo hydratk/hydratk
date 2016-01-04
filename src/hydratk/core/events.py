@@ -11,6 +11,7 @@
 event = {  
   'htk_on_stop'               : 'hydratk.core.masterhead',  '''htk_on_stop'''
   'htk_on_help'               : 'hydratk.core.masterhead',  '''htk_on_help: help_commands'''
+  'htk_on_cprint'             : 'hydratk.core.masterhead',  '''htk_on_cprint: message'''
   'htk_on_debug_info'         : 'hydratk.core.masterhead',  '''htk_on_debug_info: debug_level, channel, msg, location '''
   'htk_on_error'              : 'hydratk.core.masterhead',  '''htk_on_error: msg, location '''
   'htk_on_warning'            : 'hydratk.core.masterhead',  '''htk_on_warning: msg, location '''

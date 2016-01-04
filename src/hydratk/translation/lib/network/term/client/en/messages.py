@@ -21,10 +21,10 @@ HIGHLIGHT_US    = chr(27)+chr(91)+"4m"
 HIGHLIGHT_END   = chr(27)+chr(91)+"0m"
 
 msg = {
-    'htk_term_unknown_protocol'  : "Unknown protocol: '%s'",
-    'htk_term_connecting'        : "Connecting to server: '%s'",
-    'htk_term_connected'         : "Connected successfully",
-    'htk_term_disconnected'      : "Disconnected from server",
-    'htk_term_executing_command' : "Executing command: '%s'",
-    'htk_term_command_executed'  : "Command executed"
+    'htk_term_unknown_protocol'  : ["Unknown protocol: '{0}'"],
+    'htk_term_connecting'        : ["Connecting to server: '{0}'"],
+    'htk_term_connected'         : ["Connected successfully"],
+    'htk_term_disconnected'      : ["Disconnected from server"],
+    'htk_term_executing_command' : ["Executing command: '{0}'"],
+    'htk_term_command_executed'  : ["Command executed"]
 }

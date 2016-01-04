@@ -11,6 +11,8 @@ import pycurl
 import pytz
 import datetime
 
+
+from hydratk.lib.data.xml import XMLValidate
 from hydratk.lib.system import fs
 try:
     from io import BytesIO
@@ -58,7 +60,7 @@ curl_info_map  = {
 
 HTTP_AUTH_BASIC = pycurl.HTTPAUTH
 
-class SoapResponse():
+class SoapResponse(object):
     _msg          = None
     _resp_headers = []
     _resp_code    = 0    
@@ -99,7 +101,7 @@ class SoapResponse():
         self._apply_info()
         
         
-class SoapRequest():
+class SoapRequest(object):
     _msg         = None
     _req_url     = None
     _req_method  = pycurl.POST
@@ -144,7 +146,7 @@ class SoapRequest():
         self._msg = msg
          
 
-class SoapResponseMessage():
+class SoapResponseMessage(object):
     _content = None
     
     def __init__(self, content=None):
@@ -160,7 +162,7 @@ class SoapResponseMessage():
         self._content = content
 
 
-class SoapRequestMessage():
+class SoapRequestMessage(XMLValidate):
     _bind_lchr = '['
     _bind_rchr = ']'
     _content   = None
@@ -195,6 +197,18 @@ class SoapRequestMessage():
                 content = content.replace(str(bind_var), str(value))                
             self._content = content       
     
+    
+    def xsd_validate(self):
+        import lxml        
+        result = True
+        msg    = None
+        try:
+            XMLValidate.xsd_validate(self, self._content)
+        except lxml.etree.DocumentInvalid as e:
+            msg    = e
+            result = False
+            
+        return (result, msg)
            
 class SoapClient():
     
@@ -234,9 +248,8 @@ class SoapClient():
         self._curl.perform()        
         self._response = SoapResponse(self._curl)
         self._response.msg = SoapResponseMessage(buff.getvalue())
-        self._curl.close()          
-    
-     
-     
+        self._curl.close()
+
+         
 def xml_timestamp(location = 'Europe/Prague'):
     return datetime.datetime.now(pytz.timezone(location)).isoformat()

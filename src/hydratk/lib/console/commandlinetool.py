@@ -85,6 +85,10 @@ class CommandlineTool():
         CommandlineTool.__cmd_text = cmd_text
         CommandlineTool.__opt_text = opt_text    
     
+    
+    @staticmethod
+    def print_short_help():
+        print(CommandlineTool.create_short_help())
         
     @staticmethod    
     def print_help():        
@@ -149,7 +153,7 @@ class CommandlineTool():
     
     @staticmethod
     def get_input_option(opt):
-        options = CommandlineTool.get_input_options()
+        options = CommandlineTool.get_input_options()        
         result = False
         if options != False:
             for opt_name, opt_value in options['options']:
@@ -157,7 +161,21 @@ class CommandlineTool():
                     result = opt_value if opt_value != '' else True
                     break
         return result
-                
+    
+    @staticmethod
+    def create_short_help():
+        result = ''
+        result += CommandlineTool.__title + "\n"
+        result +=  CommandlineTool.__cp_string + "\n"
+        have_options = ' [options..]' if len(CommandlineTool.__short_opt) > 0 or len(CommandlineTool.__long_opt) > 1 else ''
+        have_commands = ' <command>' if len(CommandlineTool.__commands) > 0 else ''
+        result += "Syntax: "+sys.argv[0]+have_options+have_commands+"\n" if CommandlineTool.__trn == None else CommandlineTool.__trn.msg('htk_help_syntax',sys.argv[0]) + "\n"
+        result += "For list of all available commands and options type {h}"+sys.argv[0]+" help{e}" if CommandlineTool.__trn == None else CommandlineTool.__trn.msg('htk_help_on_help',sys.argv[0])
+        
+        #apply decorations    
+        result = CommandlineTool.parse_shell_text(result)
+        return result
+                    
     @staticmethod
     def create_help():
         import pprint

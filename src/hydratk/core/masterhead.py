@@ -81,6 +81,7 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
         current.status = const.CORE_THREAD_ALIVE
                             
         self._trn = translator.Translator()
+        self._trn.set_debug_level(const.DEBUG_LEVEL)
         """Checking for the --lang param presence"""
         if self.check_language() == False:          
             self._trn.set_language(self._language)
@@ -246,7 +247,8 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
                     debug_level = sys.argv[i + 1]  
                     if unicode(debug_level,'utf-8').isnumeric():
                         self._debug_level = int(debug_level) 
-                        self._debug = True                
+                        self._debug = True
+                        self._trn.set_debug_level(debug_level)                
                         self.dmsg('htk_on_debug_info', self._trn.msg('htk_debug_level_set', self._debug_level), self.fromhere())                  
                         debug_changed = True
                     else:
@@ -552,6 +554,109 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
             result = True
         # todo silently notify invalid hook                    
         return result                 
+    
+    def unregister_event_hook(self, event, callback = None):
+        """Methods unregisters event listener(s) for specified event.
+           
+           This method is useful for extending the system functionality
+        
+        Args:
+           event (string): event 
+           callback (callable): matching callback            
+        
+        Returns:
+           bool - in case that callback is not specified
+           int  - number of successfully unregistered hooks for matching callback
+           
+        Example:
+        
+        .. code-block:: python   
+        
+           from hydratk.core.masterhead import MasterHead
+                              
+           
+           mh = MasterHead.get_head()
+           
+           hook = [
+                   {'event' : 'htk_on_error', 'callback' : self.my_error_handler, 'unpack_args' : True, 'priority' : const.EVENT_HOOK_PRIORITY - 1}, # will be prioritized        
+                   {'event' : 'htk_on_warning', 'callback' : self.my_warning_handler, 'unpack_args' : False}
+                  ]            
+                      
+           mh.register_event_hook(hook)
+           mh.unregister_event_hook('htk_on_error') # unregisters all hooks, returns True
+           mh.unregister_event_hook('htk_on_warning', self.my_warning_handler) # unregisers matching hook only, returns 1 
+           
+        """                
+        if callback == None:
+            result = False
+            if event in self._event_hooks:
+                del self._event_hooks[event]
+                result = True
+        else:
+            result = 0
+            for priority, hooks in self._event_hooks[event].items():
+                item = 0            
+                for record in hooks:
+                    if record['callback'].__name__ == callback.__name__:
+                        del self._event_hooks[event][priority][item]
+                        result += 1
+                    item += 1
+                    
+        return result
+                    
+            
+    def replace_event_hook(self, event, callback, record):
+        """Methods replaces event listener(s) for specified event.
+           
+           This method is useful for extending the system functionality
+        
+        Args:
+           event (string): event 
+           callback (callable): matching callback
+           record (dict) : new callback record            
+        
+        Returns:          
+           int  - number of successfully replaced hooks for matching callback
+           
+        Example:
+        
+        .. code-block:: python   
+        
+           from hydratk.core.masterhead import MasterHead
+                              
+           
+           mh = MasterHead.get_head()
+           
+           hook = [
+                   {'event' : 'htk_on_error', 'callback' : self.my_error_handler, 'unpack_args' : True, 'priority' : const.EVENT_HOOK_PRIORITY - 1}, # will be prioritized        
+                   {'event' : 'htk_on_warning', 'callback' : self.my_warning_handler, 'unpack_args' : False}
+                  ]            
+              
+           mh.register_event_hook(hook)
+           
+           new_record = {
+              'callback' : another_warning_handler, 
+              'unpack_args' : False
+           }
+           
+           mh.replace_event_hook('htk_on_warning', self.my_warning_handler, new_record) # replaces matching hook only, returns 1 
+           
+        """                        
+        if type(record).__name__ != 'dict':
+            raise Exception("Invalid record type, dictionary expected")
+        if not hasattr(record['callback'], '__call__'):
+            raise Exception("Callback replacement is not callable")  
+        result = 0
+        for priority, hooks in self._event_hooks[event].items():
+            item = 0            
+            for record in hooks:
+                if record['callback'].__name__ == callback.__name__:
+                    self._event_hooks[event][priority][item] = record
+                    result += 1
+                item += 1
+        
+        return result
+            
                     
     def fire_event(self, oevent):
         """Method is processing specified event callbacks.

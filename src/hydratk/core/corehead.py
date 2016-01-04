@@ -38,6 +38,7 @@ from hydratk.core import message
 from hydratk.core.eventhandler import EventHandler
 from hydratk.core import event
 from hydratk.core.debugger import Debugger
+from hydratk.core.logger import Logger
 from hydratk.core import messagerouter
 from hydratk.lib.profiling.profiler import Profiler
 from hydratk.lib.console.commandlinetool import CommandlineTool
@@ -45,7 +46,7 @@ from hydratk.lib.array import multidict
 from hydratk.lib.exceptions.inputerror import InputError
 import hydratk.core.dbconfig as dbconfig
 
-class CoreHead(EventHandler, Debugger, Profiler):
+class CoreHead(EventHandler, Debugger, Profiler, Logger):
     """Class CoreHead extends from EventHandler, Debugger and Profiler           
     """
     _runlevel         = const.RUNLEVEL_SHUTDOWN
@@ -56,7 +57,7 @@ class CoreHead(EventHandler, Debugger, Profiler):
     _use_extensions   = True
     '''Extensions'''
     _ext              = {} 
-    _default_command  = 'help'    
+    _default_command  = 'short-help'    
     _command          = None     
     _cmd_option_hooks = {}
     _event_hooks      = {}
@@ -407,7 +408,7 @@ class CoreHead(EventHandler, Debugger, Profiler):
                 self.dmsg('htk_on_warning', self._trn.msg('htk_conf_opt_missing', 'Debug', 'enabled'), self.fromhere())
             try:                         
                 debug_level = self._config['System']['Debug']['level']
-                self._debug_level = debug_level if debug_level > 0 else 1                                              
+                self._debug_level = int(debug_level) if debug_level > 0 else 1                                              
                 self.dmsg('htk_on_debug_info', self._trn.msg('htk_debug_level_set', debug_level), self.fromhere())                
             except Exception as exc:
                 pprint.pprint(exc)
@@ -582,6 +583,7 @@ class CoreHead(EventHandler, Debugger, Profiler):
         hooks = [
                 {'command' : 'start', 'callback' : self._start_app },
                 {'command' : 'stop', 'callback' : self._stop_app_command },
+                {'command' : 'short-help', 'callback' : CommandlineTool.print_short_help },
                 {'command' : 'help', 'callback' : CommandlineTool.print_help },
                 {'command' : 'list-extensions', 'callback' : self._list_extensions },
                 {'command' : 'create-config-db', 'callback' : self._create_config_db },
@@ -757,6 +759,7 @@ class CoreHead(EventHandler, Debugger, Profiler):
                 {'event' : 'htk_on_error', 'callback' : self._eh_htk_on_error, 'unpack_args' : True},        
                 {'event' : 'htk_on_warning', 'callback' : self._eh_htk_on_warning, 'unpack_args' : True}, 
                 {'event' : 'htk_on_debug_info', 'callback' : self._eh_htk_on_debug_info, 'unpack_args' : True},
+                {'event' : 'htk_on_cprint', 'callback' : self._eh_htk_on_cprint, 'unpack_args' : True},
                 {'event' : 'htk_on_got_cmd_options', 'callback' : self._eh_htk_on_got_cmd_options },
                 {'event' : 'htk_on_extension_error', 'callback' : self._eh_htk_on_extension_error, 'unpack_args' : True},
                 {'event' : 'htk_on_extension_warning', 'callback' : self._eh_htk_on_extension_warning, 'unpack_args' : True},

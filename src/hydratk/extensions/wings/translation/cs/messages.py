@@ -20,5 +20,5 @@ language = {
 
 
 msg = {
-  'wings_test_msg' : 'wings test uspesny!',   
+  'wings_test_msg' : ['wings test uspesny!'],   
 }

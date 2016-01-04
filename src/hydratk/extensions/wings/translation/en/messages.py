@@ -13,5 +13,5 @@ language = {
 }
 
 msg = {
-  'wings_test_msg' : 'wings test successfull!',       
+  'wings_test_msg' : ['wings test successfull!'],       
 }

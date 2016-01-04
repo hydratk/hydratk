@@ -25,11 +25,12 @@ class Translator():
     '''
     classdocs
     '''
-    _msg_mod   = None
-    _help_mod  = None    
-    __language = ''
-    __messages = {} #MultiDict
-    __language = None
+    _msg_mod     = None
+    _help_mod    = None    
+    _language    = ''
+    _messages    = {}
+    _language    = None
+    _debug_level = 1
 
     def __init__(self, messages = ''):
         '''
@@ -37,7 +38,7 @@ class Translator():
         '''              
         if messages != '':
             if type(messages) is dict:
-                self.__messages = messages
+                self._messages = messages
             else:                
                 print(type(messages))
                 print(messages)
@@ -65,36 +66,39 @@ class Translator():
     def register_messages(self,messages):        
         if messages != '':
             if type(messages) is dict:
-                self.__messages = messages                
+                self._messages = messages                
             else:
                 raise ValueError('Invalid messages type, dictionary expected')                
         else:
             raise ValueError('Cannot assign an empty messages, dictionary expected')                
         return True
-        
+    
+    def set_debug_level(self,level):
+        self._debug_level = int(level) if int(level) > 0 else 1 
+            
     def set_language(self,lang):
-        self.__language = lang
+        self._language = lang
         
     def get_language(self):
-        return self.__language
+        return self._language
     
     def lmsg(self, lang, key,*args):              
-        return self.__messages[lang][key] % args if self.__messages[lang][key] != {} else None
+        return self._messages[lang][key] % args if self._messages[lang][key] != {} else None
     
-    def msg(self, key, *args):              
-        return self.__messages[key] % args if key in self.__messages else key
+    def msg(self, key, *args):                   
+        return self._messages[key][:self._debug_level][-1].format(*args) if key in self._messages else key       
 
     def add_msg(self,msg, id = ''):            
         result = 0        
         if type(msg).__name__ == 'dict':                        
             for msg_id, msg_text in msg.items():                    
                 if (msg_id != '' and msg_text != ''):
-                    self.__messages[msg_id] = msg_text
+                    self._messages[msg_id] = msg_text
                     result = result + 1
                 
         else:        
             if (id != '' and msg != ''):
-                self.__messages[id] = msg
+                self._messages[id] = msg
                 result = 1
         return result
     
@@ -126,6 +130,6 @@ class Translator():
         if type(msg).__name__ == 'dict': 
             for msg_id, msg_text in msg.items():                    
                     if (lang != '' and msg_id != '' and msg_text != ''):
-                        self.__messages[lang][msg_id] = msg_text
+                        self._messages[lang][msg_id] = msg_text
                         result = result + 1
         return result

@@ -18,6 +18,18 @@ class PropertyHead(object):
         return self._config
     
     @property
+    def debug(self):
+        return self._debug
+    
+    @property
+    def debug_level(self):
+        return self._debug_level
+    
+    @property
+    def ext_cfg(self):
+        return self._config['Extensions']
+    
+    @property
     def lang(self):
         return self._language
     
