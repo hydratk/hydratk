@@ -23,11 +23,6 @@ from urllib import urlencode
 from jsonlib2 import read
 from lxml import objectify
 
-default_ports = {
-  'HTTP' : 80,
-  'HTTPS': 443               
-}
-
 mime_types = {
   'form': 'application/x-www-form-urlencoded',
   'html': 'text/html',  
@@ -66,16 +61,33 @@ class RESTClient:
         self._verbose = verbose
         if (self._verbose):
             debuglevel = 2
+            
+    @property
+    def client(self):
         
-    def send_request(self, host, protocol='HTTP', port=None, path='/', user=None, passw=None, 
-                     method='GET', headers=None, body=None, params=None, content_type=None):
+        return self._client
+    
+    @property
+    def res_header(self):
+        
+        return self._res_header
+    
+    @property
+    def res_body(self):
+        
+        return self._res_body
+    
+    @property
+    def verbose(self):
+        
+        return self._verbose            
+        
+    def send_request(self, url, user=None, passw=None, method='GET', headers=None, 
+                     body=None, params=None, content_type=None):
         """Method sends request to server
         
         Args:
-           host (str): server host
-           protocol (str): protocol
-           port (int): server port
-           path (str): server path
+           url (str): URL
            user (str): username
            passw (str): password           
            method (str): HTTP method
@@ -95,30 +107,22 @@ class RESTClient:
         
         try:
             
-            protocol = self.protocol.lower() if (protocol == None) else protocol
-            port = default_ports[protocol.upper()] if (port == None) else port
-            message = '{0}://{1}:{2}{3}'.format(protocol, host, port, path)
-            self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_rest_request', message, user, passw,
+            self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_rest_request', url, user, passw,
                           method, headers, body, params), self._mh.fromhere()) 
             
-            ev = event.Event('rest_before_request', host, protocol, port, path, user, passw, method,
+            ev = event.Event('rest_before_request', url, user, passw, method,
                              headers, body, params, content_type)
             if (self._mh.fire_event(ev) > 0):
-                host = ev.argv(0)
-                protocol = ev.argv(1)
-                port = ev.argv(2)
-                path = ev.argv(3)
-                user = ev.argv(4)
-                passw = ev.argv(5)
-                method = ev.argv(6)
-                headers = ev.argv(7)
-                body = ev.argv(8)
-                params = ev.argv(9)
-                content_type = ev.argv(10)             
+                url = ev.argv(0)
+                user = ev.argv(1)
+                passw = ev.argv(2)
+                method = ev.argv(3)
+                headers = ev.argv(4)
+                body = ev.argv(5)
+                params = ev.argv(6)
+                content_type = ev.argv(7)             
             
             if (ev.will_run_default()): 
-                url = '{0}://{1}:{2}{3}'.format(protocol, host, port, path) 
-            
                 if (user != None):
                     self._client.add_credentials(user, passw)            
             

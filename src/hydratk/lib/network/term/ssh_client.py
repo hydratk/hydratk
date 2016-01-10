@@ -20,7 +20,9 @@ term_after_exec_command
 
 from hydratk.core.masterhead import MasterHead
 from hydratk.core import event
-from paramiko import SSHClient, SSHException, AutoAddPolicy
+from paramiko import SSHClient, AutoAddPolicy
+from paramiko.ssh_exception import SSHException, NoValidConnectionsError
+from socket import error
 from logging import basicConfig, DEBUG
 
 class TermClient:
@@ -32,6 +34,7 @@ class TermClient:
     _user = None
     _passw = None
     _verbose = None
+    _is_connected = None
     
     def __init__(self, verbose=False):
         """Class constructor
@@ -78,7 +81,11 @@ class TermClient:
     @property
     def verbose(self):
         
-        return self._verbose            
+        return self._verbose   
+    
+    @property
+    def is_connected(self): 
+        return self._is_connected                
                 
     def connect(self, host, port=22, user=None, passw=None):
         """Method connects to server
@@ -118,6 +125,7 @@ class TermClient:
             if (ev.will_run_default()):                  
                 self._client.set_missing_host_key_policy(AutoAddPolicy())
                 self._client.connect(self._host, self._port, self._user, self._passw)                
+                self._is_connected = True
                 
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_term_connected'), self._mh.fromhere()) 
             ev = event.Event('term_after_connect')
@@ -125,7 +133,7 @@ class TermClient:
                                                    
             return True
         
-        except SSHException, ex:
+        except (SSHException, NoValidConnectionsError, error), ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
             self._client.close()            
             return False            
@@ -141,10 +149,11 @@ class TermClient:
         try:                                                 
                 
             self._client.close()
+            self._is_connected = False
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_term_disconnected'), self._mh.fromhere())  
             return True  
     
-        except SSHException, ex:
+        except (SSHException, NoValidConnectionsError, error), ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
             return False                    
     
@@ -191,6 +200,6 @@ class TermClient:
                     out = out if (len(out) > 0) else None
                     return True, out
             
-        except SSHException, ex:
+        except (SSHException, NoValidConnectionsError, error), ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
             return False, err                                

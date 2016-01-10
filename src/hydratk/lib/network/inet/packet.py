@@ -241,11 +241,9 @@ def ping(destination, protocol='ICMP', port=None, verbose=False):
             answers = send_recv_packet(packet, verbose=verbose)[0]                
             
         if (len(answers) > 0):
-            print ('ping {0} OK'.format(destination))
             mh.dmsg('htk_on_debug_info', mh._trn.msg('htk_inet_ping_ok'), mh.fromhere())
             result = True
         else:
-            print ('ping {0} NOK'.format(destination))
             mh.dmsg('htk_on_debug_info', mh._trn.msg('htk_inet_ping_nok'), mh.fromhere())
             result = False
             
@@ -317,11 +315,9 @@ def traceroute(destination, protocol='ICMP', port=None, max_hops=10, verbose=Fal
                     break;
                 
         if (destination_reached):
-            print ('traceroute {0} OK'.format(destination))
             mh.dmsg('htk_on_debug_info', mh._trn.msg('htk_inet_traceroute_ok'), mh.fromhere())
             result = True
         else:
-            print ('traceroute {0} NOK'.format(destination))
             mh.dmsg('htk_on_debug_info', mh._trn.msg('htk_inet_traceroute_nok'), mh.fromhere())   
             result = False    
             

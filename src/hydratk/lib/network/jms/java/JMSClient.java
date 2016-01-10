@@ -1,8 +1,10 @@
 import java.util.Properties;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map.Entry;
+import java.util.Enumeration;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -13,6 +15,7 @@ import javax.jms.Connection;
 import javax.jms.Session;
 import javax.jms.MessageProducer;
 import javax.jms.MessageConsumer;
+import javax.jms.QueueBrowser;
 import javax.jms.Message;
 import javax.jms.TextMessage;
 import javax.jms.BytesMessage;
@@ -21,7 +24,7 @@ import javax.jms.DeliveryMode;
 /**
 * Generic JMS client
 * Specific client libraries are located on classpath
-* Tested clients - WebLogic (weblogic.jar)
+* Tested clients - WebLogic, OpenMQ, ActiveMQ
 * 
 * @author  Petr Rašek
 * @version 0.2.0
@@ -309,20 +312,16 @@ public class JMSClient {
             
         }
         
-    }
+    }  
     
     /**
     * receive
     * Receive JMS message
-    * @param destinationType
     * @param destinationName
     * @param cnt
-    * @param JMSCorrelationID
-    * @param JMSType
-    * @return boolean
+    * @return List of JMSMessage
     */      
-    public ArrayList<String> receive(String destinationType, String destinationName, int cnt,
-                                     String JMSCorrelationID, String JMSType) {
+    public ArrayList<JMSMessage> receive(String destinationName, int cnt) {
        
         try {            
             
@@ -335,35 +334,105 @@ public class JMSClient {
             
             if (verbose) {
                 StringBuilder sb = new StringBuilder();
-                sb.append("INFO - Receiving messages destinationType:").append(destinationType);
-                sb.append(", destinationName:").append(destinationName).append(", cnt:").append(cnt);
-                sb.append(", JMSCorrelationID:").append(JMSCorrelationID).append(", JMSType:").append(JMSType);
+                sb.append("INFO - Receiving messages destinationName:").append(destinationName).append(", cnt:").append(cnt);
                 System.out.println(sb.toString());
             }            
             
-            if (destinationType.toUpperCase().equals("QUEUE")) {
-                Queue queue = (Queue)ctx.lookup(destinationName);
-                consumer = session.createConsumer(queue);
-            }
-            else if (destinationType.toUpperCase().equals("TOPIC")) {
-                Topic topic = (Topic)ctx.lookup(destinationName);
-                consumer = session.createConsumer(topic);                
-            }
-            else {
-                System.out.println("ERR - Unknown destination type:" + destinationType + 
-                                   ", expected QUEUE, TOPIC");
-                return null;
-            }            
+            Queue queue = (Queue)ctx.lookup(destinationName);
+            consumer = session.createConsumer(queue);           
             
             connection.start();
             Message message = null;
             int msgCnt = 0;
             boolean matchCorr = false;
             boolean matchType = false;
-            ArrayList<String> messages = new ArrayList<String>();
+            ArrayList<JMSMessage> messages = new ArrayList<JMSMessage>();
             
-            while (msgCnt < cnt && ((message = consumer.receiveNoWait()) != null)) {                            
+            while (msgCnt < cnt && ((message = consumer.receive(1000)) != null)) {                                           
                 
+                String body;
+                if (message instanceof TextMessage)
+                    body = ((TextMessage) message).getText();
+                else {
+                  
+                    BytesMessage msg = (BytesMessage) message;
+                    byte[] bytes = new byte[(int)msg.getBodyLength()];
+                    msg.readBytes(bytes); 
+                    body = new String(bytes, "UTF-8");
+                
+                }
+                    
+                messages.add(new JMSMessage(message.getJMSCorrelationID(), message.getJMSDeliveryMode(),
+                            (message.getJMSDestination() != null) ? ((Queue) message.getJMSDestination()).getQueueName() : null, 
+                    	     message.getJMSExpiration(),
+                   		     message.getJMSMessageID(), message.getJMSPriority(), message.getJMSRedelivered(),
+                		    (message.getJMSReplyTo() != null) ? ((Queue) message.getJMSReplyTo()).getQueueName() : null,
+                    	     message.getJMSTimestamp(), message.getJMSType(), body));
+                ++msgCnt;
+            
+            }
+            
+            connection.stop();
+            
+            if (verbose)
+                System.out.println("INFO - Messages read");
+            
+            return messages;
+            
+        }
+        catch (Exception ex) {
+            
+            System.out.println("ERR - Exception: " + ex.toString());
+            if (verbose)
+                ex.printStackTrace();            
+            return null;
+            
+        }
+        
+    }    
+    
+    /**
+    * browse
+    * Browse queue
+    * @param destinationName
+    * @param cnt
+    * @param JMSCorrelationID
+    * @param JMSType
+    * @return List of JMSMessage
+    */      
+    public ArrayList<JMSMessage> browse(String destinationName, int cnt, String JMSCorrelationID, String JMSType) {
+       
+        try {            
+            
+            if (!connected) {
+                
+                System.out.println("ERR - Client is not connected to JMS server");
+                return null;
+                
+            }
+            
+            if (verbose) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("INFO - Browsing queue destinationName:").append(destinationName).append(", cnt:").append(cnt);
+                sb.append(", JMSCorrelationID:").append(JMSCorrelationID).append(", JMSType:").append(JMSType);
+                System.out.println(sb.toString());
+            }            
+            
+            Queue queue = (Queue)ctx.lookup(destinationName);
+            QueueBrowser browser = session.createBrowser(queue);           
+            connection.start();
+            
+            Enumeration msgs = browser.getEnumeration();
+            Message message = null;
+            int msgCnt = 0;
+            boolean matchCorr = false;
+            boolean matchType = false;
+            ArrayList<JMSMessage> messages = new ArrayList<JMSMessage>();
+            
+            while (msgCnt < cnt && msgs.hasMoreElements()) {                            
+                
+            	message = (Message) msgs.nextElement();
+            	
                 if (JMSCorrelationID == null || JMSCorrelationID.equals(message.getJMSCorrelationID()))
                     matchCorr = true;
                 
@@ -372,19 +441,24 @@ public class JMSClient {
                 
                 if (matchCorr && matchType) {
                 
-                    String content;
+                    String body;
                     if (message instanceof TextMessage)
-                        content = ((TextMessage) message).getText();
+                    	body = ((TextMessage) message).getText();
                     else {
                   
                         BytesMessage msg = (BytesMessage) message;
                         byte[] bytes = new byte[(int)msg.getBodyLength()];
                         msg.readBytes(bytes); 
-                        content = new String(bytes, "UTF-8");
+                        body = new String(bytes, "UTF-8");
                 
                     }
                     
-                    messages.add(content);
+                    messages.add(new JMSMessage(message.getJMSCorrelationID(), message.getJMSDeliveryMode(),
+                    		     (message.getJMSDestination() != null) ? ((Queue) message.getJMSDestination()).getQueueName() : null, 
+                    		     message.getJMSExpiration(),
+                    		     message.getJMSMessageID(), message.getJMSPriority(), message.getJMSRedelivered(),
+                    		     (message.getJMSReplyTo() != null) ? ((Queue) message.getJMSReplyTo()).getQueueName() : null,
+                    		     message.getJMSTimestamp(), message.getJMSType(), body));
                     ++msgCnt;
                 
                 }
@@ -411,6 +485,54 @@ public class JMSClient {
             
         }
         
-    }    
+    }      
     
+}
+
+class JMSMessage {
+	
+	public String JMSCorrelationID;
+	public int JMSDeliveryMode;
+	public String JMSDestination;
+	public long JMSExpiration;
+	public String JMSMessageID;
+	public int JMSPriority;
+	public boolean JMSRedelivered;
+	public String JMSReplyTo;
+	public long JMSTimestamp;
+	public String JMSType;
+	public String message;
+	
+	/**
+	 * constructor
+	 * @param JMSCorrelationID
+	 * @param JMSDeliveryMode
+	 * @param JMSDestination
+	 * @param JMSExpiration
+	 * @param JMSMessageID
+	 * @param JMSPriority
+	 * @param JMSRedelivered
+	 * @param JMSReplyTo
+	 * @param JMSTimestamp
+	 * @param JMSType
+	 * @param message
+	 */
+	public JMSMessage(String JMSCorrelationID, int JMSDeliveryMode, String JMSDestination,
+			long JMSExpiration, String JMSMessageID, int JMSPriority, boolean JMSRedelivered,
+			String JMSReplyTo, long JMSTimestamp, String JMSType, String message) {
+		
+		this.JMSCorrelationID = JMSCorrelationID;
+		this.JMSDeliveryMode  = JMSDeliveryMode;
+		this.JMSDestination   = JMSDestination;
+		this.JMSExpiration    = JMSExpiration;
+		this.JMSMessageID     = JMSMessageID;
+		this.JMSPriority      = JMSPriority;
+		this.JMSRedelivered   = JMSRedelivered;
+		this.JMSReplyTo       = JMSReplyTo;
+		this.JMSTimestamp     = JMSTimestamp;
+		this.JMSType          = JMSType;
+		this.message          = message;
+		
+	}
+	
 }

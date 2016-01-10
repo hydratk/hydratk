@@ -135,7 +135,7 @@ class DBClient:
                 self._user = user
                 self._passw = passw      
                   
-                result = self._client.connect(self._driver, self._conn_str, self._user, self._passw)
+                result = bool(self._client.connect(self._driver, self._conn_str, self._user, self._passw))
         
             if (result):                
                 self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_dbi_connected'), self._mh.fromhere())
@@ -162,7 +162,7 @@ class DBClient:
         
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_dbi_disconnecting'), self._mh.fromhere())
                 
-            result = self._client.disconnect()
+            result = bool(self._client.disconnect())
             if (result):
                 self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_dbi_disconnected'), self._mh.fromhere())   
             else:

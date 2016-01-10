@@ -323,7 +323,7 @@ class JavaBridge:
                 for dirname, _, filelist in walk(entry):   
                     exp_classpath += dirname + ':'    
                     for filename in filelist:
-                        if (filename.split('.')[1] == 'jar'):
+                        if (filename.split('.')[-1] == 'jar'):
                             exp_classpath += path.join(dirname, filename) + ':'
                             
         return exp_classpath[:-1]                                         

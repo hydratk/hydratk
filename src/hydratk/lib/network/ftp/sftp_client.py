@@ -26,7 +26,9 @@ ftp_before_remove_dir
 
 from hydratk.core.masterhead import MasterHead
 from hydratk.core import event
-from paramiko import SFTPClient, Transport, SSHException
+from paramiko import SFTPClient, Transport
+from paramiko.exception import SSHException, NoValidConnectionsError
+from socket import error
 from os import path, remove
 from logging import getLogger, DEBUG
 
@@ -145,7 +147,7 @@ class FTPClient:
                                     
             return True
         
-        except SSHException, ex:
+        except (SSHException, NoValidConnectionsError, error), ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
             return False
         
@@ -163,7 +165,7 @@ class FTPClient:
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_ftp_disconnected'), self._mh.fromhere())  
             return True
             
-        except SSHException, ex: 
+        except (SSHException, NoValidConnectionsError, error), ex: 
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())       
             return False 
         
@@ -182,7 +184,7 @@ class FTPClient:
             names = self._client.listdir()                            
             return names  
     
-        except SSHException, ex: 
+        except (SSHException, NoValidConnectionsError, error), ex: 
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())       
             return None       
         
@@ -216,7 +218,7 @@ class FTPClient:
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_ftp_cur_dir', self._path), self._mh.fromhere())  
             return True
          
-        except SSHException, ex:
+        except (SSHException, NoValidConnectionsError, error), ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())        
             return False  
         
@@ -261,7 +263,7 @@ class FTPClient:
               
             return True
  
-        except SSHException, ex:
+        except (SSHException, NoValidConnectionsError, error), ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
             if (path.exists(path)):
                 remove(path)                     
@@ -308,7 +310,7 @@ class FTPClient:
             
             return True
  
-        except SSHException, ex:
+        except (SSHException, NoValidConnectionsError, error), ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())                    
             return False  
         
@@ -340,7 +342,7 @@ class FTPClient:
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_ftp_file_deleted'), self._mh.fromhere())        
             return True              
             
-        except SSHException, ex:     
+        except (SSHException, NoValidConnectionsError, error), ex:     
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())                             
             return False   
         
@@ -372,7 +374,7 @@ class FTPClient:
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_ftp_dir_made'), self._mh.fromhere())    
             return True
                       
-        except SSHException, ex:     
+        except (SSHException, NoValidConnectionsError, error), ex:     
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())                             
             return False              
         
@@ -404,6 +406,6 @@ class FTPClient:
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_ftp_dir_removed'), self._mh.fromhere())     
             return True
                       
-        except SSHException, ex:     
+        except (SSHException, NoValidConnectionsError, error), ex:     
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())                             
             return False                                    
