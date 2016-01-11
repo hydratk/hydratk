@@ -8,10 +8,10 @@
 
 """
 
-from hydratk.lib.network.jms import client
+from hydratk.lib.network.jms import jms_client
 from hydratk.lib.system import fs
 
-class JMSClient(client.JMSClient, object):
+class JMSClient(jms_client.JMSClient, object):
     _request   = None    
     _response  = None
 
@@ -29,7 +29,7 @@ class JMSClient(client.JMSClient, object):
         return self._response
     
     def send(self, jms_correlation_id):
-        return client.JMSClient.send(
+        return jms_client.JMSClient.send(
                                self, 
                                self._request.destination_queue, 
                                self._request.message.content, 
