@@ -45,6 +45,8 @@ msg = {
     'htk_debug_enabled'               : ["Spouštím aplikaci v režimu ladění programu"],
     'htk_lang_set'                    : ["Jazyk nastaven na '{0}'"], 
     'htk_invalid_lang_set'            : ["Jazyk '{0}' není podporován"],
+    'htk_run_mode_set'                : ["Režím spuštění nastaven na '{0} ({1})'"], 
+    'htk_invalid_run_mode_set'        : ["Režim spuštění '{0}' není podporován"],    
     'htk_debug_level_set'             : ["Úroveň režimu ladění programu nastavena na {0}"],
     'htk_msg_router_id_set'           : ["Id pro hlavní router zpráv nastaveno na '{0}'"],
     'htk_msg_router_init_ok'          : ["Router zpráv '{0}' úspěšně inicializován"],

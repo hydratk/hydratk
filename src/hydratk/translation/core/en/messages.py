@@ -44,6 +44,8 @@ msg = {
     'htk_conf_opt_val_err'            : ["Config error, section: '{0}', option: '{1}' incorrect value"],
     'htk_debug_enabled'               : ["Starting application in debug mode"], 
     'htk_lang_set'                    : ["Language set to '{0}'"],
+    'htk_run_mode_set'                : ["Run mode set to '{0} ({1})'"], 
+    'htk_invalid_run_mode_set'        : ["Run mode '{0}' is not supported"],    
     'htk_invalid_lang_set'            : ["Language '{0}' is not supported"],
     'htk_debug_level_set'             : ["Debug level set to {0}"],
     'htk_msg_router_id_set'           : ["Main message router id set to '{0}'"],

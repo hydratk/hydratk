@@ -85,7 +85,7 @@ class Translator():
     def lmsg(self, lang, key,*args):              
         return self._messages[lang][key] % args if self._messages[lang][key] != {} else None
     
-    def msg(self, key, *args):                   
+    def msg(self, key, *args):                            
         return self._messages[key][:self._debug_level][-1].format(*args) if key in self._messages else key       
 
     def add_msg(self,msg, id = ''):            
