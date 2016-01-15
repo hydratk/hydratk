@@ -75,7 +75,8 @@ class CoreHead(EventHandler, Debugger, Profiler, Logger):
     _option           = {}
     _option_param     = {}
     '''Application services pool'''    
-    _app_service      = []   
+    _app_service      = []
+    _run_mode         = const.CORE_RUN_MODE_SINGLE_APP   
     
 
     def _bootstrap(self):                
@@ -86,7 +87,9 @@ class CoreHead(EventHandler, Debugger, Profiler, Logger):
                 if self._runlevel == const.RUNLEVEL_EXTENSIONS:
                     self.run_fn_hook('h_runlevel_cli')
                     if self._runlevel == const.RUNLEVEL_CLI:
-                        self.run_fn_hook('h_runlevel_appl')            
+                        self.run_fn_hook('h_runlevel_core')
+                        if self._runlevel == const.RUNLEVEL_CORE:
+                            self.run_fn_hook('h_runlevel_appl')            
         else:
             pass #already running
         
@@ -425,6 +428,16 @@ class CoreHead(EventHandler, Debugger, Profiler, Logger):
             self.dmsg('htk_on_warning', self._trn.msg('htk_conf_opt_missing', 'General', 'language'), self.fromhere())
             
         
+        try:
+            if (not self.check_run_mode()):                
+                run_mode = self._config['Core']['Options']['run_mode']
+                self._run_mode = run_mode if run_mode in const.core_run_mode_enum_desc else const.DEFAULT_RUN_MODE                                        
+            self.dmsg('htk_on_debug_info', self._trn.msg('htk_run_mode_set', self._run_mode, const.core_run_mode_enum_desc[self._run_mode]), self.fromhere())
+            self._trn.set_language(self._language)
+            self._import_global_messages()                
+        except Exception as exc:
+            self.dmsg('htk_on_warning', self._trn.msg('htk_conf_opt_missing', 'General', 'language'), self.fromhere())
+            
         '''
         TODO: temporary disabled, will be redesigned            
         if 'extensions_dir' in self._config['System']['Extending'] and os.path.exists(self._config['System']['Extending']['extensions_dir']):
@@ -578,7 +591,8 @@ class CoreHead(EventHandler, Debugger, Profiler, Logger):
             self.dmsg('htk_on_debug_info', self._trn.msg('htk_load_global_help_success', self._language), self.fromhere())            
         except ImportError as e:
             self.dmsg('htk_on_error', self._trn.msg('htk_load_global_help_failed', self._language, str(e)), self.fromhere())    
-            
+       
+                
     def _reg_self_command_hooks(self):        
         hooks = [
                 {'command' : 'start', 'callback' : self._start_app },
@@ -612,6 +626,12 @@ class CoreHead(EventHandler, Debugger, Profiler, Logger):
         self._runlevel = const.RUNLEVEL_CLI
         self._set_default_cli_params()
         self._parse_cli_args()
+        return True #required by fn_hook
+    
+    def _runlevel_core(self):
+        self._runlevel = const.RUNLEVEL_CORE
+        #subscribe managers
+        
         return True #required by fn_hook
     
     def _runlevel_appl(self):
@@ -748,6 +768,7 @@ class CoreHead(EventHandler, Debugger, Profiler, Logger):
                 {'fn_id' : 'h_runlevel_config', 'callback' : self._runlevel_config },
                 {'fn_id' : 'h_runlevel_extensions', 'callback' : self._runlevel_extensions },
                 {'fn_id' : 'h_runlevel_cli', 'callback' : self._runlevel_cli },
+                {'fn_id' : 'h_runlevel_core', 'callback' : self._runlevel_core },
                 {'fn_id' : 'h_runlevel_appl', 'callback' : self._runlevel_appl }
             ]
         self.register_fn_hook(hook)
