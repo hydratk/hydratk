@@ -14,7 +14,41 @@ import time
 from datetime import datetime
 from hydratk.core import const, event
 from xtermcolor import colorize
-'''TODO remove const '''
+
+"""
+Debug levels:
+-------------
+0  - off
+1  - application output variables, output data content and status confirmation
+2  - application logic object variables, inter-operational data content, partial construction statuses
+3  - shared libraries data, lower interface statuses, drivers, database connection objects, statuses
+4  - configuration loading, apply changes
+5  - event states, fn_hooks, ipc triggers, signals, shared memory, queue dumps
+10 - core application
+11 - core core application layer init
+12 - core commandline input triggers
+13 - core extensions init
+14 - core config, config apply
+15 - core baseinit
+16 - core shutdown
+
+Default channel filters:
+------------------------
+debug level  - channel
+10             1,2 
+11             1,3 
+12             1,4
+13             1,5 
+14             1,6 
+15             1,7 
+16             1,8
+
+1              10,11 
+2              10,12
+3              10,13
+4              10,14
+5              10,15
+"""
 
 class Debugger(object):
     _debug = False
