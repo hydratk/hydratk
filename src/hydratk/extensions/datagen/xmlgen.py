@@ -1,13 +1,25 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit library
+"""This code is a part of Datagen extension
 
-.. module:: lib.data.xmlgen
+.. module:: datagen.xmlgen
    :platform: Unix
    :synopsis: Module for sample XML generation from WSDL/XSD
 .. moduleauthor:: Petr Rašek <bowman@hydratk.org>
 
 """
 
+"""
+Events:
+-------
+xmlgen_before_import_spec
+xmlgen_after_import_spec
+xmlgen_before_write
+xmlgen_after_write
+
+"""
+
+from hydratk.core.masterhead import MasterHead
+from hydratk.core import event
 from suds.client import Client, TypeNotFound
 from lxml.etree import Element, SubElement, tostring
 from os import path
@@ -38,65 +50,119 @@ wsdl_tmpl = """
 
 class XMLGen():
     
+    _mh = None
     _client = None
+    
+    def __init__(self):
+        
+        self._mh = MasterHead.get_head()
     
     @property
     def client(self):
         
         return self._client
     
-    def import_spec(self, filename, spec_type='wsdl'):
+    def import_spec(self, filename):
         """Method imports specification
         
         Args:
             filename (str): filename
-            spec_type (str): specification type, wsdl|xsd
+            
+        Returns:
+            bool: result
         
         Raises:
-            error: ValueError     
+            error: ValueError
+            event: xmlgen_before_import_spec
+            event: xmlgen_after_import_spec     
                 
         """     
     
-        if (not path.exists(filename)):
-            raise ValueError('File {0} not found'.format(filename)) 
+        try:
     
-        spec_type = spec_type.upper()
-        if (spec_type == 'WSDL'):
-            self._client = Client('file://'+filename, cache=None)
-        elif (spec_type == 'XSD'):
-            wsdl = self._create_dummy_wsdl(filename)
-            self._client = Client('file://'+wsdl, cache=None)
-        else:
-            raise ValueError('Unknown specification type: {0}'.format(spec_type))
+            self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('datagen_xmlgen_import_spec', filename), self._mh.fromhere()) 
+            ev = event.Event('xmlgen_before_import_spec', filename)
+            if (self._mh.fire_event(ev) > 0):
+                filename = ev.argv(0)    
+    
+            if (ev.will_run_default()): 
+                if (not path.exists(filename)):
+                    raise ValueError('File {0} not found'.format(filename)) 
+                
+                spec_type = (filename.split('.')[-1]).upper()
+                filename = path.join(path.dirname(path.abspath(filename)), filename)
+                
+                if (spec_type == 'WSDL'):
+                    self._client = Client('file://'+filename, cache=None)
+                elif (spec_type == 'XSD'):
+                    wsdl = self._create_dummy_wsdl(filename)
+                    self._client = Client('file://'+wsdl, cache=None)
+                else:
+                    raise ValueError('Unknown specification type: {0}'.format(spec_type))
+                
+            self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('datagen_xmlgen_spec_imported'), self._mh.fromhere())   
+            ev = event.Event('xmlgen_after_import_spec')
+            self._mh.fire_event(ev)            
+            
+            return True                
+        
+        except Exception, ex:
+            self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
+            return False         
 
-    def toxml(self, root, envelope=False):
-        """Method creates sample xml
+    def toxml(self, root, outfile=None, envelope=False):
+        """Method creates sample xml file
         
        Args:
             root (str): root element name
+            outfile (str): output filename, default sample.xml
             envelope (bool): create SOAP envelope 
 
         Returns:
-            str: sample xml
+            bool: result
         
         Raises:
-            error: ValueError     
+            error: ValueError 
+            event: xmlgen_before_write
+            event: xmlgen_after_write    
                 
         """  
     
-        if (self._client == None):
-            raise ValueError('Specification is not imported yet')        
+        try:
+    
+            self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('datagen_xmlgen_write_sample'), self._mh.fromhere()) 
+            ev = event.Event('jsongen_before_write', root, outfile, envelope)
+            if (self._mh.fire_event(ev) > 0):
+                root = ev.argv(0)
+                outfile = ev.argv(1)
+                envelope = ev.argv(2)     
+    
+            if (ev.will_run_default()): 
+                if (self._client == None):
+                    raise ValueError('Specification is not imported yet')        
             
-        if (envelope): 
-            ns = '{%s}' % 'http://schemas.xmlsoap.org/soap/envelope/'
-            doc = Element(ns+'Envelope')
-            SubElement(doc, ns+'Header')
-            body = SubElement(doc, ns+'Body')
-            body.append(self._toxml_rec(root)) 
-        else:
-            doc = self._toxml_rec(root)
+                if (envelope): 
+                    ns = '{%s}' % 'http://schemas.xmlsoap.org/soap/envelope/'
+                    doc = Element(ns+'Envelope')
+                    SubElement(doc, ns+'Header')
+                    body = SubElement(doc, ns+'Body')
+                    body.append(self._toxml_rec(root)) 
+                else:
+                    doc = self._toxml_rec(root)
+                    
+                outfile = 'sample.xml' if (outfile == None) else outfile
+                with open(outfile, 'w') as f: 
+                    f.write(tostring(doc, encoding='UTF-8', xml_declaration=True, pretty_print=True))
+                    
+            self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('datagen_xmlgen_sample_written'), self._mh.fromhere())   
+            ev = event.Event('xmlgen_after_write')
+            self._mh.fire_event(ev)            
             
-        return tostring(doc, encoding='UTF-8', xml_declaration=True, pretty_print=True)
+            return True                      
+    
+        except Exception, ex:
+            self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
+            return False     
     
     def _toxml_rec(self, root, obj=None):
         """Method creates sample xml document

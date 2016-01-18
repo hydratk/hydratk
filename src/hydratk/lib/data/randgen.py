@@ -35,17 +35,18 @@ def gen_sysdate():
     
     return strftime('%Y-%m-%d')
 
-def gen_message_id():
+def gen_message_id(prefix='hydratk'):
     """Method generates random message id
         
     Args:
+        prefix (str): message prefix
         
     Returns:
         str: message id in format hydratk-time-random 3-digit number  
                 
     """       
     
-    return 'hydratk-{0}-{1}'.format(time(), gen_id(3))
+    return '{0}-{1}-{2}'.format(prefix, time(), gen_id(3))
 
 def gen_id(n=10):
     """Method generates random number

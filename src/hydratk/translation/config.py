@@ -12,5 +12,5 @@ packages_map  = {
   'hydratk.lib.network.soap.client'  : 'hydratk.translation.lib.network.soap.client',
   'hydratk.lib.network.term.client'  : 'hydratk.translation.lib.network.term.client',
   
-  'hydratk.lib.bridge.java'          : 'hydratk.translation.lib.bridge.java'               
+  'hydratk.lib.bridge.java'          : 'hydratk.translation.lib.bridge.java'         
 }

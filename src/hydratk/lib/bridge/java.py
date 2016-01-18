@@ -94,8 +94,8 @@ class JavaBridge:
         try:
             
             if (self._status):
-                self._mh.dmsg('htk_on_warning', self._mh._trn.msg('htk_java_already_started'), self._mh.fromhere())
-                return False
+                self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_java_already_started'), self._mh.fromhere())
+                return True
             elif (isJVMStarted()):
                 self._mh.dmsg('htk_on_warning', self._mh._trn.msg('htk_java_restart_tried'), self._mh.fromhere())
                 return False
