@@ -33,10 +33,12 @@ help_cmd_args = {
 ''' Hydra Native Options '''
 help_opt = {
    'debug'             : { '{h}-d, --debug <level>{e}' : 'debug turned on with specified level > 0' },
+   'debug-channel'     : { '{h}-e, --debug-channel <channel number, ..>{e}' : 'debug channel filter turned on' },
    'config'            : { '{h}-c, --config <file>{e}' : 'reads the alternate configuration file' },
    'force'             : { '{h}-f, --force{e}' : 'enforces command' },
    'interactive'       : { '{h}-i, --interactive{e}' : 'turns on interactive mode' },
-   'language'          : { '{h}-l, --language <language>{e}' : 'sets the text output language, for the list of available languages check the docs' },   
+   'language'          : { '{h}-l, --language <language>{e}' : 'sets the text output language, the list of available languages is specified in the docs' },
+   'run-mode'          : { '{h}-m, --run-mode <mode>{e}' : 'sets the running mode, the list of available languages is specified in the docs' },   
    'config-db-file'    : { '{h}--config-db-file <file>{e}' :  { 'description' : 'optional, database file path', 'commands' : ('create-config-db')}},
    'ext-skel-path'     : { '{h}--ext-skel-path <path>{e}' : { 'description' : 'volitelné, cesta k adresáři kde bude vytvořena kostra rozšíření HydraTK', 'commands' : ('create-ext-skel')}},
    'lib-skel-path'     : { '{h}--lib-skel-path <path>{e}' : { 'description' : 'volitelné, cesta k adresáři kde bude vytvořena kostra knihovny HydraTK', 'commands' : ('create-lib-skel')}}

@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*-
+"""This code is a part of Hydra Toolkit library
+
+.. module:: lib.data.xmlgen
+   :platform: Unix
+   :synopsis: Utilities for advanced work and validation of xml data format
+.. moduleauthor:: Petr Czaderna <pc@hydratk.org>
+
+"""
 from lxml import etree
 from hydratk.lib.system import fs
 import os

@@ -22,22 +22,26 @@ long_opts         = [
                      'debug',
                      'config',
                      'config-db-file',
+                     'debug-channel',
                      'ext-skel-path',                     
                      'force',
                      'interactive',
                      'language',
-                     'lib-skel-path',                  
+                     'lib-skel-path',
+                     'run-mode'                  
                     ]
-short_opts        = 'dcilxt'
+short_opts        = 'dcilmxte'
 
 getopt_long_opts  = [
                      'config=',
                      'config-db-file=',
                      'ext-skel-path=',
                      'debug=',
+                     'debug-channel=',
                      'force',
                      'interactive',
                      'language=',
-                     'lib-skel-path='                    
+                     'lib-skel-path='
+                     'run-mode='                    
                     ]
-getopt_short_opts = 'c:d:fil:'                    
+getopt_short_opts = 'c:d:e:fil:m:'                    

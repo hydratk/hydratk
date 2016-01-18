@@ -40,3 +40,16 @@ class PropertyHead(object):
     @property
     def runlevel(self):
         return self._runlevel
+    
+    @property
+    def run_mode(self):
+        return self._run_mode
+    
+    @run_mode.setter
+    def run_mode(self, mode):
+        if mode in(
+                   const.CORE_RUN_MODE_PP_APP,
+                   const.CORE_RUN_MODE_PP_APP,
+                   const.CORE_RUN_MODE_PP_DAEMON                   
+                   ):
+            self._run_mode = mode

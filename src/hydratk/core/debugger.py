@@ -51,9 +51,23 @@ debug level  - channel
 """
 
 class Debugger(object):
-    _debug = False
-    _debug_level = 1
-    #_stdio_lock = multiprocessing.Lock()
+    _debug             = False
+    _debug_level       = 1
+    _debug_channel     = []
+    _debug_channel_map = {
+                           1 : [10,11], 
+                           2 : [10,12],
+                           3 : [10,13],
+                           4 : [10,14],
+                           5 : [10,15],                          
+                          10 : [1,2], 
+                          11 : [1,3], 
+                          12 : [1,4],
+                          13 : [1,5], 
+                          14 : [1,6], 
+                          15 : [1,7], 
+                          16 : [1,8]
+                         }    
     
     def fromhere(self, trace_level = 1):
         fname = sys._getframe(trace_level).f_code.co_filename
@@ -91,10 +105,23 @@ class Debugger(object):
         if (self._debug):        
             self.fire_event(event.Event(event_id,*args))
         
+    def match_channel(self, channel):
+        if len(self._debug_channel) == 0: # channel filters off
+            return True
+        else:        
+            if type(channel).__name__ == 'list':
+                return len(list(set(self._debug_channel).intersection(channel))) > 0
+                 
+            if type(channel).__name__ == 'int':
+                return channel in self._debug_channel
+            
+            return False #unknown type
+                
+        
             
     ''' msg, location, level, channel'''
-    def dout(self, msg, location = {'file' : '', 'line' : '', 'module': '', 'func' : '', 'call_path' : ''}, level = 1, channel  = const.DEBUG_CHANNEL):                
-        if (self._debug and self._debug_level >= level and channel == const.DEBUG_CHANNEL):
+    def dout(self, msg, location = {'file' : '', 'line' : '', 'module': '', 'func' : '', 'call_path' : ''}, level = 1, channel  = []):                
+        if (self._debug and self._debug_level >= level and self.match_channel(channel) == True):
             thrid = '0' if multiprocessing.current_process().name == 'MainProcess' else multiprocessing.current_process().name            
             msg_format = '[{timestamp}] Debug({level}): {callpath}:{func}:{thrid}: {msg}'
             if 'msg_format' in self.cfg['System']['Debug'] and self.cfg['System']['Debug']['msg_format'] != '':

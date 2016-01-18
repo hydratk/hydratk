@@ -9,9 +9,9 @@
 """
 
 APP_NAME               = "HydraTK"
-APP_VERSION            = "0.2.0a.dev0"
+APP_VERSION            = "0.2.0a.dev1"
 APP_REVISION           = ""
-APP_DEVEL_YEAR         = "2009 - 2015"
+APP_DEVEL_YEAR         = "2009 - 2016"
 APP_AUTHORS            = "Petr Czaderna <pc@hydratk.org>, HydraTK Team"
 CP_STRING              = "(c) "+ APP_DEVEL_YEAR +" "+ APP_AUTHORS  
 CONFIG_FILE            = "/etc/hydratk/hydratk.conf"
@@ -19,8 +19,20 @@ EXT_CONFIG_DIR         = "/etc/hydratk/conf.d"
 NUM_CORE_THREADS       = 4
 DEFAULT_LANGUAGE       = "en"
 DEBUG_LEVEL            = 1
-DEBUG_CHANNEL          = 1
+DEBUG_CHANNEL          = [1,10]
+DEFAULT_RUN_MODE       = 1
 
+''' Core running mode '''
+CORE_RUN_MODE_SINGLE_APP = 1
+CORE_RUN_MODE_PP_APP     = 2
+CORE_RUN_MODE_PP_DAEMON  = 3
+
+core_run_mode_enum_desc = {
+    CORE_RUN_MODE_SINGLE_APP : 'CORE_RUN_MODE_SINGLE_APP',
+    CORE_RUN_MODE_PP_APP     : 'CORE_RUN_MODE_PP_APP',
+    CORE_RUN_MODE_PP_DAEMON  : 'CORE_RUN_MODE_PP_DAEMON'
+}
+ 
 ''' Core thread activity statuses '''
 CORE_THREAD_EXIT       = 0
 CORE_THREAD_ALIVE      = 1
@@ -59,9 +71,10 @@ PROCESS_JOIN_TIMEOUT = 10
 RUNLEVEL_SHUTDOWN   = 0
 RUNLEVEL_BASEINIT   = 1
 RUNLEVEL_CONFIG     = 2
-RUNLEVEL_EXTENSIONS = 3
-RUNLEVEL_CLI        = 4          
-RUNLEVEL_APPL       = 5
+RUNLEVEL_EXTENSIONS = 3 
+RUNLEVEL_CLI        = 4
+RUNLEVEL_CORE       = 5          
+RUNLEVEL_APPL       = 6
 
 '''Events'''
 EVENT_HOOK_PRIORITY = 50

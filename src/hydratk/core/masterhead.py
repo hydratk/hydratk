@@ -82,19 +82,22 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
                             
         self._trn = translator.Translator()
         self._trn.set_debug_level(const.DEBUG_LEVEL)
+        
         """Checking for the --lang param presence"""
         if self.check_language() == False:          
             self._trn.set_language(self._language)
         
-        self._import_global_messages()
-                
-        # self.dmsg('htk_on_warning', self._trn.msg('htk_cs', 'print_short_desc'), self.fromhere())        
+        self._import_global_messages()                        
         
         self._reg_self_fn_hooks()
         self._reg_self_command_hooks()
         self._reg_self_event_hooks()        
+        
         if (len(sys.argv) > 1 and sys.argv[1] != 'help'):
             self.check_config()
+            
+            '''Checking run mode'''        
+            self.check_run_mode()
                                           
     def exception_handler(self, extype, value, traceback):
         """Exception handler hook
@@ -178,7 +181,36 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
               config = mh.get_config()         
         """        
         return self._config
-                                
+
+    def check_run_mode(self):
+        """Method checks for run_mode input parameter from command line and validates if it's supported 
+        
+        Returns:            
+              run_mode_changed (bool) - True in case if it's supported otherwise False 
+        
+        """                
+        run_mode_changed = False
+        i = 0
+        for o in sys.argv:            
+            if o == '-m' or o == '--run-mode':                
+                if sys.argv.index(o) < (len(sys.argv) - 1):                    
+                    mode = sys.argv[i + 1]                    
+                    if (mode in [
+                                 const.CORE_RUN_MODE_SINGLE_APP,
+                                 const.CORE_RUN_MODE_PP_APP,
+                                 const.CORE_RUN_MODE_PP_DAEMON
+                                ]):                        
+                        self._run_mode = mode
+                        self._trn.set_language(self._language)                        
+                        run_mode_changed = True
+                        break
+                    else:
+                        self.dmsg('htk_on_warning', self._trn.msg('htk_invalid_run_mode_set', mode), self.fromhere())
+                else:
+                    self.dmsg('htk_on_warning', self._trn.msg('htk_opt_ignore', 'run_mode', mode), self.fromhere())                    
+            i = i + 1
+        return run_mode_changed
+                                    
     def check_language(self):
         """Method checks for language change input parameters from command line and validates if it's supported 
         
@@ -233,10 +265,10 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
         return config_changed
 
     def check_debug(self):
-        """Method checks for language change input parameters from command line and validates if it's supported 
+        """Method checks for debug option with specified level parameter from command line 
         
         Returns:            
-              language_changed (bool) - True in case if it's supported otherwise False 
+              debug_changed (bool) - True in case if it's set otherwise False 
         
         """                
         debug_changed = False
@@ -257,7 +289,40 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
                     self.dmsg('htk_on_warning', self._trn.msg('htk_opt_ignore', 'Debug', ''), self.fromhere())                    
             i = i + 1
         return debug_changed
-         
+
+    def check_debug_channel(self):
+        """Method checks for debug channel option with specified channel filters from command line
+        
+        Returns:            
+              debug_channel_changed (bool) - True in case if it's set otherwise False 
+        
+        """                
+        debug_channel_changed = False
+        i = 0
+        for o in sys.argv:            
+            if o == '-e' or o == '--debug-channel':                
+                if sys.argv.index(o) < (len(sys.argv) - 1):                    
+                    debug_channel = sys.argv[i + 1]  
+                    if unicode(debug_channel,'utf-8').isnumeric():
+                        self._debug_channel = [int(debug_channel)]                                         
+                        self.dmsg('htk_on_debug_info', self._trn.msg('htk_debug_level_set', self._debug_level), self.fromhere())                  
+                        debug_channel_changed = True
+                    elif type(debug_channel).__name__ == 'str' and debug_channel != '' and ',' in debug_channel:
+                        dch = debug_channel.split(',')
+                        new_filter = []
+                        for dchf in dch:
+                            if dchf != '':
+                                debug_channel_changed = True 
+                                new_filter.append(int(dchf))
+                        if debug_channel_changed:
+                            self._debug_channel = new_filter
+                    else:
+                        self.dmsg('htk_on_warning', self._trn.msg('htk_invalid_debug_channel_set', debug_channel), self.fromhere())
+                else:
+                    self.dmsg('htk_on_warning', self._trn.msg('htk_opt_ignore', 'debug-channel', ''), self.fromhere())                    
+            i = i + 1
+        return debug_channel_changed
+             
     def match_short_option(self, opt, value_expected=False):
         """Method registers command line short option check       
     
@@ -455,7 +520,7 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
               from hydratk.core.MasterHead import MasterHead
               
               multi_hook = [
-                           {'command_option' : 'option', 'callback' : obj1.fc_command_handler1 }, # you can specify multiple command hooks
+                           {'command_option' : 'option', 'callback' : obj1.fc_command_handler1 }, # you can specify multiple option hooks
                            {'command_option' : 'mycommand2', 'callback' : obj2.fc_command_handler2 },
                            {'command_option' : 'mycommand3', 'callback' : fc_command_handler3 }
                           ]

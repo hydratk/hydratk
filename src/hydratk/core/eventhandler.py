@@ -28,7 +28,7 @@ class EventHandler:
         self.dout(*args)       
     
     def _eh_htk_on_warning(self, oevent, *args):
-        if int(self.cfg['System']['Warnings']['display']) == 1:
+        if int(self.cfg['System']['Warnings']['enabled']) == 1:
             self.wout(*args)
     
     def _eh_htk_on_extension_warning(self, oevent, *args):
