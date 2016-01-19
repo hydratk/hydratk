@@ -26,6 +26,10 @@ inet_after_sniff
 
 from hydratk.core.masterhead import MasterHead
 from hydratk.core import event
+from logging import getLogger, ERROR
+
+getLogger('scapy.runtime').setLevel(ERROR)
+
 from scapy.all import error
 
 mh = MasterHead.get_head()
