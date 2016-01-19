@@ -5,31 +5,32 @@ FTP
 ===
 
 Library hydratk.lib.network.ftp.client provides ftp client.
+Method FTPClient is factory method which requires attribute engine to create 
+proper FTPClient object instance. Additional attributes are passed as args, kwargs. 
 
 **Supported protocols**:
 
-- FTP
-- FTPS
-- SFTP
-- TFTP
+- FTP - module ftp_client
+- SFTP - module sftp_client
+- TFTP - module tftp_client
 
 **Methods**:
 
 - **connect** - connect to server
-- **disconnect** - disconnect from server (FTP, FTPS, SFTP)
-- **list_dir** - get directory content (FTP, FTPS, SFTP)
-- **change_dir** - change remote directory (FTP, FTP, SFTP)
+- **disconnect** - disconnect from server (FTP, SFTP)
+- **list_dir** - get directory content (FTP, SFTP)
+- **change_dir** - change remote directory (FTP, SFTP)
 - **download_file** - download file from server
 - **upload_file** - upload file to server
-- **delete_file** - delete file on server (FTP, FTPS, SFTP)
-- **make_dir** - make directory on server (FTP, FTPS, SFTP)
-- **remove_dir** - remove directory from server (FTP, FTPS, SFTP)
+- **delete_file** - delete file on server (FTP, SFTP)
+- **make_dir** - make directory on server (FTP, SFTP)
+- **remove_dir** - remove directory from server (FTP, SFTP)
 
 Examples
 ========
 
 See following examples for FTP, SFTP, TFTP protocols.
-The usage for FTPS protocol is similar to FTP.
+Secured protocol variant FTP is initialized using constructor attribute secured.
 
 FTP
 ^^^

@@ -5,10 +5,12 @@ Terminal
 ========
 
 Library hydratk.lib.network.term.client provides terminal client.
+Method TermClient is factory method which requires attribute engine to create 
+proper TermClient object instance. Additional attributes are passed as args, kwargs.
 
 **Supported protocols**:
 
-- SSH
+- SSH - module ssh_client
 
 **Methods**:
 

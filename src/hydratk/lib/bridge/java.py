@@ -67,16 +67,19 @@ class JavaBridge:
         
     @property
     def jvm_path(self):
+        """ JVM path property getter """
         
         return self._jvm_path
     
     @property
     def classpath(self):
+        """ JVM classpath property getter """
         
         return self._classpath
     
     @property
     def status(self):
+        """ JVM status property getter """
         
         return self._status                                                        
         
@@ -275,7 +278,7 @@ class JavaBridge:
           
         
     def init_hashmap(self, dictionary):
-        """Method initializes Java hashmap
+        """Method initializes Java HashMap
         
         Args:
            dictionary (dict): Python dictionary

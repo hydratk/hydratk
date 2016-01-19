@@ -55,36 +55,44 @@ class TermClient:
             
     @property
     def client(self):
+        """ SSH client property getter """
         
         return self._client
     
     @property
     def host(self):
+        """ server host property getter """
         
         return self._host
     
     @property
     def port(self):
+        """ Sserver port property getter """
         
         return self._port
     
     @property
     def user(self):
+        """ username property getter """
         
         return self._user
     
     @property
     def passw(self):
+        """ user password property getter """
         
         return self._passw
     
     @property
     def verbose(self):
+        """ verbose mode property getter """
         
         return self._verbose   
     
     @property
     def is_connected(self): 
+        """ is client connected property getter """
+        
         return self._is_connected                
                 
     def connect(self, host, port=22, user=None, passw=None):

@@ -24,7 +24,7 @@ help_cmd = {
 help_opt = {             
    'spec' : { '{h}--spec <cesta>{e}' : { 'description' : 'soubor se specifikací', 'commands' : ('gen-asn1', 'gen-json', 'gen-xml')}},
    'input' : { '{h}--input <cesta>{e}' : { 'description' : 'vstupní soubor', 'commands' : ('gen-asn1')}},
-   'output' : { '{h}[--output <cesta>]{e}' : { 'description' : 'výstupní soubor, default vstupní soubor s jinou příponou', 'commands' : ('gen-asn1', 'gen-json', 'gen-xml')}},
+   'output' : { '{h}[--output <cesta>]{e}' : { 'description' : 'výstupní soubor, default vstupní soubor s jinou příponou nebo sample.json, sample.xml', 'commands' : ('gen-asn1', 'gen-json', 'gen-xml')}},
    'action' : { '{h}--action encode|decode{e}' : { 'description' : 'akce', 'commands' : ('gen-asn1')}},
    'element' : { '{h}--element <název>{e}' : { 'description' : 'název elementu ze specifikace', 'commands' : ('gen-asn1', 'gen-xml')}},
    'envelope' : { '{h}[--envelope]{e}' : { 'description' : 'generovat včetně SOAP obálky', 'commands' : ('gen-xml')}}            

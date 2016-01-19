@@ -44,31 +44,37 @@ class DBClient():
         
     @property
     def client(self):
+        """ MySQL client property getter """
         
         return self._client
     
     @property
     def host(self):
+        """ server host property getter """
         
         return self._host
     
     @property
     def port(self):
+        """ server port property getter """
         
         return self._port
     
     @property
     def sid(self):
+        """ server SID property getter """
         
         return self._sid
     
     @property
     def user(self):
+        """ username property getter """
         
         return self._user
     
     @property
     def passw(self):
+        """ user password property getter """
         
         return self._passw           
         

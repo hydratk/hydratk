@@ -5,22 +5,29 @@ JMS
 ===
 
 Library hydratk.lib.network.jms.client provides jms client.
+Method JMSClient is factory method which requires attribute engine to create 
+proper JMSClient object instance. Additional attributes are passed as args, kwargs. 
 
-**Verified JMS providers**:
+**Supported protocols**
 
-- WebLogic
+- JMS - module jms_client
+- STOMP - module stomp_client
+- AMQP - module amqp_client
 
 **Methods**:
 
 - **connect** - connect to JMS provider 
 - **disconnect** - disconnect from JMS provider 
-- **send** - send message to queue
+- **send** - send message to queue|topic
+- **receive** - receive message from queue
+- **browse** - browse queue
+- **close** - stop JVM, supported for JMS
 
 Installation
 ============
 
 Part of JMS client library is implemented in Java as a wrapper application which uses Java JMS API.
-Python client library executes JVM and communicates via stdin, stdout streams with the wrapper.
+Python client library uses Java bridge to create Java object instance.
 
 Specific Java libraries are needed to access JMS providers (WebLogic, HornetQ, OpenMQ, ActiveMQ etc.). 
 JMS API has no low level communication protocol specification so there is no universal client library.
@@ -29,36 +36,113 @@ These libraries are not bundled with hydra.
 After hydratk installation do following actions:
 
 1. Check that directory /var/local/hydratk/java was created, is writable and contains files: JMSClient.java, JMSClient.class, javaee.jar
-2. Store specific client jar file to same directory (i.e. weblogic.jar).
+2. Store specific client jar file to same directory (i.e. activemq-all-5.13.0.jar).
 
 Examples
 ========
 
+JMS
+^^^
+
   .. code-block:: python
   
      # import library
-     import hydratk.lib.network.jms.client as jms
+     import hydratk.lib.network.jms.client as jms    
     
      # initialize client
-     client = jms.JMSClient()
+     client = jms.JMSClient('JMS', verbose=True)
      
-     # connect to provider
-     connection_factory = 'javax/jms/QueueConnectionFactory'
-     initial_context_factory = 'weblogic.jndi.WLInitialContextFactory'
-     provider_url = 't3://sxcipppr1.cz:8301'
+     # connect to server
+     properties = {}
+     properties['provider_url'] = 'tcp://localhost:61616'
+     properties['initial_context_factory'] = 'org.apache.activemq.jndi.ActiveMQInitialContextFactory'
      
      # returns bool
-     client.connect(connection_factory, initial_context_factory, provider_url) 
+     client.connect('ConnectionFactory', properties) 
      
      # send message
-     destination = 'cipesb/gf/cip2ba/queue/request'
-     jms_type = 'BA-GF.BillingCustomerManagement-2.0.manageCustomer.Request'
-     message = '<ManageCustomer><id>1</id><name>Charlie Bowman</name></ManageCustomer>'
-     correlation_id = 'hydratk-123456'
+     headers = {}
+     headers['JMSCorrelationID'] = '3141592654-xxx'
+     headers['JMSType'] = 'sample'
+      
+     # returns bool  
+     client.send('dynamicQueues/HydraQueue', 'xxx', headers=headers)
      
+     # browse queue, search messages of given JMS type
+     messages = client.browse('dynamicQueues/HydraQueue', jms_type='sample')
+     
+     # receive multiple messages
+     messages = client.receive('dynamicQueues/HydraQueue', cnt=5) 
+     
+     # disconnect from server
      # returns bool
-     client.send(destination, jms_type, message, correlation_id)
+     client.disconnect()
      
-     # disconnect from provider
+     # stop JVM
+     client.close()
+     
+STOMP
+^^^^^
+
+  .. code-block:: python
+  
+     # import library
+     import hydratk.lib.network.jms.client as jms    
+    
+     # initialize client
+     client = jms.JMSClient('STOMP')
+     
+     # connect to server     
+     # returns bool
+     client.connect('localhost', 61613, 'admin', 'password') 
+     
+     # send message
+     headers = {}
+     headers['JMSCorrelationID'] = '3141592654-xxx'
+     headers['JMSType'] = 'sample'
+      
+     # returns bool  
+     client.send('HydraQueue', 'xxx', headers=headers)
+     
+     # browse queue, search messages of given JMS type
+     messages = client.browse('HydraQueue', cnt=3, jms_type='pokusny')
+     
+     # receive multiple messages
+     messages = client.receive('HydraQueue', cnt=5) 
+     
+     # disconnect from server
+     # returns bool
+     client.disconnect()
+     
+AMQP
+^^^^
+
+  .. code-block:: python
+  
+     # import library
+     import hydratk.lib.network.jms.client as jms    
+    
+     # initialize client
+     client = jms.JMSClient('AMQP')
+     
+     # connect to server     
+     # returns bool
+     client.connect('localhost', 5672, 'admin', 'password')
+     
+     # send message
+     headers = {}
+     headers['JMSCorrelationID'] = '3141592654-xxx'
+     headers['JMSType'] = 'sample'
+      
+     # returns bool  
+     client.send('HydraQueue', 'xxx', headers=headers)
+     
+     # browse queue, search messages of given JMS type
+     messages = client.browse('HydraQueue', cnt=3, jms_type='pokusny')
+     
+     # receive multiple messages
+     messages = client.receive('HydraQueue', cnt=5) 
+     
+     # disconnect from server
      # returns bool
      client.disconnect()

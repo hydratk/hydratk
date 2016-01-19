@@ -10,13 +10,13 @@
 import time
 
 
-def do_until(call, delay = 1, until_call_result, until_max_attempts = 10, until_duration = None, until_exact_time = None):
+def do_until(call, until_call_result, delay = 1, until_max_attempts = 10, until_duration = None, until_exact_time = None):
     """Function emulates do..until condition loop
      
     Args:
-       call (tuple): function call in format (callable, param1, param2 ..)
-       delay (mixed): int, float, None - delay between cycles          
+       call (tuple): function call in format (callable, param1, param2 ..)              
        until_call_result (mixed): function call result stop loop value
+       delay (mixed): int, float, None - delay between cycles   
        until_max_attempts(mixed): int, None - max call attempts stop loop value
        until_duration(mixed): int, float, None - callback repeating duration limit stop loop value
        until_exact_time(mixed): int, float, None - callback repeating till exact time stop loop value

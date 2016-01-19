@@ -68,36 +68,43 @@ class DBClient:
          
     @property
     def bridge(self):
+        """ Java bridge property getter """
         
         return self._bridge
 
     @property
     def client(self):
+        """ JDBC client property getter """
         
         return self._client
     
     @property
     def verbose(self):   
+        """ verbose mode property getter """
         
         return self._verbose   
     
     @property
     def driver(self):   
+        """ JDBC driver property getter """
         
         return self.driver 
     
     @property
-    def conn_str(self):   
+    def conn_str(self):  
+        """ connection string property getter """ 
         
         return self._conn_str 
     
     @property
-    def user(self):   
+    def user(self): 
+        """ username property getter """  
         
         return self._user
     
     @property
-    def passw(self):   
+    def passw(self): 
+        """ user password property getter """  
         
         return self._passw                             
         

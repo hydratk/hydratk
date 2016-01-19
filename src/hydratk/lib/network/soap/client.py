@@ -59,6 +59,60 @@ class SOAPClient:
             logger.setLevel(DEBUG), handler.setLevel(DEBUG)
             logger.addHandler(handler)
             
+    @property
+    def client(self):
+        """ SOAP client property getter """
+        
+        return self._client
+    
+    @property
+    def wsdl(self):
+        """ WSDL property getter """
+        
+        return self._wsdl
+    
+    @property
+    def url(self):
+        """ URL property getter """
+        
+        return self._url     
+    
+    @property
+    def location(self):
+        """ WSDL location property getter """
+        
+        return self._location
+    
+    @property
+    def user(self):
+        """ username property getter """
+        
+        return self._user
+    
+    @property
+    def passw(self):
+        """ user password property getter """
+        
+        return self._passw     
+    
+    @property
+    def endpoint(self):
+        """ service endpoint property getter """
+        
+        return self._client
+    
+    @property
+    def headers(self):
+        """ HTTP headers property getter """
+        
+        return self._client
+    
+    @property
+    def verbose(self):
+        """ verbose mode property getter """
+        
+        return self._client                      
+            
     def load_wsdl(self, url, location='remote', user=None, passw=None, endpoint=None, headers=None,
                   transport=None): 
         """Method loads wsdl

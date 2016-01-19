@@ -24,7 +24,7 @@ help_cmd = {
 help_opt = {             
    'spec' : { '{h}--spec <path>{e}' : { 'description' : 'specification filename', 'commands' : ('gen-asn1', 'gen-json', 'gen-xml')}},
    'input' : { '{h}--input <path>{e}' : { 'description' : 'input filename', 'commands' : ('gen-asn1')}},
-   'output' : { '{h}[--output <path>]{e}' : { 'description' : 'output filename, default input filename with changed suffix', 'commands' : ('gen-asn1', 'gen-json', 'gen-xml')}},
+   'output' : { '{h}[--output <path>]{e}' : { 'description' : 'output filename, default input filename with changed suffix or sample.json, sample.xml', 'commands' : ('gen-asn1', 'gen-json', 'gen-xml')}},
    'action' : { '{h}--action encode|decode{e}' : { 'description' : 'action', 'commands' : ('gen-asn1')}},
    'element' : { '{h}--element <title>{e}' : { 'description' : 'element title from specification', 'commands' : ('gen-asn1', 'gen-xml')}},
    'envelope' : { '{h}[--envelope]{e}' : { 'description' : 'generate including SOAP envelope', 'commands' : ('gen-xml')}}                

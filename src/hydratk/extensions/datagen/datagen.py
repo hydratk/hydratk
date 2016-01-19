@@ -57,7 +57,7 @@ class Extension(extension.Extension):
         output = CommandlineTool.get_input_option('--output')        
         
         if (not action):
-            print ('Missing option spec')            
+            print ('Missing option action')            
         elif (action not in ['encode', 'decode']):
             print ('Action not in encode|decode')                         
         elif (not spec):
@@ -74,9 +74,14 @@ class Extension(extension.Extension):
             if (codec.import_spec(spec)):
                 output = None if (not output) else output
                 if (action == 'encode'):
-                    codec.encode(input, element, output)
+                    result = codec.encode(input, element, output)
                 elif (action == 'decode'):  
-                    codec.decode(input, element, output)                            
+                    result = codec.decode(input, element, output) 
+                    
+                if (not result):
+                    print ('{0} error'.format(action))      
+            else:
+                print ('Import specification error')                         
         
     def gen_json(self):
         """Method handles command gen-json
@@ -99,7 +104,10 @@ class Extension(extension.Extension):
             gen = JSONGen()
             if (gen.import_schema(spec)):
                 output = None if (not output) else output
-                gen.tojson(output)
+                if (not gen.tojson(output)):
+                    print ('Generation error')
+            else:
+                print ('Import specification error')    
             
     def gen_xml(self):
         """Method handles command gen-xml
@@ -126,4 +134,7 @@ class Extension(extension.Extension):
             gen = XMLGen()
             if (gen.import_spec(spec)):                
                 output = None if (not output) else output
-                gen.toxml(element, output, envelope)                                    
+                if (not gen.toxml(element, output, envelope)):
+                    print ('Generation error')     
+            else:
+                print ('Import specification error')                                   

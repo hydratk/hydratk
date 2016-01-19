@@ -74,26 +74,31 @@ class Client:
             
     @property
     def lay3_prot(self):
+        """ 3rd layer protocol property getter """
         
         return self._lay3_prot
     
     @property
     def lay4_prot(self):
+        """ 4th layer protocol property getter """
         
         return self._lay4_prot
     
     @property
     def client(self):
+        """ INET client property getter """
         
         return self._client 
     
     @property
     def host(self):
+        """ server host property getter """
         
         return self._host
     
     @property
     def port(self):
+        """ server port property getter """
         
         return self._port   
     

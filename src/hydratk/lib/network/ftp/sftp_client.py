@@ -60,37 +60,44 @@ class FTPClient:
             getLogger('paramiko').setLevel(DEBUG)
             
     @property
-    def client(self):         
+    def client(self): 
+        """ SFTP client property getter """         
         
         return self._client
     
     @property
-    def host(self):         
+    def host(self): 
+        """ server host property getter """         
         
         return self._host
     
     @property
-    def port(self):         
+    def port(self):    
+        """ server port property getter """       
         
         return self._port
     
     @property
-    def user(self):         
+    def user(self):  
+        """ username property getter """         
         
         return self._user
     
     @property
-    def passw(self):         
+    def passw(self): 
+        """ user password property getter """          
         
         return self._passw 
     
     @property
     def path(self):
+        """ remote path property getter """  
         
         return self._path   
     
     @property
     def verbose(self):
+        """ verbose mode property getter """  
         
         return self._verbose                 
         

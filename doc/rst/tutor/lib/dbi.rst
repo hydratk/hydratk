@@ -5,25 +5,43 @@ Database
 ========
 
 Library hydratk.lib.network.dbi.client provides database client.
+Method DBClient is factory method which requires attribute engine to create 
+proper DBClient object instance. Additional attributes are passed as args, kwargs. 
 
 **Supported engines**:
 
-- SQLite
-- Oracle
-- MySQL
-- PostgreSQL
+- SQLite - module sqlite_client
+- Oracle - module oracle_client
+- MySQL - module mysql_client
+- PostgreSQL - module postgresql_client
+- JDBC - module jdbc_client
 
 **Methods**:
 
-- **connect** - connect to database file (SQLite) or database server (Oracle, MySQL, PostgreSQL)  
+- **connect** - connect to database file (SQLite) or database server (Oracle, MySQL, PostgreSQL, JDBC)  
 - **disconnect** - disconnect from database
 - **exec_query** - execute query, prepared statements with variable bindings are supported (use ? character)
 - **call_proc** - call procedure (has no return param) or function (has return param), supported for Oracle, MySQL
+- **close** - stop JVM, supported for JDBC
+
+Installation
+============
+
+Part of JDBC client library is implemented in Java as a wrapper application which uses Java JDBC API.
+Python client library uses Java bridge to create Java object instance.
+
+Specific Java libraries are needed to access database via JDBC. 
+These libraries are not bundled with hydra. 
+
+After hydratk installation do following actions:
+
+1. Check that directory /var/local/hydratk/java was created, is writable and contains files: DBClient.java, DBClient.class.
+2. Store specific client jar file to same directory (i.e. ojdbc6.jar).
 
 Examples
 ========
 
-See following examples for SQLite (database file) and Oracle (database server).
+See following examples for SQLite (database file), Oracle (database server), JDBC to access Oracle.
 The usage for MySQL and PostgreSQL is similar to Oracle.
 
 SQLite
@@ -101,3 +119,37 @@ Oracle
      # disconnect from database
      # returns bool
      client.disconnect() 
+     
+JDBC
+^^^^
+
+  .. code-block:: python
+  
+     # import library
+     import hydratk.lib.network.dbi.client as db
+    
+     # initialize client
+     client = db.DBClient('jdbc', True)  
+     
+     # connect to database
+     lient.connect(driver='oracle.jdbc.driver.OracleDriver', conn_str='jdbc:oracle:thin:@localhost:49161/XE', user='crm', passw='crm')   
+     
+     # select records from table
+     # returns bool, list of rows
+     res, rows = client.exec_query('SELECT * FROM LOV_STATUS')
+     
+     for row in rows:
+         print row 
+     
+     # insert record to table
+     client.exec_query('INSERT INTO LOV_STATUS (id, title) VALUES (4, \'pokus\')')
+                     
+     # returns output param values dictionary                     
+     params = client.call_proc('crm.customer_pck.p_read', param_names, input_values, output_types, 'proc')
+     
+     # disconnect from database
+     # returns bool
+     client.disconnect() 
+     
+     # stop JVM
+     client.stop()

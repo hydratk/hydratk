@@ -19,12 +19,21 @@ Extensions
    :maxdepth: 2  
 
    tutor/ext/benchmark
+   tutor/ext/datagen
    tutor/ext/testenv
    tutor/ext/yoda
    tutor/ext/wings
 
 Libraries
 =========
+
+Bridge
+------
+
+.. toctree::
+   :maxdepth: 2
+   
+   tutor/lib/java
 
 Network
 -------
@@ -37,6 +46,7 @@ Network
    tutor/lib/ftp
    tutor/lib/jms
    tutor/lib/rest
+   tutor/lib/rpc
    tutor/lib/soap
    tutor/lib/term
 

@@ -24,8 +24,12 @@ sys.path.append("/projects/src/hydratk-ext-testenv/src")
 
 # -- General configuration -----------------------------------------------------
 
+autodoc_default_flags = ['members', 'undoc-members']
 autodoc_mock_imports = ['cx_Oracle', 'httplib2', 'jpype', 'jsonlib2', 'lxml', 'lxml.etree', 'MySQLdb',
-                        'paramiko', 'psycopg2', 'pycurl', 'suds', 'web']
+                        'paramiko', 'paramiko.exception', 'paramiko.ssh_exception', 'proton', 'proton.utils', 
+                        'proton.reactor', 'psycopg2', 'pycurl', 'pyx.messaging', 'pyx.system.utils', 
+                        'scapy.all', 'stompest', 'stompest.config', 'stompest.sync', 'stompest.protocol', 
+                        'stompest.error', 'suds', 'suds.client', 'web']
 
 # If your documentation needs a minimal Sphinx version, state it here.
 #needs_sphinx = '1.0'

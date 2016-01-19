@@ -64,21 +64,25 @@ class RESTClient:
             
     @property
     def client(self):
+        """ REST client property getter """
         
         return self._client
     
     @property
     def res_header(self):
+        """ response header property getter """
         
         return self._res_header
     
     @property
     def res_body(self):
+        """ response body property getter """
         
         return self._res_body
     
     @property
     def verbose(self):
+        """ verbose mode """
         
         return self._verbose            
         

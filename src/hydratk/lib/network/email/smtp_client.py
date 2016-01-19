@@ -57,31 +57,37 @@ class EmailClient:
             
     @property
     def client(self):
+        """ SMTP client property getter """
         
         return self._client
     
     @property
     def host(self):
+        """ server host property getter """
         
         return self._host
     
     @property
     def port(self):
+        """ server port property getter """
         
         return self._port
     
     @property
     def user(self):
+        """ username property getter """
         
         return self._user
     
     @property
     def passw(self):
+        """ user password property getter """
         
         return self._passw
     
     @property
     def verbose(self):
+        """ verbose mode property getter """
         
         return self._verbose                    
                 

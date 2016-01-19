@@ -45,10 +45,13 @@ class CommandlineTool():
     def set_possible_commands(commands):
         """Commands setter method
         
-          :param commands: Possible commands to use
-          :type commands: list
-          :returns: void
+           :param commands: Possible commands to use
+           :type commands: list
+           
+           :returns: void
+           
         .. sectionauthor:: Petr Czaderna <pc@headz.cz>
+                              
         """        
         CommandlineTool.__commands = commands
         
@@ -56,12 +59,15 @@ class CommandlineTool():
     def set_possible_options(short_opt, long_opt):
         """Options setter method
         
-          :param short_opt: Possible short options to use (getopt format)
-          :type short_opt: str
-          :param long_opt: Possible long options to use (getopt format)
-          :type long_opt: list
-          :returns: void
-        .. sectionauthor:: Petr Czaderna <pc@headz.cz>
+           :param short_opt: Possible short options to use (getopt format)
+           :type short_opt: str
+           :param long_opt: Possible long options to use (getopt format)
+           :type long_opt: list
+           
+           :returns: void
+           
+        .. sectionauthor :: Petr Czaderna <pc@headz.cz>  
+                            
         """         
         CommandlineTool.__short_opt = short_opt
         CommandlineTool.__long_opt = long_opt
@@ -69,6 +75,7 @@ class CommandlineTool():
     @staticmethod
     def set_help(title, cp_string, cmd_text, opt_text):        
         """Method creates and returns a formated help text
+        
            :param title: Title text
            :type title: str
            :param cp_string: Copyright string
@@ -77,8 +84,11 @@ class CommandlineTool():
            :type cmd_text: dict
            :param opt_text: Text description for specified options, format is ['short_opt', 'long_opt' : 'description']
            :type opt_text: dict
+           
            :returns: void
-        .. sectionauthor:: Petr Czaderna <pc@headz.cz>
+           
+        .. sectionauthor :: Petr Czaderna <pc@headz.cz>    
+               
         """
         CommandlineTool.__title = title
         CommandlineTool.__cp_string = cp_string
@@ -99,7 +109,9 @@ class CommandlineTool():
         """Method creates and returns a formated help text
    
            :returns string help text
-        .. sectionauthor Petr Czaderna <pc@headz.cz>
+           
+        .. sectionauthor :: Petr Czaderna <pc@headz.cz>
+        
         """                                     
         result = []
         command.replace(' ','')
@@ -128,7 +140,9 @@ class CommandlineTool():
         """Method returns passed action command parameter
    
            :return string command or false if no valid command was used
-        .. sectionauthor Petr Czaderna <pc@headz.cz>
+           
+        .. sectionauthor :: Petr Czaderna <pc@headz.cz>
+        
         """
         result = False
         for cmd in sys.argv:
@@ -142,7 +156,9 @@ class CommandlineTool():
         """Method returns passed action command parameter
    
            :returns result dictionary with short and long input options
-        .. sectionauthor Petr Czaderna <pc@headz.cz>
+           
+        .. sectionauthor :: Petr Czaderna <pc@headz.cz>
+        
         """
         result = {}
         try:            
@@ -182,7 +198,9 @@ class CommandlineTool():
         """Method creates and returns a formated help text
    
            :returns result help text
-        .. sectionauthor Petr Czaderna <pc@headz.cz>
+           
+        .. sectionauthor :: Petr Czaderna <pc@headz.cz>
+           
         """
 
         result = ''

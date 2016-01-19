@@ -39,11 +39,13 @@ class DBClient():
         
     @property
     def client(self):
+        """ SQLite client property getter """
         
         return self._client
     
     @property 
     def db_file(self):
+        """ database file property getter """
         
         return self._db_file
         

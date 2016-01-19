@@ -51,22 +51,26 @@ class FTPClient:
             TftpShared.setLogLevel(2)
             
     @property
-    def client(self):         
+    def client(self):  
+        """ TFTP client property getter """         
         
         return self._client
     
     @property
-    def host(self):         
+    def host(self): 
+        """ server host property getter """          
         
         return self._host
     
     @property
-    def port(self):         
+    def port(self):  
+        """ server port property getter """         
         
         return self._port
     
     @property
     def verbose(self):
+        """ verbose mode property getter """  
         
         return self._verbose                  
         

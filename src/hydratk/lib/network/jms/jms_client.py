@@ -70,26 +70,31 @@ class JMSClient:
          
     @property
     def bridge(self):
+        """ Java bridge property getter """
         
         return self._bridge
 
     @property
     def client(self):
+        """ JMS client property getter """
         
         return self._client
     
     @property
-    def verbose(self):   
+    def verbose(self):  
+        """ verbose mode property getter """ 
         
         return self._verbose
     
     @property
     def connection_factory(self):
+        """ connection factory property getter """
         
         return self._connection_factory
     
     @property
     def properties(self):
+        """ connection properties property getter """
         
         return self._properties                
         

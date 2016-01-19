@@ -24,7 +24,7 @@ def gen_systimestamp():
     return strftime('%Y-%m-%dT%H:%M:%S')
 
 def gen_sysdate():
-    """Method generates system data
+    """Method generates system date
         
     Args:
         

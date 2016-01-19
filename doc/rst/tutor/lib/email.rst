@@ -5,30 +5,29 @@ Email
 =====
 
 Library hydratk.lib.network.email.client provides email client.
+Method EmailClient is factory method which requires attribute engine to create 
+proper EmailClient object instance. Additional attributes are passed as args, kwargs. 
 
 **Supported protocols**:
 
-- SMTP
-- SMTPS
-- IMAP
-- IMAPS
-- POP
-- POPS
+- SMTP - module smtp_client
+- IMAP - module imap_client
+- POP - module pop_client
 
 **Methods**:
 
-- **connect** - connect to mail server as sender (SMTP, SMTPS) or receiver (IMAP, IMAPS, POP, POPS)
+- **connect** - connect to mail server as sender (SMTP) or receiver (IMAP, POP)
 - **disconnect** - disconnect from mail server
-- **send_email** - send email (SMTP, SMTPS)
-- **email_count** - count emails stored on server (IMAP, IMAPS, POP, POPS)
-- **list_emails** - get list of emails stored on server (IMAP, IMAPS, POP, POPS)
-- **receive_email** - receive email (IMAP, IMAP, POP, POPS)
+- **send_email** - send email (SMTP)
+- **email_count** - count emails stored on server (IMAP, POP)
+- **list_emails** - get list of emails stored on server (IMAP, POP)
+- **receive_email** - receive email (IMAP, POP)
 
 Examples
 ========
 
 See following examples for SMTP, IMAP, POP protocols.
-Secured protocol variants are used in similar way.
+Secured protocol variants SMTPS, IMAPS, POPS are initialiazed using constructor attribute secured.
 
 SMTP
 ^^^^

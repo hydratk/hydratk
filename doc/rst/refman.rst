@@ -21,6 +21,7 @@ Libraries
 .. toctree::
    :maxdepth: 2
 
+   refman/libs/bridge
    refman/libs/network
 
 Extensions   
@@ -30,6 +31,7 @@ Extensions
    :maxdepth: 2
 
    refman/exts/benchmark
+   refman/exts/datagen
    refman/exts/testenv
    refman/exts/yoda
    refman/exts/wings

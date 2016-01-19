@@ -61,11 +61,13 @@ class RPCClient():
         
     @property
     def bridge(self):
+        """ Java bridge property getter """
         
         return self._bridge
     
     @property
     def proxy(self):
+        """ proxy object property getter """
         
         return self._proxy
         
