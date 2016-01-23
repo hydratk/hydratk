@@ -68,7 +68,7 @@ class Extension(extension.Extension):
             print ('Missing option input') 
         else:                       
         
-            from hydratk.extensions.datagen.asn1.codec import ASN1Codec
+            from hydratk.extensions.datagen.asn1codec import ASN1Codec
         
             codec = ASN1Codec()
             if (codec.import_spec(spec)):
@@ -79,7 +79,9 @@ class Extension(extension.Extension):
                     result = codec.decode(input, element, output) 
                     
                 if (not result):
-                    print ('{0} error'.format(action))      
+                    print ('{0} error'.format(action)) 
+                else:
+                    print ('{0} finished'.format(action))                          
             else:
                 print ('Import specification error')                         
         
@@ -106,6 +108,8 @@ class Extension(extension.Extension):
                 output = None if (not output) else output
                 if (not gen.tojson(output)):
                     print ('Generation error')
+                else:
+                    print ('Sample generated')                     
             else:
                 print ('Import specification error')    
             
@@ -135,6 +139,8 @@ class Extension(extension.Extension):
             if (gen.import_spec(spec)):                
                 output = None if (not output) else output
                 if (not gen.toxml(element, output, envelope)):
-                    print ('Generation error')     
+                    print ('Generation error')  
+                else:
+                    print ('Sample generated')   
             else:
                 print ('Import specification error')                                   

@@ -3,7 +3,7 @@
 # * Software Name : libmich 
 # * Version : 0.2.3
 # *
-# * Copyright © 2014. Benoit Michau. ANSSI.
+# * Copyright ï¿½ 2014. Benoit Michau. ANSSI.
 # *
 # * This program is free software: you can redistribute it and/or modify
 # * it under the terms of the GNU General Public License version 2 as published
@@ -418,6 +418,10 @@ class ASN1Obj(object):
     
     def _set_val_cho(self, val):
         # CHOICE: (name, val)
+        # hydratk fix
+        if (val.__class__.__name__ == 'dict'):
+            key = val.keys()[0]
+            val = (key, val[key])
         if self._SAFE:
             if (val is None and len(self._cont) != 0) \
             or (not isinstance(val, tuple) or len(val) != 2 \
@@ -591,6 +595,7 @@ class ASN1Obj(object):
             or not issubclass(self.CODEC, ASN1Codec):
                 raise(ASN1_OBJ('%s: invalid encoder defined: %s' 
                       % (self.get_fullname(), self.CODEC)))
+        
         if val is not None:
             self.set_val(val)
         self._encode(**kwargs)

@@ -80,6 +80,9 @@ class JSONGen():
             
             return True
             
+        except ValueError, ex:
+            print ex
+            return False            
         except Exception, ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
             return False             
@@ -113,10 +116,10 @@ class JSONGen():
             if (ev.will_run_default()):                               
                 doc = self._tojson_rec()                
                 outfile = 'sample.json' if (outfile == None) else outfile
-                with open(outfile, 'w') as f:  
+                with open(outfile, 'w') as f: 
                     dump(doc, f, indent=4)
     
-            self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('datagen_jsongen_sample_written'), self._mh.fromhere())   
+            self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('datagen_jsongen_sample_written', outfile), self._mh.fromhere())   
             ev = event.Event('jsongen_after_write')
             self._mh.fire_event(ev)            
             

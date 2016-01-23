@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """This code is a part of Datagen extension
 
-.. module:: datagen.asn1.codec
+.. module:: datagen.asn1codec
    :platform: Unix
    :synopsis: Module for ASN.1 codec
               Libraries for ASN.1 were taken from https://github.com/mitshell/libmich
@@ -23,12 +23,14 @@ asn1_after_decode
 
 from hydratk.core.masterhead import MasterHead
 from hydratk.core import event
-from libmich.asn1.processor import process_modules
-from libmich.asn1.ASN1 import ASN1Obj
-from libmich.asn1.BER import BER
+from asn1.libmich.asn1.processor import process_modules
+from asn1.libmich.asn1.ASN1 import ASN1Obj
+from asn1.libmich.asn1.BER import BER
 from os import path
 from jsonlib2 import read, dump
 from collections import OrderedDict
+from binascii import hexlify
+from datetime import datetime
 
 class ASN1Codec():
     
@@ -82,7 +84,6 @@ class ASN1Codec():
                     with open(filename, 'r') as f:                                         
                         self._spec = process_modules(f.read())  
                         self._elements = self._spec[0]['TYPE']._dict
-                        
                         ASN1Obj._SAFE = True
                         ASN1Obj._RET_STRUCT = True
                         ASN1Obj.CODEC = BER                                                 
@@ -95,6 +96,9 @@ class ASN1Codec():
                     
             return True                             
         
+        except ValueError, ex:
+            print ex
+            return False         
         except Exception, ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
             return False
@@ -118,7 +122,6 @@ class ASN1Codec():
         """         
         
         try:
-            
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('datagen_asn1_encode', infile), self._mh.fromhere()) 
             ev = event.Event('asn1_before_encode', infile, outfile)
             if (self._mh.fire_event(ev) > 0):
@@ -134,12 +137,11 @@ class ASN1Codec():
                             input = []
                             for record in objects:
                                 input.append(self._update_datatypes(record))
-                        else:                                        
-                            input = [self._update_datatypes(objects)]     
-                                     
+                        else:                                     
+                            input = [self._update_datatypes(objects)]             
                     outfile = infile.split('.')[0]+'.bin' if (outfile == None) else outfile               
                     with open(outfile, 'wb') as f:
-                        for record in input:
+                        for record in input:                        
                             output = self._elements[element].encode(record)
                             f.write(str(output()))                                                         
                 else:
@@ -151,6 +153,9 @@ class ASN1Codec():
                     
             return True                 
         
+        except ValueError, ex:
+            print ex
+            return False        
         except Exception, ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())   
             return False     
@@ -188,28 +193,29 @@ class ASN1Codec():
                         input = f.read()
                 
                     outfile = infile.split('.')[0]+'.json' if (outfile == None) else outfile     
-                    with open(outfile, 'w') as f:                       
+                    with open(outfile, 'w') as f:                      
                         records = self._split_records(input)
-
                         if (len(records) > 1):
                             output = []
-                            for record in records:
+                            for record in records:                                
                                 self._elements[element].decode(record)
                                 output.append(self._create_dict(self._elements[element]))
-                        else:             
+                        else:           
                             self._elements[element].decode(records[0])
                             output = self._create_dict(self._elements[element])
                         dump(output, f, indent=4)                                                      
-            else:
-                raise ValueError('File {0} not found'.format(infile)) 
+                else:
+                    raise ValueError('File {0} not found'.format(infile)) 
             
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('datagen_asn1_decoded', outfile), self._mh.fromhere())   
             ev = event.Event('asn1_after_decode')
             self._mh.fire_event(ev)
                     
             return True              
-        
         except ValueError, ex:
+            print ex
+            return False
+        except Exception, ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())  
             return False             
         
@@ -227,16 +233,19 @@ class ASN1Codec():
                 
         """           
 
-        for key, value in obj.items():
-            
-            classname = value.__class__.__name__
-            if (classname == 'long'):
-                obj[key] = int(value) 
-            elif (classname == 'unicode'):
-                obj[key] = str(value)
-            elif (classname == 'dict'):
+        classname = obj.__class__.__name__
+        if (classname == 'dict'):
+            for key, value in obj.items():
                 obj[key] = self._update_datatypes(obj[key])
-                
+        elif (classname == 'list'):
+            items = []
+            for item in obj:
+                items.append(self._update_datatypes(item)) 
+        elif (classname == 'long'):
+            obj = int(obj) 
+        elif (classname == 'unicode'):
+            obj = str(obj)
+           
         return obj  
     
     def _split_records(self, input):
@@ -252,11 +261,20 @@ class ASN1Codec():
         
         records = []
         input = bytearray(input)
-        
         i = 0
-        while (i < len(input)):
-            rec_size = input[i+1]
-            idx = i+rec_size+2
+        idx = None
+        length = len(input)
+        while (i < length):
+            len_byte = input[i+1]
+            if (len_byte < 128):
+                idx = i+len_byte+2
+            elif (len_byte == 128):
+                idx = length
+            else:
+                size_bytes = len_byte-128
+                rec_size = int(hexlify(input[i+2 : i+2+size_bytes]), 16)
+                idx = i+2+size_bytes+rec_size
+                
             records.append(str(input[i:idx]))
             i = idx
          
@@ -277,17 +295,28 @@ class ASN1Codec():
             dict: ordered dictionary object 
                 
         """          
-        
+
         if (val == None):
             val = obj._val 
         if (output == None):
             output = OrderedDict()   
-                  
+        
         if (obj._type in ('SEQUENCE', 'SET')):
             for key in obj._cont._index:
-                output[key] = OrderedDict()
-                output[key] = self._create_dict(obj._cont._dict[key], val[key], output[key])
+                if (val.has_key(key)):           
+                    output[key] = OrderedDict()
+                    output[key] = self._create_dict(obj._cont._dict[key], val[key], output[key])
+        elif (obj._type == 'SEQUENCE OF'):
+            output = []
+            for item in val:
+                output.append(self._create_dict(obj._cont, item, None))                
+        elif (obj._type == 'CHOICE'):
+            key = val[0]
+            output[key] = OrderedDict()
+            output[key] = self._create_dict(obj._cont._dict[key], val[1], output[key])
         else:
-            output = val 
+            if (val.__class__.__name__ == 'str' and '\\x' in val.__repr__()):
+                val = val.encode('hex')                
+            output = val
             
         return output  

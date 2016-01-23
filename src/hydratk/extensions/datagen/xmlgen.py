@@ -86,19 +86,19 @@ class XMLGen():
                 filename = ev.argv(0)    
     
             if (ev.will_run_default()): 
-                if (not path.exists(filename)):
-                    raise ValueError('File {0} not found'.format(filename)) 
+                if (path.exists(filename)):
+                    spec_type = (filename.split('.')[-1]).upper()
+                    filename = path.join(path.dirname(path.abspath(filename)), filename)
                 
-                spec_type = (filename.split('.')[-1]).upper()
-                filename = path.join(path.dirname(path.abspath(filename)), filename)
-                
-                if (spec_type == 'WSDL'):
-                    self._client = Client('file://'+filename, cache=None)
-                elif (spec_type == 'XSD'):
-                    wsdl = self._create_dummy_wsdl(filename)
-                    self._client = Client('file://'+wsdl, cache=None)
+                    if (spec_type == 'WSDL'):
+                        self._client = Client('file://'+filename, cache=None)
+                    elif (spec_type == 'XSD'):
+                        wsdl = self._create_dummy_wsdl(filename)
+                        self._client = Client('file://'+wsdl, cache=None)
+                    else:
+                        raise ValueError('Unknown specification type: {0}'.format(spec_type))
                 else:
-                    raise ValueError('Unknown specification type: {0}'.format(spec_type))
+                    raise ValueError('File {0} not found'.format(filename)) 
                 
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('datagen_xmlgen_spec_imported'), self._mh.fromhere())   
             ev = event.Event('xmlgen_after_import_spec')
@@ -106,6 +106,9 @@ class XMLGen():
             
             return True                
         
+        except ValueError, ex:
+            print ex
+            return False        
         except Exception, ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
             return False         
@@ -154,12 +157,15 @@ class XMLGen():
                 with open(outfile, 'w') as f: 
                     f.write(tostring(doc, encoding='UTF-8', xml_declaration=True, pretty_print=True))
                     
-            self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('datagen_xmlgen_sample_written'), self._mh.fromhere())   
+            self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('datagen_xmlgen_sample_written', outfile), self._mh.fromhere())   
             ev = event.Event('xmlgen_after_write')
             self._mh.fire_event(ev)            
             
             return True                      
     
+        except ValueError, ex:
+            print ex
+            return False       
         except Exception, ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
             return False     
@@ -213,7 +219,7 @@ class XMLGen():
             return doc  
     
         except TypeNotFound:
-            return None            
+            return None                     
 
     def _get_element_type(self, element):
         """Method gets element XSD type

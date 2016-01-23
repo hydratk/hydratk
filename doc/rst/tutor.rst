@@ -44,6 +44,7 @@ Network
    tutor/lib/dbi
    tutor/lib/email
    tutor/lib/ftp
+   tutor/lib/inet
    tutor/lib/jms
    tutor/lib/rest
    tutor/lib/rpc

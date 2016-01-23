@@ -842,7 +842,7 @@ class BER(ASN1.ASN1Codec):
                 raise(ASN1_BER_DECODER('%s: invalid CHOICE tag provided %s ' \
                       'compared to expected one %s' \
                       % (obj.get_fullname(), repr(obj._msg[0]), tag)))
-            tlv = obj._msg.get()
+            tlv = obj._msg.get()[0] # hydratk fix
         else:
             # otherwise, tag is directly corresponding to the chosen object
             tlv = obj._msg
