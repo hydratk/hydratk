@@ -19,3 +19,4 @@ suds
 python-ntlm
 JPype1
 scapy
+selenium

@@ -44,7 +44,8 @@ requires = [
            'suds',
            'python-ntlm',
            'JPype1',
-           'scapy'
+           'scapy',
+           'selenium'
          ]
          
 data_files=[

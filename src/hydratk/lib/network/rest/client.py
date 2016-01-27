@@ -146,10 +146,11 @@ class RESTClient:
                 self._res_header, self._res_body = self._client.request(url, method, body, headers)
             
             content_type = self.get_header('Content-Type')
-            if ('json' in content_type):
-                self._res_body = read(self._res_body)
-            elif ('xml' in content_type):               
-                self._res_body = objectify.fromstring(self._res_body)
+            if (content_type != None):
+                if ('json' in content_type):
+                    self._res_body = read(self._res_body)
+                elif ('xml' in content_type):               
+                    self._res_body = objectify.fromstring(self._res_body)
              
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_rest_response', self._res_header), self._mh.fromhere()) 
             ev = event.Event('rest_after_request')

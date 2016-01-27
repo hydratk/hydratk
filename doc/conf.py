@@ -28,8 +28,9 @@ autodoc_default_flags = ['members', 'undoc-members']
 autodoc_mock_imports = ['cx_Oracle', 'httplib2', 'jpype', 'jsonlib2', 'lxml', 'lxml.etree', 'MySQLdb',
                         'paramiko', 'paramiko.exception', 'paramiko.ssh_exception', 'proton', 'proton.utils', 
                         'proton.reactor', 'psycopg2', 'pycurl', 'pyx.messaging', 'pyx.system.utils', 
-                        'scapy.all', 'stompest', 'stompest.config', 'stompest.sync', 'stompest.protocol', 
-                        'stompest.error', 'suds', 'suds.client', 'tftpy', 'web']
+                        'scapy.all', 'selenium', 'selenium.common.exceptions', 'selenium.webdriver.support.ui',
+                        'stompest', 'stompest.config', 'stompest.sync', 'stompest.protocol', 'stompest.error', 
+                        'suds', 'suds.client', 'tftpy', 'web']
 
 # If your documentation needs a minimal Sphinx version, state it here.
 #needs_sphinx = '1.0'
