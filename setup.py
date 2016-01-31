@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-
+from install.custom_install import CustomInstall
 
 with open("README.rst", "r") as f:
     readme = f.readlines()
@@ -48,23 +48,27 @@ requires = [
            'selenium'
          ]
          
-data_files=[
-            ('/etc/hydratk', ['etc/hydratk/hydratk.conf']), 
-            ('/var/local/hydratk/dbconfig', ['var/local/hydratk/dbconfig/__init__.py']),
-            ('/var/local/hydratk/java', ['src/hydratk/lib/network/jms/java/JMSClient.java']), 
-            ('/var/local/hydratk/java', ['src/hydratk/lib/network/jms/java/javaee.jar']),
-            ('/var/local/hydratk/java', ['src/hydratk/lib/network/dbi/java/DBClient.java'])            
-           ]
+data_files = [
+              ('/etc/hydratk', ['etc/hydratk/hydratk.conf']), 
+              ('/var/local/hydratk/dbconfig', ['var/local/hydratk/dbconfig/__init__.py']),
+              ('/var/local/hydratk/java', ['src/hydratk/lib/network/jms/java/JMSClient.java']), 
+              ('/var/local/hydratk/java', ['src/hydratk/lib/network/jms/java/javaee.jar']),
+              ('/var/local/hydratk/java', ['src/hydratk/lib/network/dbi/java/DBClient.java'])            
+             ]
 
-entry_points={
-          'console_scripts': [
-              'htk = hydratk.core.bootstrapper:run_app',            
-          ]
-      }                                     
+entry_points = {
+                'console_scripts': [
+                    'htk = hydratk.core.bootstrapper:run_app',            
+                ]
+               } 
+
+cmdclass = {
+            'install': CustomInstall
+           }                               
          
 setup(
       name='hydratk',
-      version='0.2.0a.dev1',
+      version='0.2.0a.dev2',
       description='Fully extendable object oriented application toolkit with nice modular architecture',
       long_description=readme,
       author='Petr Czaderna, HydraTK Team',
@@ -77,5 +81,6 @@ setup(
       classifiers=classifiers,
       zip_safe=False,
       data_files=data_files,
-      entry_points=entry_points
+      entry_points=entry_points,
+      cmdclass=cmdclass
      )
