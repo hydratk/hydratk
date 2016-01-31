@@ -23,9 +23,9 @@ asn1_after_decode
 
 from hydratk.core.masterhead import MasterHead
 from hydratk.core import event
-from asn1.libmich.asn1.processor import process_modules
-from asn1.libmich.asn1.ASN1 import ASN1Obj
-from asn1.libmich.asn1.BER import BER
+from asn1.asn1.processor import process_modules
+from asn1.asn1.ASN1 import ASN1Obj
+from asn1.asn1.BER import BER
 from os import path
 from jsonlib2 import read, dump
 from collections import OrderedDict
@@ -195,12 +195,13 @@ class ASN1Codec():
                     outfile = infile.split('.')[0]+'.json' if (outfile == None) else outfile     
                     with open(outfile, 'w') as f:                      
                         records = self._split_records(input)
+
                         if (len(records) > 1):
                             output = []
                             for record in records:                                
                                 self._elements[element].decode(record)
                                 output.append(self._create_dict(self._elements[element]))
-                        else:           
+                        else:        
                             self._elements[element].decode(records[0])
                             output = self._create_dict(self._elements[element])
                         dump(output, f, indent=4)                                                      
@@ -295,12 +296,12 @@ class ASN1Codec():
             dict: ordered dictionary object 
                 
         """          
-
+        
         if (val == None):
             val = obj._val 
         if (output == None):
             output = OrderedDict()   
-        
+            
         if (obj._type in ('SEQUENCE', 'SET')):
             for key in obj._cont._index:
                 if (val.has_key(key)):           

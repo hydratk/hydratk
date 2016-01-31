@@ -18,6 +18,10 @@ selen_after_wait
 selen_before_get_elem
 selen_before_read_elem
 selen_before_set_elem
+selen_before_script
+selen_after_script
+selen_before_save_screen
+selen_after_save_screen
 
 """
 
@@ -28,6 +32,7 @@ browsers = {
   'CHROME'     : 'Chrome',
   'IE'         : 'Ie',
   'OPERA'      : 'Opera',
+  'PHANTOMJS'  : 'PhantomJS',
   'SAFARI'     : 'Safari'
 }            
 
@@ -43,7 +48,7 @@ class SeleniumBridge():
     _browser = None
     _url = None
     
-    def __init__(self, browser='Firefox'):
+    def __init__(self, browser='PhantomJS'):
         """Class constructor
            
         Called when the object is initialized   
@@ -62,9 +67,16 @@ class SeleniumBridge():
         if (browsers.has_key(self._browser)):
             
             client = None     
-            lib_call = 'from selenium.webdriver import ' + browsers[self._browser] + '; client = ' + browsers[self._browser] + '()'                                             
-            exec lib_call
-            self._client = client
+            if (self._browser == 'PHANTOMJS'):
+                lib_call = 'from selenium.webdriver import ' + browsers[self._browser] + '; client = ' + browsers[self._browser] + \
+                           '(service_args = [\'--ignore-ssl-errors=true\', \'--ssl-protocol=any\'])' 
+                exec lib_call
+                client.set_window_size(1024, 768)         
+            else:
+                lib_call = 'from selenium.webdriver import ' + browsers[self._browser] + '; client = ' + browsers[self._browser] + '()'                                             
+                exec lib_call
+                
+            self._client = client            
 
         else:
             raise ValueError('Unknown browser:{0}'.format(browser)) 
@@ -343,4 +355,74 @@ class SeleniumBridge():
     
         except WebDriverException, ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
-            return False                                                                                
+            return False  
+        
+    def exec_script(self, script, *args):    
+        """Method execute JS script
+        
+        Args:            
+           script (str): JavaScript code
+           args (args): script arguments   
+           
+        Returns:
+           obj: script output
+           
+        Raises:
+           event: selen_before_script
+           event: selen_after_script 
+                
+        """    
+        
+        try:
+            
+            self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_selen_executing_script', script), self._mh.fromhere())
+            ev = event.Event('selen_before_script', script)
+            if (self._mh.fire_event(ev) > 0):
+                script = ev.argv(0)    
+                
+            if (ev.will_run_default()): 
+                output = self._client.execute_script(script, *args)
+                
+            self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_selen_script_executed'), self._mh.fromhere())
+            ev = event.Event('selen_after_script')
+            self._mh.fire_event(ev)   
+            
+            return output                 
+            
+        except WebDriverException, ex:
+            self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())   
+            return None    
+        
+    def save_screen(self, outfile='screen.png'):    
+        """Method saves screenshot
+        
+        Args:            
+           outfile (str): output filename
+             
+        Returns:
+           bool: result  
+           
+        Raises:
+           event: selen_before_save_screen
+           event: selen_after_save_screen      
+                
+        """    
+        
+        try:
+            
+            self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_selen_saving_screen', outfile), self._mh.fromhere())
+            ev = event.Event('selen_before_save_screen', outfile)
+            if (self._mh.fire_event(ev) > 0):
+                outfile = ev.argv(0)    
+                
+            if (ev.will_run_default()): 
+                self._client.save_screenshot(outfile)
+                
+            self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_selen_screen_saved'), self._mh.fromhere())
+            ev = event.Event('selen_after_sace_screen')
+            self._mh.fire_event(ev)                  
+            return True        
+            
+        except WebDriverException, ex:
+            self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
+            return False                                                                                             

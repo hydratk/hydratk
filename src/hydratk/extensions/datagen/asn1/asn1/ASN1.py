@@ -27,7 +27,7 @@
 #*/
 
 try:
-    from libmich.core.element import Layer
+    from hydratk.extensions.datagen.asn1.core.element import Layer
 except:
     log('libmich module unavailable: encoding / decoding will not work')
 else:

@@ -104,10 +104,10 @@ from socket import inet_ntoa
 from binascii import hexlify, unhexlify
 from re import split, sub
 
-from libmich.core.shar import shar
-from libmich.core.shtr import shtr, decomposer, decompose
+from hydratk.extensions.datagen.asn1.core.shar import shar
+from hydratk.extensions.datagen.asn1.core.shtr import shtr, decomposer, decompose
 # TODO: cleanup the rest of libmich-related code to remove this import here
-from libmich.utils.repr import show, showattr
+from hydratk.extensions.datagen.asn1.utils.repr import show, showattr
 
 #------------------------------------------------------------------------------#
 # helping routines

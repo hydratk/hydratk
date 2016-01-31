@@ -28,7 +28,7 @@
 
 import re
 from struct import pack
-from libmich.core.shtr import decompose
+from hydratk.extensions.datagen.asn1.core.shtr import decompose
 
 #------------------------------------------------------------------------------#
 # library-wide Python routines

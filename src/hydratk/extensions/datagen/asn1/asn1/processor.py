@@ -37,7 +37,7 @@ from parsers import *
 import ASN1
 #
 # only here for commodity, should be removed
-from libmich.utils.repr import *
+from hydratk.extensions.datagen.asn1.utils.repr import *
 from PER import PER
 from BER import BER
 #ASN1.ASN1Obj.CODEC = PER

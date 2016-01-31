@@ -159,6 +159,8 @@ class RESTClient:
             return self._res_header.status, self._res_body
             
         except HttpLib2Error, ex:
+            if (str(ex) == 'WWW-Authenticate'):
+                return 401, None
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
             return None   
         

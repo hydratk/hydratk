@@ -29,9 +29,9 @@
 # export filter
 __all__ = ['PER']
 
-from libmich.core.element import Str, Int, Bit, Layer, show
-from libmich.core.shtr import shtr
-from libmich.utils.IntEncoder import *
+from hydratk.extensions.datagen.asn1.core.element import Str, Int, Bit, Layer, show
+from hydratk.extensions.datagen.asn1.core.shtr import shtr
+from hydratk.extensions.datagen.asn1.utils.IntEncoder import *
 #
 import ASN1
 from utils import *

@@ -29,9 +29,9 @@
 # export filter
 __all__ = ['BER', 'T', 'L', 'BER_TLV']
 
-from libmich.core.element import Element, Str, Int, Bit, Layer, show
-from libmich.core.shtr import shtr
-from libmich.utils.IntEncoder import *
+from hydratk.extensions.datagen.asn1.core.element import Element, Str, Int, Bit, Layer, show
+from hydratk.extensions.datagen.asn1.core.shtr import shtr
+from hydratk.extensions.datagen.asn1.utils.IntEncoder import *
 #
 import ASN1
 from utils import *
@@ -835,6 +835,7 @@ class BER(ASN1.ASN1Codec):
     def decode_choice_val(self, obj):
         # obj._val = (name, value)
         # check if CHOICE is tagged by the application
+        
         tag = obj.get_tag()
         if tag is not None:
             # if CHOICE is tagged, need to get its tag first
