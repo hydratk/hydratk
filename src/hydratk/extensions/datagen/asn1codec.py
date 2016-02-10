@@ -138,7 +138,7 @@ class ASN1Codec():
                             for record in objects:
                                 input.append(self._update_datatypes(record))
                         else:                                     
-                            input = [self._update_datatypes(objects)]             
+                            input = [self._update_datatypes(objects)]            
                     outfile = infile.split('.')[0]+'.bin' if (outfile == None) else outfile               
                     with open(outfile, 'wb') as f:
                         for record in input:                        
@@ -233,7 +233,7 @@ class ASN1Codec():
             json: json object
                 
         """           
-
+        
         classname = obj.__class__.__name__
         if (classname == 'dict'):
             for key, value in obj.items():
@@ -241,7 +241,8 @@ class ASN1Codec():
         elif (classname == 'list'):
             items = []
             for item in obj:
-                items.append(self._update_datatypes(item)) 
+                items.append(self._update_datatypes(item))    
+            obj = items           
         elif (classname == 'long'):
             obj = int(obj) 
         elif (classname == 'unicode'):

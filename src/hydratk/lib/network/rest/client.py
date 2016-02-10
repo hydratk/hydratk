@@ -22,6 +22,7 @@ from httplib2 import Http, debuglevel, HttpLib2Error
 from urllib import urlencode
 from jsonlib2 import read
 from lxml import objectify
+from socket import error
 
 mime_types = {
   'form': 'application/x-www-form-urlencoded',
@@ -39,7 +40,7 @@ class RESTClient:
     _res_body = None
     _verbose = None
     
-    def __init__(self, verbose=False, cache=False, ignore_cert=True):
+    def __init__(self, verbose=False, cache=False, ignore_cert=True, timeout=60):
         """Class constructor
            
         Called when the object is initialized 
@@ -48,15 +49,16 @@ class RESTClient:
            verbose (bool): verbose mode
            cache (bool): use local cache
            ignore_cert (bool): ignore untrusted certificate errors
+           timeout (int): timeout
            
         """         
         
         self._mh = MasterHead.get_head() 
         
         if (cache):
-            self._client = Http('.cache', disable_ssl_certificate_validation=ignore_cert)
+            self._client = Http('.cache', disable_ssl_certificate_validation=ignore_cert, timeout=timeout)
         else:
-            self._client = Http(disable_ssl_certificate_validation=ignore_cert)     
+            self._client = Http(disable_ssl_certificate_validation=ignore_cert, timeout=timeout)     
         
         self._verbose = verbose
         if (self._verbose):
@@ -158,7 +160,7 @@ class RESTClient:
                 
             return self._res_header.status, self._res_body
             
-        except HttpLib2Error, ex:
+        except (HttpLib2Error, error), ex:
             if (str(ex) == 'WWW-Authenticate'):
                 return 401, None
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
