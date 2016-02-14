@@ -13,7 +13,7 @@ datagen
 asn1
 ====
 
-.. automodule:: hydratk.extensions.datagen.asn1.codec
+.. automodule:: hydratk.extensions.datagen.asn1codec
    :member-order: bysource
 
 jsongen

@@ -1,8 +1,8 @@
 .. Selenium
 
-===========
+===============
 Selenium bridge
-===========
+===============
 
 Library hydratk.lib.bridge.selen provides bridge to Selenium WebDriver.
 Constructor requires attribute browser, PhantomJS (headless browser) is chosen by default.
