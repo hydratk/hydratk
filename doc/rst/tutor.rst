@@ -34,6 +34,7 @@ Bridge
    :maxdepth: 2
    
    tutor/lib/java
+   tutor/lib/selen
 
 Network
 -------
