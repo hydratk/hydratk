@@ -58,7 +58,8 @@ data_files = [
 
 entry_points = {
                 'console_scripts': [
-                    'htk = hydratk.core.bootstrapper:run_app',            
+                    'htk = hydratk.core.bootstrapper:run_app',
+                    'htkprof = hydratk.core.bootstrapper:run_app_prof'             
                 ]
                } 
 

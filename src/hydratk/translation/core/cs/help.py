@@ -37,6 +37,7 @@ help_opt = {
    'interactive'       : { '{h}-i, --interactive{e}' : 'zapne interaktivní režim' },
    'language'          : { '{h}-l, --language <jazyk>{e}' : 'nastaví standardní jazyk, seznam dostupných jazyků je uveden v dokumentaci' }, 
    'run-mode'          : { '{h}-m, --run-mode <mode>{e}' : 'nastaví režim spuštění, seznam dostupných režimů je uveden v dokumentaci' },
+   'profile'           : { '{h}-p, --profile <soubor>{e}' : 'zapne cProfiler a výstup měření uloži do zvoleného souboru' },
    'config-db-file'    : { '{h}--config-db-file <soubor>{e}' : { 'description' : 'volitelné, cesta k souboru databáze', 'commands' : ('create-config-db')}},
    'ext-skel-path'     : { '{h}--ext-skel-path <cesta>{e}' : { 'description' : 'volitelné, cesta k adresáři kde bude vytvořena kostra rozšíření HydraTK', 'commands' : ('create-ext-skel')}},
    'lib-skel-path'     : { '{h}--lib-skel-path <cesta>{e}' : { 'description' : 'volitelné, cesta k adresáři kde bude vytvořena kostra knihovny HydraTK', 'commands' : ('create-lib-skel')}}
