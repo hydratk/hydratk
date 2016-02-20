@@ -1,8 +1,11 @@
 from setuptools import setup, find_packages
-from install.custom_install import CustomInstall
+from install.pre_install import run_pre_install
+from install.post_install import run_post_install
 
 with open("README.rst", "r") as f:
     readme = f.readlines()
+    
+requires, data_files = run_pre_install()    
     
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -23,52 +26,15 @@ classifiers = [
     "Topic :: Utilities"
 ]
 
-         
-requires = [
-           'setproctitle',
-           'xtermcolor',
-           'pyzmq',
-           'pyyaml',
-           'psutil',
-           'cherrypy',
-           'tornado',
-           'paramiko',
-           'tftpy',
-           'pycurl',
-           'cx_Oracle',
-           'MySQL-python',
-           'psycopg2',
-           'httplib2',
-           'jsonlib2',
-           'lxml',
-           'suds',
-           'python-ntlm',
-           'JPype1',
-           'scapy',
-           'selenium'
-         ]
-         
-data_files = [
-              ('/etc/hydratk', ['etc/hydratk/hydratk.conf']), 
-              ('/var/local/hydratk/dbconfig', ['var/local/hydratk/dbconfig/__init__.py']),
-              ('/var/local/hydratk/java', ['src/hydratk/lib/network/jms/java/JMSClient.java']), 
-              ('/var/local/hydratk/java', ['src/hydratk/lib/network/jms/java/javaee.jar']),
-              ('/var/local/hydratk/java', ['src/hydratk/lib/network/dbi/java/DBClient.java'])            
-             ]
-
 entry_points = {
                 'console_scripts': [
                     'htk = hydratk.core.bootstrapper:run_app',            
                 ]
                } 
-
-cmdclass = {
-            'install': CustomInstall
-           }                               
-         
+     
 setup(
       name='hydratk',
-      version='0.2.0a.dev2',
+      version='0.2.0a.dev3',
       description='Fully extendable object oriented application toolkit with nice modular architecture',
       long_description=readme,
       author='Petr Czaderna, HydraTK Team',
@@ -81,6 +47,7 @@ setup(
       classifiers=classifiers,
       zip_safe=False,
       data_files=data_files,
-      entry_points=entry_points,
-      cmdclass=cmdclass
+      entry_points=entry_points
      )
+
+run_post_install()
