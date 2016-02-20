@@ -3,7 +3,7 @@
 
 .. module:: core.commands
    :platform: Unix
-   :synopsis: HydraTK commands and options
+   :synopsis: HydraTK commands and options, legacy deprecated version, will be removed soon 
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
@@ -28,7 +28,7 @@ long_opts         = [
                      'interactive',
                      'language',
                      'lib-skel-path',
-                     'run-mode'                  
+                     'run-mode'                                      
                     ]
 short_opts        = 'dcilmxte'
 

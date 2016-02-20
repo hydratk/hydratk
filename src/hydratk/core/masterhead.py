@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra framework
+"""This code is a part of Hydra Toolkit
 
 .. module:: core.masterhead
    :platform: Unix
@@ -263,6 +263,31 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
                     
             i = i + 1 
         return config_changed
+
+    def check_profile(self):
+        """Method checks for profile option parameter with specified output statistics file           
+        
+        Returns:            
+           result (tuple) - bool enable_profiler, string statistics file 
+        
+        """        
+        i = 0
+        self.dmsg('htk_on_debug', "Checking profile option", self.fromhere())
+        enable_profiler = False
+        stats_file     = ''
+        for o in sys.argv:
+            if o == 'help': break
+            if o == '-p' or o == '--profile':                                
+                if sys.argv.index(o) < (len(sys.argv) - 1):
+                    stats_file = sys.argv[i + 1]                    
+                    if stats_file is not None and stats_file != '':
+                        enable_profiler = True
+                        self.dmsg('htk_on_debug', "Profiler enabled, stats will be written to the: {}".format(stats_file), self.fromhere())                    
+                else:
+                    self.dmsg('htk_on_warning', self._trn.msg('htk_opt_ignore', 'Profile', ''), self.fromhere())
+                    
+            i = i + 1 
+        return (enable_profiler, stats_file)
 
     def check_debug(self):
         """Method checks for debug option with specified level parameter from command line 

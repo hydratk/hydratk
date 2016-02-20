@@ -18,13 +18,14 @@ class DBODriver(object):
     
     _cursor         = None
     _dbcon          = None
+    _result_as_dict = True
     _dsn            = None 
     _driver_options = {}
     _username       = None
     _password       = None
 
     @property
-    def dbcon(self):
+    def dbcon(self):        
         return self._dbcon 
     
     @property
@@ -69,7 +70,13 @@ class DBODriver(object):
     @abstractmethod
     def _apply_driver_options(self):
         pass
-     
+    
+    def dict_factory(self, cursor, row):
+        d = {}
+        for idx, col in enumerate(cursor.description):
+            d[col[0]] = row[idx]
+        return d
+ 
     @abstractmethod
     def connect(self):
         pass

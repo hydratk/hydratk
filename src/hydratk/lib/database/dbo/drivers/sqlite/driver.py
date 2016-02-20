@@ -52,12 +52,14 @@ class DBODriver(dbodriver.DBODriver):
                 self._driver_options[optname] = optval
             
         
-    def connect(self):        
+    def connect(self):
+        if os.path.exists(os.path.dirname(self._dbfile)) == False:
+            os.makedirs(os.path.dirname(self._dbfile))       
         self._dbcon = sqlite3.connect(
                                       self._dbfile, 
                                       self._driver_options['timeout'],
                                       self._driver_options['detect_types']
-                                    )
+                                    )                    
         self._cursor = self._dbcon.cursor()              
     
     def close(self):
@@ -147,3 +149,21 @@ class DBODriver(dbodriver.DBODriver):
             if os.path.exists(self._dbfile) and os.path.isfile(self._dbfile):
                 result = os.unlink(self._dbfile)
         return result
+    
+    def erase_database(self):
+        tables = list(self._cursor.execute("select name from sqlite_master where type is 'table'"))
+        self._cursor.executescript(';'.join(["drop table if exists %s" %i for i in tables]))
+        self._cursor.execute("VACUUM;")
+    
+    def result_as_dict(self, state):       
+        if state in (True, False):
+            self._result_as_dict = state
+            if state == True:                
+                self._dbcon.row_factory = self.dict_factory
+                self._cursor = self._dbcon.cursor()
+            else:
+                self._dbcon.row_factory = None
+                self._cursor = self._dbcon.cursor()
+        else:
+            raise TypeError('Boolean value expected')
+        

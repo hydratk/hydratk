@@ -805,8 +805,7 @@ class CoreHead(EventHandler, Debugger, Profiler, Logger):
             else:                                
                 self._command = command
                         
-            if options != False:
-                            
+            if options != False:                   
                 for opt_name, opt_value in options['options']:
                     self._run_command_option_hooks(opt_name, opt_value)                    
                                         

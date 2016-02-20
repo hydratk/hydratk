@@ -36,8 +36,16 @@ def run_app():
     if (_check_dependencies()):        
         from hydratk.core.masterhead import MasterHead
         
-        mh = MasterHead.get_head()
+        mh = MasterHead.get_head()            
         mh.run_fn_hook('h_bootstrap')
         trn = mh.get_translator()  
-        mh.dmsg('htk_on_debug_info', trn.msg('htk_app_exit'), mh.fromhere())
+        mh.dmsg('htk_on_debug_info', trn.msg('htk_app_exit'), mh.fromhere())       
+           
     sys.exit(0)
+
+def run_app_prof():
+    from hydratk.core.profiler import Profiler
+    pr = Profiler()
+    pr.start()
+    run_app()
+    pr.finish()

@@ -12,7 +12,7 @@ from hydratk.core import const
 _mh = MasterHead.get_head()
 
 def dmsg(msg, level = 1, channel  = const.DEBUG_CHANNEL):
-    if _mh.debug is True and _mh.debug_level <= level:
+    if _mh.debug is True and level <= _mh.debug_level:
         if type(msg).__name__ == 'tuple' and len(msg) > 0:            
             msg_key = msg[0]
             msg_params = ()

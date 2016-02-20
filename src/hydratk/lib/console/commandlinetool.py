@@ -9,8 +9,7 @@
 """
 
 import sys, getopt
-import pprint
-from hydratk.lib.array import multidict
+import argparse
 from hydratk.lib.number import conversion
 from hydratk.lib.number.conversion import int2bool
 from hydratk.lib.translation.translator import Translator
@@ -164,7 +163,8 @@ class CommandlineTool():
         try:            
             result['options'], result['remaining'] = getopt.getopt(sys.argv[1:], CommandlineTool.__short_opt, CommandlineTool.__long_opt)                
         except getopt.GetoptError as err:            
-            raise err          
+            #raise err
+            pass          
         return result
     
     @staticmethod
