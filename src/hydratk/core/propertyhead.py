@@ -14,6 +14,10 @@ from hydratk.translation.core import info
 class PropertyHead(object):
     
     @property
+    def cli_cmdopt_profile(self):
+        return self._opt_profile
+    
+    @property
     def cfg(self):
         return self._config
     

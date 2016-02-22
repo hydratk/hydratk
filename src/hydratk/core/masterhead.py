@@ -24,6 +24,7 @@ import imp
 import traceback
 import yaml
 import operator
+from hydratk.lib.exceptions.inputerror import InputError
 
     
 PYTHON_MAJOR_VERSION = sys.version_info[0]
@@ -38,7 +39,13 @@ from hydratk.core.hookhead import TranslationMsgLoader
 from hydratk.core.propertyhead import PropertyHead
 from hydratk.core.corehead import CoreHead
 
-from hydratk.core import const, commands, event, events, message, messagerouter
+from hydratk.core import const 
+from hydratk.core import commands
+from hydratk.core import commandopt
+from hydratk.core import event
+from hydratk.core import events
+from hydratk.core import message
+from hydratk.core import messagerouter
 from hydratk.core.eventhandler import EventHandler 
 from hydratk.core.extension import Extension
 from hydratk.lib.compat import types
@@ -348,7 +355,7 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
             i = i + 1
         return debug_channel_changed
              
-    def match_short_option(self, opt, value_expected=False):
+    def match_short_option(self, opt, value_expected=False, d_opt=None, allow_multiple = False, opt_group='htk'):
         """Method registers command line short option check       
     
         Args:
@@ -360,16 +367,38 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
            ValueError if the option is an empty string 
         
         """
-        if opt != '': 
-            if commands.short_opts.find(opt) < 0:
-                commands.short_opts = commands.short_opts + opt
-                commands.getopt_short_opts = commands.getopt_short_opts + opt if value_expected == False else commands.getopt_short_opts + opt + ':'  
-            else:                
-                raise ValueError(self._trn.msg('htk_short_opt_registered', opt))
-        else:
-            raise ValueError(self._trn.msg('htk_short_opt_invalid', opt))
+        if type(opt_group).__name__ == 'list':
+            for optg in opt_group:
+                if optg not in commandopt.short_opt:
+                    commandopt.short_opt[optg] = ''
+                if opt not in commandopt.short_opt[optg]:
+                    commandopt.short_opt[optg] += opt
+                    opt = "-{}".format(opt)
+                    if optg not in commandopt.opt:
+                        commandopt.opt[optg] = {}
+                    commandopt.opt[optg][opt] = {
+                                                    'd_opt'          : d_opt,
+                                                    'has_value'      : value_expected,
+                                                    'allow_multiple' : allow_multiple                           
+                                                }
+        elif type(opt_group).__name__ == 'str':
+            if opt_group not in commandopt.short_opt:
+                commandopt.short_opt[opt_group] = ''
+            if opt not in commandopt.short_opt[opt_group]:
+                commandopt.short_opt[opt_group] += opt
+                opt = "-{}".format(opt)
+                if opt_group not in commandopt.opt:
+                    commandopt.opt[opt_group] = {}
+                commandopt.opt[opt_group][opt] = {
+                                                'd_opt'          : d_opt,
+                                                'has_value'      : value_expected,
+                                                'allow_multiple' : allow_multiple                           
+                                            }
         
-    def match_long_option(self, opt, value_expected=False):
+        else:
+            raise TypeError('opt_group can be only of type list or str, got {}'.format(type(opt_group).__name__))
+        
+    def match_long_option(self, opt, value_expected=False, d_opt=None, allow_multiple = False, opt_group='htk'):
         """Method registers command line long option check       
     
         Args:
@@ -377,20 +406,63 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
            value_expected (bool): Whether the option value is expected or not           
            
         Raises:            
-           ValueError: if the option is already registered for matching or the option is an empty string            
+           ValueError if the option is already registered for matching
+           ValueError if the option is an empty string 
         
         """
-        if opt != '': 
-            if opt not in commands.long_opts:                
-                commands.long_opts.append(opt)
-                add_opt = opt if value_expected == False else opt + '='
-                commands.getopt_long_opts.append(add_opt)  
-            else:                
-                raise ValueError(self._trn.msg('htk_long_opt_registered', opt))
+        if type(opt_group).__name__ == 'list':
+            for optg in opt_group:
+                if optg not in commandopt.long_opt:
+                    commandopt.long_opt[optg] = []
+                if opt not in commandopt.long_opt[optg]:
+                    commandopt.long_opt[optg].append(opt)
+                    opt = "--{}".format(opt)
+                    if optg not in commandopt.opt:
+                        commandopt.opt[optg] = {}
+                    commandopt.opt[optg][opt] = {
+                                                    'd_opt'          : d_opt,
+                                                    'has_value'      : value_expected,
+                                                    'allow_multiple' : allow_multiple                           
+                                                }
+        elif type(opt_group).__name__ == 'str':
+            if opt_group not in commandopt.long_opt:
+                commandopt.long_opt[opt_group] = []
+            if opt not in commandopt.long_opt[opt_group]:
+                commandopt.long_opt[opt_group].append(opt)
+                opt = "--{}".format(opt)
+                if opt_group not in commandopt.opt:
+                    commandopt.opt[opt_group] = {}
+                commandopt.opt[opt_group][opt] = {
+                                                'd_opt'          : d_opt,
+                                                'has_value'      : value_expected,
+                                                'allow_multiple' : allow_multiple                           
+                                            }
+        
         else:
-            raise ValueError(self._trn.msg('htk_long_opt_invalid', opt))
+            raise TypeError('opt_group can be only of type list or str, got {}'.format(type(opt_group).__name__))
+    
+    
+    def match_cli_option(self, opt, value_expected=False, d_opt=None, allow_multiple = False, opt_group='htk'):
+        """Method registers command option check       
+    
+        Args:
+           opt (str): Short option string           
+           value_expected (bool): Whether the option value is expected or not           
+           
+        Raises:            
+           ValueError if the option is already registered for matching
+           ValueError if the option is an empty string 
+        
+        """
+        if type(opt).__name__ not in ('tuple, list'):
+            raise TypeError('option can be only of type tuple or list, got {}'.format(type(opt).__name__))
+        
+        short_opt, long_opt = opt
+        self.match_short_option(short_opt, value_expected, d_opt, allow_multiple, opt_group)
+        self.match_long_option(long_opt, value_expected, d_opt, allow_multiple, opt_group) 
+
             
-    def match_command(self, cmd):
+    def match_cli_command(self, cmd, opt_group='htk'):
         """Method registers command line command check       
     
         Args:
@@ -398,10 +470,13 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
            
         Raises:            
            ValueError: if the command is already registered for matching or the command is an empty string           
-        """        
+        """
+        if opt_group not in commandopt.cmd:
+            commandopt.cmd[opt_group] = []
+            
         if cmd != '': 
-            if cmd not in commands.commands:
-                commands.commands.append(cmd)                
+            if cmd not in commandopt.cmd[opt_group]:                
+                commandopt.cmd[opt_group].append(cmd)                
                 
             else:                
                 raise ValueError(self._trn.msg('htk_cmd_registered', cmd))
@@ -409,6 +484,28 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
             raise ValueError(self._trn.msg('htk_cmd_invalid', cmd))
                 
     
+    def set_cli_cmdopt_profile(self, profile):
+        if type(profile).__name__ == 'str' and profile != '':
+            self._opt_profile = profile
+            if profile not in commandopt.opt: 
+                commandopt.opt[profile] = {}
+                
+            if profile not in commandopt.long_opt:
+                commandopt.long_opt[profile] = []
+                
+            if profile not in commandopt.short_opt:
+                commandopt.short_opt[profile] = ''
+            
+        else:
+            raise InputError("Option profile have to be non empty string type, got '{}' '{}'".format(profile, type(profile).__name__))
+        
+    def set_cli_appl_title(self, help_title, cp_string):
+        if type(help_title).__name__ == 'str' and type(cp_string).__name__ == 'str': 
+            self._help_title = help_title
+            self._cp_string = cp_string
+        else:
+            raise InputError("help_title and cp_string have to be string type, got '{}' '{}'".format(type(help_title).__name__,type(cp_string).__name__))
+            
     def register_fn_hook(self, fn_id, callback=''):
         """Method adds/replaces functionality hook
         

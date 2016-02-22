@@ -113,19 +113,26 @@ class CmdOptParser(argparse.ArgumentParser):
                 d_option = opt_map[cur_opt] if cur_opt in opt_map else None
                 has_value = True if opt[-1:] == '=' else False
                 self.add_opt(cur_opt, d_option, has_value)
-    
-    def parse(self, opt_group = 'default'):
+
+    def parse(self, opt_group = 'default', hide_undef = True):
         if opt_group not in self._options:
             raise CmdOptParserUndefined('Undefined group {}'.format(opt_group))  
         for opt_name, opt_args in self._options[opt_group].items():            
             self.add_argument(opt_name, **opt_args)
             
         set_opts, unreg_opts = self.parse_known_args()
-        self._set_opts       = vars(set_opts)
+        set_opts             = vars(set_opts)        
+        self._set_opts       = set_opts if hide_undef == False else self._strip_opts(set_opts)
         self._unreg_opts     = unreg_opts
                 
         return (self._set_opts, self._unreg_opts)
-
+    
+    def _strip_opts(self, opts):
+        for opt, value in opts.items():
+            if value in (None,False):
+                del opts[opt]
+        return opts
+        
     def opt_defined(self, option_name):
         return option_name in self._set_opts and self._set_opts[option_name] != False        
     

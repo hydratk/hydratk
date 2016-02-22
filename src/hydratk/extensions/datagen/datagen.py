@@ -23,9 +23,9 @@ class Extension(extension.Extension):
         
     def _register_actions(self):
         
-        self._mh.match_command('gen-asn1')
-        self._mh.match_command('gen-json') 
-        self._mh.match_command('gen-xml')
+        self._mh.match_cli_command('gen-asn1')
+        self._mh.match_cli_command('gen-json') 
+        self._mh.match_cli_command('gen-xml')
          
         hook = [
                 {'command' : 'gen-asn1', 'callback' : self.gen_asn1},

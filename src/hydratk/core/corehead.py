@@ -12,7 +12,6 @@ import os
 import sys
 import signal
 import yaml
-import getopt
 import multiprocessing
 import importlib
 import imp
@@ -29,11 +28,11 @@ if PYTHON_MAJOR_VERSION == 2:
     
 if PYTHON_MAJOR_VERSION == 3:    
     import configparser     
-
-import re    
+  
 from hydratk.core import const
 from hydratk.core import hsignal
-from hydratk.core import commands
+from hydratk.lib.console import cmdoptparser
+from hydratk.core import commandopt
 from hydratk.core import message
 from hydratk.core.eventhandler import EventHandler
 from hydratk.core import event
@@ -42,7 +41,6 @@ from hydratk.core.logger import Logger
 from hydratk.core import messagerouter
 from hydratk.lib.profiling.profiler import Profiler
 from hydratk.lib.console.commandlinetool import CommandlineTool
-from hydratk.lib.array import multidict
 from hydratk.lib.exceptions.inputerror import InputError
 import hydratk.core.dbconfig as dbconfig
 
@@ -57,8 +55,11 @@ class CoreHead(EventHandler, Debugger, Profiler, Logger):
     _use_extensions   = True
     '''Extensions'''
     _ext              = {} 
-    _default_command  = 'short-help'    
-    _command          = None     
+    _default_command  = 'short-help'
+    _help_title       = '{h}' + const.APP_NAME + ' v' + const.APP_VERSION + '{e}'
+    _cp_string        = '{u}' + const.CP_STRING + '{e}'   
+    _command          = None
+    _opt_profile      = 'htk'     
     _cmd_option_hooks = {}
     _event_hooks      = {}
     _cmd_hooks        = {}
@@ -693,27 +694,27 @@ class CoreHead(EventHandler, Debugger, Profiler, Logger):
     def _set_default_cli_params(self):
         CommandlineTool.set_translator(self._trn)
         
-        '''Define commands'''                            
-        CommandlineTool.set_possible_commands(commands.commands)  
+        '''Define commands'''                                    
+        CommandlineTool.set_possible_commands(commandopt.cmd[self._opt_profile])  
                       
-        '''Define options'''                                               
-        CommandlineTool.set_possible_options(commands.getopt_short_opts, commands.getopt_long_opts)        
-
-        '''Set help text'''
-        help_title = '{h}' + const.APP_NAME + ' v' + const.APP_VERSION + '{e}'
-        cp_string = '{u}' + const.CP_STRING + '{e}'
+        '''Define options'''        
+        short_opt = commandopt.short_opt[self._opt_profile] if self._opt_profile in commandopt.short_opt else '' 
+        long_opt  = commandopt.long_opt[self._opt_profile] if self._opt_profile in commandopt.long_opt else []                                          
+        CommandlineTool.set_possible_options(short_opt, long_opt)        
+        
+        '''Set help text'''      
         cmd_text = {}
-        for cmd in commands.commands: 
+        for cmd in commandopt.cmd[self._opt_profile]: 
             if cmd in self._trn.help_mod.help_cmd:
                 cmd_text[cmd] = self._trn.help_mod.help_cmd[cmd]
             else: self.dmsg('htk_on_warning', self._trn.msg('htk_help_cmd_def_missing', cmd, self._language), self.fromhere())                            
         opt_text = {}
-        for opt in commands.long_opts:
+        for opt in commandopt.long_opt[self._opt_profile]:
             if opt in self._trn.help_mod.help_opt:
                 opt_text.update(self._trn.help_mod.help_opt[opt])
             else: self.dmsg('htk_on_warning', self._trn.msg('htk_option_def_missing', opt, self._language), self.fromhere())   
-                                               
-        CommandlineTool.set_help(help_title, cp_string, cmd_text, opt_text)            
+                                                    
+        CommandlineTool.set_help(self._help_title, self._cp_string, cmd_text, opt_text)                   
     
     def _set_pid_file(self, pid_file):
         pid = os.getpid()
@@ -789,16 +790,14 @@ class CoreHead(EventHandler, Debugger, Profiler, Logger):
                       
         self.register_event_hook(hook)
                             
-    def _parse_cli_args(self):        
+    def _parse_cli_args(self): 
+        command = CommandlineTool.get_input_command()
+        try:                
+            options = CommandlineTool.get_input_options(commandopt.opt[self._opt_profile])
+        except cmdoptparser.CmdOptParserError as err:
+            options = False
+            self.dmsg('htk_on_error', self._trn.msg('htk_unrecognized_opt', str(err)), self.fromhere())       
         if (len(sys.argv) > 1):
-            command = CommandlineTool.get_input_command()
-            try:                
-                options = CommandlineTool.get_input_options()
-            except getopt.GetoptError as err:
-                options = False
-                self.dmsg('htk_on_error', self._trn.msg('htk_unrecognized_opt', err.opt), self.fromhere())
-                
-            
             if command == False:
                 self.dmsg('htk_on_warning', self._trn.msg('htk_undetected_cmd'), self.fromhere())
                 self._command = self._default_command                
@@ -806,7 +805,7 @@ class CoreHead(EventHandler, Debugger, Profiler, Logger):
                 self._command = command
                         
             if options != False:                   
-                for opt_name, opt_value in options['options']:
+                for opt_name, opt_value in options['options'].items():
                     self._run_command_option_hooks(opt_name, opt_value)                    
                                         
                     if opt_name == '-h' or opt_name == '--help':

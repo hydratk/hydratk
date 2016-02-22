@@ -14,6 +14,7 @@ class Profiler(object):
     
     def __init__(self):
         self._pr = cProfile.Profile()
+        self._configure_profiler()
     
     def start(self):
         self._pr.enable()
@@ -22,11 +23,20 @@ class Profiler(object):
         self._pr.disable()
     
     def _configure_profiler(self):
-        from hydratk.core import commands
-        commands.long_opts.append('profile')
-        commands.short_opts += 'p'
-        commands.getopt_long_opts.append('profile=')
-        commands.getopt_short_opts += 'p:'
+        from hydratk.core import commandopt
+        commandopt.long_opt['htk'].append('profile')
+        commandopt.short_opt['htk'] += 'p'
+        commandopt.d_opt['htk'].append('profile')
+        commandopt.opt['htk']['-p'] = {
+                                        'd_opt'          : 'profile',
+                                        'has_value'      : True,
+                                        'allow_multiple' : False                           
+                                      }
+        commandopt.opt['htk']['--profile'] = {
+                                        'd_opt'          : 'profile',
+                                        'has_value'      : True,
+                                        'allow_multiple' : False                           
+                                      }         
 
     def _create_profiler_stats(self):
         import StringIO, pstats

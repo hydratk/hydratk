@@ -31,7 +31,7 @@ class Extension(extension.Extension):
         self._ext_year = '2013'  
         
     def _register_actions(self):
-        self._mh.match_command('start-benchmark')        
+        self._mh.match_cli_command('start-benchmark')        
         hook = [{'command' : 'start-benchmark', 'callback' : self.start_bench_fc }]        
         self._mh.register_command_hook(hook)
         self._mh.match_long_option('details')
