@@ -7,7 +7,7 @@
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
-
+import unicodedata
 import re
 
 def mreplace(text, dic): 
@@ -19,3 +19,22 @@ def mreplace(text, dic):
 
 def str_split(string, split_length=1):
     return filter(None, re.split('(.{1,%d})' % split_length, string))
+
+
+def strip_accents(text):
+    """Function strip accents from input text
+    Args:
+       text (str): Input text string        
+               
+    Returns:            
+       text (str)    
+    
+    """
+    try:
+        text = unicode(text, 'utf-8')
+    except NameError: # unicode is a default on python 3 
+        pass
+    text = unicodedata.normalize('NFD', text)
+    text = text.encode('ascii', 'ignore')
+    text = text.decode("utf-8")
+    return str(text)
