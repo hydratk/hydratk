@@ -20,14 +20,19 @@ def run_pre_install():
     
     prompt = ''
     modes = cfg['modes']
+    """
+    DISABLED until meets the pip setup compatibility
+    
     for i in xrange(0, len(modes)):
         prompt += '{0} - {1}\n'.format(i+1, modes[i])
     
-    print('Choose mode to install')
+    #print('Choose mode to install')
     try:
         mode = int(raw_input('{0}'.format(prompt)))        
     except ValueError:
         mode = 1
+    """
+    mode = 2
     mode = modes[mode-1] if (mode <= len(modes)) else 'basic'
     print('Mode {0} will be installed'.format(mode)) 
     
