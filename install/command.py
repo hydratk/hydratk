@@ -39,7 +39,7 @@ def install_pck(pckm, pck):
     print('Installing package: {0}'.format(pck))
     
     if (pckm == 'apt-get'):
-        cmd = 'apt-get install {0}'.format(pck)
+        cmd = 'apt-get -y install {0}'.format(pck)
     elif (pckm == 'yum'):
         cmd = 'yum install {0}'.format(pck)
         
@@ -54,14 +54,16 @@ def ask_module(module):
     return result                
         
 def ask_install(app):
-    
+    return True
+
     print('{0} not installed, do you want to install it ?'.format(app))
     choice = raw_input('[Y]:')
     result = True if (len(choice) == 0 or choice == 'Y') else False
     return result        
         
 def set_inst_dir():  
-    
+    return cfg['os']['inst_dir'] #workaround to make pip installer working
+
     print('Choose install directory')
     dir = raw_input('[{0}]:'.format(cfg['os']['inst_dir']))  
     dir = dir if (len(dir) > 0) else cfg['os']['inst_dir']
