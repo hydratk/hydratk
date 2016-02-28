@@ -9,7 +9,8 @@
 
 """
 
-from hydratk.lib.string.operation import str_split,file_get_contents
+from hydratk.lib.string.operation import str_split
+from hydratk.lib.system.fs import file_get_contents
 import time
 import math
 import datetime as dt
@@ -93,7 +94,7 @@ class FirePot(object):
             json_buf = json_buf.encode('utf-8')                                    
             json_buf = json_buf.encode('base64')            
             id = int(hashlib.md5(json_buf).hexdigest(), 16)            
-            res = str_split(json_buf,76) '''RFC 2045'''            
+            res = str_split(json_buf,76) #RFC 2045            
             k = 0
             for v in res:
                 if v != "\n":
