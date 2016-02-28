@@ -68,7 +68,7 @@ class FirePot(object):
                 }
             
         if FirePot._style != '':
-            item['style'] = FirePot._style '''CSS snippet'''
+            item['style'] = FirePot._style #CSS snippet
         
         FirePot._items.append(item)
         FirePot._counter += 1
