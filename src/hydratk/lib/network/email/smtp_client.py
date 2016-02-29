@@ -117,7 +117,7 @@ class EmailClient:
             message = '{0}/{1}@{2}:{3}'.format(user, passw, host, port)                            
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_email_connecting', message), self._mh.fromhere())
             
-            ev = event.Event('email_before_connect', host, self.port, user, passw)
+            ev = event.Event('email_before_connect', host, port, user, passw)
             if (self._mh.fire_event(ev) > 0):
                 host = ev.argv(0)
                 port = ev.argv(1)

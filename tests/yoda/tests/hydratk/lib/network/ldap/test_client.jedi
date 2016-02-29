@@ -1,0 +1,346 @@
+Test-Scenario-1:
+  id: ts_01
+  path: tests/hydratk/lib/network/ldap/test_client.jedi
+  name: test_client
+  desc: Unit tests for module hydratk/lib/network/ldap/client.py
+  author: Petr Rasek <bowman@hydratk.org>
+  version: 1.0
+  
+  pre-req: |
+    import yodalib.hydratk.lib.network.ldap.client as ldap
+    c = ldap.TestLDAPClient()
+    
+  Test-Case-1:
+    id: tc_01
+    name: connect
+    desc: Tests for method connect
+  
+    Test-Condition-1: 
+      id: tco_01
+      name: min_param
+      desc: Connect with minimum parameters
+      test: |
+        host = 'localhost'
+        base_dn = 'dc=test,dc=com'
+        c._events = []
+        res = c.connect(host, base_dn)
+                         
+      validate: |  
+        expected = [True, host, base_dn, 389]
+        current = [res, c._client.host, c._client.base_dn, c._client.port]
+        this.test_result = (current == expected)
+        assert (this.test_result == True), 'Expected: {0}, current: {1}'.format(expected, current)  
+        events = ['ldap_before_connect', 'ldap_after_connect']
+        this.test_result = (c._events == events)
+        assert (this.test_result == True), 'Expected: {0}, current: {1}'.format(events, c._events)        
+        
+    Test-Condition-2: 
+      id: tco_02
+      name: max_param
+      desc: Connect with maximum parameters
+      test: |
+        [host, base_dn, port, secured, user, passw] = ['localhost', 'dc=test,dc=com', 636, True, 'admin', 'admin']
+        res = c.connect(host, base_dn, port, secured, user, passw)
+                         
+      validate: |  
+        expected = [True, host, base_dn, port, secured, user, passw]
+        current = [res, c._client.host, c._client.base_dn, c._client.port, c._client.secured, c._client.user, c._client.passw]
+        this.test_result = (current == expected)
+        assert (this.test_result == True), 'Expected: {0}, current: {1}'.format(expected, current)   
+        
+    Test-Condition-3: 
+      id: tco_03
+      name: exception
+      desc: Connect exception
+      test: |
+        res = c.connect(host, base_dn, user='admin', ex=True)
+                         
+      validate: |  
+        this.test_result = (res == False)
+        assert (this.test_result == True), 'Expected exception'        
+        
+  Test-Case-2:
+    id: tc_02
+    name: disconnect
+    desc: Tests for method disconnect
+  
+    Test-Condition-1: 
+      id: tco_01
+      name: disconnect
+      desc: Disconnect
+      test: |
+        res = c.disconnect()
+                         
+      validate: |  
+        expected = True
+        current = res
+        this.test_result = (current == expected)
+        assert (this.test_result == True), 'Expected: {0}, current: {1}'.format(expected, current) 
+        
+    Test-Condition-2: 
+      id: tco_02
+      name: exception
+      desc: Disconnect exception
+      test: |
+        res = c.disconnect(ex=True)
+                         
+      validate: |  
+        this.test_result = (res == False)
+        assert (this.test_result == True), 'Expected exception'   
+        
+  Test-Case-3:
+    id: tc_03
+    name: read
+    desc: Tests for method read
+  
+    Test-Condition-1: 
+      id: tco_01
+      name: whole_ou
+      desc: Read whole organization unit
+      test: |
+        rdn = 'ou=users'
+        c._events = []
+        records = c.read(rdn)
+                         
+      validate: |  
+        expected = 3
+        current = len(records)
+        this.test_result = (current == expected)
+        assert (this.test_result == True), 'Expected: {0}, current: {1}'.format(expected, current) 
+        events = ['ldap_before_read', 'ldap_after_read']
+        this.test_result = (c._events == events)
+        assert (this.test_result == True), 'Expected: {0}, current: {1}'.format(events, c._events)     
+        
+    Test-Condition-2: 
+      id: tco_02
+      name: user
+      desc: Read user
+      test: |
+        rdn = 'cn=bowman,ou=users'
+        records = c.read(rdn)
+                         
+      validate: |  
+        expected = 1
+        current = len(records)
+        this.test_result = (current == expected) 
+        assert (this.test_result == True), 'Expected: {0}, current: {1}'.format(expected, current)         
+        
+    Test-Condition-3: 
+      id: tco_03
+      name: filter
+      desc: Search organization unit with filter
+      test: |
+        rdn = 'ou=users'
+        filter = 'cn=bowman'
+        records = c.read(rdn, filter)
+                         
+      validate: |  
+        expected = 1
+        current = len(records)
+        this.test_result = (current == expected)
+        assert (this.test_result == True), 'Expected: {0}, current: {1}'.format(expected, current)            
+        
+    Test-Condition-4: 
+      id: tco_04
+      name: no_child
+      desc: Read no child records
+      test: |
+        rdn = 'ou=users'        
+        records = c.read(rdn, get_child=False)
+                         
+      validate: |  
+        expected = 1
+        current = len(records)
+        this.test_result = (current == expected)
+        assert (this.test_result == True), 'Expected: {0}, current: {1}'.format(expected, current)  
+        
+    Test-Condition-5: 
+      id: tco_05
+      name: fetch_one
+      desc: Fetch one record
+      test: |
+        rdn = 'ou=users'        
+        records = c.read(rdn, fetch_one=True)
+                         
+      validate: |  
+        expected = 1
+        current = len(records)
+        this.test_result = (current == expected)
+        assert (this.test_result == True), 'Expected: {0}, current: {1}'.format(expected, current)   
+        
+    Test-Condition-6: 
+      id: tco_06
+      name: given_attrs
+      desc: Read given attributes
+      test: |
+        rdn = 'cn=bowman,ou=users'     
+        attrs = ['sn']   
+        records = c.read(rdn, attrs=attrs)
+                         
+      validate: |  
+        expected = {'CN':'cn=bowman,ou=users,dc=test,dc=com', 'sn':'Bowman'}
+        current = records[0]
+        this.test_result = (current == expected)
+        assert (this.test_result == True), 'Expected: {0}, current: {1}'.format(expected, current)  
+        
+    Test-Condition-7: 
+      id: tco_07
+      name: cn_only
+      desc: Read only CN
+      test: |
+        rdn = 'cn=bowman,ou=users'     
+        records = c.read(rdn, cn_only=True)
+                         
+      validate: |  
+        expected = 'cn=bowman,ou=users,dc=test,dc=com'
+        current = records[0]
+        this.test_result = (current == expected)
+        assert (this.test_result == True), 'Expected: {0}, current: {1}'.format(expected, current) 
+        
+    Test-Condition-8: 
+      id: tco_08
+      name: attrs_only
+      desc: Read attributes only
+      test: |
+        rdn = 'cn=bowman,ou=users'     
+        records = c.read(rdn, attrs_only=True)
+                         
+      validate: |  
+        expected = ['givenName', 'sn']
+        current = records
+        this.test_result = (current == expected)
+        assert (this.test_result == True), 'Expected: {0}, current: {1}'.format(expected, current)                                                                        
+        
+  Test-Case-4:
+    id: tc_04
+    name: create
+    desc: Tests for method create
+  
+    Test-Condition-1: 
+      id: tco_01
+      name: min_param
+      desc: Create with minimum parameters
+      test: |
+        rdn = 'cn=bowman,ou=users'
+        c._events = []
+        res = c.create(rdn)
+                         
+      validate: |  
+        expected = True
+        current = res
+        this.test_result = (current == expected)
+        assert (this.test_result == True), 'Expected: {0}, current: {1}'.format(expected, current) 
+        events = ['ldap_before_create', 'ldap_after_create']
+        this.test_result = (c._events == events)
+        assert (this.test_result == True), 'Expected: {0}, current: {1}'.format(events, c._events)   
+        
+    Test-Condition-2: 
+      id: tco_02
+      name: max_param
+      desc: Create with maximum parameters
+      test: |
+        rdn = 'cn=bowman,ou=users'
+        attrs = {'sn':'Bowman', 'givenName':'Charlie'}
+        res = c.create(rdn, attrs)
+                         
+      validate: |  
+        expected = True
+        current = res
+        this.test_result = (current == expected)
+        assert (this.test_result == True), 'Expected: {0}, current: {1}'.format(expected, current)              
+        
+    Test-Condition-3: 
+      id: tco_03
+      name: exception
+      desc: Create exception
+      test: |
+        res = c.create(rdn, ex=True)
+                         
+      validate: |  
+        this.test_result = (res == False)
+        assert (this.test_result == True), 'Expected exception'     
+        
+  Test-Case-5:
+    id: tc_05
+    name: update
+    desc: Tests for method update
+  
+    Test-Condition-1: 
+      id: tco_01
+      name: attrs
+      desc: Update attributes
+      test: |
+        rdn = 'cn=bowman,ou=users'
+        attrs = {'sn':'Neil', 'givenName':'Vince'}
+        c._events = []
+        res = c.update(rdn, attrs)
+                         
+      validate: |  
+        expected = True
+        current = res
+        this.test_result = (current == expected)
+        assert (this.test_result == True), 'Expected: {0}, current: {1}'.format(expected, current) 
+        events = ['ldap_before_update', 'ldap_before_read', 'ldap_after_read', 'ldap_after_update']
+        this.test_result = (c._events == events)
+        assert (this.test_result == True), 'Expected: {0}, current: {1}'.format(events, c._events)
+        
+    Test-Condition-2: 
+      id: tco_02
+      name: rdn
+      desc: Update rdn
+      test: |
+        rdn = 'cn=bowman,ou=users'
+        attrs = {'cn':'neil', 'sn':'Neil', 'givenName':'Vince'}
+        res = c.update(rdn, attrs)
+                         
+      validate: |  
+        expected = True
+        current = res
+        this.test_result = (current == expected)
+        assert (this.test_result == True), 'Expected: {0}, current: {1}'.format(expected, current)                       
+        
+    Test-Condition-3: 
+      id: tco_03
+      name: exception
+      desc: Update exception
+      test: |
+        attrs = {'cn':'neil', 'sn':'Neil', 'givenName':'Vince'}
+        res = c.update(rdn, attrs, ex=True)
+                         
+      validate: |  
+        this.test_result = (res == False)
+        assert (this.test_result == True), 'Expected exception'          
+        
+  Test-Case-6:
+    id: tc_06
+    name: delete
+    desc: Tests for method delete
+  
+    Test-Condition-1: 
+      id: tco_01
+      name: delete
+      desc: Delete
+      test: |
+        rdn = 'cn=bowman,ou=users'
+        c._events = []
+        res = c.delete(rdn)
+                         
+      validate: |  
+        expected = True
+        current = res
+        this.test_result = (current == expected)
+        assert (this.test_result == True), 'Expected: {0}, current: {1}'.format(expected, current) 
+        events = ['ldap_before_delete', 'ldap_after_delete']
+        this.test_result = (c._events == events)
+        assert (this.test_result == True), 'Expected: {0}, current: {1}'.format(events, c._events)              
+        
+    Test-Condition-2: 
+      id: tco_02
+      name: exception
+      desc: Delete exception
+      test: |
+        res = c.delete(rdn, ex=True)
+                         
+      validate: |  
+        this.test_result = (res == False)
+        assert (this.test_result == True), 'Expected exception'                         

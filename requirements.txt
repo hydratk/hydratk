@@ -20,3 +20,4 @@ python-ntlm
 JPype1
 scapy
 selenium
+python-ldap

@@ -45,7 +45,8 @@ config = {
                           'MySQL-python', 
                           'paramiko',
                           'psycopg2',               
-                          'pycurl',                                                          
+                          'pycurl',     
+                          'python-ldap',                                                     
                           'python-ntlm',               
                           'scapy',
                           'selenium', 
@@ -115,6 +116,16 @@ config = {
             'pycurl'       : {
                               'repo'    : [
                                            'python-pycurl'
+                                          ]
+                             },
+            'python-ldap'  : {
+                              'apt-get' : [
+                                           'libldap2-dev',
+                                           'libsasl2-dev',
+                                           'libssl-dev'
+                                          ],
+                              'yum'     : [
+                                           'openldap-devel'
                                           ]
                              },
             'pyzmq'        : {                        

@@ -7,6 +7,7 @@ packages_map  = {
   'hydratk.lib.network.inet.client'  : 'hydratk.translation.lib.network.inet.client',
   'hydratk.lib.network.inet.packet'  : 'hydratk.translation.lib.network.inet.packet',
   'hydratk.lib.network.jms.client'   : 'hydratk.translation.lib.network.jms.client',
+  'hydratk.lib.network.ldap.client'  : 'hydratk.translation.lib.network.ldap.client',
   'hydratk.lib.network.rest.client'  : 'hydratk.translation.lib.network.rest.client',
   'hydratk.lib.network.rpc.client'   : 'hydratk.translation.lib.network.rpc.client',
   'hydratk.lib.network.soap.client'  : 'hydratk.translation.lib.network.soap.client',

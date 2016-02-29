@@ -99,19 +99,19 @@ class SOAPClient:
     def endpoint(self):
         """ service endpoint property getter """
         
-        return self._client
+        return self._endpoint
     
     @property
     def headers(self):
         """ HTTP headers property getter """
         
-        return self._client
+        return self._headers
     
     @property
     def verbose(self):
         """ verbose mode property getter """
         
-        return self._client                      
+        return self._verbose                      
             
     def load_wsdl(self, url, location='remote', user=None, passw=None, endpoint=None, headers=None,
                   transport=None): 

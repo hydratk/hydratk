@@ -47,6 +47,7 @@ Network
    tutor/lib/ftp
    tutor/lib/inet
    tutor/lib/jms
+   tutor/lib/ldap
    tutor/lib/rest
    tutor/lib/rpc
    tutor/lib/soap

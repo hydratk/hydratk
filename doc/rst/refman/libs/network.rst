@@ -145,6 +145,15 @@ simple_jms
 .. automodule:: hydratk.lib.network.jms.simplejms
    :member-order: bysource
 
+ldap
+====
+
+client
+^^^^^^
+
+.. automodule:: hydratk.lib.network.ldap.client
+   :member-order: bysource
+
 rest
 ====
 

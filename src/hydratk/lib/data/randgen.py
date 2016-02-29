@@ -62,7 +62,9 @@ def gen_id(n=10):
                 
     """  
     
-    if (n > 0):     
+    if (n == 1):
+        return str(randint(0,9))
+    elif (n > 1):     
         return str(randint(10**(n-1), 10**n-1))
     else:
         raise ValueError('n must be positive integer')

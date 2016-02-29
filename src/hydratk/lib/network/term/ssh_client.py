@@ -210,4 +210,4 @@ class TermClient:
             
         except (SSHException, NoValidConnectionsError, error), ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
-            return False, err                                
+            return False, [str(ex)]                                

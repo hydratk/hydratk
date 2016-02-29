@@ -16,7 +16,7 @@ proper RPCClient object instance. Additional attributes are passed as args, kwar
 
 - **init_proxy**: - initialize proxy to remote object
 - **call_method**: - call method on remote object
-- **close** - stop JVM, supported for JDBC
+- **close** - stop JVM
 
 Examples
 ========
