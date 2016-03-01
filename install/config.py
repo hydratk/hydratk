@@ -12,7 +12,7 @@ config = {
   'pre_tasks' : [
                  'install_libs_from_repo',
                  'install_java',
-                 'install_oracle',
+                 #'install_oracle',
                  'install_phantomjs'
                 ],
 

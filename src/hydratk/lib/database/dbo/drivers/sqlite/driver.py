@@ -152,7 +152,11 @@ class DBODriver(dbodriver.DBODriver):
     
     def erase_database(self):
         tables = list(self._cursor.execute("select name from sqlite_master where type is 'table'"))
-        self._cursor.executescript(';'.join(["drop table if exists %s" %i for i in tables]))
+        query = ''
+        for col in tables:
+            query += "drop table if exists {};".format(col['name'])        
+        print("QUERY: {}".format(query))
+        self._cursor.executescript(query)
         self._cursor.execute("VACUUM;")
     
     def result_as_dict(self, state):       
