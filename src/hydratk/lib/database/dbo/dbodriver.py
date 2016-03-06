@@ -32,7 +32,7 @@ class DBODriver(object):
     def cursor(self):
         return self._cursor
     
-    def __init__(self, dsn, username=None, password=None, driver_options={}):        
+    def __init__(self, dsn, username=None, password=None, driver_options={}, autoconnect = True):        
         '''
         Constructor
         '''
@@ -46,7 +46,8 @@ class DBODriver(object):
             raise Exception("Error initialize database driver, dsn parse {0} error".format(dsn))
         
         try:
-            self.connect()
+            if autoconnect == True:
+                self.connect()
             
         except Exception as e:
             exc = DBODriverException(str(e))
