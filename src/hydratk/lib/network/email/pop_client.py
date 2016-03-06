@@ -21,12 +21,14 @@ email_after_receive_email
 from hydratk.core.masterhead import MasterHead
 from hydratk.core import event
 from poplib import POP3, POP3_SSL, error_proto
+from socket import error
 from string import replace
 
 class EmailClient:
     
     _mh = None
     _client = None
+    _secured = None
     _host = None    
     _port = None
     _user = None
@@ -53,6 +55,12 @@ class EmailClient:
         """ POP client property getter """
         
         return self._client
+    
+    @property
+    def secured(self):
+        """ secured property getter """
+        
+        return self._secured    
     
     @property
     def host(self):
@@ -125,16 +133,16 @@ class EmailClient:
             if (ev.will_run_default()):  
                                 
                 if (not self._secured):
-                    self._client = POP3(self.host, self.port) 
+                    self._client = POP3(self._host, self._port) 
                 else:
-                    self._client = POP3_SSL(self.host, self.port) 
+                    self._client = POP3_SSL(self._host, self._port) 
                            
-                if (self.verbose):
+                if (self._verbose):
                     self._client.set_debuglevel(2)                                          
                     
-                if (self.user != None):
-                    self._client.user(self.user)
-                    self._client.pass_(self.passw)                        
+                if (self._user != None):
+                    self._client.user(self._user)
+                    self._client.pass_(self._passw)                        
                 
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_email_connected'), self._mh.fromhere()) 
             ev = event.Event('email_after_connect')
@@ -142,7 +150,7 @@ class EmailClient:
                                                    
             return True
         
-        except error_proto, ex:
+        except (error_proto, error), ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
             return False            
                    
@@ -160,7 +168,7 @@ class EmailClient:
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_email_disconnected'), self._mh.fromhere())  
             return True  
     
-        except error_proto, ex:
+        except (error_proto, error), ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
             return False    
         
@@ -180,7 +188,7 @@ class EmailClient:
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_email_count', count), self._mh.fromhere())      
             return count              
             
-        except error_proto, ex: 
+        except (error_proto, error), ex: 
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
             return None      
         
@@ -204,7 +212,7 @@ class EmailClient:
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_email_listed'), self._mh.fromhere())         
             return emails
             
-        except error_proto, ex: 
+        except (error_proto, error), ex: 
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
             return None  
         
@@ -236,27 +244,34 @@ class EmailClient:
                 
             msg_found = False
             message = ''
+            sender = None
+            recipients = None
+            cc = None
+            subject = None
+            
             for line in msg:
                 if (not msg_found):
                     if ('From: ' in line):
                         sender = replace(line, ('From: '), '')
                     elif ('To: ' in line):
-                        recipients = replace(line, ('To: '), '') 
+                        recipients = replace(line, ('To: '), '')
+                        recipients = recipients.split(',') 
                     elif ('CC: ' in line):
-                        cc = replace(line, ('CC: '), '')  
+                        cc = replace(line, ('CC: '), '') 
+                        cc = cc.split(',') 
                     elif ('Subject: ' in line):
                         subject = replace(line, ('Subject: '), '')
                     elif ('Inbound message' in line):
                         msg_found = True
                 else:
-                        message += line + '\r\n'                
+                        message += line + '\r\n'            
                 
             ev = event.Event('email_after_receive_email')
             self._mh.fire_event(ev)
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_email_received'), self._mh.fromhere())  
 
-            return [sender, recipients, cc, subject, message]                                                       
+            return (sender, recipients, cc, subject, message)                                                       
             
-        except error_proto, ex: 
+        except (error_proto, error), ex: 
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
             return None                                                                            

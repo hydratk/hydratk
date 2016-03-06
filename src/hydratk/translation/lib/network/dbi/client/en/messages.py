@@ -32,5 +32,5 @@ msg = {
     'htk_dbi_query_executed'     : ["Query executed"],
     'htk_dbi_query_error'        : ["Error occured during query execution"],
     'htk_dbi_calling_proc'       : ["Calling procedure: '{0}'"],
-    'htk_dbi_proc_called'        : ["Procedure called"] 
+    'htk_dbi_proc_called'        : ["Procedure called: '{0}'"] 
 }

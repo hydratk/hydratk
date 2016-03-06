@@ -230,7 +230,7 @@ class DBClient():
            ret_type (str): return type, string, optional, used for function only                    
              
         Returns:
-           tuple: result (bool) (for function only), params (list)
+           tuple: result (according to ret_type) (for function only), params (dict)
            
         Raises:
            event: dbi_before_call_proc
@@ -240,7 +240,7 @@ class DBClient():
         
         try:                    
         
-            message = p_name + ' param: {0}'.format(i_values) if (len(i_values) > 0) else p_name
+            message = p_name + ' params: {0}'.format(i_values) if (len(i_values) > 0) else p_name
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_dbi_calling_proc', message), self._mh.fromhere())
             
             ev = event.Event('dbi_before_call_proc', p_name, param_names, i_values, o_types, type, ret_type)
@@ -264,7 +264,11 @@ class DBClient():
                     if (i_values.has_key(name)):
                         params.append(i_values[name])
                     elif (o_types.has_key(name)):
-                        params.append(cur.var(self._data_types[o_types[name].lower()])) 
+                        
+                        if (o_types[name].lower() == 'cursor'):
+                            params.append(self._client.cursor())
+                        else:
+                            params.append(cur.var(self._data_types[o_types[name].lower()])) 
                     else:
                         params.append(None)                               
                 
@@ -277,17 +281,23 @@ class DBClient():
                 i = 0 
                 for param in params:
                     name = param_names[i]
-                                                    
+                                                  
                     if (param.__class__.__module__ == 'cx_Oracle'):
-                        param = param.getvalue()
-                    if (o_types.has_key(name) and o_types[name] == 'int' and param != None):
-                        param = int(param)
                         
-                    output[name] = param
+                        if (param.__class__.__name__ == 'Cursor'):
+                            columns = [j[0].lower() for j in param.description]                    
+                            param = [dict(zip(columns, row)) for row in param]                              
+                        else:
+                            param = param.getvalue()
+                            if (o_types.has_key(name) and o_types[name] == 'int' and param != None):
+                                param = int(param)
+                    
+                    if (o_types.has_key(name)):    
+                        output[name] = param
                     i = i+1              
             
             cur.close()  
-            self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_dbi_proc_called'), self._mh.fromhere())
+            self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_dbi_proc_called', output), self._mh.fromhere())
             
             if (type in ('func', 'function')): 
                 ev = event.Event('dbi_after_call_proc', result, output) 

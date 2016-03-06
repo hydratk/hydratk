@@ -290,8 +290,8 @@ class FTPClient:
  
         except all_errors, ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
-            if (path.exists(path)):
-                remove(path)                     
+            if (path.exists(lpath)):
+                remove(lpath)                     
             return False  
         
     def upload_file(self, local_path, remote_path=None):
@@ -422,7 +422,7 @@ class FTPClient:
             
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_ftp_removing_dir', path), self._mh.fromhere())  
             
-            ev = event.Event('ftp_before_remove_file', path)
+            ev = event.Event('ftp_before_remove_dir', path)
             if (self._mh.fire_event(ev) > 0):
                 path = ev.argv(0)                     
             

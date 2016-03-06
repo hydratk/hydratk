@@ -1,0 +1,73 @@
+Test-Scenario-1:
+  id: ts_01
+  path: tests/hydratk/lib/network/email/test_client.jedi
+  name: test_client
+  desc: Unit tests for module hydratk/lib/network/email/client.py
+  author: Petr Rasek <bowman@hydratk.org>
+  version: 1.0
+  
+  pre-req: |
+    import hydratk.lib.network.email.client as email
+    
+  Test-Case-1:
+    id: tc_01
+    name: term_client
+    desc: Tests for method EmailClient
+  
+    Test-Condition-1: 
+      id: tco_01
+      name: smtp_client
+      desc: Create SMTP client instance
+      test: |
+        protocol = 'SMTP'        
+        client = email.EmailClient(protocol) 
+                         
+      validate: |  
+        current = '{0}.{1}'.format(client.__module__, client.__class__.__name__)
+        expected = 'hydratk.lib.network.email.smtp_client.EmailClient'
+        this.test_result = (current == expected)
+        assert (this.test_result == True), 'expected: {0}, current: {1}'.format(current, expected)     
+        
+    Test-Condition-2: 
+      id: tco_02
+      name: pop_client
+      desc: Create POP client instance
+      test: |
+        protocol = 'POP'        
+        client = email.EmailClient(protocol) 
+                         
+      validate: |  
+        current = '{0}.{1}'.format(client.__module__, client.__class__.__name__)
+        expected = 'hydratk.lib.network.email.pop_client.EmailClient'
+        this.test_result = (current == expected)
+        assert (this.test_result == True), 'expected: {0}, current: {1}'.format(current, expected)        
+        
+    Test-Condition-3: 
+      id: tco_03
+      name: imap_client
+      desc: Create IMAP client instance
+      test: |
+        protocol = 'IMAP'        
+        client = email.EmailClient(protocol) 
+                         
+      validate: |  
+        current = '{0}.{1}'.format(client.__module__, client.__class__.__name__)
+        expected = 'hydratk.lib.network.email.imap_client.EmailClient'
+        this.test_result = (current == expected)
+        assert (this.test_result == True), 'expected: {0}, current: {1}'.format(current, expected)                           
+        
+    Test-Condition-4: 
+      id: tco_04
+      name: unknown_client
+      desc: Create unknown client
+      test: |      
+        try:
+            protocol = 'XXX'
+            client = email.EmailClient(protocol) 
+            result = False
+        except ValueError:    
+            result = True
+                         
+      validate: |  
+        this.test_result = (result == True)
+        assert (this.test_result == True), 'expected ValueError'                     

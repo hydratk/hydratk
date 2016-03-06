@@ -21,11 +21,13 @@ email_after_send_email
 from hydratk.core.masterhead import MasterHead
 from hydratk.core import event
 from smtplib import SMTP, SMTP_SSL, SMTPException
+from socket import error
 
 class EmailClient:
     
     _mh = None
     _client = None
+    _secured = None
     _host = None    
     _port = None
     _user = None
@@ -60,6 +62,12 @@ class EmailClient:
         """ SMTP client property getter """
         
         return self._client
+    
+    @property
+    def secured(self):
+        """ secured property getter """
+        
+        return self._secured    
     
     @property
     def host(self):
@@ -132,7 +140,7 @@ class EmailClient:
             if (ev.will_run_default()):                  
                 self._client.connect(self.host, self.port)                      
                     
-                if (self.user != None):
+                if (self._user != None):
                     self._client.login(self.user, self.passw)                         
                 
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_email_connected'), self._mh.fromhere()) 
@@ -141,7 +149,7 @@ class EmailClient:
                                                    
             return True
         
-        except SMTPException, ex:
+        except (SMTPException, error), ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
             return False            
                    
@@ -159,7 +167,7 @@ class EmailClient:
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_email_disconnected'), self._mh.fromhere())  
             return True  
     
-        except SMTPException, ex:
+        except (SMTPException, error), ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
             return False  
         
@@ -212,7 +220,7 @@ class EmailClient:
             
             return True
             
-        except SMTPException, ex:
+        except (SMTPException, error), ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
             return False 
                                                               

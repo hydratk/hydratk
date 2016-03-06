@@ -22,6 +22,6 @@ HIGHLIGHT_END   = chr(27)+chr(91)+"0m"
 
 msg = {
     'htk_rest_request'  : ["Posílám požadavek na server: '{0}', uživatel:'{1}', heslo:'{2}', metoda:'{3}', " + \
-                          "hlavičky: '{4}', tělo: '{5}', parametry:'{6}'"],
+                          "hlavičky:'{4}', tělo:'{5}', parametry:'{6}'"],
     'htk_rest_response' : ["Obdržena odpověď ze serveru: '{0}'"] 
 }

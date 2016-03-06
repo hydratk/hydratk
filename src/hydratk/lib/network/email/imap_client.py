@@ -27,6 +27,7 @@ class EmailClient:
     
     _mh = None
     _client = None
+    _secured = None
     _host = None    
     _port = None
     _user = None
@@ -53,6 +54,12 @@ class EmailClient:
         """ IMAP client property getter """
         
         return self._client
+    
+    @property
+    def secured(self):
+        """ secured property getter """
+        
+        return self._secured    
     
     @property
     def host(self):
@@ -125,15 +132,15 @@ class EmailClient:
             if (ev.will_run_default()):  
                                 
                 if (not self._secured):
-                    self._client = IMAP4(self.host, self.port) 
+                    self._client = IMAP4(self._host, self._port) 
                 else:
-                    self._client = IMAP4_SSL(self.host, self.port) 
+                    self._client = IMAP4_SSL(self._host, self._port) 
                            
-                if (self.verbose):
+                if (self._verbose):
                     self._client.debug = 4                                       
                     
-                if (self.user != None):
-                    self._client.login(self.user, self.passw)                       
+                if (self._user != None):
+                    self._client.login(self._user, self._passw)                       
                 
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_email_connected'), self._mh.fromhere()) 
             ev = event.Event('email_after_connect')
@@ -233,15 +240,22 @@ class EmailClient:
                 msg = msg.split('\r\n')                                                                                                                                      
                 
             msg_found = False
+            sender = None
+            recipients = None
+            cc = None
+            subject = None
             message = ''
+            
             for line in msg:
                 if (not msg_found):
                     if ('From: ' in line):
                         sender = replace(line, ('From: '), '')
                     elif ('To: ' in line):
                         recipients = replace(line, ('To: '), '') 
+                        recipients = recipients.split(',')
                     elif ('CC: ' in line):
-                        cc = replace(line, ('CC: '), '')  
+                        cc = replace(line, ('CC: '), '')
+                        cc = cc.split(',')  
                     elif ('Subject: ' in line):
                         subject = replace(line, ('Subject: '), '')
                     elif ('Inbound message' in line):
@@ -253,7 +267,7 @@ class EmailClient:
             self._mh.fire_event(ev)
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_email_received'), self._mh.fromhere())  
 
-            return [sender, recipients, cc, subject, message]                                                       
+            return (sender, recipients, cc, subject, message)                                                       
             
         except IMAP4.error, ex: 
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())

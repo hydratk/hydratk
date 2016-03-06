@@ -22,7 +22,7 @@ HIGHLIGHT_END   = chr(27)+chr(91)+"0m"
 
 msg = {
     'htk_jms_connecting'          : ["Připojuji se na JMS server s parametry: '{0}'"],
-    'htk_jms_connected'           : ["Spojení s JMS serverm bylo úspěšné"],
+    'htk_jms_connected'           : ["Spojení s JMS serverem bylo úspěšné"],
     'htk_jms_connecting_error'    : ["Nastala chyba při spojení s JMS serverem"],
     'htk_jms_disconnecting'       : ["Ukončuji spojení s JMS serverem"],
     'htk_jms_disconnected'        : ["Spojení s JMS serverem bylo ukončeno"],

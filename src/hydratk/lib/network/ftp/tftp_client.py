@@ -95,7 +95,7 @@ class FTPClient:
         
         try:            
                           
-            message = '{0}:{1}{2}'.format(host, port)                            
+            message = '{0}:{1}'.format(host, port)                            
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_ftp_connecting', message), self._mh.fromhere())
             
             ev = event.Event('ftp_before_connect', host, port)
@@ -162,8 +162,8 @@ class FTPClient:
  
         except TftpShared.TftpException, ex:
             self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
-            if (path.exists(path)):
-                remove(path)                     
+            if (path.exists(lpath)):
+                remove(lpath)                     
             return False  
         
     def upload_file(self, local_path, remote_path=None):

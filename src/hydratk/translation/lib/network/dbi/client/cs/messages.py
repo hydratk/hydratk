@@ -32,5 +32,5 @@ msg = {
     'htk_dbi_query_executed'     : ["Vykonávání dotazu ukončeno"],
     'htk_dbi_query_error'        : ["Nastala chyba při vykonávání dotazu"],    
     'htk_dbi_calling_proc'       : ["Volám proceduru: '{0}'"],
-    'htk_dbi_proc_called'        : ["Volání procedury ukončeno"] 
+    'htk_dbi_proc_called'        : ["Volání procedury ukončeno: '{0}'"] 
 }
