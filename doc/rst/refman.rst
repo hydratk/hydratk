@@ -33,6 +33,7 @@ Extensions
    refman/exts/benchmark
    refman/exts/datagen
    refman/exts/testenv
+   refman/exts/trackapps
    refman/exts/yoda
    refman/exts/wings
 

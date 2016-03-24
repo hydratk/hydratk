@@ -21,6 +21,7 @@ Extensions
    tutor/ext/benchmark
    tutor/ext/datagen
    tutor/ext/testenv
+   tutor/ext/trackapps
    tutor/ext/yoda
    tutor/ext/wings
 
