@@ -8,12 +8,12 @@ TrackApps extension provides interface to bugtracking and test management applic
 
 Following applications are supported:
 
-- **Quality Center** 
-- **Bugzilla**
-- **Mantis**
-- **Trac**
-- **Jira**
-- **TestLink**
+- **Quality Center** - bugtracking, test management 
+- **Bugzilla** - bugtracking
+- **Mantis** - bugtracking
+- **Trac** - bugtracking
+- **Jira** - bugtracking
+- **TestLink** - test management
 
 Installation
 ============
@@ -75,7 +75,7 @@ Command options
 - **[--limit]**: record limit, supported for action: read
 - **[--offset]**: record offset, supported for action: read
 - **[--params]**: record params, dictionary form - name1:value,name2:value,... , supported for actions create|update
-- **[--qc-path]**: QC directory path, dir1/di2/... , mandatory for use cases: read/create test folder|reac/create test set, create test
+- **[--path]**: directory path, dir1/di2/... , mandatory for use cases: read/create test folder|read/create test set, create test
 
 Configuration
 ^^^^^^^^^^^^^
@@ -88,18 +88,15 @@ Entities defect|test|test-set|test-instance are configurable.
 - **user**: username, used in method: connect, --user command option
 - **passw**: password, used in method: connect, --passw command option 
 - **domain**: domain, used in method: connect, --domain command option
-- **project**: project, used in method: connect, --project command option
-- **mapping**: field names can be replaced by more human readable names                       
-               use dictionary form, mapped name: original name
-               mapped name has to be used if configured, otherwise use original name                                                                                                     
+- **project**: project, used in method: connect, --project command option                                                                                                    
 - **return_fields**: record fields returned by read operation                                 
-                     use list form, name1,name2,name3 (original names)                                         
+                     use list form, name1,name2,name3                                      
 - **required_fields**: required fields to create new record, user will be prompted            
-                       use list form, name1,name2,name3 (original names)                                      
+                       use list form, name1,name2,name3                                     
 - **default_values**: default field values to create new record                               
-                      use dictionary form, name: value (original names)                                        
+                      use dictionary form, name: value                                      
 - **lov**: list of values for required fields, list will be offered to the user within create action               
-           use dictionary form, name: value1,value2,value3 (original names)
+           use dictionary form, name: value1,value2,value3
 
 **Sample**
 
@@ -111,16 +108,6 @@ Entities defect|test|test-set|test-instance are configurable.
        passw: password
        domain: RELEASE
        project: SimpleOnlineCompany  
-       mapping:
-         defect:
-           Summary: name
-           Assigned to: owner
-         test:
-           Designer: owner
-           Project: user-04
-           Priority: user-01
-           TC structure: user-05
-           Test name: name
        return_fields: 
          defect: name,owner,project,status,description
          test: name,subtype-id,owner,user-04,user-01,user-05,description
@@ -165,18 +152,18 @@ Defects
      # read defect
      entity = 'defect'
      query = '{ID[=100]}'
-     fields = ['Summary', 'Assigned To', 'Project', 'Impacted System']
+     fields = ['name', 'owner', 'user-04', 'user-05']
      res, records = c.read(entity=entity, fields=fields, query=query)  
      
      # create defect
-     params = {'Summary': 'test', 'Assigned To': 'x0549396', 'Project': 'General', 'Status': 'New',
+     params = {'name': 'test', 'owner': 'x0549396', 'user-04': 'General', 'Status': 'New',
                'Detected on Date': '2016-03-07', 'Environment': 'Preproduction', 'Detected By': 'x0549396',
-               'Defect Reason': '6 - Others', 'Severity': '5-Low', 'Impacted System': 'Other application',
+               'Defect Reason': '6 - Others', 'Severity': '5-Low', 'user-05': 'Other application',
                'Test Type': 'Sys-int Test', 'Description': 'Test'}
      id = c.create(entity, params)       
      
      # update defect
-     params = {'Summary': 'test 2', 'Status': 'Closed'}
+     params = {'name': 'test 2', 'Status': 'Closed'}
      res = c.update(id, entity, params) 
      
      # delete defect
@@ -252,37 +239,37 @@ Test
   .. code-block:: bash
   
      # read tests under test folder (test plan), output is printed
-     # qc-path is mandatory, user will be prompted if missing
-     htk --app qc --action read --entity test-folder --qc-path "Subject/.Trash/VAS" track
+     # path is mandatory, user will be prompted if missing
+     htk --app qc --action read --type test-folder --path "Subject/.Trash/VAS" track
      
      # read test
-     htk --app qc --action read --entity test --id 1234 track
+     htk --app qc --action read --type test --id 1234 track
      
      # create test folder
-     # qc-path contains also new folder name
-     htk --app qc --action create --entity test-folder --qc-path "Subject/.Trash/VAS/hydra" track
+     # path contains also new folder name
+     htk --app qc --action create --type test-folder --path "Subject/.Trash/VAS/hydra" track
      
      # create test with provided mandatory fields
-     htk --app qc --action create --entity test --qc-path "Subject/.Trash/VAS/hydra" --params "name:test,subtype-id:MANUAL" track
+     htk --app qc --action create --type test --path "Subject/.Trash/VAS/hydra" --params "name:test,subtype-id:MANUAL" track
      
      # update test
-     htk --app qc --action update --entity test --id 1235 --params "name:test 2" track
+     htk --app qc --action update --type test --id 1235 --params "name:test 2" track
      
      # read test sets under test set folder (test lab), output is written to file
-     htk --app qc --action read --entity test-set-folder --qc-path "Root/.Trash/VAS" --output sets.txt track
+     htk --app qc --action read --type test-set-folder --path "Root/.Trash/VAS" --output sets.txt track
      
      # create test set folder
-     # qc-path contains also new folder name
-     htk --app qc --action create --entity test-set-folder --qc-path "Root/.Trash/VAS/hydra" track
+     # path contains also new folder name
+     htk --app qc --action create --type test-set-folder --path "Root/.Trash/VAS/hydra" track
      
      # create test set with provided mandatory fields, id is printed
-     htk --app qc --action create --entity test-set --qc-path "Root/.Trash/VAS/hydra" --params "name:set1,'subtype-id:hp.qc.test-set.default'" track
+     htk --app qc --action create --type test-set --qc-path "Root/.Trash/VAS/hydra" --params "name:set1,'subtype-id:hp.qc.test-set.default'" track
      
      # create test instance (assign test to test set) with provided mandatory fields
-     htk --app qc --action create --entity test-instance --params "cycle-id:1236,test-id:1235,test-order:1,subtype-id:hp.qc.test-instance.MANUAL" track
+     htk --app qc --action create --type test-instance --params "cycle-id:1236,test-id:1235,test-order:1,subtype-id:hp.qc.test-instance.MANUAL" track
      
      # update test instance
-     htk --app qc --action update --entity test-instance --id 1237 --params "status:Closed" track
+     htk --app qc --action update --type test-instance --id 1237 --params "status:Closed" track
 
 Bugzilla
 ========
@@ -328,9 +315,6 @@ Bugzilla interface supports bug entity only, parameters are not distinguished pe
        user: username
        passw: password
        return_fields: product,component,summary,version,creator 
-       mapping: 
-         Product: product
-         Version: version
        required_fields: product,component,summary,version   
        default_values:
          product: FooBar
@@ -353,7 +337,7 @@ Examples
      
      # read issue
      id = 40
-     fields = ['creator', 'severity', 'Summary', 'Product']
+     fields = ['creator', 'severity', 'summary', 'product']
      res, records = c.read(id, fields=fields) 
      
      # create bug
@@ -374,7 +358,7 @@ More examples are available in QC section.
   .. code-block:: bash
   
      # read issue
-     htk --app bugzilla --action read --id 40 --fields "creator,severity,Summary,Product" track
+     htk --app bugzilla --action read --id 40 --fields "creator,severity,summary,product" track
      
      # create issue
      htk --app bugzilla --action create --params "summary:test hydra,version:1" track
@@ -426,10 +410,6 @@ Mantis interface supports issue entity only, parameters are not distinguished pe
        user: username
        passw: password
        project: Sample Project
-       mapping:
-         Category: category
-         Summary: summary
-         Description: description
        return_fields: category,summary,description,reporter,priority,severity
        required_fields: category,summary,description
        default_values:
@@ -525,10 +505,6 @@ Trac interface supports ticket entity only, parameters are not distinguished per
        user: username
        passw: password
        project: project1
-       mapping:
-         Status: status
-         Summary: summary
-         Description: description
        return_fields: summary,type,priority,description
        required_fields: summary,description
        default_values:
@@ -626,9 +602,6 @@ Jira interface supports issue entity only, parameters are not distinguished per 
        user: username
        passw: password
        project: DEMO
-       mapping:
-         Summary: summary
-         Description: description
        return_fields: summary,description,id,status,priority
        required_fields: summary,description,priority
        default_values:                    
@@ -680,4 +653,150 @@ More examples are available in QC section.
 TestLink
 ========
 
-TBD
+Methods
+^^^^^^^
+
+- **connect**: connect to TestLink, params: url, dev_key, project
+- **read**: read entities, params: method, params, fields 
+- **create**: create entity, params: method, params
+- **update**: update entity, params: method, params
+- **read_test_suite**: read tests under test suite, params: path, steps, fields
+- **create_test_suite**: create test suite, params: path, name, details
+- **read_test_plsn**: read test under test plan, params: plan, plan_id, build_id, fields
+- **create_test_plan**: create test plan, params: name, notes
+- **create_build**: create build under plan, params: plan, name, notes
+- **read_test**: read test, params: id, fields
+- **create_test**: create test in test folder, params: path, params, steps
+- **add_test_to_plan**: add test to plan, params: test, plan, plan_id
+- **update_test_execution**: update test execution, params: test, status, notes, plan, plan_id, build_id
+
+Command options
+^^^^^^^^^^^^^^^
+
+- **--app**: application, use testlink
+- **--action**: actions, read|create|update
+- **[--type]**: entity type, test-suite|test|test-plan|build
+- **[--output]**: filename, action output is written, supported for action: read
+- **[--url]**: url, configurable
+- **[--dev-key]**: developer key, configurable
+- **[--project]**: project, configurable
+- **[--id]**: record id, mandatory for actions: update, read (for use cases read test|read test plan)
+- **[--fields]**: request record fields, configurable, list form - name1,name2,... , supported for action: read
+- **[--params]**: record params, dictionary form - name1:value,name2:value,... , supported for actions create|update
+- **[--path]**: directory path, dir1/di2/... , mandatory for use cases: read/create test suite|create test
+- **[--steps]**: test steps, steps delimited by |, step in dictionary form - name1:value,name2:value,...|name1:value,name2:value,... , supported for use case create test
+
+Configuration
+^^^^^^^^^^^^^
+
+All parameters are optional.
+
+- **url**: url, used in method: connect, --url command option
+- **dev_key**: developer key, used in method: connect, --dev-key command option
+- **project**: project, used in method: connect, --project command option                                                                                                    
+- **return_fields**: test fields returned by read operation                                 
+                     use list form, name1,name2,name3                                       
+- **required_fields**: required test fields to create new record, user will be prompted            
+                       use list form, name1,name2,name3                                      
+- **default_values**: default test field values to create new record                               
+                      use dictionary form, name: value                                       
+- **lov**: list of values for required test fields, list will be offered to the user within create action               
+           use dictionary form, name: value1,value2,value3
+
+**Sample**
+
+  .. code-block:: yaml
+  
+     testlink:
+     url: url     
+     dev_key: 3db69a303c75cdaa08c98b12d5f9f2aa
+     project: hydra
+     return_fields:
+       test: casename,author_login,summary,id,full_tc_external_id,steps,tcase_id,tcase_name,exec_status,actions,expected_results
+     required_fields:
+       testcasename,authorlogin,summary
+     default_values:
+       authorlogin: admin
+     lov:  
+       exec_status: p,f
+     
+Examples
+^^^^^^^^
+
+**API**
+
+  .. code-block:: python  
+  
+     # import client
+     from hydratk.extensions.trackapps.testlink import Client
+     c = Client()
+     
+     # connect
+     res = c.connect(url, dev_key, project)
+     
+     # read test
+     id = 3
+     res, test = c.read_test(id) 
+     
+     # read test suite
+     path = 'suite 1/suite 3'
+     res, tests = c.read_test_suite(path)             
+     
+     # create test suite
+     id = c.create_test_suite('suite 1/suite 3', 'suite 4', 'xxx')
+     
+     # create test
+     params = {'testcasename': 'case 3', 'authorlogin': 'lynus', 'summary': 'hydratk'}
+     steps = [{'actions': 'DO', 'expected_results': 'OK'}]
+     test_id = c.create_test('suite 1/suite 3', params, steps)     
+     
+     # create test plan and build
+     plan_id = c.create_test_plan('plan 1')
+     build_id = c.create_build(plan_id, 'build 1')
+     
+     # add test to test plan
+     res = c.add_test_to_plan(test_id, 'plan 1')
+     
+     # update test execution
+     res = c.update_test_execution(test_id, status='p', plan='plan 1')   
+     
+     # read test plan
+     res, tests = c.read_test_plan('plan 1') 
+
+**Command line**    
+
+  .. code-block:: bash
+  
+     # read tests under test folder (test plan), output is printed
+     # path is mandatory, user will be prompted if missing
+     htk --app testlink --action read --type test-suite --path "suite 1/suite 3" track
+     
+     # read test
+     # id is mandatory
+     htk --app testlink --action read --type test --id 3 track
+     
+     # create test suite
+     # path contains also new suite name
+     htk --app testlink --action create --type test-suite --path "suite 1/suite 3" track
+     
+     # create test with provided mandatory fields
+     htk --app testlink --action create --type test --path "suite 1/suite 3" --params "testcasename:case3,authorlogin:admin,summary:test" track
+     
+     # create test with steps
+     htk --app testlink --action create --type test --path "suite 1/suite 3" --params "testcasename:case3,authorlogin:admin,summary:test" 
+         --steps "actions:act1,expected_results:res1|actions:act2,expected_results:res2" track
+     
+     # read tests under test plan, output is written to file
+     htk --app testlink --action read --type test-plan --id 166 --output tests.txt track
+     
+     # create test plan
+     htk --app testlink --action create --type test-plan --params "name:plan 1" track
+     
+     # create build
+     htk --app testlink --action create --type build --params "plan:2,name:build 1" track
+     
+     # add test to plan
+     htk --app testlink --action update --type test-plan --id 166 --params "test:3" track
+     
+     # update test execution
+     htk --app testlink --action update --type test --id 3 --params "plan:167,status:f" track  

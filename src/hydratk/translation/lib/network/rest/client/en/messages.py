@@ -23,5 +23,5 @@ HIGHLIGHT_END   = chr(27)+chr(91)+"0m"
 msg = {
     'htk_rest_request'  : ["Sending request on server:'{0}', user:'{1}', passw:'{2}', method:'{3}', " + \
                           "headers:'{4}', body:'{5}', params:'{6}'"],
-    'htk_rest_response' : ["Received response from server: '{0}'"] 
+    'htk_rest_response' : ["Received response from server: header: {0}, body: {1}"] 
 }
