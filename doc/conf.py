@@ -21,6 +21,7 @@ import sphinx_rtd_theme
 sys.path.append("/projects/src/hydratk/src")
 sys.path.append("/projects/src/hydratk-ext-yoda/src")
 sys.path.append("/projects/src/hydratk-ext-testenv/src")
+sys.path.append("/projects/src/hydratk-ext-trackapps/src")
 
 # -- General configuration -----------------------------------------------------
 
