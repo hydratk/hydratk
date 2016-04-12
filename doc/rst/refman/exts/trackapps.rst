@@ -38,4 +38,10 @@ jira
 ====
 
 .. automodule:: hydratk.extensions.trackapps.jira
+   :member-order: bysource    
+   
+testlink
+========
+
+.. automodule:: hydratk.extensions.trackapps.testlink
    :member-order: bysource            
