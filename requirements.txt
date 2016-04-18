@@ -21,3 +21,6 @@ JPype1
 scapy
 selenium
 python-ldap
+pyexcel
+pyexcel-xlsx
+pyexcel-ods3
