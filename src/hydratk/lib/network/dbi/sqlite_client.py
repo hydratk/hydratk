@@ -148,8 +148,8 @@ class DBClient():
                 if (fetch_one):
                     rows = cur.fetchone()
                 else:
-                    rows = cur.fetchall()                
-            
+                    rows = cur.fetchall()           
+                
             cur.close()  
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_dbi_query_executed'), self._mh.fromhere())
             ev = event.Event('dbi_after_exec_query', True, rows)

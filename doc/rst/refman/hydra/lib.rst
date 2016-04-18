@@ -61,6 +61,12 @@ loop
 data
 ====
 
+loader
+^^^^^^
+
+.. automodule:: hydratk.lib.data.loader
+   :member-order: bysource
+
 randgen
 ^^^^^^^
 

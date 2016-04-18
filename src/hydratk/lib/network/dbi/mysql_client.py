@@ -78,7 +78,7 @@ class DBClient():
         
         return self._passw           
         
-    def connect(self, host=None, port=3306, sid=None, user=None, passw=None, db_file=None):
+    def connect(self, host=None, port=3306, sid=None, user=None, passw=None):
         """Method connects to database
         
         Args:            
