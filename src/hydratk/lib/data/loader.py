@@ -12,9 +12,9 @@ def load_from_file(filename, header=0, delimiter=None, sheet=None):
     """Method loads data from file
         
     Args:
-        filename (str): filename, including extension csv|tsv|xlsx|ods
+        filename (str): filename, supported extensions csv|tsv|xlsx|ods
         header (int): row id with header defining column names, default first row
-        delimiter (str): delimiter, supported for csv|tsv formats, default ;|\t
+        delimiter (str): delimiter, supported for csv|tsv formats, default ;|tab
         sheet (str): sheet name, supported for xlsx|ods formats, default first sheet
         
     Returns:
