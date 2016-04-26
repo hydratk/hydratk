@@ -12,7 +12,6 @@ import sys
 import os
 import errno
 import signal
-import threading
 import time
 import multiprocessing
 import pprint
@@ -24,8 +23,9 @@ import imp
 import traceback
 import yaml
 import operator
-from hydratk.lib.exceptions.inputerror import InputError
+import threading
 
+from hydratk.lib.exceptions.inputerror import InputError
     
 PYTHON_MAJOR_VERSION = sys.version_info[0]
 
@@ -35,9 +35,10 @@ if PYTHON_MAJOR_VERSION == 2:
 if PYTHON_MAJOR_VERSION == 3:    
     import configparser      
 
-from hydratk.core.hookhead import TranslationMsgLoader
+from hydratk.core.hookhead import ModuleLoader
 from hydratk.core.propertyhead import PropertyHead
 from hydratk.core.corehead import CoreHead
+from hydratk.core.servicehead import ServiceHead
 
 from hydratk.core import const 
 from hydratk.core import commands
@@ -54,15 +55,15 @@ from hydratk.lib.profiling.profiler import Profiler
 from hydratk.lib.array import multidict
 from hydratk.lib.console.commandlinetool import CommandlineTool
 from hydratk.lib.number import conversion
-from hydratk.lib.translation import translator
 from hydratk.translation.core import info
+from hydratk.lib.translation import translator
 
 HIGHLIGHT_START = chr(27) + chr(91) + "1m"
 HIGHLIGHT_US = chr(27) + chr(91) + "4m"
 HIGHLIGHT_END = chr(27) + chr(91) + "0m"
 SHORT_DESC = HIGHLIGHT_START + const.APP_NAME + " v" + const.APP_VERSION + const.APP_REVISION + HIGHLIGHT_END + " load, performacne and stress testing tool"
 
-class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
+class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
     """Class MasterHead extends from CoreHead decorated by EventHandler, Debugger and Profiler           
     """
     _instance = None
@@ -73,39 +74,16 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
         if MasterHead._instance_created == False:            
             raise ValueError("For creating class instance please use the get_head method instead!")
         if MasterHead._instance is not None:
-            raise ValueError("A Class instantiation already exists, use get_head method instead!")
+            raise ValueError("A Class instantiation already exists, use get_head method instead!")        
         
         '''Setting up global exception handler for uncaught exceptions''' 
         
         sys.excepthook = self.exception_handler
         
-        '''Setting up dynamic translation messages import hook'''
-        sys.meta_path.append(self)
-          
-        self._runlevel = const.RUNLEVEL_BASEINIT
-            
-        current = threading.currentThread()
-        current.status = const.CORE_THREAD_ALIVE
-                            
-        self._trn = translator.Translator()
-        self._trn.set_debug_level(const.DEBUG_LEVEL)
-        
-        """Checking for the --lang param presence"""
-        if self.check_language() == False:          
-            self._trn.set_language(self._language)
-        
-        self._import_global_messages()                        
-        
+        '''Setting up basic functionality hooks'''
         self._reg_self_fn_hooks()
-        self._reg_self_command_hooks()
-        self._reg_self_event_hooks()        
         
-        if (len(sys.argv) > 1 and sys.argv[1] != 'help'):
-            self.check_config()
-            
-            '''Checking run mode'''        
-            self.check_run_mode()
-                                          
+                                                  
     def exception_handler(self, extype, value, traceback):
         """Exception handler hook
            
@@ -201,7 +179,7 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
         for o in sys.argv:            
             if o == '-m' or o == '--run-mode':                
                 if sys.argv.index(o) < (len(sys.argv) - 1):                    
-                    mode = sys.argv[i + 1]                    
+                    mode = int(sys.argv[i + 1])                    
                     if (mode in [
                                  const.CORE_RUN_MODE_SINGLE_APP,
                                  const.CORE_RUN_MODE_PP_APP,
@@ -543,13 +521,15 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
             result = True            
         return result
     
-    def run_fn_hook(self, fn_id):
+    def run_fn_hook(self, fn_id, *args, **kwargs):
         """Method is processing registered callback for specified fn_id.
            
            This method is usable for functionality extending, replacement. 
         
         Args:
            fn_id (str): functionality id
+           args (mixed): optional arguments
+           kwargs (mixed): optional keyword arguments
                    
         Returns:            
            void
@@ -566,9 +546,18 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
         
         """
         if fn_id in self._fn_hooks:
-            if self._fn_hooks[fn_id]() != True:            
-                raise Exception(self._trn.msg('htk_fn_hook_invalid')) 
-            
+            if self._fn_hooks[fn_id](*args,**kwargs) != True:            
+                raise Exception(self._trn.msg('htk_fn_hook_invalid', fn_id)) 
+    
+    def dummy_fn_hook(self):
+        return True
+     
+    def start_pp_app(self):
+        self._start_app()
+    
+    def stop_pp_app(self, force_exit = False):
+        self._stop_app(force_exit)
+           
     def register_command_hook(self, cmd, callback=''):
         """Method adds command hook
         
@@ -1028,7 +1017,7 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
         action_status = multiprocessing.Value('i', const.CORE_THREAD_ACTION_NONE)  
         is_alive_check = multiprocessing.Value('d', time.time())             
         parent_conn, child_conn = multiprocessing.Pipe()               
-        current = multiprocessing.Process(target=self.c_worker, name=nexti, args=(nexti, status, action_status, child_conn, is_alive_check))
+        current = multiprocessing.Process(target=self._c_worker, name=nexti, args=(nexti, status, action_status, child_conn, is_alive_check))
         
         current.last_ping_response = 0
         current.next_check_time = time.time() + const.CORE_THREAD_PING_TIME
@@ -1042,7 +1031,9 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
         self.dmsg('htk_on_debug_info', self._trn.msg('htk_cthread_init', nexti), self.fromhere())
         current.start()
     
-
+    def get_thrid(self):
+        return '0' if multiprocessing.current_process().name == 'MainProcess' else multiprocessing.current_process().name
+        
     def create_ext_skel(self):
         from hydratk.core import template;
         from os.path import expanduser
@@ -1359,3 +1350,176 @@ class MasterHead(PropertyHead, CoreHead, TranslationMsgLoader):
         
         print("Completed.")
         return result  
+            
+    def async_fn_ex(self, fn_id, *args, **kwargs):
+        if fn_id is None or fn_id == '':
+            raise TypeError("fn_id: expected nonempty string")
+        if fn_id not in self._async_fn_ex:
+            raise KeyError("fn_id: {} is not registered".format(fn_id))
+        thr_id = self.get_thrid()
+        msg = {
+           'type' : "async_fn_ex",
+           'from' : 'htk_obsrv@core.raptor',
+           'to'   : 'any@core.raptor',
+           'data' : {
+                     'fn_id'  : fn_id,
+                     'args'   : args,
+                     'kwargs' : kwargs
+                    }
+        
+        }
+        self.send_msg(msg)        
+        
+    def send_msg(self,msg):
+        return self._send_msg(msg)
+            
+    def async_ext_fn(self, callback, result_callback, *args, **kwargs ):
+        if type(callback).__name__ != 'tuple': 
+            raise TypeError("callback: tuple expected")
+        obj, meth = callback
+        if type(obj).__name__ not in ('Extension', 'str'):            
+            raise TypeError("callback object: expected instance or str, got {}".format(type(obj).__name__))
+        if type(meth).__name__ != 'str' or meth == '':
+            raise TypeError("callback method: expected nonempty str")        
+        ext_name = obj.get_ext_name() if type(obj).__name__ == 'Extension' else obj
+        if ext_name not in self._ext:
+            raise KeyError("callback: undefined extension name: {}".format(ext_name))
+        
+        result_obj  = None
+        result_meth = None
+        if result_callback is not None:
+            if type(result_callback).__name__ not in ('str','tuple'):
+                raise TypeError("result_callback object: expected str or tuple")
+            if type(result_callback).__name__ == 'str':
+                if result_callback == '':
+                    raise TypeError("result_callback: empty string not acceptable")
+                if result_callback not in self._async_fn: #fn_id
+                    raise KeyError("result_callback fn_id: {} is not registered".format(result_callback)) 
+            else: #tuple
+                pass
+            
+        ticket_id = self._new_async_ticket_id()
+        self._new_async_ticket(ticket_id)
+        msg = {
+           'type' : "async_ext_fn",
+           'from' : 'htk_obsrv@core.raptor',
+           'to'   : 'any@core.raptor',
+           'data' : {
+                     'ticket_id' : ticket_id,
+                     'callback' : {
+                                   'ext_name'  : ext_name,
+                                   'method'    : meth, 
+                                   'args'      : args,
+                                   'kwargs'    : kwargs
+                                  }
+                    }
+        
+        } 
+        self.send_msg(msg)
+        return ticket_id  
+    
+    def get_async_ticket_content(self, ticket_id):
+        if ticket_id is not None and ticket_id != '':
+            if ticket_id in self._async_fn_tickets:
+                return self._async_fn_tickets[ticket_id]
+            raise KeyError("Ticket id: {} doesn't exists".format(ticket_id))
+        else:
+            raise TypeError("Invalid ticket_id: {}".format(type(ticket_id).__name__))
+    
+    def update_async_ticket_content(self, ticket_id, data):
+        pass
+            
+    def async_ticket_completed(self, ticket_id):
+        if ticket_id is not None and ticket_id != '':
+            if ticket_id in self._async_fn_tickets:
+                return self._async_fn_tickets[ticket_id]['completed']
+            raise KeyError("Ticket id: {} doesn't exists".format(ticket_id))
+        else:
+            raise TypeError("Invalid ticket_id: {}".format(type(ticket_id).__name__))
+        
+    def delete_async_ticket(self, ticket_id):
+        self._delete_async_ticket(ticket_id)
+        
+    def register_async_fn_ex(self, fn_id, callback, result_callback = None):        
+        if fn_id is None or fn_id == '':
+            raise TypeError("fn_id: expected nonempty string")        
+        res_cb = None
+        if result_callback is not None:
+            if callable(result_callback) and type(result_callback).__name__ in ('function','instancemethod'):
+                res_cb = {}
+                res_cb['class_inst'] = None
+                res_cb['func']   = result_callback
+                if type(result_callback).__name__ == 'instancemethod':
+                    res_cb['class_inst'] = result_callback.im_self
+                    res_cb['func']   = result_callback.im_func
+            else:
+                raise TypeError('result_callback: expected callable function or instancemethod')
+        if callable(callback) and type(callback).__name__ in ('function','instancemethod'):
+            cb               = {}
+            cb['class_inst'] = None
+            cb['func']   = callback
+            if type(callback).__name__ == 'instancemethod':                
+                cb['class_inst'] = callback.im_self
+                cb['func']   = callback.im_func
+            self._async_fn_ex[fn_id] = {
+                                          'callback' : cb,
+                                          'result_callback' : res_cb 
+                                       }            
+            return True
+        else:
+            raise TypeError('callback: expected callable function or instancemethod')
+    
+    def bridge_fn_cb(self, fn_id_src, fn_id_dest):
+        pass
+    
+    def reg_fn_cb(self, fn_id, callback, options = None):
+        """Method is registering callback with specified fn_id.
+           
+           This method is usable for functionality extending, replacement. 
+        
+        Args:
+           fn_id (str): functionality id
+           args (mixed): optional arguments
+           kwargs (mixed): optional keyword arguments
+                   
+        Returns:            
+           void
+           
+        Example:
+        
+        .. code-block:: python
+        
+           from hydratk.core.masterhead import MasterHead
+           from hydratk.core.event import Event
+                      
+           mh = MasterHead.get_head()
+           mh.run_fn_hook('mh_bootstrap')
+        
+        """
+        if fn_id is None or fn_id == '':
+            raise TypeError("fn_id: expected nonempty string")
+        if callable(callback):
+            self._fn_callback[fn_id] = callback
+            return True
+        else:
+            raise TypeError('callback: expected callable')
+        #if self._run_mode >= const.CORE_RUN_MODE_PP_APP:
+        
+    def register_async_fn(self, fn_id, callback):
+        if fn_id is None or fn_id == '':
+            raise TypeError("fn_id: expected nonempty string")
+        if callable(callback):
+            self._async_fn[fn_id] = callback
+            return True
+        else:
+            raise TypeError('callback: expected callable')
+        
+    def get_ext(self, extension_name):
+        if type(extension_name).__name__ == 'str' and extension_name != '':
+            if extension_name in self._ext:                
+                return self._ext[extension_name]                
+            else:
+                raise IndexError("Undefined extension {}".format(extension_name))
+        else:
+            raise TypeError("Extension name string expected")
+        

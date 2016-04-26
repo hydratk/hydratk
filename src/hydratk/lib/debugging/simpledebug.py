@@ -7,11 +7,12 @@
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
-from hydratk.core.masterhead import MasterHead
+
 from hydratk.core import const
-_mh = MasterHead.get_head()
 
 def dmsg(msg, level = 1, channel  = const.DEBUG_CHANNEL):
+    from hydratk.core.masterhead import MasterHead
+    _mh = MasterHead.get_head()
     if _mh.debug is True and level <= _mh.debug_level:
         if type(msg).__name__ == 'tuple' and len(msg) > 0:            
             msg_key = msg[0]

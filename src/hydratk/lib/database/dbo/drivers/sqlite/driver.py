@@ -155,7 +155,6 @@ class DBODriver(dbodriver.DBODriver):
         query = ''
         for col in tables:
             query += "drop table if exists {};".format(col['name'])        
-        print("QUERY: {}".format(query))
         self._cursor.executescript(query)
         self._cursor.execute("VACUUM;")
     

@@ -14,6 +14,30 @@ from hydratk.translation.core import info
 class PropertyHead(object):
     
     @property
+    def current_async_ticket_id(self):
+        return self._current_async_ticket_id
+    
+    @property
+    def async_fn_tickets(self):
+        return self._async_fn_tickets
+    
+    @async_fn_tickets.setter
+    def async_fn_tickets(self, data):
+        self._async_fn_tickets = data
+           
+    @property
+    def fn_cb_shared(self):
+        return self._fn_cb_shared
+    
+    @fn_cb_shared.setter
+    def fn_cb_shared(self, d):
+        self._fn_cb_shared = d
+    
+    @property
+    def cbm(self):
+        return self._cbm #CallbackManager instance
+        
+    @property
     def cli_cmdopt_profile(self):
         return self._opt_profile
     

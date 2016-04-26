@@ -86,7 +86,7 @@ class MessageRouter():
     @version: 0.1.0      
     ''' 
     def get_queue(self, service_id, action, options = {}):
-        
+        from hydratk.lib.debugging.simpledebug import dmsg
         q = False
         if service_id != '' and service_id in self._service_list:
             service = self._service_list[service_id]
@@ -102,14 +102,17 @@ class MessageRouter():
                         file_path = os.path.dirname(service_options['address'])
                         if (not os.path.exists(file_path)):                                                
                             os.makedirs(file_path)
-                            ''' TODO set optimal default directory permission '''  
+                            ''' TODO set optimal default directory permission '''
+                    dmsg("Binding to message queue {} : socket type {}".format(addr_prefix + service_options['address'],options['socket_type']))          
                     q.bind(addr_prefix + service_options['address'])
                     service['active'] = True
                     self._service_list[service_id] = service
                 else:
-                    pass
+                    raise Exception("Service queue is active use MESSAGE_QUEUE_ACTION_CONNECT instead")
             elif (action == MESSAGE_QUEUE_ACTION_CONNECT):
                 q.connect(addr_prefix + service_options['address'])
+                dmsg("Connecting to message queue {} : socket type {}".format(addr_prefix + service_options['address'],options['socket_type']))
+                
              
             else:
                 pass 

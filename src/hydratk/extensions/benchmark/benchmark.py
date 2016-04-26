@@ -45,8 +45,7 @@ class Extension(extension.Extension):
         self._run_basic_tests()
         if (self.__print_details):
             self._print_test_info()
-        
-        
+            
     def _run_basic_tests(self):
         self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('benchmark_basic_test_run'), self._mh.fromhere())        
         rprint(self._mh._trn.msg('benchmark_single_cpu_calculations'))        

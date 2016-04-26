@@ -48,3 +48,33 @@ DUMMY            = 301
 DUMMY_LAST       = 302 
 ''' messages with number < 500 are core reserved numbers''' 
 
+types = { 
+        'FN_CALLBACK' : 1
+       } 
+        
+            
+class Message(object):
+    _type = None
+
+class FnCallBackMsg(Message):
+    _type     = types['FN_CALLBACK']
+    _callback = None
+    _args     = None
+    _kwargs   = None
+    
+    def __init__(self, callback, *args, **kwargs):
+        self.set_callback(callback)
+        self.set_args(args, kwargs)
+    
+    def set_callback(self, callback):
+        if callable(callback):
+            self._callback = callback
+        else:
+            raise TypeError('Callable object required')
+        
+    def set_args(self, *args, **kwargs):
+        self._args   = args
+        self._kwargs = kwargs
+        
+    def run(self):
+        return self._callback(self, *self._args, **self._kwargs)

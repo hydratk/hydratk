@@ -135,7 +135,7 @@ msg = {
     'htk_long_opt_invalid'            : ["Dlouhá volba {0} není platný řetězec"],
     'htk_cmd_registered'              : ["Příkaz {0} je již zaregistrován"],
     'htk_cmd_invalid'                 : ["Příkaz {0} není platný řetězec"],
-    'htk_fn_hook_invalid'             : ["Neplatný funkční hook, návratová hodnota musí být True"],
+    'htk_fn_hook_invalid'             : ["Neplatný funkční hook, návratová hodnota pro {0} musí být True"],
     'htk_app_service_invalid'         : ["Název služby musí být platný řetězec, bylo zadáno: {0}"],
     'htk_app_service_registered'      : ["Služba: {0} je již zaregistrována"],
     'htk_app_service_desc_missing'    : ["Není specifikován popis lužby"],

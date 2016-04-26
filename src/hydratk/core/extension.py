@@ -10,7 +10,7 @@
 
 from hydratk.lib.exceptions import *
 
-class Extension:
+class Extension(object):
     _ext_id            = 'Undefined'
     _ext_name          = 'Undefined'
     _ext_version       = 'Undefined'
@@ -26,7 +26,8 @@ class Extension:
         if hasattr(self.__class__, '_wrap_hydra_attrs') and self._wrap_hydra_attrs == True:
             if hasattr(self._mh, name):
                 return self._mh[name]
-    
+        raise AttributeError("'module' object has no attribute '{}'".format(name))
+      
     def __init__(self, core_instance = None):                  
         self._mh = core_instance
         self._init_extension()        

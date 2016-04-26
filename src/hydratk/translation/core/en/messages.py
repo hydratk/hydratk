@@ -135,7 +135,7 @@ msg = {
     'htk_long_opt_invalid'            : ["Long option {0} is not valid string"],
     'htk_cmd_registered'              : ["Command {0} is already registered for matching"],
     'htk_cmd_invalid'                 : ["Command {0} is not valid string"],
-    'htk_fn_hook_invalid'             : ["Functionality Hook error, have to return True"],
+    'htk_fn_hook_invalid'             : ["Functionality Hook error, {0} have to return True"],
     'htk_app_service_invalid'         : ["Service name must be a valid string, your input was: {0}"],
     'htk_app_service_registered'      : ["Service with name: {0} already registered"],
     'htk_app_service_desc_missing'    : ["Service description has to be specified"],

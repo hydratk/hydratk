@@ -28,14 +28,15 @@ class Extension(extension.Extension):
         pass    
     
     def _register_actions(self):
-        hook = [
+        pass
+        #hook = [
                 #{'event' : 'h_^on_cmd_options', 'callback' : self.event_test },
-                {'event' : '$htk_on_cmd_options', 'callback' : self.event_test },
+                #{'event' : '$htk_on_cmd_options', 'callback' : self.event_test },
                 #{'event' : 'htk_on_cmd_options', 'callback' : self.event_test },                
                 #{'event' : '^h_before_cmd_options', 'callback' : self.event_test },
                 #{'event' : 'h_before_cmd_options', 'callback' : self.event_test },
-                ]        
-        self._mh.register_event_hook(hook)
+        #        ]        
+        #self._mh.register_event_hook(hook)
         
     
     def _reg_signal_hooks(self):        

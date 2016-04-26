@@ -173,9 +173,9 @@ class Debugger(object):
     def exout(self, exc_type, exc_msg, exc_traceback ):
         thrname = '0' if multiprocessing.current_process().name == 'MainProcess' else multiprocessing.current_process().name
         #self._stdio_lock.acquire()
-        print("Unhandled exception:%s: %s:\nmsg: %s\ntraceback:" % (thrname, exc_type, exc_msg))                 
-        traceback.print_tb(exc_traceback)      
-        sys.stdout.flush()
+        print("Unhandled exception:%s: %s:\nmsg: %s\ntraceback:" % (thrname, exc_type, exc_msg))                         
+        print("Traceback:")
+        traceback.print_tb(exc_traceback)        
         
     def _ec_parent_tell_signal(self, oevent):
         #current = multiprocessing.current_process()
