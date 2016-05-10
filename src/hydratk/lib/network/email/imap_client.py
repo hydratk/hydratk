@@ -40,7 +40,7 @@ class EmailClient:
         Called when the object is initialized 
         
         Args:
-           secured (bool): secured POP  
+           secured (bool): secured IMAP  
            verbose (bool): verbose mode     
            
         """         
@@ -154,6 +154,8 @@ class EmailClient:
                    
     def disconnect(self):
         """Method disconnects from server
+        
+        Args:        
            
         Returns:
            bool: result         
@@ -171,7 +173,9 @@ class EmailClient:
             return False    
         
     def email_count(self):
-        """Method gets email count        
+        """Method gets email count   
+        
+        Args:     
            
         Returns: 
            int: count       
@@ -192,6 +196,8 @@ class EmailClient:
         
     def list_emails(self):
         """Method gets email list
+        
+        Args:
            
         Returns: 
            list: email ids       

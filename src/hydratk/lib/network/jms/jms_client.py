@@ -63,6 +63,11 @@ class JMSClient:
         
     def close(self):
         """Method stops JVM  
+        
+        Args:
+        
+        Returns:
+           void
                 
         """  
         
@@ -151,7 +156,9 @@ class JMSClient:
             return False 
         
     def disconnect(self):
-        """Method disconnects from server           
+        """Method disconnects from server  
+        
+        Args:         
 
         Returns:
            bool: result

@@ -19,6 +19,17 @@ if PYTHON_MAJOR_VERSION == 2:
     sys.setdefaultencoding('UTF8')
     
 def _check_dependencies():
+    """Method checks if all dependent modules can be loaded
+    
+    Modules are configured in hydratk.core.dependencies (including minimum version)
+        
+    Args:            
+           
+    Returns:
+       bool: result, False if any module is missing            
+                
+    """       
+    
     result = True
     for mod, modinfo in dep_modules.items():
         if Utils.module_loaded(mod):
@@ -33,17 +44,37 @@ def _check_dependencies():
     return result
 
 def run_app():
+    """Method runs HydraTK application
+    
+    Method is executed from htk command (automatically installed)
+        
+    Args:            
+           
+    Returns:   
+       void     
+                
+    """
+        
     if (_check_dependencies()):        
         from hydratk.core.masterhead import MasterHead
         
         mh = MasterHead.get_head()            
-        mh.run_fn_hook('h_bootstrap')
+        mh.run_fn_hook('h_bootstrap') # run level specific processing
         trn = mh.get_translator()  
         mh.dmsg('htk_on_debug_info', trn.msg('htk_app_exit'), mh.fromhere())       
            
     sys.exit(0)
 
 def run_app_prof():
+    """Method runs HydraTK application in profiling mode
+    
+    Method is executed from htkprof command (automatically installed)
+    C profiler lsprof is used
+        
+    Args:                 
+                
+    """    
+    
     from hydratk.core.profiler import Profiler
     pr = Profiler()
     pr.start()

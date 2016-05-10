@@ -68,35 +68,72 @@ class SoapResponse(object):
     
     @property
     def response_code(self):
+        """ response_code property getter """
+        
         return self._resp_code
     
     @property
     def info(self):
+        """ info property getter """
+        
         return self._info
     
     @property
     def headers(self):
+        """ headers property getter """
+        
         return self._resp_headers
         
-    
     @property
     def msg(self):
+        """ msg property getter """
+        
         return self._msg   
                      
     @property
     def message(self):
+        """ message property getter """
+        
         return self._msg
  
     def _extract_info(self, curl_obj):
+        """Methods extracts parameters from CURL object
+
+        Args:
+           curl_obj (obj): CURL object
+
+        Returns:
+           void
+    
+        """
+                
         for info_key, curl_opt in curl_info_map.items():                                                
             if hasattr(curl_obj, curl_opt): 
                 curl_val = curl_obj.getinfo(getattr(curl_obj, curl_opt))
                 self._info[info_key] = curl_val
            
     def _apply_info(self):
+        """Methods stores response code
+
+        Args:           
+
+        Returns:
+           void
+    
+        """
+                
         self._resp_code = self._info['response_code']
                     
     def __init__(self, curl_obj):
+        """Class constructor 
+        
+        Called when object is initialized
+
+        Args:
+           curl_obj (obj): CURL object
+    
+        """
+                
         self._extract_info(curl_obj)
         self._apply_info()
         
@@ -110,39 +147,64 @@ class SoapRequest(object):
                    ]
     
     
-    def __init__(self, request_url = None):
+    def __init__(self, request_url=None):
+        """Class constructor
+        
+        Called when object is initialized
+
+        Args:
+           request_url (str): URL
+    
+        """
+                
         self._req_url = request_url      
     
     @property
     def url(self):
+        """ url property getter """
+        
         return self._req_url
     
     @url.setter
     def url(self, url):
+        """ url property setter """
+        
         self._req_url = url
             
     @property
     def headers(self):
+        """ header property getter """
+        
         return self._req_headers
     
     @headers.setter
     def headers(self, header):
+        """ headers property setter """
+        
         self._req_headers = header
     
     @property
     def msg(self):
+        """ msg property getter """
+        
         return self._msg
     
     @msg.setter
     def msg(self, msg):
+        """ msg property setter """
+        
         self._msg = msg   
                      
     @property
     def message(self):
+        """ message propery getter """
+        
         return self._msg
     
     @message.setter
     def message(self, msg):
+        """ message property setter """
+        
         self._msg = msg
          
 
@@ -150,15 +212,28 @@ class SoapResponseMessage(object):
     _content = None
     
     def __init__(self, content=None):
+        """Class constructor
+        
+        Called when object is initialized
+
+        Args:
+           content (str): response content
+    
+        """
+                
         if content is not None:
             self._content = content
             
     @property
     def content(self):
+        """ content property getter """
+        
         return self._content
     
     @content.setter
     def content(self, content):
+        """ content property setter """
+        
         self._content = content
 
 
@@ -168,6 +243,17 @@ class SoapRequestMessage(XMLValidate):
     _content   = None
     
     def __init__(self, content=None, source='file'):
+        """Class constructor
+        
+        Called when object is initialized
+
+        Args:
+           content (str): filename including path if source=file
+                          request content if source=str
+           source (str): content source, file|str
+    
+        """
+                
         if content is not None:
             if source == 'file':
                 self.load_from_file(content)
@@ -175,17 +261,42 @@ class SoapRequestMessage(XMLValidate):
                 self._content = content  
                 
     @property
-    def content(self):        
+    def content(self):       
+        """ content property getter """
+         
         return self._content
     
     @content.setter
     def content(self, content):
+        """ content property setter """
+        
         self._content = content
     
-    def load_from_file(self,msg_file):
+    def load_from_file(self, msg_file):
+        """Methods loads request content from file
+
+        Args:
+           msg_file (str): filename including path
+
+        Returns:
+           void
+    
+        """
+        
         self._content = fs.file_get_contents(msg_file)             
         
-    def bind_var(self,*args,**kwargs):
+    def bind_var(self, *args, **kwargs):
+        """Methods binds input data to request template
+
+        Args:
+           args (arg): arguments
+           kwargs (kwargs): key value arguments
+
+        Returns:
+           void
+    
+        """
+                
         if self._content is not None:
             content = str(self._content)
             for bdata in args:
@@ -199,6 +310,15 @@ class SoapRequestMessage(XMLValidate):
     
     
     def xsd_validate(self):
+        """Methods validates request xml according to xsd
+
+        Args:
+
+        Returns:
+           tuple: result (bool), message (str)
+    
+        """
+                
         import lxml        
         result = True
         msg    = None
@@ -219,25 +339,60 @@ class SoapClient():
 
     @property
     def request(self):
+        """ request property getter """
+        
         return self._request
     
     @request.setter
     def request(self, req):
+        """ request property setter """
+        
         self._request = req
     
     @property
     def response(self):
+        """ response property getter """
+        
         return self._response    
              
     def __init__(self):
+        """Class constructor
+        
+        Called when object is initialized
+
+        Args:
+    
+        """
+                
         self._curl = pycurl.Curl()
     
-    def set_auth(self, username, password, auth_type = HTTP_AUTH_BASIC):
+    def set_auth(self, username, password, auth_type=HTTP_AUTH_BASIC):
+        """Methods sets authentication headers
+
+        Args:
+           username (str): username
+           password (str): password
+           auth_type (str) HTTP authentication, Basic supported only
+
+        Returns:
+           void
+    
+        """
+                
         self._curl.setopt(self._curl.HTTPAUTH, auth_type)
         if auth_type == HTTP_AUTH_BASIC:
             self._curl.setopt(self._curl.USERPWD, "{username}:{password}".format(username=username,password=password))                   
     
-    def send(self, timeout = _connection_timeout):        
+    def send(self, timeout=_connection_timeout):  
+        """Methods sends request
+
+        Args:
+           timeout (int): connection timeout
+
+        Returns:
+           void
+    
+        """              
         
         buff = BytesIO()                
         self._curl.setopt(self._curl.URL, self.request.url)
@@ -251,5 +406,15 @@ class SoapClient():
         self._curl.close()
 
          
-def xml_timestamp(location = 'Europe/Prague'):
+def xml_timestamp(location='Europe/Prague'):
+        """Methods creates timestamp including time zone
+
+        Args:
+           location (str): time zone location
+
+        Returns:
+           str: timestamp
+    
+        """  
+          
     return datetime.datetime.now(pytz.timezone(location)).isoformat()

@@ -20,7 +20,21 @@ class Queue(zmq):
     __socket_type = None
     
     
-    def __init__(self, qtype, address, authkey = ''):
+    def __init__(self, qtype, address, authkey=''):
+        """Class constructor
+        
+        Called when object is initialized
+
+        Args:
+           qtype (int): queue type, server|client
+           address (str): queue address
+           authkey (str): authentication key
+           
+        Raises:
+           error: ValueError
+    
+        """
+                
         if type in (queue.QUEUE_TYPE_SERVER,queue.QUEUE_TYPE_CLIENT):
             self.__type = qtype
         else: raise ValueError('Invalid Queue type')
@@ -35,11 +49,34 @@ class Queue(zmq):
         self.__authkey = authkey 
         
     
-    def set_option(self,option,value):
+    def set_option(self, option, value):
+        """Methods sets queue option
+
+        Args:
+           option (str): option
+           option (str): option value
+
+        Returns:
+           void
+    
+        """
+                
         if option != '':
             self.__options[option] = value
             
-    def create(self, socket_type = None):
+    def create(self, socket_type=None):
+        """Methods creates queue server
+
+        Args:
+           socket_type (str): type of socket
+
+        Returns:
+           void
+    
+        Raises:
+           error: ValueError
+    
+        """        
         if self.__type != queue.QUEUE_TYPE_SERVER:
             raise ValueError('This operation cannot be done on this queue type')
         
@@ -50,9 +87,30 @@ class Queue(zmq):
         
             
     def destroy(self):
+        """Methods destroys queue
+
+        Args:
+
+        Returns:
+           void
+    
+        """     
+           
         self.__manager.shutdown()
         
     def connect(self):
+        """Methods connects to queue
+
+        Args:
+
+        Returns:
+           void
+           
+        Raises:
+           error: ValueError
+    
+        """
+                
         if self.__type != queue.QUEUE_TYPE_CLIENT:
             raise ValueError('This operation cannot be done on this queue type')
         

@@ -18,14 +18,13 @@ def check_auth(user, password):
     This function will perform authentication against the local system's
     /etc/shadow or /etc/passwd database for a given user and password.
 
-    :param user: The username to perform authentication with
-    :type user: str
+    Args:
+       user (str): The username to perform authentication with
+       password (str): The password (plain text) for the given user
 
-    :param password: The password (plain text) for the given user
-    :type password: str
-
-    :returns: True if successful, None otherwise.
-    :rtype: True or None
+    Returns:
+       bool: result
+    
     """
 
     salt_pattern = compile_regex(r"\$.*\$.*\$")

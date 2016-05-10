@@ -23,6 +23,15 @@ class MessageHead(object):
     _current_async_ticket_id = None
     
     def _new_async_ticket_id(self):
+        """Method creates new ticket
+        
+        Args:
+        
+        Returns:            
+           str: ticket id
+           
+        """
+                
         if self._async_ticket_seq == self._async_ticket_seq_max:
             self._reset_ticket_seq()
         self._async_ticket_seq += 1             
@@ -32,6 +41,16 @@ class MessageHead(object):
         return ticket_id
         
     def _new_async_ticket(self, ticket_id):
+        """Method creates dummy ticket
+        
+        Args:
+           ticket_id (str): ticket
+        
+        Returns:            
+           void
+           
+        """
+                
         self._async_fn_tickets[ticket_id] = {
                                               'completed' : False,
                                               'error_no'  : None,
@@ -39,7 +58,21 @@ class MessageHead(object):
                                               'data'      : None 
                                             }
     
-    def _delete_async_ticket(self, ticket_id):        
+    def _delete_async_ticket(self, ticket_id):       
+        """Method deletes ticket
+        
+        Args:
+           ticket_id (str): ticket
+        
+        Returns:            
+           void
+           
+        Raises:
+           error: KeyError
+           error: TypeError
+           
+        """
+                 
         if ticket_id is not None or ticket_id != '':
             if ticket_id in self._async_fn_tickets:                
                 del self._async_fn_tickets[ticket_id]
@@ -49,9 +82,27 @@ class MessageHead(object):
             raise TypeError("Invalid ticket_id: {}".format(type(ticket_id).__name__))
             
     def _reset_async_ticket_seq(self):
+        """Method resets ticket id sequence
+        
+        Args:
+        
+        Returns:            
+           void
+           
+        """
+                
         self._async_ticket_seq = 0
                 
     def _reg_msg_handlers(self):
+        """Method registers message handlers to functionality hooks
+        
+        Args:
+        
+        Returns:            
+           void
+           
+        """
+                
         hook = [
                 {'fn_id' : 'cmsg_async_fn_ex', 'callback' : self._msg_async_fn_ex },
                 {'fn_id' : 'cmsg_async_fn',    'callback' : self._msg_async_fn },
@@ -59,7 +110,20 @@ class MessageHead(object):
             ]                    
         self.register_fn_hook(hook)
     
-    def _process_cmsg(self, ev, msg):        
+    def _process_cmsg(self, ev, msg):   
+        """Method processes message
+        
+        Message contains functionality hook to be executed
+        
+        Args:
+           ev: not used
+           msg (obj): message in Base64 format
+        
+        Returns:            
+           void
+           
+        """
+                     
         pickled = base64.b64decode(msg)
         msg = pickle.loads(pickled)
         dmsg("Processing message: {}".format(msg))
@@ -72,6 +136,16 @@ class MessageHead(object):
         
             
     def _send_msg(self, msg):
+        """Method sends message
+        
+        Args:
+           msg (obj): message
+        
+        Returns:            
+           bool: True
+           
+        """
+                
         current = multiprocessing.current_process()
         mq      = current.msgq
         msg     = base64.b64encode(pickle.dumps(msg))     
@@ -93,7 +167,17 @@ class MessageHead(object):
         return True
         print("Processing async_fn_ext")
         
-    def _msg_async_ext_fn(self, msg):        
+    def _msg_async_ext_fn(self, msg):      
+        """Method runs funcionality hook callback from message
+        
+        Args:
+           msg (dict): message
+        
+        Returns:            
+           bool: True
+           
+        """
+                  
         ext_name = msg['data']['callback']['ext_name']
         meth     = msg['data']['callback']['method']
         args     = msg['data']['callback']['args']

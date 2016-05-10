@@ -7,6 +7,12 @@
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
+
+'''
+Options mapping
+Alias - option xxx can have aliases -x (short option), --xxx (long option)
+Value - option is used as xxx <value> or xxx if value is/isn't configured
+'''
 opt = {
       'htk' : {
             '-c'               :  {
@@ -52,22 +58,22 @@ opt = {
                                   },
             '-f '              :  {
                                     'd_opt'           : 'force',
-                                    'has_value'       : True,
+                                    'has_value'       : False,
                                     'allow_multiple'  : False                            
                                   },      
             '--force'          :  {
                                     'd_opt'           : 'force',
-                                    'has_value'       : True,
+                                    'has_value'       : False,
                                     'allow_multiple'  : False                            
                                   },
             '-i'               :  {
-                                    'd_opt'           : 'force',
-                                    'has_value'       : True,
+                                    'd_opt'           : 'interactive',
+                                    'has_value'       : False,
                                     'allow_multiple'  : False                            
                                   },      
             '--interactive'    :  {
-                                    'd_opt'           : 'force',
-                                    'has_value'       : True,
+                                    'd_opt'           : 'interactive',
+                                    'has_value'       : False,
                                     'allow_multiple'  : False                            
                                   },
             '-l'               :  {
@@ -99,6 +105,7 @@ opt = {
       }
 }
 
+''' target options '''
 d_opt = {         
        'htk': [
             'debug',
@@ -114,6 +121,7 @@ d_opt = {
         ]
 }
 
+''' long options '''
 long_opt = {
        'htk': [
             'debug',
@@ -129,10 +137,12 @@ long_opt = {
         ]                   
 }
 
+''' short options '''
 short_opt = {
-              'htk' : "dcilmxte"             
+              'htk' : "dcilmtxe"             
             }
 
+''' commands '''
 cmd = {
       'htk' : [
                 'create-config-db',

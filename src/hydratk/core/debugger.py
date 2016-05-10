@@ -8,7 +8,7 @@
 
 """
 
-import sys, os, multiprocessing, inspect,traceback
+import sys, os, multiprocessing, inspect, traceback
 import pprint
 import time
 from datetime import datetime
@@ -69,7 +69,19 @@ class Debugger(object):
                           16 : [1,8]
                          }    
     
-    def fromhere(self, trace_level = 1):
+    def fromhere(self, trace_level=1):
+        """Method returns location of executed code 
+        
+        Dictionary {file, module, func, line, call_path}
+        
+        Args:     
+           trace_level (int): level in stacktrace     
+           
+        Returns:
+           dict: code location       
+                
+        """ 
+                 
         fname = sys._getframe(trace_level).f_code.co_filename
         modname = os.path.basename(fname)
         modarg = modname.split('.')                   
@@ -84,28 +96,99 @@ class Debugger(object):
                 }
                 
     def function(self):
+        """Method returns executed function name
+        
+        Args:       
+           
+        Returns:
+           str: function      
+                
+        """ 
+                
         return sys._getframe(1).f_code.co_name        
     
-    def file(self):        
+    def file(self):       
+        """Method returns executed filename
+        
+        Args:       
+           
+        Returns:
+           str: filename      
+                
+        """ 
+                 
         return sys._getframe(1).f_code.co_filename
 
-    def line(self):        
+    def line(self):   
+        """Method returns executed line number
+        
+        Args:       
+           
+        Returns:
+           int: line number      
+                
+        """ 
+                     
         return sys._getframe(1).f_lineno
     
     def module(self):
+        """Method returns executed module name
+        
+        Args:       
+           
+        Returns:
+           str: module      
+                
+        """ 
+                
         fp = sys._getframe(1).f_code.co_filename
         modname = os.path.basename(fp)
         modarg = modname.split('.')
         return modarg[0]
         
-    def errmsg(self,*args):
+    def errmsg(self, *args):
+        """Method prints error message
+        
+        Args:
+           args (list): list of arguments       
+           
+        Returns:
+           void      
+                
+        """ 
+                
         print(args)
     
-    def dmsg(self,event_id,*args):
+    def dmsg(self, event_id, *args):
+        """Method sends debug message via event
+        
+        Args:
+           event_id (str): event
+           args (args): arguments       
+           
+        Returns:
+           void   
+           
+        Raises:
+           event: event_id   
+                
+        """ 
+                
         if (self._debug):        
             self.fire_event(event.Event(event_id,*args))
         
     def match_channel(self, channel):
+        """Method checks if required channels are tracked by debugger
+        
+        Args:
+           channel (obj): required channel as int (channel id)
+                                              list (channel ids)   
+           
+        Returns:
+           bool: result   
+                
+        """ 
+                
         if len(self._debug_channel) == 0: # channel filters off
             return True
         else:        
@@ -116,14 +199,30 @@ class Debugger(object):
                 return channel in self._debug_channel
             
             return False #unknown type
-                
+                                    
+    def dout(self, msg, location={'file' : '', 'line' : '', 'module': '', 'func' : '', 'call_path' : ''}, level=1, channel=[]):  
+        """Method prints debug message
         
-            
-    ''' msg, location, level, channel'''
-    def dout(self, msg, location = {'file' : '', 'line' : '', 'module': '', 'func' : '', 'call_path' : ''}, level = 1, channel  = []):                
+        Configuration options - System/Debug/msg_format
+                              - System/Debug/term_color
+        
+        Args:
+           msg (str): message
+           location (dict): location of executed code as dictionary {file, line, module, func, call_path}
+                            format returned by method fromhere
+           level (int): required debug level, default 1
+           channel (obj): required channel as int, channels as list of int, default all    
+           
+        Returns:
+           void   
+                
+        """ 
+                              
         if (self._debug and self._debug_level >= level and self.match_channel(channel) == True):
             thrid = '0' if multiprocessing.current_process().name == 'MainProcess' else multiprocessing.current_process().name            
             msg_format = '[{timestamp}] Debug({level}): {callpath}:{func}:{thrid}: {msg}'
+            
+            # override message format if configured
             if 'msg_format' in self.cfg['System']['Debug'] and self.cfg['System']['Debug']['msg_format'] != '':
                 msg_format = self.cfg['System']['Debug']['msg_format']
             
@@ -143,7 +242,8 @@ class Debugger(object):
                                     msg=msg,
                                     channel = channel
                                    )
-                        
+            
+            # override message color if configured            
             if 'term_color' in self.cfg['System']['Debug'] and self.cfg['System']['Debug']['term_color'] is not None and '#' == self.cfg['System']['Debug']['term_color'][0]:
                 rgb_color = self.cfg['System']['Debug']['term_color'].replace('#','')
                 msg_text = colorize(msg_text, int(rgb_color,16)) 
@@ -151,8 +251,19 @@ class Debugger(object):
             print(msg_text)
             sys.stdout.flush()
             
-    ''' msg, location'''
-    def wout(self,msg,location = {'file' : '', 'line' : '', 'module': '', 'func' : '', 'call_path' : ''}):
+    def wout(self, msg, location={'file' : '', 'line' : '', 'module': '', 'func' : '', 'call_path' : ''}):
+        """Method prints warning message
+
+        Args:
+           msg (str): message
+           location (dict): location of executed code as dictionary {file, line, module, func, call_path}
+                            format returned by method fromhere
+           
+        Returns:
+           void   
+                
+        """ 
+                
         thrid = '0' if multiprocessing.current_process().name == 'MainProcess' else multiprocessing.current_process().name
         #self._stdio_lock.acquire()
         print("Warning: %s:%s:%s: %s " % (location['call_path'],location['func'],thrid,msg))
@@ -160,17 +271,38 @@ class Debugger(object):
         #self._stdio_lock.release()
     
         
-    ''' msg, location'''
-    def errout(self,msg,location = {'file' : '', 'line' : '', 'module': '', 'func' : '', 'call_path' : ''}):
+    def errout(self, msg, location={'file' : '', 'line' : '', 'module': '', 'func' : '', 'call_path' : ''}):
+        """Method prints error message
+
+        Args:
+           msg (str): message
+           location (dict): location of executed code as dictionary {file, line, module, func, call_path}
+                            format returned by method fromhere
+           
+        Returns:
+           void   
+                
+        """
+                
         thrname = '0' if multiprocessing.current_process().name == 'MainProcess' else multiprocessing.current_process().name
         #self._stdio_lock.acquire()
         print("Error: %s:%s:%s: %s " % (location['call_path'],location['func'],thrname,msg))        
         sys.stdout.flush()
         #self._stdio_lock.release()
-        
-    ''' msg, location'''
-        
-    def exout(self, exc_type, exc_msg, exc_traceback ):
+
+    def exout(self, exc_type, exc_msg, exc_traceback):
+        """Method prints exception including traceback
+
+        Args:
+           exc_type (str): type of exception
+           exc_msg (str): message
+           exc_traceback (obj): traceback
+           
+        Returns:
+           void   
+                
+        """
+                
         thrname = '0' if multiprocessing.current_process().name == 'MainProcess' else multiprocessing.current_process().name
         #self._stdio_lock.acquire()
         print("Unhandled exception:%s: %s:\nmsg: %s\ntraceback:" % (thrname, exc_type, exc_msg))                         

@@ -91,6 +91,10 @@ class JavaBridge:
 
         Returns:
            bool: result
+           
+        Raises:
+           event: java_before_start
+           event: java_after_start
                 
         """          
         
@@ -131,9 +135,15 @@ class JavaBridge:
     
     def stop(self):
         """Method stops JVM
+        
+        Args:
             
         Returns:
            bool: result
+           
+        Raises:
+           event: java_before_stop
+           event: java_after_stop        
                 
         """          
         
@@ -301,14 +311,13 @@ class JavaBridge:
             return None   
         
     def _set_classpath(self, classpath=None):
-        """Method sends command connect  
+        """Method sets classpath
         
         Args:
-           connection_factory: JMS connection factory
-           properties (dict): JMS connection properties 
+           classpath (str): path to be appended to configured classpath
 
         Returns:
-           bool: result
+           str: classpath
                 
         """          
         

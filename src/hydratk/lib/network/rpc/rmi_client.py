@@ -54,6 +54,11 @@ class RPCClient():
         
     def close(self):
         """Method stops JVM  
+        
+        Args:
+        
+        Returns:
+           void
                 
         """  
         

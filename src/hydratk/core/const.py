@@ -8,12 +8,15 @@
 
 """
 
+''' Application metadata '''
 APP_NAME               = "HydraTK"
 APP_VERSION            = "0.2.0"
 APP_REVISION           = ""
 APP_DEVEL_YEAR         = "2009 - 2016"
 APP_AUTHORS            = "Petr Czaderna <pc@hydratk.org>, HydraTK Team"
-CP_STRING              = "(c) "+ APP_DEVEL_YEAR +" "+ APP_AUTHORS  
+CP_STRING              = "(c) "+ APP_DEVEL_YEAR +" "+ APP_AUTHORS
+
+''' Default configuration '''  
 CONFIG_FILE            = "/etc/hydratk/hydratk.conf"
 EXT_CONFIG_DIR         = "/etc/hydratk/conf.d"
 NUM_CORE_THREADS       = 4
@@ -38,6 +41,7 @@ CORE_THREAD_EXIT       = 0
 CORE_THREAD_ALIVE      = 1
 CORE_THREAD_WAIT       = 2
 CORE_THREAD_WORK       = 3
+
 ''' Core thread action statuses '''
 CORE_THREAD_ACTION_NONE            = 0
 CORE_THREAD_ACTION_PROCESS_PRIVMSG = 1
@@ -64,10 +68,10 @@ APP_STATUS_RUNNING     = 2
 SERVICE_STATUS_STOPPED = 0
 SERVICE_STATUS_STARTED = 1  
 
-'''Processes'''
+''' Processes '''
 PROCESS_JOIN_TIMEOUT = 10
 
-'''Run levels'''
+''' Run levels '''
 RUNLEVEL_SHUTDOWN   = 0
 RUNLEVEL_BASEINIT   = 1
 RUNLEVEL_CONFIG     = 2
@@ -76,7 +80,7 @@ RUNLEVEL_CLI        = 4
 RUNLEVEL_CORE       = 5          
 RUNLEVEL_APPL       = 6
 
-'''Events'''
+''' Events '''
 EVENT_HOOK_PRIORITY = 50
             
 

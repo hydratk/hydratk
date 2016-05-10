@@ -18,17 +18,40 @@ class Extension(object):
     _ext_year          = 'Undefined'
     ''' MasterHead object reference '''           
     _mh                = None     
-    '''
-    classdocs    
-    '''
     
-    def __getattr__(self,name):
+    def __getattr__(self, name):
+        """Method gets required MasterHead attribute
+        
+        Subclass must have enabled attribute _wrap_hydra_attrs
+        
+        Args:     
+           name (str): attribute name
+           
+        Returns:
+           obj: attribute value
+           
+        Raises:
+           error: AttributeError    
+                
+        """ 
+                
         if hasattr(self.__class__, '_wrap_hydra_attrs') and self._wrap_hydra_attrs == True:
             if hasattr(self._mh, name):
                 return self._mh[name]
         raise AttributeError("'module' object has no attribute '{}'".format(name))
       
-    def __init__(self, core_instance = None):                  
+    def __init__(self, core_instance=None):
+        """Class constructor
+        
+        Called when object is initialized
+        Set extensions metadata 
+        If implemented in subclass - check dependencies, import modules, register actions
+        
+        Args:     
+           core_instance (obj): CoreHead reference      
+                
+        """ 
+                                  
         self._mh = core_instance
         self._init_extension()        
         
@@ -42,13 +65,49 @@ class Extension(object):
             self._register_actions()                   
 
     def get_ext_name(self):
+        """Method gets extension name
+        
+        Args:     
+           
+        Returns:
+           str: name
+                
+        """ 
+                
         return self._ext_name
     
     def get_ext_version(self):
+        """Method gets extension version
+        
+        Args:     
+           
+        Returns:
+           str: version
+                
+        """ 
+                
         return self._ext_version
     
     def get_ext_author(self):
+        """Method gets extension author
+        
+        Args:     
+           
+        Returns:
+           str: author
+                
+        """ 
+                
         return self._ext_author
     
     def get_ext_info(self):
+        """Method gets extension summary info
+        
+        Args:     
+           
+        Returns:
+           str: info
+                
+        """ 
+                
         return self._ext_name +' v'+ self._ext_version + ' (c) [' + self._ext_year + ' '+ self._ext_author + ']'    

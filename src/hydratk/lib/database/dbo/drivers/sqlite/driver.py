@@ -25,6 +25,16 @@ class DBODriver(dbodriver.DBODriver):
                   }
     
     def _detect_mode(self, dsn):
+        """Method detects if is running in memory or file mode
+        
+        Args:   
+           dsn (str): dsn
+           
+        Returns:
+           bool: result
+                
+        """ 
+                
         result = True
         if dsn.find('::') > 0:
             self._mode = 'MEMORY'
@@ -35,6 +45,19 @@ class DBODriver(dbodriver.DBODriver):
         return result
         
     def _parse_dsn(self, dsn): 
+        """Method parses dsn
+        
+        Args:   
+           dsn (str): dsn
+           
+        Returns:
+           bool: True
+           
+        Raises:
+           exception: Exception
+                
+        """ 
+                
         if self._detect_mode(dsn):
             if self._mode == 'FILE':
                 dbfile = dsn.split(':')[1]
@@ -47,12 +70,31 @@ class DBODriver(dbodriver.DBODriver):
         return True
     
     def _apply_driver_options(self, driver_options):
+        """Method sets driver options
+        
+        Args:   
+           driver_option (dict): driver options
+           
+        Returns:
+           void
+                
+        """ 
+                
         for optname, optval in driver_options.items():
             if optname in self._driver_options:
                 self._driver_options[optname] = optval
             
         
     def connect(self):
+        """Method connects to database
+        
+        Args:   
+           
+        Returns:
+           void
+                
+        """ 
+                
         if os.path.exists(os.path.dirname(self._dbfile)) == False:
             os.makedirs(os.path.dirname(self._dbfile))       
         self._dbcon = sqlite3.connect(
@@ -63,12 +105,36 @@ class DBODriver(dbodriver.DBODriver):
         self._cursor = self._dbcon.cursor()              
     
     def close(self):
+        """Method disconnects from database
+        
+        Args:   
+           
+        Returns:
+           void
+           
+        Raises:
+           exception: DBODriverException
+                
+        """ 
+                
         if type(self._dbcon).__name__ == 'Connection':
             self._dbcon.close()
         else:
             raise dbodriver.DBODriverException('Not connected')  
                 
     def commit(self):
+        """Method commits transaction
+        
+        Args:   
+           
+        Returns:
+           void
+           
+        Raises:
+           exception: DBODriverException
+                
+        """ 
+                
         if type(self._dbcon).__name__ == 'Connection':
             self._dbcon.commit()
         else:
@@ -99,12 +165,35 @@ class DBODriver(dbodriver.DBODriver):
         pass
     
     def execute(self, sql, *parameters):
+        """Method executes query
+        
+        Args:   
+           sql (str): SQL query
+           parameters (args): query parameters
+           
+        Returns:
+           obj: cursor
+                
+        """ 
+                
         return self._cursor.execute(sql, *parameters)
         
     def quote(self):
         pass
     
     def rollback(self):
+        """Method rollbacks transaction
+        
+        Args:   
+           
+        Returns:
+           void
+           
+        Raises:
+           exception: DBODriverException
+                
+        """ 
+                
         if type(self._dbcon).__name__ == 'Connection':
             self._dbcon.rollback()
         else:
@@ -114,10 +203,30 @@ class DBODriver(dbodriver.DBODriver):
         pass
 
     def __getitem__(self, name):
+        """Method gets item
+        
+        Args:   
+           name (str): item name
+           
+        Returns:
+           obj: item value
+                
+        """ 
+                
         if hasattr(sqlite3, name):
             return getattr(sqlite3, name)
             
     def __getattr__(self,name):
+        """Method gets attribute
+        
+        Args:   
+           name (str): attribute name
+           
+        Returns:
+           obj: attribute value
+                
+        """ 
+                
         if type(self._dbcon).__name__ == 'Connection':    
             if hasattr(self._dbcon, name):
                 return getattr(self._dbcon,name)
@@ -126,6 +235,16 @@ class DBODriver(dbodriver.DBODriver):
                 return getattr(sqlite3,name) 
             
     def table_exists(self, table_name):
+        """Method checks if table exists
+        
+        Args:   
+           table_name (str): table
+           
+        Returns:
+           bool: result (not working now)
+                
+        """ 
+                
         result = False
         if table_name is not None and table_name != '':
             query = "SELECT count(*) found FROM sqlite_master where type='table' and tbl_name=?"
@@ -134,6 +253,15 @@ class DBODriver(dbodriver.DBODriver):
         return result
         
     def database_exists(self):
+        """Method checks if database exists
+        
+        Args:   
+           
+        Returns:
+           bool: result
+                
+        """ 
+                
         result = False
         if self._mode == 'FILE':
             if os.path.exists(self._dbfile) and os.path.isfile(self._dbfile) and os.path.getsize(self._dbfile) > 0:
@@ -144,6 +272,15 @@ class DBODriver(dbodriver.DBODriver):
         return result
     
     def remove_database(self):
+        """Method deletes database file
+        
+        Args:   
+           
+        Returns:
+           bool: result
+                
+        """ 
+                
         result = False
         if self._mode == 'FILE':
             if os.path.exists(self._dbfile) and os.path.isfile(self._dbfile):
@@ -151,6 +288,15 @@ class DBODriver(dbodriver.DBODriver):
         return result
     
     def erase_database(self):
+        """Method drops database
+        
+        Args:   
+           
+        Returns:
+           void
+                
+        """ 
+                
         tables = list(self._cursor.execute("select name from sqlite_master where type is 'table'"))
         query = ''
         for col in tables:
@@ -158,7 +304,20 @@ class DBODriver(dbodriver.DBODriver):
         self._cursor.executescript(query)
         self._cursor.execute("VACUUM;")
     
-    def result_as_dict(self, state):       
+    def result_as_dict(self, state):   
+        """Method enales query result in dictionary form
+        
+        Args:   
+           state (bool): enable dictionary
+           
+        Returns:
+           void
+           
+        Raises:
+           error: TypeError
+                
+        """ 
+                    
         if state in (True, False):
             self._result_as_dict = state
             if state == True:                

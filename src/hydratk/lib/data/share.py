@@ -3,16 +3,33 @@ class My(object):
     _piles       = {}      
         
     @property    
-    def pocket(self):        
+    def pocket(self): 
+        """ pocket property getter """
+               
         if self._pocket is None:                                
             self._pocket = Pocket()                                                                  
         return self._pocket    
 
     @property
     def piles(self):
+        """ piles property getter """
+        
         return self._piles
         
-    def pile(self,pile_id = None):
+    def pile(self, pile_id=None):
+        """Method creates new pile
+        
+        Args:   
+           pile_id (str): pile identifier
+           
+        Returns:
+           obj: Pile 
+           
+        Raises:
+           error: ValueError  
+                
+        """ 
+                
         if pile_id is None or pile_id == '':
             raise ValueError("Pile id cannot be NoneType or an empty string")
         else:
@@ -21,7 +38,20 @@ class My(object):
             return self._piles[pile_id]
      
     
-    def drop_pile(self,pile_id):
+    def drop_pile(self, pile_id):
+        """Method drops pile
+        
+        Args:   
+           pile_id (str): pile identifier
+           
+        Returns:
+           bool: result  
+           
+        Raises:
+           error: ValueError 
+                
+        """ 
+                
         result = False
         if pile_id is None or pile_id == '':
             raise ValueError("Pile id cannot be NoneType or an empty string")
@@ -35,6 +65,15 @@ class Pocket(object):
     _data = {}
     
     def show(self):
+        """Method prints pocket content
+        
+        Args:   
+           
+        Returns:
+           void   
+                
+        """ 
+                
         total_items = len(self._data)
         if len(self._data) > 0:
             print("Pocket items: {0}".format(total_items))
@@ -44,10 +83,14 @@ class Pocket(object):
             
     @property
     def content(self):
+        """ content property getter """
+        
         return self._data
     
     @content.setter
     def content(self, data):
+        """ content property setter """
+        
         if type(data).__name__ != 'dict':
             raise ValueError('Dictionary expected')
         self._data = data
@@ -55,10 +98,29 @@ class Pocket(object):
     def __init__(self):
         pass
         
-    def fill(self, data = {}):
+    def fill(self, data={}):
+        """Method fills pocket with data
+        
+        Args:   
+           data (obj): data
+           
+        Returns:
+           void   
+                
+        """ 
+                
         self._data = data
         
     def purge(self):
+        """Method purges pocket
+        
+        Args:   
+           
+        Returns:
+           void   
+                
+        """ 
+                
         self._data = {}
 
 class Pile(object):

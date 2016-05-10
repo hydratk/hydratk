@@ -156,6 +156,8 @@ class EmailClient:
                    
     def disconnect(self):
         """Method disconnects from server
+        
+        Args:
            
         Returns:
            bool: result         
@@ -173,7 +175,9 @@ class EmailClient:
             return False    
         
     def email_count(self):
-        """Method gets email count        
+        """Method gets email count   
+        
+        Args:     
            
         Returns: 
            int: count       
@@ -194,6 +198,8 @@ class EmailClient:
         
     def list_emails(self):
         """Method gets email list
+        
+        Args:
            
         Returns: 
            list: email ids       

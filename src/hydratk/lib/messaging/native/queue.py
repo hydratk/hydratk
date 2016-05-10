@@ -19,7 +19,21 @@ class Queue():
     __authkey = None
     
     
-    def __init__(self, qtype, address, authkey = ''):
+    def __init__(self, qtype, address, authkey=''):
+        """Class constructor
+        
+        Called when object is initialized
+
+        Args:
+           qtype (int): queue type, server|client
+           address (str): queue address
+           authkey (str): authentication key
+           
+        Raises:
+           error: ValueError
+    
+        """
+                
         if type in (queue.QUEUE_TYPE_SERVER,queue.QUEUE_TYPE_CLIENT):
             self.__type = qtype
         else: raise ValueError('Invalid Queue type')
@@ -33,6 +47,18 @@ class Queue():
         
     
     def create(self):
+        """Methods creates queue server
+
+        Args:
+
+        Returns:
+           void
+    
+        Raises:
+           error: ValueError
+    
+        """
+                
         if self.__type != queue.QUEUE_TYPE_SERVER:
             raise ValueError('This operation cannot be done on this queue type')
         
@@ -42,9 +68,30 @@ class Queue():
         self.__manager.start()
             
     def destroy(self):
+        """Methods destroys queue
+
+        Args:
+
+        Returns:
+           void
+    
+        """
+                
         self.__manager.shutdown()
         
     def connect(self):
+        """Methods connects to queue
+
+        Args:
+
+        Returns:
+           void
+           
+        Raises:
+           error: ValueError
+    
+        """
+                
         if self.__type != queue.QUEUE_TYPE_CLIENT:
             raise ValueError('This operation cannot be done on this queue type')
         

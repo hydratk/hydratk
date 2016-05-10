@@ -61,7 +61,7 @@ from hydratk.lib.translation import translator
 HIGHLIGHT_START = chr(27) + chr(91) + "1m"
 HIGHLIGHT_US = chr(27) + chr(91) + "4m"
 HIGHLIGHT_END = chr(27) + chr(91) + "0m"
-SHORT_DESC = HIGHLIGHT_START + const.APP_NAME + " v" + const.APP_VERSION + const.APP_REVISION + HIGHLIGHT_END + " load, performacne and stress testing tool"
+SHORT_DESC = HIGHLIGHT_START + const.APP_NAME + " v" + const.APP_VERSION + const.APP_REVISION + HIGHLIGHT_END + " load, performance and stress testing tool"
 
 class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
     """Class MasterHead extends from CoreHead decorated by EventHandler, Debugger and Profiler           
@@ -70,6 +70,16 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
     _instance_created = False                 
         
     def __init__(self):
+        """Class constructor
+        
+        MasterHead use singleton pattern, constructor should never be called directly
+        
+        Args:
+        
+        Raises:
+           error: ValueError       
+                
+        """         
                   
         if MasterHead._instance_created == False:            
             raise ValueError("For creating class instance please use the get_head method instead!")
@@ -89,10 +99,16 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
            
            This method is registered as sys.excepthook callback and transforms unhandled exceptions to the HydraTK Event  
            
-           Args:
-              extype (str): Exception type           
-              value (str): Exception message info
-              traceback (obj) Exception traceback object        
+        Args:
+           extype (str): Exception type           
+           value (str): Exception message info
+           traceback (obj) Exception traceback object   
+              
+        Returns:
+           void
+              
+        Raises:
+           event: htk_on_uncaught_exception     
         
         """
         try:
@@ -112,10 +128,13 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
     def get_translator(self):
         """Method returns current traslator object initialized from hydratrk.lib.translation.translator.Translator 
         
-           Returns:            
-              Translator (obj)
+        Args:
+        
+        Returns:            
+           obj: Translator
                
         """
+        
         return self._trn
     
     @staticmethod
@@ -125,8 +144,10 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
            This method returns current active MasterHead instance or creates a new one
            For preventing inner conflicts it's designed as singleton   
         
+        Args:
+        
         Returns:            
-           MasterHead (obj)
+           obj: MasterHead
            
         Example:
         
@@ -137,6 +158,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             mh = MasterHead.get_head()        
         
         """
+        
         if MasterHead._instance is None:           
             MasterHead._instance_created = True
             try:             
@@ -153,8 +175,10 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
     def get_config(self):
         """Method return current loaded configuration  
         
+        Args:
+        
         Returns:            
-              self._config (dict)
+           dict: self._config
            
         Example:
         
@@ -164,16 +188,20 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                       
               mh = MasterHead.get_head()
               config = mh.get_config()         
-        """        
+        """  
+              
         return self._config
 
     def check_run_mode(self):
-        """Method checks for run_mode input parameter from command line and validates if it's supported 
+        """Method checks for run_mode input parameter (-m, --run-mode) from command line and validates if it's supported 
+        
+        Args:
         
         Returns:            
-              run_mode_changed (bool) - True in case if it's supported otherwise False 
+           bool: run_mode_changed, True in case if it's supported otherwise False 
         
-        """                
+        """             
+           
         run_mode_changed = False
         i = 0
         for o in sys.argv:            
@@ -197,12 +225,15 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         return run_mode_changed
                                     
     def check_language(self):
-        """Method checks for language change input parameters from command line and validates if it's supported 
+        """Method checks for language change input parameters (-l, --language) from command line and validates if it's supported 
+        
+        Args:
         
         Returns:            
-              language_changed (bool) - True in case if it's supported otherwise False 
+           bool: language_changed, True in case if it's supported otherwise False 
         
-        """        
+        """  
+              
         from hydratk.translation.core import info
         language_changed = False
         i = 0
@@ -223,13 +254,16 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         return language_changed
                 
     def check_config(self):
-        """Method checks for config file change input parameters from command line and validates its existence
+        """Method checks for config file change input parameters (-c, --config) from command line and validates its existence
            If the new config file exists, then current config file path will be replaced by new one 
         
-        Returns:            
-           config_changed (bool) - True in case if config file exists otherwise False 
+        Args:
         
-        """        
+        Returns:            
+           bool: config_changed, True in case if config file exists otherwise False 
+        
+        """       
+         
         i = 0
         config_changed = False
         for o in sys.argv:
@@ -250,12 +284,15 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         return config_changed
 
     def check_profile(self):
-        """Method checks for profile option parameter with specified output statistics file           
+        """Method checks for profile option parameter (help, -p, --profile) with specified output statistics file           
+        
+        Args:
         
         Returns:            
-           result (tuple) - bool enable_profiler, string statistics file 
+           tuple: result, bool enable_profiler, string statistics file 
         
         """        
+        
         i = 0
         self.dmsg('htk_on_debug', "Checking profile option", self.fromhere())
         enable_profiler = False
@@ -275,12 +312,15 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         return (enable_profiler, stats_file)
 
     def check_debug(self):
-        """Method checks for debug option with specified level parameter from command line 
+        """Method checks for debug option with specified level parameter (-d, --debug) from command line 
+        
+        Args:
         
         Returns:            
-              debug_changed (bool) - True in case if it's set otherwise False 
+            bool: debug_changed, True in case if it's set otherwise False 
         
-        """                
+        """        
+                
         debug_changed = False
         i = 0
         for o in sys.argv:            
@@ -301,10 +341,12 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         return debug_changed
 
     def check_debug_channel(self):
-        """Method checks for debug channel option with specified channel filters from command line
+        """Method checks for debug channel option with specified channel filters from command line (-d, --debug-channel)
+        
+        Args:
         
         Returns:            
-              debug_channel_changed (bool) - True in case if it's set otherwise False 
+            bool: debug_channel_changed, True in case if it's set otherwise False 
         
         """                
         debug_channel_changed = False
@@ -333,18 +375,24 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             i = i + 1
         return debug_channel_changed
              
-    def match_short_option(self, opt, value_expected=False, d_opt=None, allow_multiple = False, opt_group='htk'):
+    def match_short_option(self, opt, value_expected=False, d_opt=None, allow_multiple=False, opt_group='htk'):
         """Method registers command line short option check       
     
         Args:
            opt (str): Short option string           
-           value_expected (bool): Whether the option value is expected or not           
+           value_expected (bool): Whether the option value is expected or not  
+           d_opt (str): target option
+           allow_multiple (bool): multiple option occurences allowed
+           opt_group (obj): list or str, option group, default htk         
+           
+        Returns:
+           void   
            
         Raises:            
-           ValueError if the option is already registered for matching
-           ValueError if the option is an empty string 
+           error: TypeError
         
         """
+        
         if type(opt_group).__name__ == 'list':
             for optg in opt_group:
                 if optg not in commandopt.short_opt:
@@ -376,18 +424,24 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         else:
             raise TypeError('opt_group can be only of type list or str, got {}'.format(type(opt_group).__name__))
         
-    def match_long_option(self, opt, value_expected=False, d_opt=None, allow_multiple = False, opt_group='htk'):
+    def match_long_option(self, opt, value_expected=False, d_opt=None, allow_multiple=False, opt_group='htk'):
         """Method registers command line long option check       
     
         Args:
-           opt (str): Short option string           
-           value_expected (bool): Whether the option value is expected or not           
+           opt (str): long option string           
+           value_expected (bool): Whether the option value is expected or not
+           d_opt (str): target option
+           allow_multiple (bool): multiple option occurences allowed
+           opt_group (obj): list or str, option group, default htk                         
+          
+        Returns:
+           void  
            
         Raises:            
-           ValueError if the option is already registered for matching
-           ValueError if the option is an empty string 
+           error: TypeError
         
         """
+        
         if type(opt_group).__name__ == 'list':
             for optg in opt_group:
                 if optg not in commandopt.long_opt:
@@ -420,18 +474,21 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             raise TypeError('opt_group can be only of type list or str, got {}'.format(type(opt_group).__name__))
     
     
-    def match_cli_option(self, opt, value_expected=False, d_opt=None, allow_multiple = False, opt_group='htk'):
+    def match_cli_option(self, opt, value_expected=False, d_opt=None, allow_multiple=False, opt_group='htk'):
         """Method registers command option check       
     
         Args:
-           opt (str): Short option string           
-           value_expected (bool): Whether the option value is expected or not           
+           opt (obj): tuple or list, short and long option strings        
+           value_expected (bool): Whether the option value is expected or not   
+           d_opt (str): target option
+           allow_multiple (bool): multiple option occurences allowed
+           opt_group (obj): list or str, option group, default htk                       
            
         Raises:            
-           ValueError if the option is already registered for matching
-           ValueError if the option is an empty string 
+           error: TypeError
         
         """
+        
         if type(opt).__name__ not in ('tuple, list'):
             raise TypeError('option can be only of type tuple or list, got {}'.format(type(opt).__name__))
         
@@ -444,11 +501,16 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """Method registers command line command check       
     
         Args:
-           cmd (str): Command string                                 
+           cmd (str): Command string    
+           opt_group (str): option group, default htk
+           
+        Returns:
+           void                             
            
         Raises:            
-           ValueError: if the command is already registered for matching or the command is an empty string           
+           error: ValueError: if the command is already registered for matching or the command is an empty string           
         """
+        
         if opt_group not in commandopt.cmd:
             commandopt.cmd[opt_group] = []
             
@@ -463,6 +525,19 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 
     
     def set_cli_cmdopt_profile(self, profile):
+        """Method sets new command option profile     
+    
+        Args:
+           profile (str): option group
+           
+        Returns:
+           void                             
+           
+        Raises:            
+           error: InputError
+                     
+        """
+                
         if type(profile).__name__ == 'str' and profile != '':
             self._opt_profile = profile
             if profile not in commandopt.opt: 
@@ -478,6 +553,20 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             raise InputError("Option profile have to be non empty string type, got '{}' '{}'".format(profile, type(profile).__name__))
         
     def set_cli_appl_title(self, help_title, cp_string):
+        """Method sets custom application title    
+    
+        Args:
+           help_title (str): help
+           cp_string (str): copyright
+           
+        Returns:
+           void                             
+           
+        Raises:            
+           error: InputError
+                     
+        """
+                
         if type(help_title).__name__ == 'str' and type(cp_string).__name__ == 'str': 
             self._help_title = help_title
             self._cp_string = cp_string
@@ -508,6 +597,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
              mh.register_fn_hook('mh_bootstrap', my_bootstrapper)              
              
         """
+        
         result = False
         if (type(fn_id).__name__ == 'list'):            
             result = 0
@@ -534,6 +624,9 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         Returns:            
            void
            
+        Raises:
+           exception: Exception
+           
         Example:
         
         .. code-block:: python
@@ -545,17 +638,46 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
            mh.run_fn_hook('mh_bootstrap')
         
         """
+        
         if fn_id in self._fn_hooks:
             if self._fn_hooks[fn_id](*args,**kwargs) != True:            
                 raise Exception(self._trn.msg('htk_fn_hook_invalid', fn_id)) 
     
     def dummy_fn_hook(self):
+        """Method runs dummy hook
+        
+        Args:
+                   
+        Returns:            
+           bool: True
+        
+        """
+                
         return True
      
     def start_pp_app(self):
+        """Method starts application
+        
+        Args:
+                   
+        Returns:            
+           void
+        
+        """
+                
         self._start_app()
     
-    def stop_pp_app(self, force_exit = False):
+    def stop_pp_app(self, force_exit=False):
+        """Method stops application
+        
+        Args:
+           force_exit (bool): force application termination
+                   
+        Returns:            
+           void
+        
+        """
+                
         self._stop_app(force_exit)
            
     def register_command_hook(self, cmd, callback=''):
@@ -588,6 +710,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
              mh.register_command_hook('mycommand4', fc_command_handler) # single registration  
              
         """
+        
         result = False
         if (type(cmd).__name__ == 'list'):            
             result = 0
@@ -621,8 +744,8 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
               callback (callable): Function callback 
         
            Returns:
-              bool - in case that cmd_opt is defined by string 
-              int  - number of successfully added hooks in case that cmd_opt is dictionary with multiple defined callbacks
+              bool: in case that cmd_opt is defined by string 
+              int: number of successfully added hooks in case that cmd_opt is dictionary with multiple defined callbacks
            
            Example:
            
@@ -639,6 +762,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
               mh = MasterHead.get_head().  
            
         """
+        
         result = False
         if (type(cmd_opt).__name__ == 'list'):            
             result = 0
@@ -675,8 +799,8 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
            priority (int): optional priority number > 0, lower number means higher priority, default value is const.EVENT_HOOK_PRIORITY 
         
         Returns:
-           bool - in case that cmd_opt is defined by string 
-           int  - number of successfully registered hooks in case that event is dictionary with multiple defined callbacks
+           bool: in case that cmd_opt is defined by string 
+           int: number of successfully registered hooks in case that event is dictionary with multiple defined callbacks
            
         Example:
         
@@ -695,6 +819,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
            mh.register_event_hook(hook)
            
         """
+        
         result = False
         if (type(event).__name__ == 'list'):                       
             result = 0
@@ -731,7 +856,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         # todo silently notify invalid hook                    
         return result                 
     
-    def unregister_event_hook(self, event, callback = None):
+    def unregister_event_hook(self, event, callback=None):
         """Methods unregisters event listener(s) for specified event.
            
            This method is useful for extending the system functionality
@@ -741,8 +866,8 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
            callback (callable): matching callback            
         
         Returns:
-           bool - in case that callback is not specified
-           int  - number of successfully unregistered hooks for matching callback
+           bool: in case that callback is not specified
+           int: number of successfully unregistered hooks for matching callback
            
         Example:
         
@@ -762,7 +887,8 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
            mh.unregister_event_hook('htk_on_error') # unregisters all hooks, returns True
            mh.unregister_event_hook('htk_on_warning', self.my_warning_handler) # unregisers matching hook only, returns 1 
            
-        """                
+        """    
+                    
         if callback == None:
             result = False
             if event in self._event_hooks:
@@ -792,7 +918,10 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
            record (dict) : new callback record            
         
         Returns:          
-           int  - number of successfully replaced hooks for matching callback
+           int: number of successfully replaced hooks for matching callback
+           
+        Raises:
+           exception: Exception
            
         Example:
         
@@ -817,7 +946,8 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
            
            mh.replace_event_hook('htk_on_warning', self.my_warning_handler, new_record) # replaces matching hook only, returns 1 
            
-        """                        
+        """  
+                              
         if type(record).__name__ != 'dict':
             raise Exception("Invalid record type, dictionary expected")
         if not hasattr(record['callback'], '__call__'):
@@ -843,7 +973,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
            oevent (obj): Event object type  hydratk.core.event.Event
         
         Returns:            
-           int  - number of successfully processed event registered callbacks
+           int: number of successfully processed event registered callbacks
            
         Example:
         
@@ -864,7 +994,8 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         event_id = oevent.id()                
         before_event_id = '^{0}'.format(event_id.replace('^', ''))         
         after_event_id = '${0}'.format(event_id.replace('$', ''))     
-                   
+              
+        # fire event before requested event is processed if enabled          
         if event_id not in (before_event_id, after_event_id) and event_id in self._event_hooks and oevent.skip_before_hook is False:            
             hbh_ev = event.Event(before_event_id, oevent)                                     
             hbh_ev.set_data('target_event', oevent)                           
@@ -872,6 +1003,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             if hbh_ev.will_run_default() == False:
                 return fe_count
         
+        # process event and execute registered callback
         if event_id in self._event_hooks and oevent.propagate():                                             
             i = 0
             for _, records in sorted(self._event_hooks[event_id].items(), key=operator.itemgetter(0)):  # _ unused priority
@@ -884,7 +1016,8 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                         cb(oevent)
                     i += 1
                 fe_count = i                                    
-                                    
+            
+        # fire event after requested event is processed if enabled                        
         if event_id not in (before_event_id, after_event_id) and event_id in self._event_hooks and oevent.propagate() and oevent.skip_after_hook is False:
             hah_ev = event.Event(after_event_id, oevent)                
             hah_ev.set_data('source_event', oevent)        
@@ -893,6 +1026,17 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         return fe_count
                 
     def apply_command_options(self):
+        """Method sets several command options 
+        
+        Debugging, language
+        
+        Args:
+        
+        Returns:            
+           void
+           
+        """
+                
         if ('--debug' in self._option_param):
             if (type(self._option_param['--debug'][0]).__name__ == 'str' and self._option_param['--debug'][0].isdigit()):
                 if int(self._option_param['--debug'][0]) > 0:
@@ -913,17 +1057,43 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             else:
                 lang_value = self._option_param['--language'][0].__str__() if self._option_param['--language'][0] != {} else ''                 
                 self.dmsg('htk_on_warning', self._trn.msg('htk_opt_ignore', 'Debug level', lang_value), self.fromhere())
-                
-                       
-              
+                                                     
     def get_language(self):
+        """Method gets language
+        
+        Args:
+        
+        Returns:            
+           str: language
+           
+        """
+                
         return self._language
     
-    def have_command_action(self):        
+    def have_command_action(self): 
+        """Method checks if command is set
+        
+        Args:
+        
+        Returns:            
+           bool: result
+           
+        """
+                       
         return True if self._command != None else False
     
     def get_command_action(self):
+        """Method gets command
+        
+        Args:
+        
+        Returns:            
+           str: command
+           
+        """
+                
         return self._command
+    
     '''
     def get_opt_alias_str(self, opt):             
         result = ''
@@ -933,12 +1103,39 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         return result
     '''    
     
-    def service_registered(self, service_name):        
+    def service_registered(self, service_name):  
+        """Method checks if service is registered
+        
+        Args:
+           service_name (str): service
+        
+        Returns:            
+           bool: result
+           
+        """
+                      
         for service in self._app_service:
             if service_name == service.name: return True
         return False    
         
     def register_service(self, service_name, description, cb):
+        """Method registers given service and creates own process
+        
+        Args:
+           service_name (str): service
+           description (str): description
+           cb (callable): callback
+        
+        Returns:            
+           bool: True
+           
+        Raises:
+           error: TypeError
+           error: SystemError
+           error: ValueError
+           
+        """
+                
         if not isinstance(service_name, types.basestring) or service_name == '':
             raise TypeError(self._trn.msg('htk_app_service_invalid', service_name))
         if self.service_registered(service_name):
@@ -963,6 +1160,16 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         pass
     
     def start_service(self, service_name):
+        """Method starts service
+        
+        Args:
+           service_name (str): service
+        
+        Returns:            
+           bool: result
+           
+        """
+                
         for service in self._app_service:
             if service_name == service.name and not service.is_alive():
                 service.start()                
@@ -984,6 +1191,18 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         pass
     
     def stop_services(self):
+        """Method stops all running services
+        
+        Service is tried via signal SIGINT first
+        If not successful it is stopped via signal SIGKILL
+        
+        Args:
+        
+        Returns:            
+           void
+           
+        """
+                
         for service in self._app_service:
             if service.pid != None:
                 service_name = service.service_name                          
@@ -999,19 +1218,47 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 
                     
     def init_core_threads(self): 
+        """Method initializes threads according to configuration
+        
+        Args:
+        
+        Returns:            
+           void
+           
+        """
+                
         i = 1       
         while i <= self._num_threads:
             self.add_core_thread(i)
             i = i + 1        
     
     def destroy_core_threads(self):
+        """Method destroys threads
+        
+        Args:
+        
+        Returns:            
+           void
+           
+        """
+                
         for thread in self._thr:
             name = thread.name
             thread.status.value = const.CORE_THREAD_EXIT
             self.dmsg('htk_on_debug_info', self._trn.msg('htk_cthread_destroy', name), self.fromhere())
             thread.join()
                 
-    def add_core_thread(self, i=None):        
+    def add_core_thread(self, i=None):  
+        """Method adds new thread to the pool
+        
+        Args:
+           i (int): thread id
+        
+        Returns:            
+           void
+           
+        """        
+              
         nexti = len(self._thr) + 1 if i == None else i
         status = multiprocessing.Value('i', const.CORE_THREAD_WORK)
         action_status = multiprocessing.Value('i', const.CORE_THREAD_ACTION_NONE)  
@@ -1032,9 +1279,33 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         current.start()
     
     def get_thrid(self):
+        """Method gets thread id (name)
+        
+        Args:
+        
+        Returns:            
+           str: id
+           
+        """
+                
         return '0' if multiprocessing.current_process().name == 'MainProcess' else multiprocessing.current_process().name
         
     def create_ext_skel(self):
+        """Method creates extension skeleton
+        
+        Skeleton contains extension module, configuration, langtexts, installation
+        In default (non-interactive) mode the skeleton is created from template in ~/hydratk directory
+        In interactive mode the skeleton wizard asks the user for several data (path, name, author, ...)
+        
+        Command line options - --force, --interactive, --ext-skel-path
+        
+        Args:
+        
+        Returns:            
+           bool: result
+           
+        """
+                
         from hydratk.core import template;
         from os.path import expanduser
         default_install_path = "{0}/hydratk".format(expanduser("~"));
@@ -1076,7 +1347,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 ext_desc = read_ext_desc if len(read_ext_desc) > 0 else template.extension_default_user_data['ext_desc']
                 print("Extension description set to: %s" % ext_desc)
                 
-                print('4. Enter the extension athor name');
+                print('4. Enter the extension author name');
                 read_author_name = raw_input("[{0}]:".format(template.extension_default_user_data['author_name']))
                 author_name = read_author_name if len(read_author_name) > 0 else template.extension_default_user_data['author_name']
                 print("Extension author name set to: %s" % author_name)
@@ -1216,6 +1487,21 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         return result  
             
     def create_lib_skel(self):
+        """Method creates library skeleton
+        
+        Skeleton contains extension module, installation
+        In default (non-interactive) mode the skeleton is created from template in ~/hydratk directory
+        In interactive mode the skeleton wizard asks the user for several data (path, name, author, ...)
+        
+        Command line options - --force, --interactive, --lib-skel-path
+        
+        Args:
+        
+        Returns:            
+           bool: result
+           
+        """
+                
         from hydratk.core import template;
         from os.path import expanduser
         default_install_path = "{0}/hydratk".format(expanduser("~"));
@@ -1352,6 +1638,18 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         return result  
             
     def async_fn_ex(self, fn_id, *args, **kwargs):
+        """Method sends functionality hook in asynchronous way as message
+        
+        Args:
+           fn_id (str): functionality
+           args (args): arguments
+           kwargs (kwargs): key value arguments
+        
+        Returns:            
+           void
+           
+        """
+                
         if fn_id is None or fn_id == '':
             raise TypeError("fn_id: expected nonempty string")
         if fn_id not in self._async_fn_ex:
@@ -1370,10 +1668,37 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         }
         self.send_msg(msg)        
         
-    def send_msg(self,msg):
+    def send_msg(self, msg):
+        """Method send message to queue
+
+        Args:
+           msg (obj): message
+        
+        Returns:            
+           void
+           
+        """
+                
         return self._send_msg(msg)
             
     def async_ext_fn(self, callback, result_callback, *args, **kwargs ):
+        """Method send extension hook in asynchronous way as message
+        
+        Args:
+           callback (tuple): callback
+           result_callback (obj): str or tuple, callback
+           args (args): arguments
+           kwargs (kwargs): key value arguments
+        
+        Returns:            
+           str: ticket id
+           
+        Raises:
+           error: TypeError
+           error: KeyError
+           
+        """
+                
         if type(callback).__name__ != 'tuple': 
             raise TypeError("callback: tuple expected")
         obj, meth = callback
@@ -1419,6 +1744,20 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         return ticket_id  
     
     def get_async_ticket_content(self, ticket_id):
+        """Method gets ticket content
+        
+        Args:
+           ticket_id (str): ticket
+        
+        Returns:            
+           obj: content
+           
+        Raises:
+           error: KeyError
+           error: TypeError
+           
+        """
+                
         if ticket_id is not None and ticket_id != '':
             if ticket_id in self._async_fn_tickets:
                 return self._async_fn_tickets[ticket_id]
@@ -1430,6 +1769,20 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         pass
             
     def async_ticket_completed(self, ticket_id):
+        """Method checks if ticket processing is completed
+        
+        Args:
+           ticket_id (str): ticket
+        
+        Returns:            
+           bool: result
+           
+        Raises:
+           error: KeyError
+           error: TypeError
+           
+        """
+                
         if ticket_id is not None and ticket_id != '':
             if ticket_id in self._async_fn_tickets:
                 return self._async_fn_tickets[ticket_id]['completed']
@@ -1438,9 +1791,34 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             raise TypeError("Invalid ticket_id: {}".format(type(ticket_id).__name__))
         
     def delete_async_ticket(self, ticket_id):
+        """Method deletes ticket
+        
+        Args:
+           ticket_id (str): ticket
+        
+        Returns:            
+           void
+           
+        """
+                
         self._delete_async_ticket(ticket_id)
         
-    def register_async_fn_ex(self, fn_id, callback, result_callback = None):        
+    def register_async_fn_ex(self, fn_id, callback, result_callback=None):  
+        """Method registers functionality hook in asynchronous way
+        
+        Args:
+           fn_id (str): functionality hook
+           callback (callable): callback
+           result_callback (callable): result callback
+        
+        Returns:            
+           bool: True
+           
+        Raises:
+           error: TypeError
+           
+        """
+                      
         if fn_id is None or fn_id == '':
             raise TypeError("fn_id: expected nonempty string")        
         res_cb = None
@@ -1472,30 +1850,24 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
     def bridge_fn_cb(self, fn_id_src, fn_id_dest):
         pass
     
-    def reg_fn_cb(self, fn_id, callback, options = None):
+    def reg_fn_cb(self, fn_id, callback, options=None):
         """Method is registering callback with specified fn_id.
            
            This method is usable for functionality extending, replacement. 
         
         Args:
            fn_id (str): functionality id
-           args (mixed): optional arguments
-           kwargs (mixed): optional keyword arguments
+           callback (callable): callback
+           options: not used
                    
         Returns:            
-           void
+           bool: True
            
-        Example:
-        
-        .. code-block:: python
-        
-           from hydratk.core.masterhead import MasterHead
-           from hydratk.core.event import Event
-                      
-           mh = MasterHead.get_head()
-           mh.run_fn_hook('mh_bootstrap')
+        Raises:
+           error: TypeError
         
         """
+        
         if fn_id is None or fn_id == '':
             raise TypeError("fn_id: expected nonempty string")
         if callable(callback):
@@ -1506,6 +1878,20 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         #if self._run_mode >= const.CORE_RUN_MODE_PP_APP:
         
     def register_async_fn(self, fn_id, callback):
+        """Method registers functionality hook in asynchronous way
+        
+        Args:
+           fn_id (str): functionality hook
+           callback (callable): callback
+        
+        Returns:            
+           bool: True
+           
+        Raises:
+           error: TypeError
+           
+        """   
+             
         if fn_id is None or fn_id == '':
             raise TypeError("fn_id: expected nonempty string")
         if callable(callback):
@@ -1515,6 +1901,20 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             raise TypeError('callback: expected callable')
         
     def get_ext(self, extension_name):
+        """Method gets extensions
+        
+        Args:
+           extension_name (str): extension
+        
+        Returns:            
+           obj: Extension
+           
+        Raises:
+           error: IndexError
+           error: TypeError
+           
+        """
+                
         if type(extension_name).__name__ == 'str' and extension_name != '':
             if extension_name in self._ext:                
                 return self._ext[extension_name]                

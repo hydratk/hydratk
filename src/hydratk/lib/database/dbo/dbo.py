@@ -21,19 +21,23 @@ class DBO(object):
     _driver_name = None
     
     def __init__(self, dsn, username=None, password=None, options={}):
-        '''
+        """ Class constructor
+        
+        Called when object is initialized
+        
         Args: 
-           dsn (string): format: dbdriver:db_string
-           username(string): username
-           password(string): password 
-           options(dict): driver specific options
+           dsn (str): format: dbdriver:db_string
+           username (str): username
+           password (str): password 
+           options (dict): driver specific options
            
         Returns:
            DBO: object on success 
            
         Raises:
-           DBOException: on error                     
-        '''
+           exception: DBOException
+                                
+        """
         
         driver_name = self._get_driver_from_dsn(dsn)
         if driver_name in dbo_drivers:
@@ -52,22 +56,63 @@ class DBO(object):
     
     @property
     def driver_name(self):
+        """ driver_name property getter """
+        
         return self._driver_name
     
-    def _import_dbo_driver(self, dbo_driver):        
+    def _import_dbo_driver(self, dbo_driver): 
+        """Method import DBO driver
+        
+        Args:   
+           dbo_driver (str): DBO driver
+           
+        Returns:
+           obj: module   
+                
+        """ 
+                       
         return importlib.import_module(dbo_driver)
-    
-    
+        
     def _get_driver_from_dsn(self, dsn):
+        """Method gets DB driver from dsn
+        
+        Args:   
+           dsn (str): dsn
+           
+        Returns:
+           str: DB driver
+                
+        """ 
+                
         return dsn.split(':')[0]
     
     def get_available_drivers(self):
         pass
     
-    def __getattr__(self,name):
+    def __getattr__(self, name):
+        """Method gets attribute
+        
+        Args:   
+           name (str): attribute name
+           
+        Returns:
+           obj: attribute value
+                
+        """ 
+                
         return getattr(self._dbo_driver,name)
     
     def __getitem__(self, name):
+        """Method gets item
+        
+        Args:   
+           name (str): item name
+           
+        Returns:
+           obj: item value
+                
+        """ 
+                
         return getattr(self._dbo_driver, name)    
 
 class DBOException():

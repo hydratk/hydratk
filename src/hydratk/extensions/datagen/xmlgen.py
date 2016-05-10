@@ -28,6 +28,7 @@ from logging import getLogger, CRITICAL
 
 getLogger('suds.resolver').setLevel(CRITICAL)
 
+''' WSDL template '''
 wsdl_tmpl = """
 <wsdl:definitions targetNamespace="{0}" xmlns:tns="{1}" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
                   xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
@@ -54,11 +55,19 @@ class XMLGen():
     _client = None
     
     def __init__(self):
+        """Class constructor
+        
+        Called when object is initialized
+        
+        Args:              
+                
+        """          
         
         self._mh = MasterHead.get_head()
     
     @property
     def client(self):
+        """ client property getter """
         
         return self._client
     
@@ -72,7 +81,6 @@ class XMLGen():
             bool: result
         
         Raises:
-            error: ValueError
             event: xmlgen_before_import_spec
             event: xmlgen_after_import_spec     
                 
@@ -125,7 +133,6 @@ class XMLGen():
             bool: result
         
         Raises:
-            error: ValueError 
             event: xmlgen_before_write
             event: xmlgen_after_write    
                 
@@ -230,7 +237,10 @@ class XMLGen():
             element (str): element name
 
         Returns:
-            str: element type         
+            str: element type
+            
+        Raises:
+           error: ValueError         
                 
         """      
     

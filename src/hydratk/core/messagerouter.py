@@ -36,30 +36,42 @@ class MessageRouter():
     _id           = ''
     _trn          = None
  
-    '''
-    Create router using specified parameters
-    
-    @param id: router identificator
-    @param config: global config object  
-    '''
     def __init__(self, id):
-        '''
-        Constructor
-        '''
+        """Class constructor
+        
+        Called when object is initialized
+        
+        Args:
+           id (str): message router id
+        
+        Returns:            
+           void
+           
+        Raises:
+           error: TypeError
+           
+        """        
+ 
         from hydratk.core.masterhead import MasterHead
         self._id = id
         self._trn = MasterHead.get_head().get_translator()    
             
-    '''
-    Method will add router service identificator using specified parameters
-    
-    @param id: service identificator
-    @param transport_type: supported transport type, currently only IPC and TCP is supported
-    @param options: transport_type supported options
-                    ZMQ supported options:
-                      socket_type = 
-    '''    
     def register_service(self, id, transport_type, options):
+        """Method will add router service identificator using specified parameters
+        
+        Args:
+           id (str): service identifier
+           transport_type (int): supported transport type, currently only IPC and TCP is supported
+           options: (dict): transport_type supported options
+        
+        Returns:            
+           bool: True
+           
+        Raises:
+           error: InputError
+           
+        """
+                
         if id != '' and id not in self._service_list.values():
             service = {}
             if (transport_type in (SERVICE_TRANSPORT_TYPE_ZMQ_IPC, SERVICE_TRANSPORT_TYPE_ZMQ_TCP)):
@@ -76,16 +88,18 @@ class MessageRouter():
            
         return True
         
-    
-    '''
-    Method will return a new instance of queue object for specified service_id
-    
-    @param service_id: service identificator
-    @param options: queue type optional settings, e.g. zmq socket_type can be passed this way
-    @author: Petr Czaderna
-    @version: 0.1.0      
-    ''' 
     def get_queue(self, service_id, action, options = {}):
+        """Method will return a new instance of queue object for specified service_id
+        
+        Args:
+           service_id (str): service identifier
+           options: (dict): queue type optional settings
+        
+        Returns:            
+           obj: socket
+
+        """
+                
         from hydratk.lib.debugging.simpledebug import dmsg
         q = False
         if service_id != '' and service_id in self._service_list:
@@ -121,6 +135,16 @@ class MessageRouter():
         return q
     
     def get_service_address(self, service_id):
+        """Method gets service address
+        
+        Args:
+           service_id (str): service identifier
+        
+        Returns:            
+           str: address
+
+        """
+                
         service = self._service_list[service_id]
         service_options = service['options']
         return service_options['address']  

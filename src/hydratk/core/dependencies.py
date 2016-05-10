@@ -18,10 +18,10 @@ dep_modules = {
                           'desc' : 'YAML parser'
                          },
                  'setproctitle': {
-                           'desc' : 'System process title changer'       
+                          'desc' : 'System process title changer'       
                          },
-                  'sqlite3' : {
-                           'desc' : 'SQLite v3 database handler'    
+                 'sqlite3' : {
+                          'desc' : 'SQLite v3 database handler'    
                          }  
                 }
 

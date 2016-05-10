@@ -13,6 +13,14 @@ import command as cmd
 from os import path
 
 def run_pre_install():
+    """Method runs pre-install tasks
+
+    Args:
+
+    Returns:
+       void
+    
+    """    
     
     print('**************************************')
     print('*    HydraTK installation wizard     *')
@@ -64,6 +72,14 @@ def run_pre_install():
     return (requires, data_files)  
 
 def set_custom_modules():
+    """Method handles module choice wizard
+
+    Args:
+
+    Returns:
+       void
+    
+    """        
     
     print('Non-basic modules will be offered to install')
     requires = cfg['modules']['basic']
@@ -81,6 +97,15 @@ def set_custom_modules():
     return (requires, data_files) 
 
 def install_libs_from_repo(requires):
+    """Method installs libraries from repositories
+
+    Args:
+       requires (list): required libraries
+
+    Returns:
+       void
+    
+    """        
     
     pckm = cmd.get_pck_manager()[0]
     
@@ -98,6 +123,16 @@ def install_libs_from_repo(requires):
     return requires
                 
 def install_java(requires, data_files):
+    """Method downloads and install Java
+
+    Args:
+       requries (list): required libraries
+       data_files (list): Java files 
+
+    Returns:
+       void
+    
+    """        
     
     module = 'JPype1'
     alias = 'java'
@@ -131,6 +166,15 @@ def install_java(requires, data_files):
     return (requires, data_files)
 
 def install_oracle(requires):
+    """Method downloads and install Oracle
+
+    Args:
+       requires (list): required libraries
+
+    Returns:
+       void
+    
+    """        
     
     module = 'cx_Oracle'
     alias = 'instantclient'
@@ -168,6 +212,15 @@ def install_oracle(requires):
     return requires 
         
 def install_phantomjs(requires):
+    """Method downloads and install PhantomJS
+
+    Args:
+       requires (list): required libraries
+
+    Returns:
+       void
+    
+    """        
     
     module = 'selenium'
     alias = 'phantomjs'

@@ -30,16 +30,25 @@ class JSONGen():
     _schema = None
     
     def __init__(self):
+        """Class constructor
+        
+        Called when object is initialized
+        
+        Args:              
+                
+        """          
         
         self._mh = MasterHead.get_head()
     
     @property
     def path(self):
+        """ path property getter """
         
         return self._path
     
     @property
     def schema(self):
+        """ schema property getter """
         
         return self._schema
     
@@ -53,7 +62,6 @@ class JSONGen():
             bool: result
         
         Raises:
-            error: ValueError
             event: jsongen_before_import_spec
             event: jsongen_after_import_spec     
                 
@@ -165,6 +173,7 @@ class JSONGen():
                     doc[key] = self._tojson_rec(subelem)
                 else:
                     doc[key] = '?'
+                    
         elif (schema['type'] == 'array'):
             doc = []
             doc.append(self._tojson_rec(schema['items']))

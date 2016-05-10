@@ -10,7 +10,19 @@
 
 from hydratk.core import const
 
-def dmsg(msg, level = 1, channel  = const.DEBUG_CHANNEL):
+def dmsg(msg, level=1, channel=const.DEBUG_CHANNEL):
+    """Method writes debug message
+        
+    Args:   
+       msg (str): message
+       level (int): debug level
+       channel (list): debug channel
+           
+    Returns:
+       void
+                
+    """ 
+            
     from hydratk.core.masterhead import MasterHead
     _mh = MasterHead.get_head()
     if _mh.debug is True and level <= _mh.debug_level:

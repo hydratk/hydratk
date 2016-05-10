@@ -122,6 +122,17 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
     
 
     def _bootstrap(self):
+        """Method executes specific processing according to runlevel
+        
+        Callback for functionality h_bootstrap
+        
+        Args:            
+           
+        Returns:
+            bool: True       
+                
+        """  
+            
         if self._runlevel == const.RUNLEVEL_SHUTDOWN:
             self.run_fn_hook('h_runlevel_baseinit')                        
         if self._runlevel == const.RUNLEVEL_BASEINIT:
@@ -140,6 +151,20 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         return True #required by fn_hook
         
     def _create_config_db(self):
+        """Method creates configuration database
+        
+        Callback for command create-config-db
+        Database filename is taken from option --config-db-file (prio 1)
+                                        configuration System/DBConfig/db_file (prio 2) 
+        If database exists it can be recreated using option -f|--force, otherwise is kept   
+        
+        Args:            
+           
+        Returns:
+            bool: result       
+                
+        """          
+        
         result = False
         force_cmd = True if CommandlineTool.get_input_option('-f') or  CommandlineTool.get_input_option('--force') == True else False
         db_file_param = CommandlineTool.get_input_option('--config-db-file')
@@ -171,7 +196,29 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         pass
     
     def _c_observer(self):
-        setproctitle.setproctitle('hydratk/c_observer')
+        """Method creates observer process and watches it during its lifecycle
+        
+        When it is not active, application is stopped
+        
+        Configuration options - Core/MessageService/id
+                                Core/MessageService/transport_type, only IPC is supported now
+                                Core/MessageService/address
+                                Core/Service/pid_file  
+        
+        Args:            
+           
+        Returns:
+           void  
+            
+        Raises:
+           event: htk_before_cw_activity_check    
+           event: htk_on_cobserver_ctx_switch
+                
+        """           
+        
+        setproctitle.setproctitle('hydratk/c_observer') # mark process to be identified in list of processes
+        
+        # get message service id from configuration, otherwise stop application
         try:
             core_msg_service_id = self._config['Core']['MessageService']['id']
             if (core_msg_service_id != ''):
@@ -186,6 +233,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             self._stop_app(True)                         
                 
         try:
+            # get message queue transport type and address from configuration, otherwise stop application
             cmsgq_transport_type = int(self._config['Core']['MessageService']['transport_type'])            
             if (cmsgq_transport_type != ''):
                 options = {}
@@ -195,12 +243,14 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                            'address' : cmsgq_address                  
                     }
                 try:
+                    # register message service to queue
                     self._msg_router.register_service(self._core_msg_service_id, cmsgq_transport_type, options)
                     self.dmsg('htk_on_debug_info', self._trn.msg('htk_core_msg_service_add_ok', core_msg_service_id), self.fromhere())
                     self._observer_status = const.CORE_THREAD_WORK
                     current = multiprocessing.current_process()
                     current.status = const.CORE_THREAD_WORK
                    
+                    # initialize process as message queue sender
                     try:
                         #current.msgq   = self._msg_router.get_queue(self._core_msg_service_id, messagerouter.MESSAGE_QUEUE_ACTION_BIND, {'socket_type' : zmq.PULL} )
                         #self.dmsg('htk_on_debug_info', "Message queue {} : socket type zmq.PULL connected".format(self._core_msg_service_id), self.fromhere())
@@ -225,6 +275,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                     
                     self.dmsg('htk_on_debug_info', self._trn.msg('htk_observer_init'), self.fromhere())
                     
+                    # create PID file, get filename from configuration, otherwise stop application
                     try:
                         pid_file = self._config['Core']['Service']['pid_file']            
                         if (pid_file != ''):
@@ -239,7 +290,9 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                         self._stop_app(True)
                     except ValueError as desc:
                         self.dmsg('htk_on_error', self._trn.msg('htk_conf_opt_val_err', 'Core', 'pid_file', desc), self.fromhere())
-                        self._stop_app(True)                        
+                        self._stop_app(True) 
+                        
+                    # initialize worker threads                      
                     self.init_core_threads()
                     self._reg_self_signal_hooks()
                     
@@ -247,8 +300,11 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                     
                     next_cw_activity_check = time.time() + const.CORE_THREAD_ACTIVITY_CHECK_TIME
 
+                    # continuous thread status check during application run
+                    # application will be stopped if process is not active
                     while (current.status > const.CORE_THREAD_ALIVE and self._observer_status >= const.CORE_THREAD_ALIVE):
                         
+                        # check thread activity, event htk_before_cw_activity_check is fired first
                         if (time.time() >= next_cw_activity_check):                                                          
                             ev = event.Event('htk_before_cw_activity_check')    
                             self.fire_event(ev)                            
@@ -257,6 +313,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                                 
                             next_cw_activity_check = time.time() + const.CORE_THREAD_ACTIVITY_CHECK_TIME
                         
+                        # switch thread context, via event htk_on_cobserver_ctx_switch
                         try:    
                             ev = event.Event('htk_on_cobserver_ctx_switch')     
                             self.fire_event(ev)
@@ -266,12 +323,14 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                             print(ex)
                             traceback.print_tb(tb)
                         
+                        # sleep process, status will be checked again after sleep time
                         self.dmsg('htk_on_debug_info', self._trn.msg('htk_observer_sleep'), self.fromhere(), 5)            
                         time.sleep(const.CORE_OBSERVER_SLEEP_TIME)
                         #res = current.msgq.send("SOME Message text")
                         #print("Observer sent message {}".format(res))   
                         self.dmsg('htk_on_debug_info', self._trn.msg('htk_observer_awake'), self.fromhere(), 5)
-                                                            
+                     
+                    # final cleanup                                        
                     self.stop_services()        
                     self.destroy_core_threads()
                     self.dmsg('htk_on_debug_info', self._trn.msg('htk_observer_term'), self.fromhere(), 5)
@@ -290,11 +349,31 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             self._stop_app()    
         
     def _c_worker(self, i, status, action_status, pipe_conn, is_alive_check): 
+        """Method watches worker process during its lifecycle
+        
+        Process polls messages from queue
+        
+        TODO explain parameters
+        Args:            
+           i (int): process id
+           status (int): activity status
+           action_status (int): action status
+           pipe_conn (obj): pipe process connection
+           is_alive_check
+           
+        Returns:
+           void      
+            
+        Raises:
+           event: htk_on_cworker_init
+                
+        """  
+                
         ev = event.Event('htk_on_cworker_init')     
         self.fire_event(ev)
         if ev.will_run_default():
-            setproctitle.setproctitle('hydratk/core:' + str(i))
-            '''updating signal hooks to work properly'''        
+            setproctitle.setproctitle('hydratk/core:' + str(i)) # mark process to be identified in list of processes
+            # updating signal hooks to work properly
             self._reg_self_signal_hooks() 
                                                 
             current = multiprocessing.current_process()                        
@@ -306,6 +385,8 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             current.action_status = action_status
             current.is_alive_check = is_alive_check          
             #current.msgq = self._msg_router.get_queue(self._core_msg_service_id, messagerouter.MESSAGE_QUEUE_ACTION_CONNECT, options)
+            
+            # initialize process as message queue receiver
             context = zmq.Context()
             socket_pull = context.socket(zmq.PULL)
             socket_pull.connect("ipc:///tmp/hydratk/core.socket")
@@ -314,14 +395,17 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             poller = zmq.Poller()
             poller.register(socket_pull, zmq.POLLIN) #pull socket
             
-            current.poller = poller          #assign poller to the current process
+            current.poller = poller      #assign poller to the current process
             current.msgq   = socket_pull #assign pull socket to the current process
                     
             self.dmsg('htk_on_debug_info', self._trn.msg('htk_core_msgq_connect_ok', self._msg_router.get_service_address(self._core_msg_service_id)), self.fromhere())
                         
-            self.dmsg('htk_on_debug_info', self._trn.msg('htk_cworker_init'), self.fromhere())        
+            self.dmsg('htk_on_debug_info', self._trn.msg('htk_cworker_init'), self.fromhere()) 
+            
+            # continuous thread status check        
             while (current.status.value > const.CORE_THREAD_ALIVE):
-                current.is_alive_check.value = time.time()                       
+                current.is_alive_check.value = time.time()             
+                # check queue for messages if process is working, process them, sleep after          
                 if (current.status.value == const.CORE_THREAD_WORK):                
                     socks = dict(poller.poll(100))                
                     if socket_pull in socks and socks[socket_pull] == zmq.POLLIN:                                
@@ -334,8 +418,9 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                         self.dmsg('htk_on_debug_info', self._trn.msg('htk_cthread_sleep'), self.fromhere(), 5)
                         time.sleep(1.0)
                         self.dmsg('htk_on_debug_info', self._trn.msg('htk_cthread_awake'), self.fromhere(), 5)
+                # check queue for messages if process is waiting, process them, sleep after
                 elif (current.status.value == const.CORE_THREAD_WAIT):
-                    self._check_cw_priv_msg(current)
+                    self._check_cw_privmsg(current) 
                     self.dmsg('htk_on_debug_info', self._trn.msg('htk_cthread_sleep'), self.fromhere(), 5)
                     time.sleep(1)
                     self.dmsg('htk_on_debug_info', self._trn.msg('htk_cthread_awake'), self.fromhere(), 5)
@@ -343,6 +428,15 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             self.dmsg('htk_on_debug_info', self._trn.msg('htk_cworker_term'), self.fromhere())       
     
     def _check_co_privmsg(self):
+        """Method checks queue for observer messages and processes them
+        
+        Args:            
+           
+        Returns:
+           void      
+                
+        """  
+                
         self.dmsg('htk_on_debug_info', 'checking privmsg', self.fromhere(), 1)
         try:
             for thr in self._thr:
@@ -356,23 +450,52 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             tb = traceback.format_exc()
             pprint.pprint(tb) 
                     
-    def _write_config_db(self, db_file):        
+    def _write_config_db(self, db_file):      
+        """Method writes data from configuration file to database
+        
+        Args:
+           db_file (str): database filename including path           
+           
+        Returns:
+           void      
+                
+        """          
+          
         db = dbconfig.DBConfig(db_file)
         db.connect()
         self.dmsg('htk_on_debug_info', self._trn.msg('htk_write_cfg_db'), self.fromhere())
         db.writedb(self._config)             
         
     def _dopoll(self, poller):
+        """Method reads message from queue
+        
+        Args:         
+           poller (obj): message queue receiver
+           
+        Returns:
+           obj: message      
+                
+        """
+                
         while True:
             try:
                 return poller.poll()
             except Exception as e: #except IOError as e:
                 if e.errno != errno.EINTR:
-                    raise e
-                
-      
+                    raise e                      
     
     def _check_core_msg_queue(self):
+        """Method checks queue for message
+        
+        Message is sent via event if present (method doesn't wait if queue is empty)
+        
+        Args:         
+           
+        Returns:
+           bool: True/False if queue is/isn't empty   
+                
+        """
+                
         current = multiprocessing.current_process()
         mq = current.msgq
         q_empty = False
@@ -393,6 +516,15 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         return q_empty      
     
     def _check_cw_privmsg(self):
+        """Method checks queue for worker messages and processes them
+        
+        Args:            
+           
+        Returns:
+           void      
+                
+        """          
+        
         self.dmsg('htk_on_debug_info', self._trn.msg('htk_cworker_check_priv_msg'), self.fromhere(), 1) 
         current = multiprocessing.current_process()
         try:
@@ -409,6 +541,15 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             traceback.print_tb(tb)    
     
     def _check_cw_activity(self):
+        """Method checks worker activity
+        
+        Args:            
+           
+        Returns:
+           void      
+                
+        """  
+                
         for thr in self._thr:            
             # current.last_ping_response = 0
             # current.response_alert_level = 1
@@ -425,7 +566,18 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                     thr.response_alert_level += 1                    
             thr.next_check_time = time.time() + const.CORE_THREAD_PING_TIME
             
-    def _do_command_action(self):        
+    def _do_command_action(self):  
+        """Method processes command
+        
+        Command must have registered callback
+        
+        Args:            
+           
+        Returns:
+           void      
+                
+        """  
+                      
         if (self._command != None):                                
             if (self._command in self._cmd_hooks):                               
                 self._run_command_hooks(self._command)
@@ -433,7 +585,18 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         else:
             self._run_command_hooks(self._default_command)
     
-    def _load_db_config(self):        
+    def _load_db_config(self):
+        """Method loads configuration from database
+        
+        Database file is stored in configuration System/DBConfig/db_file
+        
+        Args:            
+           
+        Returns:
+           void      
+                
+        """        
+                
         db_file = self._config['System']['DBConfig']['db_file']
         db = dbconfig.DBConfig(db_file)        
         db.connect()
@@ -449,10 +612,24 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             if obj not in self._config[grp]:
                 self._config[grp][obj] = {}
                   
-            self._config[grp][obj][itmk] = itmv
+            self._config[grp][obj][itmk] = itmv # update in memory configuration
     
     
     def _process_extension_configs(self):
+        """Method searches configuration directory for extension specific configuration files
+        
+        Each file is reported via event htk_before_append_extension_config_file
+        
+        Args:            
+           
+        Returns:
+           void
+           
+        Raises:
+           event: htk_before_append_extension_config_file      
+                
+        """            
+        
         if (os.path.exists(self._ext_confd)):                    
             for dirname, _, filelist in os.walk(self._ext_confd): # subdir_list not used            
                 for fname in filelist:
@@ -466,6 +643,16 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
     
     
     def _append_extension_config_from_file(self, ext_config_file):
+        """Method parses extension configuration file
+        
+        Args:  
+           ext_config_file (str): config filename including path          
+           
+        Returns:
+           void 
+                
+        """      
+                
         if (os.path.exists(self._ext_confd)):
             try:
                 self.dmsg('htk_on_debug_info', self._trn.msg('htk_loading_ext_cfg', ext_config_file), self.fromhere())
@@ -480,16 +667,35 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                 traceback.print_tb(tb)
                 sys.exit(1)
      
-    def _merge_base_config(self, config):                
+    def _merge_base_config(self, config): 
+        """Method merges configuration with in memory configuration
+        
+        Args:  
+           config (dict): configuration with dictionary structure         
+           
+        Returns:
+           void 
+                
+        """  
+                               
         for gk, gv in config.items():
             for ok, ov in gv.items():
                 for kk, kv in ov.items():                    
                     if gk != '' and ok != '' and kk != '':
                         if gk not in self._config: self._config[gk] = {}
                         if ok not in self._config[gk]: self._config[gk][ok] = {}
-                        self._config[gk][ok][kk] = kv                                                                         
+                        self._config[gk][ok][kk] = kv # update in memory configuration                                                                        
                                         
-    def _load_base_config(self):                       
+    def _load_base_config(self): 
+        """Method loads base configuration from file
+        
+        Args:          
+           
+        Returns:
+           void 
+                
+        """  
+                                      
         if (os.path.exists(self._config_file)):            
             try:
                 self.dmsg('htk_on_debug_info', self._trn.msg('htk_loading_base_cfg', self._config_file), self.fromhere())
@@ -505,9 +711,28 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         else:
             self.dmsg('htk_on_error', self._trn.msg('htk_loading_base_cfg', self._config_file), self.fromhere())
             
-    def _apply_config(self):               
+    def _apply_config(self): 
+        """Method initializes several configurable options
+        
+        Debug, language, message router, count of workers
+                
+        Configuration options - System/Debug/enabled
+                              - System/Debug/level
+                              - System/Language/id
+                              - Core/Options/run_mode
+                              - Core/MessageRoute/id
+                              - Core/Workers/total
+        
+        Args:         
+           
+        Returns:
+           void 
+                
+        """  
+                              
         from hydratk.translation.core import info
         
+        # get debug from command option or configuration
         if (not self.check_debug()):
             try:                                             
                 if (self._config['System']['Debug']['enabled'] == 1):
@@ -526,7 +751,8 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             except Exception as exc:
                 pprint.pprint(exc)
                 self.dmsg('htk_on_warning', self._trn.msg('htk_conf_opt_missing', 'Debug', 'level'), self.fromhere())   
-            
+        
+        # import langtexts, get language from command option or configuration    
         try:
             if (not self.check_language()):                
                 language = self._config['System']['Language']['id']
@@ -539,6 +765,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             
         
         try:
+            # get run mode from command option or configuration
             if (not self.check_run_mode()):                
                 run_mode = self._config['Core']['Options']['run_mode']
                 self._run_mode = run_mode if run_mode in const.core_run_mode_enum_desc else const.DEFAULT_RUN_MODE                                        
@@ -557,6 +784,8 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                         
             self.dmsg('htk_on_warning', self._trn.msg('htk_ext_ext_dir_not_exists', self._config['System']['Extending']['extensions_dir']), self.fromhere())   
         ''' 
+            
+        # get message router id from configuration
         try:
             msg_router_id = self._config['Core']['MessageRouter']['id']            
             if (msg_router_id != ''):
@@ -567,6 +796,8 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             self.dmsg('htk_on_warning', self._trn.msg('htk_conf_opt_missing', 'Core', 'msg_router_id'), self.fromhere())
         except ValueError as desc:
             self.dmsg('htk_on_warning', self._trn.msg('htk_conf_opt_val_err', 'Core', 'msg_router_id', desc), self.fromhere())
+            
+        # get count of workers from configuration or from processor cores
         try:
             workers = self._config['Core']['Workers']['total']            
             if (workers != ''):
@@ -579,7 +810,19 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         except ValueError as desc:
             self.dmsg('htk_on_warning', self._trn.msg('htk_conf_opt_val_err', 'Core', 'workers', desc), self.fromhere())       
 
-    def _load_extensions(self):        
+    def _load_extensions(self): 
+        """Method loads extensions specified in configuration
+        
+        Internal extensions are imported as module
+        External extensions are included to PYTHONPATH
+
+        Args:         
+           
+        Returns:
+           void 
+                
+        """         
+               
         if 'Extensions' in self._config:
             try:                       
                 for ext_name, ext_cfg in self._config['Extensions'].items():                                                            
@@ -608,11 +851,26 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         self.dmsg('htk_on_debug_info', self._trn.msg('htk_fin_load_int_ext'), self.fromhere()) 
       
     def _load_extension(self, ext_name, ext_cfg):
+        """Method loads internal extension
+
+        Args:  
+           ext_name (str): extension name
+           ext_cfg (dict): extension configuration      
+           
+        Returns:
+           void 
+           
+        Raises:
+           exception: Exception
+                
+        """  
+                
         ext_module = ext_cfg['module']
         ext_base_path = ext_cfg['package']                
         ext_full_path = ext_base_path + '.' + ext_module 
         
-        if ext_name not in self._ext:                     
+        if ext_name not in self._ext: 
+            # import extension (including langtexts) if enabled                    
             try:
                 if 'enabled' not in ext_cfg:
                     self.dmsg('htk_on_error', self._trn.msg('htk_conf_opt_missing', 'Extension_' + ext_name, 'enabled'), self.fromhere())
@@ -637,6 +895,16 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             raise Exception(self._trn.msg('htk_duplicate_extension', ext_name))         
 
     def _extension_module_import(self, ext_full_path):
+        """Method imports extension
+
+        Args:  
+           ext_full_path (str): full module package name    
+           
+        Returns:
+           obj: module 
+                
+        """  
+                
         mod = __import__(ext_full_path)
         components = ext_full_path.split('.')
         for comp in components[1:]:
@@ -644,6 +912,18 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         return mod
     
     def _load_module_from_file(self, filepath):
+        """Method loads module from file
+        
+        Supported formats: py (source code), pyc (compiled code)
+
+        Args:  
+           filepath (str): filename including path  
+           
+        Returns:
+           obj: module 
+                
+        """  
+                
         import pprint
         pprint.pprint(sys.path)
         module = None
@@ -660,15 +940,29 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         return module
                 
     def _import_extension_messages(self, ext_path):
+        """Method imports extension langtexts and commands help        
+
+        Args:  
+           ext_path (str): filename including path  
+           
+        Returns:
+           void
+                
+        """  
+                
         msg_package  = ext_path + '.translation.'+self._language+'.messages'
         help_package = ext_path + '.translation.'+self._language+'.help'
+        
+        # import langtexts
         try:
             self.dmsg('htk_on_debug_info', self._trn.msg('htk_load_ext_msg', self._language, str(msg_package)), self.fromhere())             
             lang = importlib.import_module(msg_package)
             self._trn.add_msg(lang.msg)            
             self.dmsg('htk_on_debug_info', self._trn.msg('htk_load_ext_msg_success', self._language), self.fromhere())            
         except ImportError as e:
-            self.dmsg('htk_on_error', self._trn.msg('htk_load_ext_msg_failed', self._language, str(e)), self.fromhere())                                    
+            self.dmsg('htk_on_error', self._trn.msg('htk_load_ext_msg_failed', self._language, str(e)), self.fromhere())
+            
+        # import commands help                                    
         try:            
             self.dmsg('htk_on_debug_info', self._trn.msg('htk_load_ext_help', self._language, str(help_package)), self.fromhere())            
             help_msg = importlib.import_module(help_package)
@@ -677,6 +971,17 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             self.dmsg('htk_on_error', self._trn.msg('htk_load_ext_help_failed', self._language, str(e)), self.fromhere())   
             
     def _import_package_messages(self, import_package, msg_package):
+        """Method imports package langtexts      
+
+        Args:  
+           import_package (str): full package name
+           msg_package (str): full package directory name
+           
+        Returns:
+           void
+                
+        """  
+                
         msg_package  = msg_package+'.'+self._language+'.messages'
         
         try:            
@@ -689,15 +994,28 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         
         
     def _import_global_messages(self):
+        """Method imports global langtexts and command help  
+
+        Args:  
+           
+        Returns:
+           void
+                
+        """  
+                
         msg_package  = 'hydratk.translation.core.'+self._language+'.messages'
         help_package = 'hydratk.translation.core.'+self._language+'.help'
+        
+        # import langtexts
         try:            
             self.dmsg('htk_on_debug_info', self._trn.msg('htk_load_global_msg', self._language, msg_package), self.fromhere())                          
             self._trn.msg_mod = importlib.import_module(msg_package)
             self._trn.register_messages(self._trn.msg_mod.msg)
             self.dmsg('htk_on_debug_info', self._trn.msg('htk_load_global_msg_success', self._language), self.fromhere())                        
         except ImportError as e:
-            self.dmsg('htk_on_error', self._trn.msg('htk_load_global_msg_failed', self._language, str(e)), self.fromhere())             
+            self.dmsg('htk_on_error', self._trn.msg('htk_load_global_msg_failed', self._language, str(e)), self.fromhere()) 
+            
+        # import command help            
         try:
             self.dmsg('htk_on_debug_info', self._trn.msg('htk_load_global_help', self._language, str(help_package)), self.fromhere())                        
             self._trn.set_help_mod(importlib.import_module(help_package))                                   
@@ -706,7 +1024,16 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             self.dmsg('htk_on_error', self._trn.msg('htk_load_global_help_failed', self._language, str(e)), self.fromhere())    
        
                 
-    def _reg_self_command_hooks(self):        
+    def _reg_self_command_hooks(self):  
+        """Method registers global commands hooks
+
+        Args:  
+           
+        Returns:
+           void
+                
+        """          
+                      
         hooks = [
                 {'command' : 'start', 'callback' : self._start_app },
                 {'command' : 'stop', 'callback' : self._stop_app_command },
@@ -719,7 +1046,18 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             ]
         self.register_command_hook(hooks)  
     
-    def _runlevel_baseinit(self):             
+    def _runlevel_baseinit(self):     
+        """Method executes specific processing for runlevel baseinit
+        
+        Initialize translator, import global langtexts, register hooks
+
+        Args:  
+           
+        Returns:
+           bool: True
+                
+        """   
+                        
         self._runlevel = const.RUNLEVEL_BASEINIT
         
         '''Setting up dynamic translation messages import hook'''
@@ -750,6 +1088,17 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         return True
                                     
     def _runlevel_config(self):
+        """Method executes specific processing for runlevel config
+        
+        Load configuration from several sources - base, extensions, database
+
+        Args:  
+           
+        Returns:
+           bool: True
+                
+        """   
+                
         self._runlevel = const.RUNLEVEL_CONFIG        
         self._load_base_config()
         self._process_extension_configs()
@@ -761,6 +1110,21 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         
     
     def _runlevel_extensions(self):
+        """Method executes specific processing for runlevel extensions
+        
+        Load extensions
+
+        Args:  
+           
+        Returns:
+           bool: True
+           
+        Raises:
+           event: htk_before_load_extensions
+           event: htk_after_load_extensions
+                
+        """ 
+                
         self._runlevel = const.RUNLEVEL_EXTENSIONS
         ev = event.Event('htk_before_load_extensions')     
         self.fire_event(ev)
@@ -770,12 +1134,34 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         return True #required by fn_hook
     
     def _runlevel_cli(self):
+        """Method executes specific processing for runlevel cli
+        
+        Parse command options
+
+        Args:  
+           
+        Returns:
+           bool: True
+                
+        """ 
+                
         self._runlevel = const.RUNLEVEL_CLI
         self._set_default_cli_params()
         self._parse_cli_args()
         return True #required by fn_hook
     
     def _runlevel_core(self):
+        """Method executes specific processing for runlevel core
+        
+        Subscribe managers if running in parallel processing mode
+
+        Args:  
+           
+        Returns:
+           bool: True
+                
+        """ 
+                
         self._runlevel = const.RUNLEVEL_CORE
         #subscribe managers
         if self._run_mode >= const.CORE_RUN_MODE_PP_APP:                    
@@ -794,6 +1180,17 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         return True #required by fn_hook
     
     def _runlevel_appl(self):
+        """Method executes specific processing for runlevel appl
+        
+        Process command
+
+        Args:  
+           
+        Returns:
+           bool: True
+                
+        """ 
+                
         self._runlevel = const.RUNLEVEL_APPL        
         if (self.have_command_action()):
             self._do_command_action()
@@ -802,16 +1199,18 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
     def _run_command_option_hooks(self, command_opt, command_opt_value):
         """Method is processing specified command option callbacks.
            
-           This method runs automatically in runlevel cli, if there're specified options. 
+        This method runs automatically in runlevel cli, if there're specified options. 
         
         Args:
            command_opt (str): command option
+           command_opt_value (str): option value
         
         Returns:            
-           int  - number of processed callbacks
+           int: number of processed callbacks
                    
            
         """
+        
         processed_callbacks = 0
         if command_opt in self._cmd_option_hooks:                        
             for record in self._cmd_option_hooks[command_opt]:                                                               
@@ -827,15 +1226,16 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
     def _run_command_hooks(self, command):
         """Method is processing specified command callbacks.
            
-           By default this method is called in runlevel appl if there's command specified 
+        By default this method is called in runlevel appl if there's command specified 
         
         Args:
            command (str): command
         
         Returns:            
-           int  - number of processed callbacks                  
+           int: number of processed callbacks                  
            
         """
+        
         processed_callbacks = 0
         if command in self._cmd_hooks:                        
             for record in self._cmd_hooks[command]:                                                               
@@ -850,6 +1250,15 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
     
     
     def _set_default_cli_params(self):
+        """Method initializes command line according to configuration
+        
+        Args:
+        
+        Returns:            
+           void                
+           
+        """
+                
         CommandlineTool.set_translator(self._trn)
         
         '''Define commands'''                                    
@@ -875,6 +1284,16 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         CommandlineTool.set_help(self._help_title, self._cp_string, cmd_text, opt_text)                   
     
     def _set_pid_file(self, pid_file):
+        """Method creates PID file
+        
+        Args:
+           pid_file (str): PID filename including path
+        
+        Returns:            
+           int: PID                
+           
+        """
+                
         pid = os.getpid()
         if (pid_file != ''):                                    
             file_path = os.path.dirname(pid_file)
@@ -886,9 +1305,29 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         return pid          
     
     def _notify_thread(self, pid):
+        """Method notifies thread via signal SIGPIPE
+        
+        Args:
+           pid (int): PID to be notified
+        
+        Returns:            
+           void               
+           
+        """
+                
         os.kill(pid, signal.SIGPIPE)
         
     def _send_ping(self, thr):
+        """Method sends PING message to thread
+        
+        Args:
+           thr (obj): thread to be pinged 
+        
+        Returns:            
+           void               
+           
+        """
+                
         timestamp = time.time()
         thr.last_ping = timestamp
         msg = {
@@ -903,17 +1342,56 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         self._notify_thread(thr.pid)
         
     def _service_starter(self, cb, service_status, parent_conn):
+        """Method starts service process
+        
+        Args:
+           cb (method): callback method
+           service_status (int): service status
+           parent_conn (obj): pipe connection
+        
+        Returns:            
+           void               
+           
+        """
+                
         current = multiprocessing.current_process() 
-        setproctitle.setproctitle('hydra/srv:' + current.service_name)
+        setproctitle.setproctitle('hydra/srv:' + current.service_name) # mark process to be identified in list of processes
         self._reg_service_signal_hooks()
         cb(service_status, parent_conn)
         
     def _sig_retriever(self, signum, frame):
+        """Method handles received signal
+        
+        If signal is supported (see hydratk.core.hsignal), new event is fired
+        Not supported signals are ignored
+        
+        Args:
+           signum (int): signal number
+           frame: NOT USED
+        
+        Returns:            
+           void   
+           
+        Raises:
+           event: htk_on_signal 
+           event: htk_on_sigterm|htk_on_sigint|htk_on_sigpipe|htk_on_sigalamr         
+           
+        """
+                
         self.fire_event(event.Event('htk_on_signal', signum))
         if signum in hsignal.sig2event:
             self.fire_event(event.Event(hsignal.sig2event[signum]))
     
-    def _reg_service_signal_hooks(self):        
+    def _reg_service_signal_hooks(self):
+        """Method registers signal hooks supported for services
+        
+        Args:
+        
+        Returns:            
+           void         
+           
+        """
+                        
         signal.signal(signal.SIGTERM, self._sig_retriever)
         signal.signal(signal.SIGINT, self._sig_retriever)
         signal.signal(signal.SIGPIPE, self._sig_retriever)        
@@ -922,6 +1400,17 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
     
     
     def _reg_self_fn_hooks(self):
+        """Method registers functionality hooks
+        
+        Bootstrap, runlevels
+        
+        Args:
+        
+        Returns:            
+           void         
+           
+        """
+                
         hook = [
                 {'fn_id' : 'h_bootstrap', 'callback' : self._bootstrap },
                 {'fn_id' : 'h_runlevel_baseinit', 'callback' : self._runlevel_baseinit },
@@ -937,6 +1426,14 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         self._reg_msg_handlers()
     
     def _reg_self_event_hooks(self):
+        """Method registers event hooks
+        
+        Args:
+        
+        Returns:            
+           void         
+           
+        """        
         
         hook = [
                 {'event' : 'htk_on_error', 'callback' : self._eh_htk_on_error, 'unpack_args' : True},        
@@ -954,6 +1451,20 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         self.register_event_hook(hook)
                             
     def _parse_cli_args(self): 
+        """Method parses command and options
+        
+        Recognized commands are handled, unrecognized are ignored
+        
+        Args:
+        
+        Returns:            
+           void  
+           
+        Raises:
+           event: htk_on_cmd_options       
+           
+        """  
+                
         command = CommandlineTool.get_input_command()
         try:                
             options = CommandlineTool.get_input_options(commandopt.opt[self._opt_profile])
@@ -981,6 +1492,17 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         self.fire_event(event.Event('htk_on_cmd_options'))  
      
     def _process_cw_msg(self, msg, thr):
+        """Method processes PONG message from worker
+        
+        Args:
+           msg (dict): message
+           thr (obj): thread
+        
+        Returns:            
+           void   
+           
+        """  
+                
         if msg['zone'] == 'Core':
             if msg['command'] == message.PONG:
                 thr.response_alert_level = 0
@@ -992,10 +1514,33 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                     print(e)
                 self.dmsg('htk_on_debug_info', self._trn.msg('htp_cworker_prcess_msg', str(thr.num), str(r_speed)), self.fromhere()) 
     
-    def _trigger_cmsg(self, msg):               
+    def _trigger_cmsg(self, msg): 
+        """Method sends message in event
+        
+        Args:
+           msg (dict): message
+        
+        Returns:            
+           void 
+           
+        Raises:
+           event: htk_on_cmsg_recv  
+           
+        """  
+                              
         self.fire_event(event.Event('htk_on_cmsg_recv', msg))       
     
     def _response_ping(self, msg):
+        """Method sends PONG message
+        
+        Args:
+           msg (dict): message
+        
+        Returns:            
+           void 
+           
+        """ 
+                
         current = multiprocessing.current_process()
         if msg['zone'] == 'Core':
             msg = {
@@ -1011,6 +1556,21 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         pass
         
     def _process_privmsg(self, msg):
+        """Method processes private message
+        
+        If PING message is received, PONG message is sent as response
+        
+        Args:
+           msg (dict): message
+        
+        Returns:            
+           void 
+           
+        Raises:
+           event: h_privmsg_recv
+           
+        """ 
+                
         # pprint.pprint(msg)        
         self.fire_event(event.Event('h_privmsg_recv', msg))
         if msg['type'] == message.REQUEST:
@@ -1019,12 +1579,31 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
     
                     
     def _remove_pid_file(self, pid_file):
+        """Method deletes PID file
+        
+        Args:
+           pid_file (str): PID filename including path
+        
+        Returns:            
+           bool: result
+           
+        """ 
+                
         result = False
         if os.path.exists(pid_file) and os.path.isfile(pid_file):
             result = os.unlink(pid_file)
         return result
     
-    def _reg_self_signal_hooks(self):        
+    def _reg_self_signal_hooks(self):  
+        """Method registers signal hooks
+        
+        Args:
+        
+        Returns:            
+           void
+           
+        """ 
+                      
         signal.signal(signal.SIGTERM, self._sig_retriever)
         signal.signal(signal.SIGINT, self._sig_retriever)
         signal.signal(signal.SIGPIPE, self._sig_retriever)
@@ -1047,6 +1626,20 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         self.register_event_hook(hook)
         
     def _start_app(self):
+        """Method starts application
+        
+        Initialize observer process
+        
+        Args:
+        
+        Returns:            
+           void
+           
+        Raises:
+           event: htk_on_start
+           
+        """ 
+                
         self.dmsg('htk_on_debug_info', self._trn.msg('htk_app_start'), self.fromhere())
         cevent = event.Event('htk_on_start')
         self.fire_event(cevent)
@@ -1056,6 +1649,19 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
     
             
     def _stop_app(self, force_exit=False):
+        """Method stops application
+        
+        Args:
+           force_exit (bool): force application stopping
+        
+        Returns:            
+           void
+           
+        Raises:
+           event: htk_on_stop
+           
+        """ 
+                
         self.dmsg('htk_on_debug_info', self._trn.msg('htk_app_stop'), self.fromhere())
         cevent = event.Event('htk_on_stop')        
         self.fire_event(cevent)
@@ -1070,6 +1676,19 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                 sys.exit(1)
     
     def _stop_app_command(self):
+        """Method stops application in controlled way
+        
+        Process is terminated using signal SIGTERM
+        
+        Configuration options - Core/Service/pid_file
+        
+        Args:
+        
+        Returns:            
+           void
+           
+        """ 
+                
         pid_file = self._config['Core']['Service']['pid_file']
         if (os.path.exists(pid_file)):
             pid = open(pid_file).read()
@@ -1096,10 +1715,28 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             self.dmsg('htk_on_debug_info', self._trn.msg('htk_app_not_running'), self.fromhere())
     
     def _init_message_router(self):
+        """Method initializes message router
+
+        Args:
+        
+        Returns:            
+           void
+           
+        """ 
+                
         self._msg_router = messagerouter.MessageRouter(self._msg_router_id)        
         self.dmsg('htk_on_debug_info', self._trn.msg('htk_msg_router_init_ok', self._msg_router_id), self.fromhere())
         
-    def _list_extensions(self):        
+    def _list_extensions(self):  
+        """Method prints extension list
+
+        Args:
+        
+        Returns:            
+           void
+           
+        """ 
+                      
         for ext_name in self._ext:                        
             print("%s: %s" % (ext_name, self._ext[ext_name].get_ext_info())) 
             
