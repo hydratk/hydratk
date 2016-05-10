@@ -39,20 +39,37 @@ class ASN1Codec():
     _elements = None
     
     def __init__(self):
+        """Class constructor
+        
+        Called when object is initialized
+        
+        Args:            
+                
+        """         
         
         self._mh = MasterHead.get_head()
     
     @property
     def spec(self):
+        """ spec property getter """
         
         return self._spec
     
     @property
     def elements(self):
+        """ elements property getter """
         
         return self._elements
     
     def __str__(self):
+        """Method overrides __str__
+        
+        Args:            
+           
+        Returns:
+           str
+                
+        """         
         
         return self._spec._text_def 
     
@@ -66,7 +83,6 @@ class ASN1Codec():
             bool: result
         
         Raises:
-            error: ValueError  
             event: asn1_before_import_spec
             event: asn1_after_import_spec   
                 
@@ -114,8 +130,7 @@ class ASN1Codec():
         Returns: 
             bool: result
         
-        Raises:
-            error: ValueError   
+        Raises: 
             event: asn1_before_encode
             event: asn1_after_encode  
                 
@@ -172,7 +187,6 @@ class ASN1Codec():
             bool: result
         
         Raises:
-            error: ValueError
             event: asn1_before_decode
             event: asn1_after_decode     
                 

@@ -60,7 +60,12 @@ class DBClient:
             self._mh.dmsg('htk_on_error', ex, self._mh.fromhere())       
         
     def close(self):
-        """Method stops JVM  
+        """Method stops JVM 
+        
+        Args:
+        
+        Returns:
+           void 
                 
         """  
         
@@ -158,7 +163,9 @@ class DBClient:
             return False 
         
     def disconnect(self):
-        """Method disconnects from server           
+        """Method disconnects from server   
+        
+        Args:        
 
         Returns:
            bool: result

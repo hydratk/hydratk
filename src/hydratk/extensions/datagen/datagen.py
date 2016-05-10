@@ -14,6 +14,14 @@ from hydratk.lib.console.commandlinetool import CommandlineTool
 class Extension(extension.Extension):
     
     def _init_extension(self):
+        """Method initializes extension
+        
+        Args:            
+           
+        Returns:
+           void    
+                
+        """         
         
         self._ext_id   = 'datagen'
         self._ext_name = 'Datagen'
@@ -22,6 +30,16 @@ class Extension(extension.Extension):
         self._ext_year = '2016'  
         
     def _register_actions(self):
+        """Method registers actions
+        
+        Commands gen-asn1, gen-json, gen-xml
+        
+        Args:            
+           
+        Returns:
+           void    
+                
+        """          
         
         self._mh.match_cli_command('gen-asn1')
         self._mh.match_cli_command('gen-json') 
@@ -44,7 +62,12 @@ class Extension(extension.Extension):
     def gen_asn1(self):
         """Method handles command gen-asn1
         
-        Encode text file, decode binary file according to ASN.1 specification                 
+        Encode text file, decode binary file according to ASN.1 specification
+        
+        Args:
+        
+        Returns:
+           void                 
                 
         """         
         
@@ -88,7 +111,12 @@ class Extension(extension.Extension):
     def gen_json(self):
         """Method handles command gen-json
         
-        Generate sample JSON file according to JSON specification                   
+        Generate sample JSON file according to JSON specification  
+        
+        Args:
+        
+        Returns:
+           void                 
                 
         """         
         
@@ -116,7 +144,12 @@ class Extension(extension.Extension):
     def gen_xml(self):
         """Method handles command gen-xml
         
-        Generate sample XML file according to WSDL/XSD specification                   
+        Generate sample XML file according to WSDL/XSD specification 
+        
+        Args:
+        
+        Returns:
+           void                  
                 
         """         
         

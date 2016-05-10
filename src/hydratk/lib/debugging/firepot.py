@@ -32,16 +32,44 @@ class FirePot(object):
     
     @staticmethod
     def enable(state):
+        """Method set enable
+        
+        Args:   
+           state (bool): enable state
+           
+        Returns:
+           void
+                
+        """ 
+                
         FirePot._enabled = state if state in (True,False) else False 
     
     @staticmethod
     def enabled():
+        """Method gets enable
+        
+        Args:   
+           
+        Returns:
+           bool: enable
+                
+        """ 
+                
         return FirePot._enabled    
         
     
-    '''level,fmt, object....'''
     @staticmethod 
     def log(*args): 
+        """Method adds log record
+        
+        Args:   
+           args (args): arguments
+           
+        Returns:
+           bool: result
+                
+        """ 
+                
         args = list(args)
         if not FirePot._enabled: return False
         fmt = ''
@@ -77,6 +105,15 @@ class FirePot(object):
         
     @staticmethod
     def flush_items():
+        """Method flushes items
+        
+        Args:   
+           
+        Returns:
+           void
+                
+        """ 
+                
         FirePot._items = []
         
     
@@ -87,6 +124,16 @@ class FirePot(object):
         
     @staticmethod
     def get_headers():
+        """Method gets log headers
+        
+        Args:   
+           name (str): attribute name
+           
+        Returns:
+           dict: headers
+                
+        """ 
+                
         result = False
         if len(FirePot._items) > 0:
             result = collections.OrderedDict()

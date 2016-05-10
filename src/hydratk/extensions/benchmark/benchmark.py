@@ -24,6 +24,15 @@ class Extension(extension.Extension):
     __print_details = False
     
     def _init_extension(self):
+        """Method initializes extension
+        
+        Args:            
+           
+        Returns:
+           void    
+                
+        """        
+          
         self._ext_id   = 'benchmark'
         self._ext_name = 'BenchMark'
         self._ext_version = '0.1.0'
@@ -31,15 +40,46 @@ class Extension(extension.Extension):
         self._ext_year = '2013'  
         
     def _register_actions(self):
+        """Method registers actions
+        
+        Callback for command start-benchmark
+        
+        Args:            
+           
+        Returns:
+           void    
+                
+        """  
+                
         self._mh.match_cli_command('start-benchmark')        
         hook = [{'command' : 'start-benchmark', 'callback' : self.start_bench_fc }]        
         self._mh.register_command_hook(hook)
         self._mh.match_long_option('details')
     
     def _setup_params(self):
+        """Method sets parameters
+        
+        Command option --details
+        
+        Args:            
+           
+        Returns:
+           void    
+                
+        """  
+                
         self.__print_details = True if CommandlineTool.get_input_option('--details') == True else False
             
     def start_bench_fc(self):
+        """Method handles command start-benchmark
+        
+        Args:            
+           
+        Returns:
+           void    
+                
+        """  
+                
         self._mh.dmsg('htk_on_debug_info','received start benchmark command', self._mh.fromhere())
         self._setup_params()
         self._run_basic_tests()
@@ -47,6 +87,15 @@ class Extension(extension.Extension):
             self._print_test_info()
             
     def _run_basic_tests(self):
+        """Method runs basic tests
+        
+        Args:            
+           
+        Returns:
+           void    
+                
+        """  
+                
         self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('benchmark_basic_test_run'), self._mh.fromhere())        
         rprint(self._mh._trn.msg('benchmark_single_cpu_calculations'))        
         self._factorial_test()
@@ -58,21 +107,43 @@ class Extension(extension.Extension):
         self._event_thru_test()
         rprint(".\n")
         
-    def _print_test_info(self):                
+    def _print_test_info(self):  
+        """Method prints test results
+        
+        Args:            
+           
+        Returns:
+           void    
+                
+        """  
+                              
         for test_name, test_value in self.__test_results.items():
             print(test_name + ": "+ test_value.__str__())        
     
-    def event_test_cb1(self, oevent):        
+    def event_test_cb1(self, oevent):  
+     
         x = oevent.get_data('random')        
         return True
     
     def _event_thru_test(self):
+        """Method tests event throughput
+        
+        Args:            
+           
+        Returns:
+           void    
+           
+        Raises:
+           event: benchmark_test_event1
+                
+        """  
+                
         t_start = dt.datetime.now()
         hook = {}
         hook[0] = {'event' : 'benchmark_test_event1', 'callback' : self.event_test_cb1, 'unpack_args' : True}                      
         self._mh.register_event_hook(hook)
         
-        '''figurout the xrange compatiblity'''
+        '''figure out the xrange compatiblity'''
         rangefc = xrange if PYTHON_MAJOR_VERSION == 2 else range
             
         for i in rangefc(10000000):
@@ -84,7 +155,16 @@ class Extension(extension.Extension):
         duration = (t_end - t_start)
         self.__test_results['1Kb data Event througput(10 000 000)'] = duration.microseconds.__float__() / 1000000 
             
-    def _factorial_test(self):             
+    def _factorial_test(self):   
+        """Method tests factorial caluculation
+        
+        Args:            
+           
+        Returns:
+           void    
+                
+        """ 
+                          
         n            = 10000
         a            = 1
         check_cycles = 10
@@ -115,12 +195,31 @@ class Extension(extension.Extension):
         self.__test_results['Factorial('+n.__str__()+')'] = sduration   
     
     def __fibcalc(self, n):
+        """Method calculates Fibonacci number
+        
+        Args:         
+           n (int): nth number   
+           
+        Returns:
+           int: number    
+                
+        """ 
+                
         a,b = 1,1
         for i in range(n-1):
             a,b = b,a+b
         return a
  
     def _fib_test(self):
+        """Method tests Fibonacci calculation
+        
+        Args:            
+           
+        Returns:
+           void    
+                
+        """ 
+                
         check_cycles = 10
         delta_list   = []
         low          = None
@@ -148,7 +247,16 @@ class Extension(extension.Extension):
         self.__test_results['Fibonacci('+n.__str__()+')'] = sduration
         
         
-    def _calc_flops_test(self):        
+    def _calc_flops_test(self):  
+        """Method tests arithmetic operations with floating point
+        
+        Args:            
+           
+        Returns:
+           void    
+                
+        """ 
+                      
         delta_list      = []
         low             = None
         high            = None

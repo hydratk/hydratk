@@ -14,6 +14,14 @@ from setuptools.command.install import install
 from os import path
 
 def run_post_install():
+    """Method runs post-install tasks
+
+    Args:
+
+    Returns:
+       void
+    
+    """     
     
     print('**************************************') 
     print('*     Running post-install tasks     *')    
@@ -24,12 +32,28 @@ def run_post_install():
         globals()[task]()     
 
 def set_access_rights():
+    """Method sets access rights
+
+    Args:
+
+    Returns:
+       void
+    
+    """    
     
     for dir, right in cfg['rights'].items():
         cmd.set_rights(dir, right)
 
         
 def compile_java_classes():
+    """Method compiles Java classes
+
+    Args:
+
+    Returns:
+       void
+    
+    """    
     
     dir = cfg['java']['dir'] 
     if (path.exists(dir)):

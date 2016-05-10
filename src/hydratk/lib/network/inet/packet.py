@@ -40,14 +40,14 @@ def Packet(protocol, **kwargs):
     Whole scapy protocol stack is supported    
         
     Args:            
-        protocol (str): protocol
-        kwargs (kwargs): key value arguments 
+       protocol (str): protocol
+       kwargs (kwargs): key value arguments 
            
     Returns:
-        obj: Packet
+       obj: Packet
         
     Raises:
-        error: ValueError
+       error: ValueError
                 
     """       
     
@@ -67,11 +67,11 @@ def compose_packet(packets, payload=None):
     """Method composes packet from partial packets
         
     Args:            
-        packets (list): partial packets
-        payload (str): packet payload
+       packets (list): partial packets
+       payload (str): packet payload
            
     Returns:
-        obj: Packet
+       obj: Packet
                 
     """       
     
@@ -99,8 +99,11 @@ def dump(packet, raw=False):
     """Method print packet dump
         
     Args:            
-        packet (obj): packet, partial of composed
-        raw (bool): print raw hexdump
+       packet (obj): packet, partial of composed
+       raw (bool): print raw hexdump
+        
+    Returns:
+       void
                 
     """       
     
@@ -120,9 +123,12 @@ def send_packet(packet, iface=None, verbose=False):
     """Method sends packet
         
     Args:            
-        packet (obj): packet
-        iface (str): interface, used when Ether packet is included
-        verbose (bool): verbose mode
+       packet (obj): packet
+       iface (str): interface, used when Ether packet is included
+       verbose (bool): verbose mode
+       
+    Returns:
+       void
         
     Raises:
         event: inet_before_send_packet
@@ -157,11 +163,11 @@ def send_recv_packet(packet, iface=None, retry=3, timeout=1, verbose=False):
     """Method sends packet and receives answer
         
     Args:            
-        packet (obj): packet
-        iface (str): interface, used when Ether packet is included
-        retry (int): number of retries
-        timeout (int): timeout to receive answer
-        verbose (bool): verbose mode
+       packet (obj): packet
+       iface (str): interface, used when Ether packet is included
+       retry (int): number of retries
+       timeout (int): timeout to receive answer
+       verbose (bool): verbose mode
         
     Returns:
         tuple: answered packets, unswered packets
@@ -205,13 +211,13 @@ def ping(destination, protocol='ICMP', port=None, verbose=False):
     """Method executes ping
         
     Args:            
-        destination (str): IP address or hostname
-        protocol (str): protocol, ICMP|TCP
-        port (int): port, used for TCP protocol
-        verbose (bool): verbose mode
+       destination (str): IP address or hostname
+       protocol (str): protocol, ICMP|TCP
+       port (int): port, used for TCP protocol
+       verbose (bool): verbose mode
         
     Returns:
-        bool: result
+       bool: result
         
     Raises:
        error: ValueError
@@ -264,14 +270,14 @@ def traceroute(destination, protocol='ICMP', port=None, max_hops=10, verbose=Fal
     """Method executes traceroute
         
     Args:            
-        destination (str): IP address or hostname
-        protocol (str): protocol, ICMP|TCP
-        port (int): port, used for TCP protocol
-        max_hops (int): maximum hops
-        verbose (bool): verbose mode
+       destination (str): IP address or hostname
+       protocol (str): protocol, ICMP|TCP
+       port (int): port, used for TCP protocol
+       max_hops (int): maximum hops
+       verbose (bool): verbose mode
         
     Returns:
-        bool: result
+       bool: result
         
     Raises:
        error: ValueError
@@ -338,10 +344,13 @@ def sniffer(output, iface='all', filter=None, timeout=10):
     """Method executes traffic sniffer
         
     Args:            
-        output (str): filename to store packets in PCAP format
-        iface (str): interface where traffic will be sniffed, default all interfaces
-        filter (str): traffic filter, see scapy doc
-        timeout (int): time to stop sniffer
+       output (str): filename to store packets in PCAP format
+       iface (str): interface where traffic will be sniffed, default all interfaces
+       filter (str): traffic filter, see scapy doc
+       timeout (int): time to stop sniffer
+       
+    Returns:
+       void
         
     Raises:
         event: inet_before_sniff

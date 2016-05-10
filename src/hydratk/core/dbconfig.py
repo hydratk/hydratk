@@ -35,6 +35,11 @@ class DBConfig():
     
     def connect(self):
         """Method connects configuration database
+        
+        Args:
+        
+        Returns:
+           void
                 
         """        
         self._conn = cfgdb.connect(self._db_file)
@@ -46,7 +51,7 @@ class DBConfig():
            base_config (dict): configuration   
              
         Returns:
-           bool - result 
+           bool: result 
                 
         """
         result = False
@@ -63,14 +68,14 @@ class DBConfig():
             result = True
         return result    
 
-    def cfg2db(self,d):
+    def cfg2db(self, d):
         """Method converts base config data to the database input format
         
         Args:
            d (dict): base configuration   
              
         Returns:
-           dict - cfg 
+           dict: cfg 
                 
         """                
         cfg = []    
@@ -81,14 +86,14 @@ class DBConfig():
         return cfg
 
  
-    def db2cfg(self, active_only = False):
+    def db2cfg(self, active_only=False):
         """Method converts config database data to base config input format
         
         Args:
-           active_only (bool): wheter to load only active settings, default False   
+           active_only (bool): whether to load only active settings, default False   
              
         Returns:
-           list - records 
+           list: records 
                 
         """               
         enabled_filter = "enabled = 1" if active_only == True else "" 

@@ -173,7 +173,9 @@ class FTPClient:
             return False
         
     def disconnect(self):
-        """Method disconnects from server    
+        """Method disconnects from server 
+        
+        Args:   
            
         Returns:
            bool: result         
@@ -191,7 +193,9 @@ class FTPClient:
             return False 
         
     def list_dir(self):
-        """Method lists remote working directory        
+        """Method lists remote working directory   
+        
+        Args:     
            
         Returns:
            list: names         
@@ -216,7 +220,7 @@ class FTPClient:
         """Method changes remote working directory
         
         Args:
-           path (str): - new remote path
+           path (str): new remote path
         
         Returns:
            bool: result         

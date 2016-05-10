@@ -63,18 +63,62 @@ class FnCallBackMsg(Message):
     _kwargs   = None
     
     def __init__(self, callback, *args, **kwargs):
+        """Class constructor
+        
+        Called when object is initialized
+        
+        Args:
+           callback (callable): callback
+           args (args): arguments
+           kwargs (kwargs): key value arguments        
+           
+        """
+                
         self.set_callback(callback)
         self.set_args(args, kwargs)
     
     def set_callback(self, callback):
+        """Method sets callback
+        
+        Args:
+           callback (callable): callback
+        
+        Returns:            
+           void
+           
+        Raises:
+           error: TypeError
+           
+        """
+                
         if callable(callback):
             self._callback = callback
         else:
             raise TypeError('Callable object required')
         
     def set_args(self, *args, **kwargs):
+        """Method sets arguments
+        
+        Args:
+           args (args): arguments
+           kwargs (kwargs): key value arguments
+        
+        Returns:            
+           void
+           
+        """
+                
         self._args   = args
         self._kwargs = kwargs
         
     def run(self):
+        """Method executes callback
+        
+        Args:
+        
+        Returns:            
+           obj: callback output
+           
+        """
+                
         return self._callback(self, *self._args, **self._kwargs)

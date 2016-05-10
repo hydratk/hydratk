@@ -15,6 +15,14 @@ from shutil import move as mv
 import cmd
 
 def get_pck_manager():
+    """Method detects package managers
+
+    Args:
+
+    Returns:
+       list: managers
+    
+    """    
     
     pck_managers = ['apt-get', 'yum']
     
@@ -26,6 +34,15 @@ def get_pck_manager():
     return pckm
 
 def is_installed(app):
+    """Method checks if application is installed
+
+    Args:
+       app (str): application
+
+    Returns:
+       bool: result
+    
+    """      
     
     cmd = ['which', app]
     proc = Popen(cmd, stdout=PIPE)
@@ -35,6 +52,16 @@ def is_installed(app):
     return result    
 
 def install_pck(pckm, pck):
+    """Method installs package
+
+    Args:
+       pckm (str): package manager, apt-get|yum
+       pck (str): package name
+
+    Returns:
+       void
+    
+    """     
     
     print('Installing package: {0}'.format(pck))
     
@@ -47,6 +74,15 @@ def install_pck(pckm, pck):
         print('Failed to install package {0}'.format(pck)) 
         
 def ask_module(module):
+    """Method asks if user wants to install module
+
+    Args:
+       module (str): python module
+
+    Returns:
+       bool: result
+    
+    """     
     
     print('Do you want to install module: {0}'.format(module))
     choice = raw_input('[Y]:')
@@ -54,6 +90,15 @@ def ask_module(module):
     return result                
         
 def ask_install(app):
+    """Method asks if user wants to install application
+
+    Args:
+       app (str): application
+
+    Returns:
+       bool: result
+    
+    """     
     return True
 
     print('{0} not installed, do you want to install it ?'.format(app))
@@ -61,7 +106,16 @@ def ask_install(app):
     result = True if (len(choice) == 0 or choice == 'Y') else False
     return result        
         
-def set_inst_dir():  
+def set_inst_dir(): 
+    """Method sets installation directory
+
+    Args:
+
+    Returns:
+       str: directory
+    
+    """ 
+         
     return cfg['os']['inst_dir'] #workaround to make pip installer working
 
     print('Choose install directory')
@@ -70,6 +124,17 @@ def set_inst_dir():
     return dir   
 
 def download_pck(url, options=None, outfile=None):
+    """Method downloads package
+
+    Args:
+       url (str): download url
+       options (str): download options for wget command
+       outfile (str): output filename
+
+    Returns:
+       void
+    
+    """     
     
     print('Downloading package: {0}'.format(url))
     
@@ -83,17 +148,47 @@ def download_pck(url, options=None, outfile=None):
         print('Failed to download package {0}'.format(url))                         
 
 def move(src, dst=None, dir=cfg['os']['inst_dir']): 
+    """Method moves directory
+
+    Args:
+       src (str): source directory name
+       dst (str): destination directory name including path
+       dir (str): destination directory
+
+    Returns:
+       void
+    
+    """     
     
     path = '{0}/{1}'.format(dir, dst) if (dst != None) else '{0}/{1}'.format(dir, src)
     print('Moving {0} to {1}'.format(src, path))  
     mv(src, path)  
         
-def delete(path):   
+def delete(path): 
+    """Method deletes directory
+
+    Args:
+       path (str): directory path
+
+    Returns:
+       void
+    
+    """       
     
     print('Deleting {0}'.format(path)) 
     remove(path)   
         
-def decompress(path, method='tar'):    
+def decompress(path, method='tar'):
+    """Method decompresses archive
+
+    Args:
+       path (str): archive path
+       method (str): decompressing method, tar|zip|gzip|bzip
+
+    Returns:
+       void
+    
+    """         
     
     print('Decompressing file: {0}').format(path)  
     
@@ -110,6 +205,17 @@ def decompress(path, method='tar'):
         print('Failed to decompress file {0}'.format(file))                                                       
            
 def set_rights(path, rights, recursive=True):
+    """Method sets acces rights
+
+    Args:
+       path (str): directory or file path
+       rights (str): access rights in Unix style
+       recursive (bool): set recursive rights
+
+    Returns:
+       void
+    
+    """     
     
     print('Setting rights for {0}'.format(path))
     
@@ -122,6 +228,17 @@ def set_rights(path, rights, recursive=True):
         print('Failed to set rights for {0}'.format(path))
         
 def setenv(var, value, cfg=cfg['os']['profile']):  
+    """Method sets environment variable
+
+    Args:
+       var (str): variable name
+       value (str): variable value
+       cfg (str): configuation file
+
+    Returns:
+       void
+    
+    """     
     
     print('Setting environment variable: {0}={1}'.format(var, value))
 
@@ -142,6 +259,17 @@ def setenv(var, value, cfg=cfg['os']['profile']):
         environ[var] = value
         
 def create_symlink(dir, src, link):
+    """Method creates symbolic link
+
+    Args:
+       dir (str): source directory
+       src (str): source name
+       link (str): link name
+
+    Returns:
+       void
+    
+    """     
     
     print('Creating symlink {0} for {1}'.format(link, src))
     cmd = 'ln -s {0} {1}'.format(src, link)
@@ -150,6 +278,17 @@ def create_symlink(dir, src, link):
         print('Failed to create symlink {0}'.format(link))   
         
 def ldconfig(app, dir, cfg=cfg['os']['ldconfig']):
+    """Methods adds application to ldconfig
+
+    Args:
+       app (str): application library
+       dir (str): source directory
+       cfg (str): ldconfig configuration file
+
+    Returns:
+       void
+    
+    """     
     
     cmd = 'ldconfig'
     print('Adding {0} to {1}'.format(dir, cmd))
@@ -162,7 +301,18 @@ def ldconfig(app, dir, cfg=cfg['os']['ldconfig']):
     if (call(cmd, shell=True) != 0):
         print('Failed to call {0}'.format(cmd))             
         
-def compile_java_class(dir, file, classpath=None):    
+def compile_java_class(dir, file, classpath=None):   
+    """Method compiles Java class
+
+    Args:
+       dir (str): source directory
+       file (str): Java filename
+       classpath (str): classpath used in compilation
+
+    Returns:
+       void
+    
+    """      
     
     print('Compiling {0}'.format(file))
     

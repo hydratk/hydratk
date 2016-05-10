@@ -10,7 +10,7 @@
 import time
 
 
-def do_until(call, until_call_result, delay = 1, until_max_attempts = 10, until_duration = None, until_exact_time = None):
+def do_until(call, until_call_result, delay=1, until_max_attempts=10, until_duration=None, until_exact_time=None):
     """Function emulates do..until condition loop
      
     Args:
@@ -20,6 +20,12 @@ def do_until(call, until_call_result, delay = 1, until_max_attempts = 10, until_
        until_max_attempts(mixed): int, None - max call attempts stop loop value
        until_duration(mixed): int, float, None - callback repeating duration limit stop loop value
        until_exact_time(mixed): int, float, None - callback repeating till exact time stop loop value
+       
+    Returns:
+       void
+       
+    Raises:
+       ValueError
    
     Example:
      

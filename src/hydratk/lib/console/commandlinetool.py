@@ -33,7 +33,20 @@ class CommandlineTool():
     _parser     = None        
          
     @staticmethod
-    def set_translator(translator):                     
+    def set_translator(translator):      
+        """Method sets translator
+        
+        Args:   
+           translator (obj): Translator object
+           
+        Returns:
+           void
+           
+        Raises:
+           error: ValueError  
+                
+        """  
+                               
         if isinstance(translator, Translator):            
             CommandlineTool._trn = translator
         else:
@@ -43,30 +56,29 @@ class CommandlineTool():
     def set_possible_commands(commands):
         """Commands setter method
         
-           :param commands: Possible commands to use
-           :type commands: list
+        Args:
+           commands (list): Possible commands to use
            
-           :returns: void
-           
-        .. sectionauthor:: Petr Czaderna <pc@headz.cz>
+        Returns:
+           void
                               
         """        
+        
         CommandlineTool._commands = commands
         
     @staticmethod    
     def set_possible_options(short_opt, long_opt):
         """Options setter method
         
-           :param short_opt: Possible short options to use (getopt format)
-           :type short_opt: str
-           :param long_opt: Possible long options to use (getopt format)
-           :type long_opt: list
+        Args:
+           short_opt (str): Possible short options to use (getopt format)
+           long_opt (list): Possible long options to use (getopt format)
            
-           :returns: void
-           
-        .. sectionauthor :: Petr Czaderna <pc@headz.cz>  
+        Returns:
+           void
                             
-        """        
+        """    
+            
         CommandlineTool._short_opt = short_opt
         CommandlineTool._long_opt = long_opt
     
@@ -74,18 +86,14 @@ class CommandlineTool():
     def set_help(title, cp_string, cmd_text, opt_text):        
         """Method creates and returns a formated help text
         
-           :param title: Title text
-           :type title: str
-           :param cp_string: Copyright string
-           :type cp_string: str
-           :param cmd_text: Text description for specified commands, format is ['command' : 'description']
-           :type cmd_text: dict
-           :param opt_text: Text description for specified options, format is ['short_opt', 'long_opt' : 'description']
-           :type opt_text: dict
+        Args:
+           title (str): Title text
+           cp_string (str): Copyright string
+           cmd_text (dict): Text description for specified commands, format is ['command' : 'description']
+           opt_text (dict): Text description for specified options, format is ['short_opt', 'long_opt' : 'description']
            
-           :returns: void
-           
-        .. sectionauthor :: Petr Czaderna <pc@headz.cz>    
+        Returns:
+           void
                
         """
         CommandlineTool._title = title
@@ -96,21 +104,42 @@ class CommandlineTool():
     
     @staticmethod
     def print_short_help():
+        """Method prints short help
+        
+        Args:   
+           
+        Returns:
+           void   
+                
+        """  
+                
         print(CommandlineTool.create_short_help())
         
     @staticmethod    
-    def print_help():        
+    def print_help():  
+        """Method prints long help
+        
+        Args:   
+           
+        Returns:
+           void   
+                
+        """ 
+                      
         print(CommandlineTool.create_help())
     
     @staticmethod  
     def get_command_options_desc(command):
         """Method creates and returns a formated help text
-   
-           :returns string help text
-           
-        .. sectionauthor :: Petr Czaderna <pc@headz.cz>
         
-        """                                     
+        Args:
+           command (str): command text
+   
+        Returns:
+           str: help text
+        
+        """   
+                                          
         result = []
         command.replace(' ','')
         command.replace('{h}','')
@@ -136,12 +165,15 @@ class CommandlineTool():
     @staticmethod
     def get_input_command():
         """Method returns passed action command parameter
+        
+        Args:
    
-           :return string command or false if no valid command was used
-           
-        .. sectionauthor :: Petr Czaderna <pc@headz.cz>
+        Returns:
+           str: string command 
+           bool: false if no valid command was used
         
         """
+        
         result = False
         for cmd in sys.argv:
             if cmd in CommandlineTool._commands:
@@ -152,12 +184,18 @@ class CommandlineTool():
     @staticmethod
     def get_input_options(opt_dict):
         """Method returns passed action command parameter
+        
+        Args:
+           opt_dict (dict): options
    
-           :returns result dictionary with short and long input options
+        Returns:
+           dict: result dictionary with short and long input options
            
-        .. sectionauthor :: Petr Czaderna <pc@headz.cz>
+        Raises:
+           error: CmdOptParserError
         
         """
+        
         result = {}
         try:            
             CommandlineTool._parser = cmdoptparser.CmdOptParser()
@@ -171,6 +209,19 @@ class CommandlineTool():
     
     @staticmethod
     def get_input_option(opt):
+        """Method gets option value
+        
+        Args:   
+           opt (str): option
+           
+        Returns:
+           bool: result   
+           
+        Raises:
+           error: CmdOptParserError
+                
+        """ 
+                
         if CommandlineTool._parser == None:
             raise cmdoptparser.CmdOptParserError('Commandline needs to be parsed first')       
         opt_value = CommandlineTool._parser.get_opt(opt)
@@ -181,6 +232,15 @@ class CommandlineTool():
     
     @staticmethod
     def create_short_help():
+        """Method creates short help text
+        
+        Args:   
+           
+        Returns:
+           str: help text
+                
+        """ 
+                
         result = ''
         result += CommandlineTool._title + "\n"
         result +=  CommandlineTool._cp_string + "\n"
@@ -197,10 +257,11 @@ class CommandlineTool():
     def create_help():
         import pprint
         """Method creates and returns a formated help text
+        
+        Args:
    
-           :returns result help text
-           
-        .. sectionauthor :: Petr Czaderna <pc@headz.cz>
+        Returns:
+           str: result help text
            
         """
 
@@ -266,6 +327,16 @@ class CommandlineTool():
 
     @staticmethod 
     def parse_shell_text(result):
+        """Method adds special characters for shell print
+        
+        Args:  
+           result (str): text  
+           
+        Returns:
+           str: shell text   
+                
+        """ 
+                
         result = result.replace('{h}', HS)
         result = result.replace('{u}', US)
         result = result.replace('{e}', EOS)

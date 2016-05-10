@@ -16,6 +16,16 @@ class ModuleLoader():
     _package_path = None
     
     def find_module(self, module_name, package_path):
+        """Method imports module langtexts
+        
+        Args:     
+           module_name (str): full module name
+           package_path (str): full package 
+           
+        Returns:
+           obj: ModuleLoeader
+                
+        """         
         
         if module_name in packages_map:   #translation messages handling         
             self._import_package_messages(module_name, packages_map[module_name])
@@ -28,6 +38,16 @@ class ModuleLoader():
         return None
     
     def load_module(self, module_name):
+        """Method loads module
+        
+        Args:     
+           module_name (str): full module name
+           
+        Returns:
+           obj: module
+                
+        """  
+                
         if module_name in packages_map: #translation messages handling
             return None
         else:

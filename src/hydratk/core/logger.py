@@ -13,7 +13,16 @@ import sys
 class Logger(object):
     _emulate_print = True
     
-    def spout(self, data):        
+    def spout(self, data):   
+        """Method prints data
+        
+        Args:     
+           data (str): data
+           
+        Returns:
+                
+        """  
+                     
         lf = "\n" if self._emulate_print == True else ""
         sys.stdout.write(data+lf)
         sys.stdout.flush()        

@@ -54,7 +54,7 @@ class SeleniumBridge():
         Called when the object is initialized   
         
         Args:            
-           browser (str): browser name
+           browser (str): browser name, default PhantomJS
            
         Raises:
            error: ValueError
@@ -155,7 +155,10 @@ class SeleniumBridge():
         Args:            
            ident (str): element id
            method (str): search method id|xpath
-           timeout (float): timeout              
+           timeout (float): timeout   
+           
+        Returns:
+           void           
            
         Raises:
            event: selenium_before_wait
@@ -193,7 +196,7 @@ class SeleniumBridge():
            single (bool): get single element, used for method class|css|text|name|tag|xpath
              
         Returns:
-           obj: WebElement
+           obj: WebElement or list of WebElement
            
         Raises:
            event: selenium_before_get_elem
@@ -250,7 +253,7 @@ class SeleniumBridge():
             return None    
         
     def read_element(self, ident, method='id', attr=None, attr_val=None):
-        """Method reads element
+        """Method reads element value
         
         Args:            
            ident (str): element identification, method specific
@@ -298,7 +301,7 @@ class SeleniumBridge():
             return None         
     
     def set_element(self, ident, val=None, method='id', attr=None, attr_val=None):    
-        """Method sets element
+        """Method sets element value
         
         Args:            
            ident (str): element identification, method specific
@@ -358,7 +361,7 @@ class SeleniumBridge():
             return False  
         
     def exec_script(self, script, *args):    
-        """Method execute JS script
+        """Method execute JavaScript code
         
         Args:            
            script (str): JavaScript code

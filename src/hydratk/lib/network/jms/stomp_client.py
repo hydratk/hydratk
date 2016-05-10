@@ -162,7 +162,9 @@ class JMSClient:
             return False 
         
     def disconnect(self):
-        """Method disconnects from server           
+        """Method disconnects from server 
+        
+        Args:          
 
         Returns:
            bool: result

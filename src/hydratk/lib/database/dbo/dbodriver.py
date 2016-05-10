@@ -25,17 +25,34 @@ class DBODriver(object):
     _password       = None
 
     @property
-    def dbcon(self):        
+    def dbcon(self):      
+        """ dbcon property getter """
+          
         return self._dbcon 
     
     @property
     def cursor(self):
+        """ cursor property getter """
+        
         return self._cursor
     
-    def __init__(self, dsn, username=None, password=None, driver_options={}, autoconnect = True):        
-        '''
-        Constructor
-        '''
+    def __init__(self, dsn, username=None, password=None, driver_options={}, autoconnect=True):        
+        """Class constructor
+        
+        Called when object is initialized
+        
+        Args:   
+           dsn (str): dsn
+           username (str): username
+           password (str): password
+           driver_options (dict): driver options
+           autoconnect (bool): connect to DB within object creation
+           
+        Raises:
+           exception: Exception
+                
+        """ 
+                
         self._dsn            = dsn
         self._username       = username
         self._password       = password
@@ -235,37 +252,62 @@ class DBODriverException(Exception):
     
     @property
     def message(self):
+        """ message propery getter """
+        
         return self._message
     
     @property
     def call_path(self):
+        """ call_path property getter """
+        
         return self._call_path
         
     @property
     def file(self):
+        """ file property getter """
+        
         return self._file
     
     @property
     def line(self):
+        """ line property getter """
+        
         return self._line
 
     @property
     def func(self):
+        """ func property getter """
+        
         return self._func
     
     @property
     def module(self):
+        """ module propery getter """
+        
         return self._module    
         
     @property
     def parent_exc(self):
+        """ parent_exc property getter """
+        
         return self._parent_exc
     
     @parent_exc.setter
     def parent_exc(self,exc):
+        """ parent_exc property setter """
+        
         self._parent_exc = exc
     
     def __init__(self, msg):
+        """Class constructor
+        
+        Called when object is initialized
+        
+        Args:   
+           msg (str): message
+                
+        """ 
+                
         self._message   = msg
         trace           = self.get_trace(2)
         self._file      = trace['file']
@@ -275,9 +317,28 @@ class DBODriverException(Exception):
         self._module    = trace['module']
         
     def __str__(self):
+        """Method overried __str__
+        
+        Args:   
+           
+        Returns:
+           str
+                
+        """ 
+                
         return repr(self._message)
     
     def get_trace(self, level):
+        """Method gets traceback
+        
+        Args:   
+           level (int): trace level
+           
+        Returns:
+           dict: traceback
+                
+        """ 
+                
         fname = sys._getframe(level).f_code.co_filename
         modname = os.path.basename(fname)
         modarg = modname.split('.')                   

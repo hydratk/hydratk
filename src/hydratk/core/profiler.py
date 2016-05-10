@@ -13,16 +13,51 @@ class Profiler(object):
     _pr = None
     
     def __init__(self):
+        """Class constructor
+        
+        Called when object is initialized
+        
+        Args:
+
+        """
+                
         self._pr = cProfile.Profile()
         self._configure_profiler()
     
     def start(self):
+        """Method starts profiler
+        
+        Args:
+        
+        Returns:            
+           void
+
+        """
+                
         self._pr.enable()
     
     def finish(self):
+        """Method stops profiler
+        
+        Args:
+        
+        Returns:            
+           void
+
+        """
+                
         self._pr.disable()
     
     def _configure_profiler(self):
+        """Method sets profiler command line configuration (options -p, --profile)
+        
+        Args:
+        
+        Returns:            
+           void
+
+        """
+                
         from hydratk.core import commandopt
         commandopt.long_opt['htk'].append('profile')
         commandopt.short_opt['htk'] += 'p'

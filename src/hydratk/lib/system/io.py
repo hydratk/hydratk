@@ -16,4 +16,14 @@ stdout_flush  = True
 emulate_print = True
 
 def cprint(data):
+    """Methods sends data as debug message
+
+    Args:
+       data (str): message
+
+    Returns:
+       void
+    
+    """
+        
     _mh.dmsg('htk_on_cprint',data)    

@@ -36,7 +36,9 @@ class DBClient():
     def __init__(self):
         """Class constructor
            
-        Called when the object is initialized          
+        Called when the object is initialized 
+        
+        Args:         
            
         """    
         
@@ -102,14 +104,13 @@ class DBClient():
             message = '{0}/{1}@{2}:{3}/{4}'.format(user, passw, host, port, sid)
             self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('htk_dbi_connecting', message), self._mh.fromhere())
             
-            ev = event.Event('dbi_before_connect', host, port, sid, user, passw, db_file)
+            ev = event.Event('dbi_before_connect', host, port, sid, user, passw)
             if (self._mh.fire_event(ev) > 0):
                 host = ev.argv(0)
                 port = ev.argv(1)
                 sid = ev.argv(2)
                 user = ev.argv(3)
-                passw = ev.argv(4)
-                db_file = ev.argv(5)               
+                passw = ev.argv(4)            
             
             if (ev.will_run_default()):
                 self._host = host     

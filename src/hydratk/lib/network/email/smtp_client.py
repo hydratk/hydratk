@@ -155,6 +155,8 @@ class EmailClient:
                    
     def disconnect(self):
         """Method disconnects from server
+        
+        Args:
            
         Returns:
            bool: result         
