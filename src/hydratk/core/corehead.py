@@ -852,8 +852,9 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
     def _set_default_cli_params(self):
         CommandlineTool.set_translator(self._trn)
         
-        '''Define commands'''                                    
-        CommandlineTool.set_possible_commands(commandopt.cmd[self._opt_profile])  
+        '''Define commands'''
+        if self._opt_profile in commandopt.cmd:                                    
+            CommandlineTool.set_possible_commands(commandopt.cmd[self._opt_profile])  
                       
         '''Define options'''        
         short_opt = commandopt.short_opt[self._opt_profile] if self._opt_profile in commandopt.short_opt else '' 

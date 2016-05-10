@@ -8,8 +8,6 @@
 
 """
 
-from hydratk.lib.exceptions import *
-
 class Extension(object):
     _ext_id            = 'Undefined'
     _ext_name          = 'Undefined'
