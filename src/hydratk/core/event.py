@@ -55,7 +55,14 @@ class Event(object):
                 self._data[k] = v                         
         
     def id(self):
-        """ id property getter """
+        """Method gets id attribute
+
+        Args:
+           
+        Returns:
+           str 
+           
+        """  
         
         return self._id
     
@@ -72,7 +79,14 @@ class Event(object):
         return len(self._args)
          
     def args(self):
-        """ args property getter """
+        """Method gets args attribute
+
+        Args:
+           
+        Returns:
+           tuple 
+           
+        """  
         
         return self._args
     
@@ -208,9 +222,15 @@ class Event(object):
         """        
         
         return self._run_default
-      
-    @property          
+           
     def propagate(self):
-        """ propagate property getter """
+        """Method gets propagate attribute
+
+        Args:
+           
+        Returns:
+           bool 
+           
+        """  
         
         return self._propagate
