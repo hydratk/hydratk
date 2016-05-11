@@ -407,14 +407,14 @@ class SoapClient():
 
          
 def xml_timestamp(location='Europe/Prague'):
-        """Methods creates timestamp including time zone
+    """Methods creates timestamp including time zone
 
-        Args:
-           location (str): time zone location
+    Args:
+       location (str): time zone location
 
-        Returns:
-           str: timestamp
+    Returns:
+       str: timestamp
     
-        """  
+    """  
           
     return datetime.datetime.now(pytz.timezone(location)).isoformat()

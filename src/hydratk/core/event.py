@@ -54,7 +54,6 @@ class Event(object):
             for k,v in kwargs.items():
                 self._data[k] = v                         
         
-    @property
     def id(self):
         """ id property getter """
         
@@ -71,8 +70,7 @@ class Event(object):
         """
                 
         return len(self._args)
-    
-    @property        
+         
     def args(self):
         """ args property getter """
         

@@ -38,6 +38,7 @@ autodoc_mock_imports = [
                         'proton', 'proton.utils', 'proton.reactor', 
                         'psycopg2', 
                         'pycurl', 
+                        'pytz',
                         'pyx.messaging', 'pyx.system.utils', 
                         'scapy.all', 
                         'selenium', 'selenium.common.exceptions', 'selenium.webdriver.support.ui',

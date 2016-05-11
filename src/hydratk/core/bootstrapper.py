@@ -71,7 +71,10 @@ def run_app_prof():
     Method is executed from htkprof command (automatically installed)
     C profiler lsprof is used
         
-    Args:                 
+    Args:    
+    
+    Returns:
+       void             
                 
     """    
     

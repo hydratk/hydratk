@@ -62,7 +62,7 @@ class MessageRouter():
         Args:
            id (str): service identifier
            transport_type (int): supported transport type, currently only IPC and TCP is supported
-           options: (dict): transport_type supported options
+           options (dict): transport_type supported options
         
         Returns:            
            bool: True
@@ -93,7 +93,7 @@ class MessageRouter():
         
         Args:
            service_id (str): service identifier
-           options: (dict): queue type optional settings
+           options (dict): queue type optional settings
         
         Returns:            
            obj: socket
