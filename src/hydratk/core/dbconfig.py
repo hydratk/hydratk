@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit
+"""HydraTK database configuration and settings module
 
 .. module:: core.dbconfig
    :platform: Unix
@@ -19,11 +19,14 @@ db_struct = {
             }
 
 class DBConfig():
+    """ Class DBConfig
+    """
+    
     _db_file = None
     _conn    = None
     
     def __init__(self, db_file):
-        """Class constructor.
+        """Class constructor
            
            called when the object is initialized 
         
@@ -37,6 +40,7 @@ class DBConfig():
         """Method connects configuration database
         
         Args:
+           none
         
         Returns:
            void

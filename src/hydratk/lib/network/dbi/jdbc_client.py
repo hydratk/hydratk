@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""Generic JDBC client
 
 .. module:: network.dbi.jdbc_client
    :platform: Unix
@@ -23,6 +23,8 @@ from hydratk.core import event
 from hydratk.lib.bridge.java import JavaBridge
 
 class DBClient:
+    """Class DBClient
+    """
     
     _mh = None
     _bridge = None
@@ -63,6 +65,7 @@ class DBClient:
         """Method stops JVM 
         
         Args:
+           none
         
         Returns:
            void 
@@ -165,7 +168,8 @@ class DBClient:
     def disconnect(self):
         """Method disconnects from server   
         
-        Args:        
+        Args:  
+           none      
 
         Returns:
            bool: result

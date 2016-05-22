@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit library
+"""Class for input error exception
 
 .. module:: lib.exceptions.inputerror
    :platform: Unix
@@ -9,9 +9,8 @@
 """
 
 class InputError(Exception):
-    '''
-    classdocs
-    '''
+    """Class InputError
+    """
 
     def __init__(self, error_num, args, msg):
         """Class constructor

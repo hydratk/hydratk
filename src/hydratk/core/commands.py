@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit
+"""HYdraTK commands and options
 
 .. module:: core.commands
    :platform: Unix

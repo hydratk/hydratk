@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit
+"""HydraTK default event class
 
 .. module:: core.event
    :platform: Unix
@@ -11,6 +11,9 @@
 import pprint
 
 class Event(object):
+    """ Class Event
+    """
+    
     _id                 = None
     _args               = ()
     _data               = {}
@@ -58,6 +61,7 @@ class Event(object):
         """Method gets id attribute
 
         Args:
+           none
            
         Returns:
            str 
@@ -70,6 +74,7 @@ class Event(object):
         """Method gets count of arguments
 
         Args:
+           none
            
         Returns:
            int: count of arguments
@@ -82,6 +87,7 @@ class Event(object):
         """Method gets args attribute
 
         Args:
+           none
            
         Returns:
            tuple 
@@ -94,6 +100,7 @@ class Event(object):
         """Method gets event data
 
         Args:
+           none
            
         Returns:
            dict: data
@@ -166,6 +173,7 @@ class Event(object):
         """Method stops event propagation
 
         Args:
+           none
            
         Returns:
            void
@@ -190,6 +198,7 @@ class Event(object):
         """Method prevents default event processing
 
         Args:
+           none
            
         Returns:
            void
@@ -202,6 +211,7 @@ class Event(object):
         """Method enables default event processing
 
         Args:
+           none
            
         Returns:
            void
@@ -215,6 +225,7 @@ class Event(object):
         """Method gets default event processing
 
         Args:
+           none
            
         Returns:
            bool: run_default
@@ -227,6 +238,7 @@ class Event(object):
         """Method gets propagate attribute
 
         Args:
+           none
            
         Returns:
            bool 

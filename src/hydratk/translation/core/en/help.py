@@ -41,6 +41,6 @@ help_opt = {
    'run-mode'          : { '{h}-m, --run-mode <mode>{e}' : 'sets the running mode, the list of available languages is specified in the docs' },
    'profile'           : { '{h}-p, --profile <file>{e}' : 'enables cProfiler and outputs the measuring to the specified file' },   
    'config-db-file'    : { '{h}--config-db-file <file>{e}' :  { 'description' : 'optional, database file path', 'commands' : ('create-config-db')}},
-   'ext-skel-path'     : { '{h}--ext-skel-path <path>{e}' : { 'description' : 'volitelné, cesta k adresáři kde bude vytvořena kostra rozšíření HydraTK', 'commands' : ('create-ext-skel')}},
-   'lib-skel-path'     : { '{h}--lib-skel-path <path>{e}' : { 'description' : 'volitelné, cesta k adresáři kde bude vytvořena kostra knihovny HydraTK', 'commands' : ('create-lib-skel')}}
+   'ext-skel-path'     : { '{h}--ext-skel-path <path>{e}' : { 'description' : 'optional, directory path where HydraTK extension skeleton will be created', 'commands' : ('create-ext-skel')}},
+   'lib-skel-path'     : { '{h}--lib-skel-path <path>{e}' : { 'description' : 'optional, directory path where HydraTK library skeleton will be created', 'commands' : ('create-lib-skel')}}
 }

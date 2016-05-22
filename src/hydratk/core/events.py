@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit
+"""HydraTK default events definition
 
 .. module:: core.events
    :platform: Unix

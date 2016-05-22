@@ -1,4 +1,4 @@
-.. Reference manual
+.. _refman:
 
 ================
 Reference Manual
@@ -6,34 +6,32 @@ Reference Manual
 
 Module, class, and function reference
 
-Hydra
-=====
+HydraTK
+=======
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    refman/hydra/core
    refman/hydra/lib
-
-Libraries
-=========
-
-.. toctree::
-   :maxdepth: 2
-
-   refman/libs/bridge
-   refman/libs/network
 
 Extensions   
 ==========
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    refman/exts/benchmark
    refman/exts/datagen
    refman/exts/testenv
    refman/exts/trackapps
    refman/exts/yoda
-   refman/exts/wings
+   
+Libraries
+=========
 
+.. toctree::
+   :maxdepth: 1
+
+   refman/libs/bridge
+   refman/libs/network   

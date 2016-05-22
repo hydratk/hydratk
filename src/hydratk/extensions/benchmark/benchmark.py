@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Benchmark extension
+"""Benchmark extension for tuning and testing hydra toolkit performance
 
 .. module:: benchmark.benchmark
    :platform: Unix
@@ -20,13 +20,17 @@ import sys
 import random
 
 class Extension(extension.Extension):
+    """Class Extensions
+    """
+    
     __test_results  = {}
     __print_details = False
     
     def _init_extension(self):
         """Method initializes extension
         
-        Args:            
+        Args:      
+           none      
            
         Returns:
            void    
@@ -44,7 +48,8 @@ class Extension(extension.Extension):
         
         Callback for command start-benchmark
         
-        Args:            
+        Args:     
+           none       
            
         Returns:
            void    
@@ -61,7 +66,8 @@ class Extension(extension.Extension):
         
         Command option --details
         
-        Args:            
+        Args:   
+           none         
            
         Returns:
            void    
@@ -73,7 +79,8 @@ class Extension(extension.Extension):
     def start_bench_fc(self):
         """Method handles command start-benchmark
         
-        Args:            
+        Args:  
+           none          
            
         Returns:
            void    
@@ -89,7 +96,8 @@ class Extension(extension.Extension):
     def _run_basic_tests(self):
         """Method runs basic tests
         
-        Args:            
+        Args: 
+           none           
            
         Returns:
            void    
@@ -110,7 +118,8 @@ class Extension(extension.Extension):
     def _print_test_info(self):  
         """Method prints test results
         
-        Args:            
+        Args: 
+           none           
            
         Returns:
            void    
@@ -128,7 +137,8 @@ class Extension(extension.Extension):
     def _event_thru_test(self):
         """Method tests event throughput
         
-        Args:            
+        Args:  
+           none          
            
         Returns:
            void    
@@ -158,7 +168,8 @@ class Extension(extension.Extension):
     def _factorial_test(self):   
         """Method tests factorial caluculation
         
-        Args:            
+        Args:  
+           none          
            
         Returns:
            void    
@@ -213,7 +224,8 @@ class Extension(extension.Extension):
     def _fib_test(self):
         """Method tests Fibonacci calculation
         
-        Args:            
+        Args: 
+           none           
            
         Returns:
            void    
@@ -250,7 +262,8 @@ class Extension(extension.Extension):
     def _calc_flops_test(self):  
         """Method tests arithmetic operations with floating point
         
-        Args:            
+        Args: 
+           none           
            
         Returns:
            void    

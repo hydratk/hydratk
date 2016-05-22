@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""Generic REST client for protocols HTTP, HTTPS
 
 .. module:: network.rest.client
    :platform: Unix
@@ -33,6 +33,8 @@ mime_types = {
 }
 
 class RESTClient:
+    """Class RESTClient
+    """
     
     _mh = None
     _client = None
@@ -188,6 +190,7 @@ class RESTClient:
         """Method gets response body
         
         Args:
+           none
 
         Returns:
            str: body

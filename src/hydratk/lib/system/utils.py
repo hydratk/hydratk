@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit library
+"""A useful module for misc utils
 
 .. module:: lib.system.utils
    :platform: Unix
@@ -13,6 +13,8 @@ import pkg_resources
 
 
 class Utils():
+    """Class Utils
+    """
     
     @staticmethod
     def module_version(module):

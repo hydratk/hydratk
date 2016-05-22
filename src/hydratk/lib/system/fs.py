@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit library
+"""Module for operation with file system
 
 .. module:: lib.system.fs
    :platform: Unix

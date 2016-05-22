@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit
+"""HydraTK core integrated logging features
 
 .. module:: core.logger
    :platform: Unix
@@ -11,6 +11,9 @@
 import sys
 
 class Logger(object):
+    """Class Logger
+    """
+    
     _emulate_print = True
     
     def spout(self, data):   

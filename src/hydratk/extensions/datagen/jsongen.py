@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Datagen extension
+"""Module for sample JSON generation from JSON schema
 
 .. module:: datagen.jsongen
    :platform: Unix
@@ -24,6 +24,8 @@ from jsonlib2 import read, dump
 from os import path
 
 class JSONGen():
+    """Class JSONGen
+    """
     
     _mh = None
     _path = None
@@ -34,7 +36,8 @@ class JSONGen():
         
         Called when object is initialized
         
-        Args:              
+        Args:
+           none              
                 
         """          
         

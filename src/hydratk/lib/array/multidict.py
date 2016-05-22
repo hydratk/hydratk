@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit library
+"""Multi-level dictionary
 
 .. module:: lib.array.multidict
    :platform: Unix
@@ -11,13 +11,18 @@
 from collections import defaultdict
 
 class MultiDict(defaultdict):
+    """Class MultiDict
+    
+    Inherited from defaultdict
+    """
     
     def __init__(self):
         """Class constructor
         
         Called when object is initialized
         
-        Args:            
+        Args: 
+           none           
                 
         """  
                 
@@ -26,7 +31,8 @@ class MultiDict(defaultdict):
     def __repr__(self):
         """Method overrides __repr__
         
-        Args:            
+        Args:  
+           none          
            
         Returns:
            str

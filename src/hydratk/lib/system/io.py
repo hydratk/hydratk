@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit library
+"""Useful module for controlled input output
 
 .. module:: lib.system.io
    :platform: Unix

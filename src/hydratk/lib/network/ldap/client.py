@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""Generic LDAP client
 
 .. module:: network.ldap.client
    :platform: Unix
@@ -31,6 +31,8 @@ from ldap import set_option, initialize, LDAPError, OPT_DEBUG_LEVEL, SCOPE_BASE,
 from ldap.modlist import addModlist, modifyModlist
 
 class LDAPClient:
+    """Class LDAPClient
+    """
     
     _mh = None
     _client = None
@@ -177,6 +179,7 @@ class LDAPClient:
         """Method disconnects from server
         
         Args:
+           none
            
         Returns:
            bool: result         

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit
+"""Module with functions for cyclic data manipulation and verification
 
 .. module:: lib.data.loop
    :platform: Unix
@@ -25,7 +25,7 @@ def do_until(call, until_call_result, delay=1, until_max_attempts=10, until_dura
        void
        
     Raises:
-       ValueError
+       error: ValueError
    
     Example:
      

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""SFTP client
 
 .. module:: network.ftp.sftp_client
    :platform: Unix
@@ -33,6 +33,8 @@ from os import path, remove
 from logging import getLogger, DEBUG
 
 class FTPClient:
+    """Class FTPClient
+    """
     
     _mh = None
     _client = None
@@ -162,6 +164,7 @@ class FTPClient:
         """Method disconnects from server  
         
         Args:  
+           none
            
         Returns:
            bool: result         
@@ -181,7 +184,8 @@ class FTPClient:
     def list_dir(self):
         """Method lists remote working directory  
         
-        Args:      
+        Args:    
+           none  
            
         Returns:
            list: names         

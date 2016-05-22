@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit
+"""HydraTK core integrated debugger
 
 .. module:: core.debugger
    :platform: Unix
@@ -51,6 +51,9 @@ debug level  - channel
 """
 
 class Debugger(object):
+    """ Class Debugger
+    """
+    
     _debug             = False
     _debug_level       = 1
     _debug_channel     = []
@@ -99,6 +102,7 @@ class Debugger(object):
         """Method returns executed function name
         
         Args:       
+           none
            
         Returns:
            str: function      
@@ -111,6 +115,7 @@ class Debugger(object):
         """Method returns executed filename
         
         Args:       
+           none
            
         Returns:
            str: filename      
@@ -123,6 +128,7 @@ class Debugger(object):
         """Method returns executed line number
         
         Args:       
+           none
            
         Returns:
            int: line number      
@@ -135,6 +141,7 @@ class Debugger(object):
         """Method returns executed module name
         
         Args:       
+           none
            
         Returns:
            str: module      
@@ -181,8 +188,7 @@ class Debugger(object):
         """Method checks if required channels are tracked by debugger
         
         Args:
-           channel (obj): required channel as int (channel id)
-                                              list (channel ids)   
+           channel (obj): required channel as int (channel id), list (channel ids)   
            
         Returns:
            bool: result   
@@ -203,8 +209,9 @@ class Debugger(object):
     def dout(self, msg, location={'file' : '', 'line' : '', 'module': '', 'func' : '', 'call_path' : ''}, level=1, channel=[]):  
         """Method prints debug message
         
-        Configuration options - System/Debug/msg_format
-                              - System/Debug/term_color
+        Configuration options:
+        System/Debug/msg_format
+        System/Debug/term_color
         
         Args:
            msg (str): message

@@ -1,203 +1,201 @@
-.. Network
+.. _refman_lib_network:
 
-=======
 Network
 =======
 
-dbi
-===
+This section contains source code documentation of Network library.
 
-client
-^^^^^^
+.. _refman_lib_network_dbi:
+
+dbi
+^^^
+
+* client
 
 .. automodule:: hydratk.lib.network.dbi.client
    :member-order: bysource
 
-jdbc_client
-^^^^^^^^^^^
+* jdbc_client
 
 .. automodule:: hydratk.lib.network.dbi.jdbc_client
    :member-order: bysource
    
-mysql_client
-^^^^^^^^^^^^
+* mysql_client
 
 .. automodule:: hydratk.lib.network.dbi.mysql_client
    :member-order: bysource  
    
-oracle_client
-^^^^^^^^^^^^^
+* oracle_client
 
 .. automodule:: hydratk.lib.network.dbi.oracle_client
    :member-order: bysource
    
-postgresql_client
-^^^^^^^^^^^^^^^^^
+* postgresql_client
 
 .. automodule:: hydratk.lib.network.dbi.postgresql_client
    :member-order: bysource
    
-sqlite_client
-^^^^^^^^^^^^^
+* sqlite_client
 
 .. automodule:: hydratk.lib.network.dbi.sqlite_client
    :member-order: bysource          
 
-email
-=====
+.. _refman_lib_network_email:
 
-client
-^^^^^^
+email
+^^^^^
+
+* client
 
 .. automodule:: hydratk.lib.network.email.client
    :member-order: bysource
    
-imap_client
-^^^^^^^^^^^
+* imap_client
 
 .. automodule:: hydratk.lib.network.email.imap_client
    :member-order: bysource
    
-pop_client
-^^^^^^^^^^
+* pop_client
 
 .. automodule:: hydratk.lib.network.email.pop_client
    :member-order: bysource
    
-smtp_client
-^^^^^^^^^^^
+* smtp_client
 
 .. automodule:: hydratk.lib.network.email.smtp_client
    :member-order: bysource         
 
-ftp
-===
+.. _refman_lib_network_ftp:
 
-client
-^^^^^^
+ftp
+^^^
+
+* client
 
 .. automodule:: hydratk.lib.network.ftp.client
    :member-order: bysource
    
-ftp_client
-^^^^^^^^^^
+* ftp_client
 
 .. automodule:: hydratk.lib.network.ftp.ftp_client
    :member-order: bysource
    
-sftp_client
-^^^^^^^^^^^
+* sftp_client
 
 .. automodule:: hydratk.lib.network.ftp.sftp_client
    :member-order: bysource
    
-tftp_client
-^^^^^^^^^^^
+* tftp_client
 
 .. automodule:: hydratk.lib.network.ftp.tftp_client
    :member-order: bysource  
    
+.. _refman_lib_network_inet:   
+   
 inet
-====
+^^^^
 
-client
-^^^^^^
+* client
 
 .. automodule:: hydratk.lib.network.inet.client
    :member-order: bysource 
 
-packet
-^^^^^^  
+* packet  
 
 .. automodule:: hydratk.lib.network.inet.packet
    :member-order: bysource      
 
-jms
-===
+.. _refman_lib_network_jms:
 
-client
-^^^^^^
+jms
+^^^
+
+* client
 
 .. automodule:: hydratk.lib.network.jms.client
    :member-order: bysource
    
-amqp_client
-^^^^^^^^^^^
+* amqp_client
 
 .. automodule:: hydratk.lib.network.jms.amqp_client
    :member-order: bysource
    
-jms_client
-^^^^^^^^^^
+* jms_client
 
 .. automodule:: hydratk.lib.network.jms.jms_client
    :member-order: bysource
    
-stomp_client
-^^^^^^^^^^^^
+* stomp_client
 
 .. automodule:: hydratk.lib.network.jms.stomp_client
    :member-order: bysource         
 
-simple_jms
-^^^^^^^^^^
+* simple_jms
 
 .. automodule:: hydratk.lib.network.jms.simplejms
    :member-order: bysource
 
-ldap
-====
+.. _refman_lib_network_ldap:
 
-client
-^^^^^^
+ldap
+^^^^
+
+* client
 
 .. automodule:: hydratk.lib.network.ldap.client
    :member-order: bysource
 
-rest
-====
+.. _refman_lib_network_rest:
 
-client
-^^^^^^
+rest
+^^^^
+
+* client
 
 .. automodule:: hydratk.lib.network.rest.client
    :member-order: bysource
    
+.. _refman_lib_network_rpc:   
+   
 rpc
-===
+^^^
 
-client
-^^^^^^
+* client
 
 .. automodule:: hydratk.lib.network.rpc.client
    :member-order: bysource
 
-rmi_client
-^^^^^^^^^^
+* rmi_client
 
 .. automodule:: hydratk.lib.network.rpc.rmi_client
    :member-order: bysource
 
+.. _refman_lib_network_soap:
+
 soap
-====
+^^^^
+
+* client
 
 .. automodule:: hydratk.lib.network.soap.client
    :member-order: bysource
 
+* simplesoap
+
 .. automodule:: hydratk.lib.network.soap.simplesoap
    :member-order: bysource
 
-term
-====
+.. _refman_lib_network_term:
 
-client
-^^^^^^
+term
+^^^^
+
+* client
 
 .. automodule:: hydratk.lib.network.term.client
    :member-order: bysource
    
-ssh_client
-^^^^^^^^^^
+* ssh_client
 
 .. automodule:: hydratk.lib.network.term.ssh_client
    :member-order: bysource   

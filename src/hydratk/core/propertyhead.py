@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra framework
+"""HydraTK properties module
 
 .. module:: core.propertyhead
    :platform: Unix
@@ -12,6 +12,8 @@ from hydratk.core import const
 from hydratk.translation.core import info
 
 class PropertyHead(object):
+    """Class PropertyHead
+    """
     
     @property
     def current_async_ticket_id(self):
@@ -21,7 +23,7 @@ class PropertyHead(object):
     
     @property
     def async_fn_tickets(self):
-        """async_fn_tickets property getter"""
+        """async_fn_tickets property getter, setter"""
                 
         return self._async_fn_tickets
     
@@ -33,7 +35,7 @@ class PropertyHead(object):
            
     @property
     def fn_cb_shared(self):
-        """fn_cb_shared property getter"""
+        """fn_cb_shared property getter, setter"""
                 
         return self._fn_cb_shared
     
@@ -81,7 +83,7 @@ class PropertyHead(object):
     
     @property
     def lang(self):
-        """language property getter"""
+        """language property getter, setter"""
                 
         return self._language
     
@@ -99,7 +101,7 @@ class PropertyHead(object):
     
     @property
     def run_mode(self):
-        """run_mode property getter"""
+        """run_mode property getter, setter"""
                 
         return self._run_mode
     

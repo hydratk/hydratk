@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit
+"""HydraTK master module
 
 .. module:: core.masterhead
    :platform: Unix
@@ -75,6 +75,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         MasterHead use singleton pattern, constructor should never be called directly
         
         Args:
+           none
         
         Raises:
            error: ValueError       
@@ -129,6 +130,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """Method returns current traslator object initialized from hydratrk.lib.translation.translator.Translator 
         
         Args:
+           none
         
         Returns:            
            obj: Translator
@@ -145,6 +147,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
            For preventing inner conflicts it's designed as singleton   
         
         Args:
+           none
         
         Returns:            
            obj: MasterHead
@@ -176,6 +179,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """Method return current loaded configuration  
         
         Args:
+           none
         
         Returns:            
            dict: self._config
@@ -196,6 +200,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """Method checks for run_mode input parameter (-m, --run-mode) from command line and validates if it's supported 
         
         Args:
+           none
         
         Returns:            
            bool: run_mode_changed, True in case if it's supported otherwise False 
@@ -228,6 +233,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """Method checks for language change input parameters (-l, --language) from command line and validates if it's supported 
         
         Args:
+           none
         
         Returns:            
            bool: language_changed, True in case if it's supported otherwise False 
@@ -258,6 +264,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
            If the new config file exists, then current config file path will be replaced by new one 
         
         Args:
+           none
         
         Returns:            
            bool: config_changed, True in case if config file exists otherwise False 
@@ -287,6 +294,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """Method checks for profile option parameter (help, -p, --profile) with specified output statistics file           
         
         Args:
+           none
         
         Returns:            
            tuple: result, bool enable_profiler, string statistics file 
@@ -315,9 +323,10 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """Method checks for debug option with specified level parameter (-d, --debug) from command line 
         
         Args:
+           none
         
         Returns:            
-            bool: debug_changed, True in case if it's set otherwise False 
+           bool: debug_changed, True in case if it's set otherwise False 
         
         """        
                 
@@ -344,9 +353,10 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """Method checks for debug channel option with specified channel filters from command line (-d, --debug-channel)
         
         Args:
+           none
         
         Returns:            
-            bool: debug_channel_changed, True in case if it's set otherwise False 
+           bool: debug_channel_changed, True in case if it's set otherwise False 
         
         """                
         debug_channel_changed = False
@@ -647,6 +657,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """Method runs dummy hook
         
         Args:
+           none
                    
         Returns:            
            bool: True
@@ -659,6 +670,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """Method starts application
         
         Args:
+           none
                    
         Returns:            
            void
@@ -1031,6 +1043,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         Debugging, language
         
         Args:
+           none
         
         Returns:            
            void
@@ -1062,6 +1075,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """Method gets language
         
         Args:
+           none
         
         Returns:            
            str: language
@@ -1074,6 +1088,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """Method checks if command is set
         
         Args:
+           none
         
         Returns:            
            bool: result
@@ -1086,6 +1101,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """Method gets command
         
         Args:
+           none
         
         Returns:            
            str: command
@@ -1221,6 +1237,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """Method initializes threads according to configuration
         
         Args:
+           none
         
         Returns:            
            void
@@ -1236,6 +1253,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """Method destroys threads
         
         Args:
+           none
         
         Returns:            
            void
@@ -1282,6 +1300,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """Method gets thread id (name)
         
         Args:
+           none
         
         Returns:            
            str: id
@@ -1300,6 +1319,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         Command line options - --force, --interactive, --ext-skel-path
         
         Args:
+           none
         
         Returns:            
            bool: result
@@ -1496,6 +1516,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         Command line options - --force, --interactive, --lib-skel-path
         
         Args:
+           none
         
         Returns:            
            bool: result
@@ -1543,7 +1564,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 lib_desc = read_lib_desc if len(read_lib_desc) > 0 else template.lib_default_user_data['lib_desc']
                 print("Library description set to: %s" % lib_desc)
                 
-                print('4. Enter the lib athor name');
+                print('4. Enter the lib author name');
                 read_author_name = raw_input("[{0}]:".format(template.lib_default_user_data['author_name']))
                 author_name = read_author_name if len(read_author_name) > 0 else template.lib_default_user_data['author_name']
                 print("lib author name set to: %s" % author_name)

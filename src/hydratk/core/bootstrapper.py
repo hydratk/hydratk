@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*
-"""This code is a part of Hydra Toolkit
+"""HydraTK core bootstrapper
 
 .. module:: core.bootstrapper
    :platform: Unix
@@ -23,7 +23,8 @@ def _check_dependencies():
     
     Modules are configured in hydratk.core.dependencies (including minimum version)
         
-    Args:            
+    Args:  
+       none          
            
     Returns:
        bool: result, False if any module is missing            
@@ -48,7 +49,8 @@ def run_app():
     
     Method is executed from htk command (automatically installed)
         
-    Args:            
+    Args: 
+       none           
            
     Returns:   
        void     
@@ -72,6 +74,7 @@ def run_app_prof():
     C profiler lsprof is used
         
     Args:    
+       none
     
     Returns:
        void             

@@ -1,57 +1,15 @@
-.. Tutorials
+.. _tutor:
 
 =========
 Tutorials
 =========
 
-tutorials, howto's for specific topics
-
-Hydra
-=====
+This section provides tutorials for specific topics.
+If you want to try HydraTK, some extension or library, you should start with these tutorials.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
-Extensions
-==========
-
-.. toctree::                                                                    
-   :maxdepth: 2  
-
-   tutor/ext/benchmark
-   tutor/ext/datagen
-   tutor/ext/testenv
-   tutor/ext/trackapps
-   tutor/ext/yoda
-   tutor/ext/wings
-
-Libraries
-=========
-
-Bridge
-------
-
-.. toctree::
-   :maxdepth: 2
-   
-   tutor/lib/java
-   tutor/lib/selen
-
-Network
--------
-
-.. toctree::                                                                    
-   :maxdepth: 2 
-
-   tutor/lib/dbi
-   tutor/lib/email
-   tutor/lib/ftp
-   tutor/lib/inet
-   tutor/lib/jms
-   tutor/lib/ldap
-   tutor/lib/rest
-   tutor/lib/rpc
-   tutor/lib/soap
-   tutor/lib/term
-
-
+   tutor/hydratk
+   tutor/extensions
+   tutor/libraries

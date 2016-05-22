@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""Generic RPC client factory
 
 .. module:: network.rpc.client
    :platform: Unix

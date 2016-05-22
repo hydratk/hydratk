@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit
+"""HydraTK message router
 
 .. module:: core.messagerouter
    :platform: Unix
@@ -13,24 +13,18 @@ from hydratk.core import const, message
 from hydratk.lib.exceptions.inputerror import InputError
 import zmq
 
-'''An existing router id'''
-ERROR_ROUTER_ID_EXISTS               = 1 
-'''An existing service id'''  
-ERROR_SERVICE_ID_EXISTS              = 10
-'''Invalid transport type'''  
-ERROR_SERVICE_INVALID_TRANSPORT_TYPE = 11  
-'''ZeroMQ IPC'''
-SERVICE_TRANSPORT_TYPE_ZMQ_IPC       = 1
-'''ZeroMQ TCP''' 
-SERVICE_TRANSPORT_TYPE_ZMQ_TCP       = 2 
+ERROR_ROUTER_ID_EXISTS               = 1  # An existing router id
+ERROR_SERVICE_ID_EXISTS              = 10 # An existing service id 
+ERROR_SERVICE_INVALID_TRANSPORT_TYPE = 11 # Invalid transport type
+SERVICE_TRANSPORT_TYPE_ZMQ_IPC       = 1  # ZeroMQ IPC
+SERVICE_TRANSPORT_TYPE_ZMQ_TCP       = 2  # ZeroMQ TCP
 
 MESSAGE_QUEUE_ACTION_BIND            = 1
 MESSAGE_QUEUE_ACTION_CONNECT         = 2 
 
 class MessageRouter():
-    '''
-    classdocs
-    '''
+    """Class MessageRoute
+    """
    
     _service_list = {}    
     _id           = ''

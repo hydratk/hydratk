@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit library
+"""Module for data loading from external resources
 
 .. module:: lib.data.loader
    :platform: Unix

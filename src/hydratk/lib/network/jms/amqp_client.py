@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""AMQP client
 
 .. module:: network.jms.amqp_client
    :platform: Unix
@@ -42,6 +42,8 @@ mapping = {
 }
 
 class JMSClient:
+    """Class JMSClient
+    """
     
     _mh = None
     _verbose = None
@@ -164,7 +166,8 @@ class JMSClient:
     def disconnect(self):
         """Method disconnects from server
         
-        Args:           
+        Args:   
+           none        
 
         Returns:
            bool: result

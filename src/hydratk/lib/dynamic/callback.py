@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""Function callback management 
 
 .. module:: lib.dynamic.callback
    :platform: Unix
@@ -11,6 +11,9 @@ import sys
 import cPickle as pickle
 
 class CallBackProcessor(object):
+    """Class CallBackProcessor
+    """
+    
     _cbm           = None #CallBackManager instance
     _cb_dict       = {}
     _cb_dproxy     = None
@@ -66,6 +69,9 @@ class CallBackTree(object):
     pass
         
 class CallBack(object):
+    """Class CallBack
+    """
+    
     _shared = False
     _async  = False
     _fn_id  = None
@@ -150,6 +156,9 @@ class CallBack(object):
         self._obj = pickle.dumps(obj)
 
 class CallBackManager(object):
+    """Class CallBackManager
+    """
+    
     _cb_dict       = {}
     _cb_dproxy     = None
     _cbm_proc      = None

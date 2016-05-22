@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""Complex dabase interface inspired by PHP PDO
 
 .. module:: database.dbo
    :platform: Unix
@@ -17,6 +17,9 @@ dbo_drivers = {
               }
 
 class DBO(object):
+    """Class DBO
+    """
+    
     _dbo_driver  = None
     _driver_name = None
     
@@ -116,6 +119,9 @@ class DBO(object):
         return getattr(self._dbo_driver, name)    
 
 class DBOException():
+    """Class DBOException
+    """
+    
     _error_info = {}
     _code       = None
     _message    = None

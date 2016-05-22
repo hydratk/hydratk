@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit library
+"""Useful module for commandline input parameters handling
 
 .. module:: lib.console.commandlinetool
    :platform: Unix
@@ -22,6 +22,9 @@ def rprint(data):
         sys.stdout.flush()
         
 class CommandlineTool():
+    """Class CommandLineTool
+    """
+    
     _title      = ''
     _cp_string  = ''
     _commands   = []
@@ -107,6 +110,7 @@ class CommandlineTool():
         """Method prints short help
         
         Args:   
+           none
            
         Returns:
            void   
@@ -119,7 +123,8 @@ class CommandlineTool():
     def print_help():  
         """Method prints long help
         
-        Args:   
+        Args:
+           none   
            
         Returns:
            void   
@@ -167,6 +172,7 @@ class CommandlineTool():
         """Method returns passed action command parameter
         
         Args:
+           none
    
         Returns:
            str: string command 
@@ -235,6 +241,7 @@ class CommandlineTool():
         """Method creates short help text
         
         Args:   
+           none
            
         Returns:
            str: help text
@@ -254,17 +261,18 @@ class CommandlineTool():
         return result
                     
     @staticmethod
-    def create_help():
-        import pprint
+    def create_help():        
         """Method creates and returns a formated help text
         
         Args:
+           none
    
         Returns:
            str: result help text
            
         """
-
+        
+        import pprint
         result = ''
         result += CommandlineTool._title + "\n"
         result +=  CommandlineTool._cp_string + "\n"

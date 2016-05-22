@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""SSH client
 
 .. module:: network.lib.ssh_client
    :platform: Unix
@@ -26,6 +26,8 @@ from socket import error
 from logging import basicConfig, DEBUG
 
 class TermClient:
+    """Class TermClient
+    """
     
     _mh = None
     _client = None
@@ -150,6 +152,7 @@ class TermClient:
         """Method disconnects from server
         
         Args:
+           none
            
         Returns:
            bool: result

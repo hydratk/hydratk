@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""Generic DB client factory
 
 .. module:: network.dbi.client
    :platform: Unix
@@ -16,7 +16,7 @@ engines = {
   'JDBC'      : 'jdbc_client'
 }
 
-def DBClient(engine='SQLITE', *args, **kwargs):
+def DBClient(engine='SQLITE', *args, **kwargs):    
     """DB client factory method
         
     Args:            

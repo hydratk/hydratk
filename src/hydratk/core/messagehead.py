@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit
+"""HydraTK core commmunication messages processing fuctionality
 
 .. module:: core.messagehead
    :platform: Unix
@@ -18,6 +18,9 @@ import time
 from hydratk.lib.debugging.simpledebug import dmsg
 
 class MessageHead(object):
+    """Class MessageHead
+    """
+    
     _async_ticket_seq        = 0
     _async_ticket_seq_max    = 9999999999
     _current_async_ticket_id = None
@@ -26,6 +29,7 @@ class MessageHead(object):
         """Method creates new ticket
         
         Args:
+           none
         
         Returns:            
            str: ticket id
@@ -85,6 +89,7 @@ class MessageHead(object):
         """Method resets ticket id sequence
         
         Args:
+           none
         
         Returns:            
            void
@@ -97,6 +102,7 @@ class MessageHead(object):
         """Method registers message handlers to functionality hooks
         
         Args:
+           none
         
         Returns:            
            void

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit library
+"""Raw implementation of FireLogger protocol for debugging purposes
 
 .. module:: lib.debugging.firepot
    :platform: Unix
@@ -23,6 +23,9 @@ import hashlib
 
 
 class FirePot(object):
+    """Class FirePot
+    """
+    
     _items = []
     _enabled = False
     _levels = ['debug', 'warning', 'info', 'error', 'critical']
@@ -49,6 +52,7 @@ class FirePot(object):
         """Method gets enable
         
         Args:   
+           none
            
         Returns:
            bool: enable
@@ -107,7 +111,8 @@ class FirePot(object):
     def flush_items():
         """Method flushes items
         
-        Args:   
+        Args:
+           none   
            
         Returns:
            void

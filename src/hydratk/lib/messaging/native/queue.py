@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit library
+"""A Python native multiprocessing Managed queue driver
 
 .. module:: lib.messaging.native.queue
    :platform: Unix
@@ -13,6 +13,9 @@ from multiprocessing import Queue
 from multiprocessing.managers import SyncManager
 
 class Queue():
+    """Class Queue
+    """
+    
     __type    = None
     __manager = None
     __address = None
@@ -50,6 +53,7 @@ class Queue():
         """Methods creates queue server
 
         Args:
+           none
 
         Returns:
            void
@@ -71,6 +75,7 @@ class Queue():
         """Methods destroys queue
 
         Args:
+           none
 
         Returns:
            void
@@ -83,6 +88,7 @@ class Queue():
         """Methods connects to queue
 
         Args:
+           none
 
         Returns:
            void

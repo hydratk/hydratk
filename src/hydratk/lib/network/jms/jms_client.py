@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""JMS client
 
 .. module:: network.jms.jms_client
    :platform: Unix
@@ -27,6 +27,8 @@ from hydratk.core import event
 from hydratk.lib.bridge.java import JavaBridge
 
 class JMSClient:
+    """Class JMSClient
+    """
     
     _mh = None
     _bridge = None
@@ -65,6 +67,7 @@ class JMSClient:
         """Method stops JVM  
         
         Args:
+           none
         
         Returns:
            void
@@ -158,7 +161,8 @@ class JMSClient:
     def disconnect(self):
         """Method disconnects from server  
         
-        Args:         
+        Args:  
+           none       
 
         Returns:
            bool: result

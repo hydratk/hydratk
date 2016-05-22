@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit
+"""HydraTK core services
 
 .. module:: core.servicebus
    :platform: Unix
@@ -9,6 +9,8 @@
 """
 
 class ServiceHead(object):
+    """Class ServiceHead
+    """
     
     def srv_async_cb(self, cbo): #CallBack object
         

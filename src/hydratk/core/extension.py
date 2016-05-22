@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit
+"""HydraTK extensions implementation class
 
 .. module:: core.extension
    :platform: Unix
@@ -9,6 +9,9 @@
 """
 
 class Extension(object):
+    """Class Extension
+    """
+    
     _ext_id            = 'Undefined'
     _ext_name          = 'Undefined'
     _ext_version       = 'Undefined'
@@ -66,6 +69,7 @@ class Extension(object):
         """Method gets extension name
         
         Args:     
+           none
            
         Returns:
            str: name
@@ -77,7 +81,8 @@ class Extension(object):
     def get_ext_version(self):
         """Method gets extension version
         
-        Args:     
+        Args:   
+           none  
            
         Returns:
            str: version
@@ -89,7 +94,8 @@ class Extension(object):
     def get_ext_author(self):
         """Method gets extension author
         
-        Args:     
+        Args:  
+           none   
            
         Returns:
            str: author
@@ -101,7 +107,8 @@ class Extension(object):
     def get_ext_info(self):
         """Method gets extension summary info
         
-        Args:     
+        Args:
+           none     
            
         Returns:
            str: info

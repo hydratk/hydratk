@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra toolkit
+"""HydraTK python system hooks
 
 .. module:: core.hookhead
    :platform: Unix
@@ -13,6 +13,9 @@ import imp
 from hydratk.translation.config import packages_map
 
 class ModuleLoader():
+    """Class ModuleLoader
+    """
+    
     _package_path = None
     
     def find_module(self, module_name, package_path):

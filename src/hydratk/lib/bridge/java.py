@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""Bridge to Java virtual machine
 
 .. module:: bridge.java
    :platform: Unix
@@ -38,6 +38,8 @@ java_types = {
 }
 
 class JavaBridge:
+    """Class JavaBridge
+    """
 
     _mh = None
     _jvm_path = None
@@ -137,6 +139,7 @@ class JavaBridge:
         """Method stops JVM
         
         Args:
+           none
             
         Returns:
            bool: result

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit
+"""Module for handling commandline input options based on argparse 
 
 .. module:: lib.console.cmdoptparser
    :platform: Unix
@@ -14,6 +14,11 @@ class CmdOptParserUndefined(Exception): pass
 class CmdOptParserError(Exception): pass
 
 class CmdOptParser(argparse.ArgumentParser):
+    """Class CmdOptParses
+    
+    Inherited from ArgumentParser
+    """
+    
     _silent     = False
     _set_opts   = {}
     _unreg_opts = []

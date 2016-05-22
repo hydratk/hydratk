@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""Generic SOAP client
 
 .. module:: network.soap.client
    :platform: Unix
@@ -28,6 +28,8 @@ from sys import stderr
 getLogger('suds.client').setLevel(CRITICAL)
 
 class SOAPClient:
+    """Class SOAPClient
+    """
     
     _mh = None
     _client = None
@@ -188,7 +190,8 @@ class SOAPClient:
     def get_operations(self):
         """Method returns service operations
         
-        Args:           
+        Args:  
+           none         
 
         Returns:
            list: operations

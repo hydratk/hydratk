@@ -14,6 +14,9 @@ import sys
 import os
 
 class DBODriver(object):
+    """Class DBODriver
+    """
+    
     __metaclass__ = ABCMeta
     
     _cursor         = None
@@ -74,15 +77,16 @@ class DBODriver(object):
         
     @abstractmethod
     def _parse_dsn(self, dsn):
-        '''
+        """
         Parses driver specific dsn string
                 
         Args: 
            dsn (string): driver specific dsn format
                               
         Raises:
-           DBODriverException: on error                     
-       '''
+           exception: DBODriverException
+                                
+        """
         pass
      
     @abstractmethod
@@ -165,6 +169,9 @@ class DBODriver(object):
     
 
 class DBODriverStatement(object):
+    """Class DBODriverStatement
+    """
+    
     __metaclass__ = ABCMeta
     
     @abstractmethod
@@ -241,6 +248,9 @@ class DBODriverStatement(object):
     
 
 class DBODriverException(Exception):
+    """Class DBODriverException
+    """
+    
     _error_info = {}
     _call_path  = None
     _message    = None
@@ -288,7 +298,7 @@ class DBODriverException(Exception):
         
     @property
     def parent_exc(self):
-        """ parent_exc property getter """
+        """ parent_exc property getter, setter """
         
         return self._parent_exc
     
@@ -319,7 +329,8 @@ class DBODriverException(Exception):
     def __str__(self):
         """Method overried __str__
         
-        Args:   
+        Args:  
+           none 
            
         Returns:
            str

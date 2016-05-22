@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""IMAP email client
 
 .. module:: network.email.imap_client
    :platform: Unix
@@ -24,6 +24,8 @@ from imaplib import IMAP4, IMAP4_SSL
 from string import replace
 
 class EmailClient:
+    """Class EmailClient
+    """
     
     _mh = None
     _client = None
@@ -155,7 +157,8 @@ class EmailClient:
     def disconnect(self):
         """Method disconnects from server
         
-        Args:        
+        Args:  
+           none      
            
         Returns:
            bool: result         
@@ -175,7 +178,8 @@ class EmailClient:
     def email_count(self):
         """Method gets email count   
         
-        Args:     
+        Args:
+           none     
            
         Returns: 
            int: count       
@@ -198,6 +202,7 @@ class EmailClient:
         """Method gets email list
         
         Args:
+           none
            
         Returns: 
            list: email ids       

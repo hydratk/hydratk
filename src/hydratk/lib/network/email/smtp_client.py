@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""SMTP email client
 
 .. module:: network.email.smtp_client
    :platform: Unix
@@ -24,6 +24,8 @@ from smtplib import SMTP, SMTP_SSL, SMTPException
 from socket import error
 
 class EmailClient:
+    """Class EmailClient
+    """
     
     _mh = None
     _client = None
@@ -157,6 +159,7 @@ class EmailClient:
         """Method disconnects from server
         
         Args:
+           none
            
         Returns:
            bool: result         

@@ -1,59 +1,62 @@
-.. TestEnv
+.. _refman_ext_testenv:
 
-=======
 TestEnv
 =======
 
+This section contains source code documentation of TestEnv extension.
+
+.. _refman_ext_testenv_testenv:
+
 testenv
-=======
+^^^^^^^
 
 .. automodule:: hydratk.extensions.testenv.testenv
    :member-order: bysource
 
-application
-===========
+.. _refman_ext_testenv_application:
 
-rest_handler
-^^^^^^^^^^^^
+application
+^^^^^^^^^^^
+
+* rest_handler
 
 .. automodule:: hydratk.extensions.testenv.application.rest_handler
    :member-order: bysource
 
-soap_handler
-^^^^^^^^^^^^
+* soap_handler
 
 .. automodule:: hydratk.extensions.testenv.application.soap_handler
    :member-order: bysource
 
-web_server
-^^^^^^^^^^
+* web_server
 
 .. automodule:: hydratk.extensions.testenv.application.web_server
    :member-order: bysource
 
+.. _refman_ext_testenv_entities:
+
 entities
-========
+^^^^^^^^
 
 .. automodule:: hydratk.extensions.testenv.entities.crm_entities
    :member-order: bysource
 
-interfaces
-==========
+.. _refman_ext_testenv_interfaces:
 
-db_int
-^^^^^^
+interfaces
+^^^^^^^^^^
+
+* db_int
 
 .. automodule:: hydratk.extensions.testenv.interfaces.db_int
    :member-order: bysource
 
-rest_int
-^^^^^^^^
+* rest_int
 
 .. automodule:: hydratk.extensions.testenv.interfaces.rest_int
    :member-order: bysource
 
-soap_int
-^^^^^^^^
+* soap_int
 
 .. automodule:: hydratk.extensions.testenv.interfaces.soap_int
    :member-order: bysource

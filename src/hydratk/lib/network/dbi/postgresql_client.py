@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""PostgreSQL DB client
 
 .. module:: network.dbi.postgresql_client
    :platform: Unix
@@ -24,6 +24,8 @@ from psycopg2 import Error, connect
 from string import replace
 
 class DBClient():
+    """Class DBClient
+    """
     
     _mh = None
     _client = None
@@ -38,7 +40,8 @@ class DBClient():
            
         Called when the object is initialized 
         
-        Args:         
+        Args: 
+           none        
            
         """    
         
@@ -135,7 +138,8 @@ class DBClient():
     def disconnect(self):
         """Method disconnects from database
         
-        Args:            
+        Args:   
+           none         
              
         Returns:
            bool: result

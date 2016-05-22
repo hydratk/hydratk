@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Datagen extension
+"""Module for ASN.1 codec
 
 .. module:: datagen.asn1codec
    :platform: Unix
@@ -33,6 +33,8 @@ from binascii import hexlify
 from datetime import datetime
 
 class ASN1Codec():
+    """Class ASN1Codec
+    """
     
     _mh = None
     _spec = None
@@ -43,7 +45,8 @@ class ASN1Codec():
         
         Called when object is initialized
         
-        Args:            
+        Args:   
+           none         
                 
         """         
         
@@ -64,7 +67,8 @@ class ASN1Codec():
     def __str__(self):
         """Method overrides __str__
         
-        Args:            
+        Args:  
+           none          
            
         Returns:
            str

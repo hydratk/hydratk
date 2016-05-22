@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Datagen extension
+"""Module for sample XML generation from WSDL/XSD
 
 .. module:: datagen.xmlgen
    :platform: Unix
@@ -50,6 +50,8 @@ wsdl_tmpl = """
 """
 
 class XMLGen():
+    """Class XMLGen
+    """
     
     _mh = None
     _client = None
@@ -59,7 +61,8 @@ class XMLGen():
         
         Called when object is initialized
         
-        Args:              
+        Args:   
+           none           
                 
         """          
         
@@ -75,14 +78,14 @@ class XMLGen():
         """Method imports specification
         
         Args:
-            filename (str): filename
+           filename (str): filename
             
         Returns:
-            bool: result
+           bool: result
         
         Raises:
-            event: xmlgen_before_import_spec
-            event: xmlgen_after_import_spec     
+           event: xmlgen_before_import_spec
+           event: xmlgen_after_import_spec     
                 
         """     
     
@@ -124,17 +127,17 @@ class XMLGen():
     def toxml(self, root, outfile=None, envelope=False):
         """Method creates sample xml file
         
-       Args:
-            root (str): root element name
-            outfile (str): output filename, default sample.xml
-            envelope (bool): create SOAP envelope 
+        Args:
+           root (str): root element name
+           outfile (str): output filename, default sample.xml
+           envelope (bool): create SOAP envelope 
 
         Returns:
-            bool: result
+           bool: result
         
         Raises:
-            event: xmlgen_before_write
-            event: xmlgen_after_write    
+           event: xmlgen_before_write
+           event: xmlgen_after_write    
                 
         """  
     
@@ -180,17 +183,17 @@ class XMLGen():
     def _toxml_rec(self, root, obj=None):
         """Method creates sample xml document
         
-       It is used in recursive traversal
+        It is used in recursive traversal
         
-       Args:
-            root (str): root element name
-            obj (obj): suds element object 
+        Args:
+           root (str): root element name
+           obj (obj): suds element object 
 
         Returns:
-            xml: xml document
+           xml: xml document
         
         Raises:
-            error: ValueError     
+           error: ValueError     
                 
         """          
         
@@ -234,10 +237,10 @@ class XMLGen():
         It is used to determine if element is Simple or Complex    
         
         Args:
-            element (str): element name
+           element (str): element name
 
         Returns:
-            str: element type
+           str: element type
             
         Raises:
            error: ValueError         
@@ -264,13 +267,13 @@ class XMLGen():
         It is used to construct XML element with correct namespaces
         
         Args:
-            element (str): element name
+           element (str): element name
 
         Returns:
-            str: element namespace    
+           str: element namespace    
         
         Raises:
-            error: ValueError    
+           error: ValueError    
                 
         """        
     
@@ -294,13 +297,13 @@ class XMLGen():
         File is stored in same folder as XSD file (with suffix .wsdl)
         
         Args:
-            xsd (str): XSD filename
+           xsd (str): XSD filename
 
         Returns:
            str: WSDL filename 
         
         Raises:
-            error: ValueError     
+           error: ValueError     
                 
         """     
     

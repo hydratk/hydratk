@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit library
+"""Message queue general factory class
 
 .. module:: lib.messaging.queue
    :platform: Unix
@@ -14,6 +14,9 @@ QUEUE_TYPE_SERVER=1
 QUEUE_TYPE_CLIENT=2
 
 class Queue():
+    """Class Queue
+    """
+    
     __impl_q = {
                 'native' : 'multiprocessing',
                 'zmq'    : 'zmq'

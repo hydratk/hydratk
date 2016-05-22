@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit library
+"""Useful module for solving Python 2 and 3 compatibility problems
 
 .. module:: lib.compat.utils
    :platform: Unix

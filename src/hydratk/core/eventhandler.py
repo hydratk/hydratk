@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit
+"""HydraTK core event handling implementation class
 
 .. module:: core.eventhandler
    :platform: Unix
@@ -11,6 +11,8 @@
 from hydratk.core import hsignal
 
 class EventHandler:
+    """Class EventHandler
+    """
     
     def _ec_check_co_privmsg(self, oevent):
         self._check_co_privmsg()    

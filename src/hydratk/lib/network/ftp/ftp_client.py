@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""FTP client
 
 .. module:: network.ftp.ftp_client
    :platform: Unix
@@ -30,6 +30,8 @@ from ftplib import FTP, FTP_TLS, all_errors
 from os import path, remove
 
 class FTPClient:
+    """Class FTPClient
+    """
     
     _mh = None
     _client = None
@@ -176,6 +178,7 @@ class FTPClient:
         """Method disconnects from server 
         
         Args:   
+           none
            
         Returns:
            bool: result         
@@ -195,7 +198,8 @@ class FTPClient:
     def list_dir(self):
         """Method lists remote working directory   
         
-        Args:     
+        Args:  
+           none   
            
         Returns:
            list: names         

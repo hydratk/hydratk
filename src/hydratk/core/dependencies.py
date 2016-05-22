@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit
+"""HydraTK core module dependency definitions
 
 .. module:: core.dependencies
    :platform: Unix

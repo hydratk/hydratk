@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""Raw packet networking
 
 .. module:: network.inet.packet
    :platform: Unix

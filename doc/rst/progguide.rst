@@ -1,4 +1,4 @@
-.. Programmer’s Guide
+.. _progguide:
 
 ==================
 Programmer’s Guide

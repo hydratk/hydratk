@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""SQLite DB client
 
 .. module:: network.dbi.sqlite_client
    :platform: Unix
@@ -23,6 +23,8 @@ from hydratk.core import event
 from sqlite3 import Error, connect, Row
 
 class DBClient():
+    """Class DBClient
+    """
     
     _mh = None
     _client = None
@@ -33,7 +35,8 @@ class DBClient():
            
         Called when the object is initialized   
         
-        Args:       
+        Args:  
+           none     
            
         """    
         
@@ -92,7 +95,8 @@ class DBClient():
     def disconnect(self):
         """Method disconnects from database
         
-        Args:            
+        Args:   
+           none         
              
         Returns:
            bool: result

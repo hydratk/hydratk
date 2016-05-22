@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""TFTP client
 
 .. module:: network.ftp.tftp_client
    :platform: Unix
-   :synopsis: SFTP client
+   :synopsis: TFTP client
 .. moduleauthor:: Petr Rašek <bowman@hydratk.org>
 
 """
@@ -26,6 +26,8 @@ from tftpy import TftpShared, TftpClient
 from os import path, remove
 
 class FTPClient:
+    """Class FTPClient
+    """
     
     _mh = None
     _client = None

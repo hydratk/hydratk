@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit library
+"""A useful module for application multilanguagee support
 
 .. module:: translator
    :platform: Unix
@@ -22,9 +22,9 @@ if PYTHON_MAJOR_VERSION == 3:
 
 
 class Translator():
-    '''
-    classdocs
-    '''
+    """Class Translator
+    """
+    
     _msg_mod     = None
     _help_mod    = None    
     _language    = ''
@@ -55,7 +55,7 @@ class Translator():
             
     @property
     def msg_mod(self):
-        """ msg_mod property getter """
+        """ msg_mod property getter, setter """
         
         return self._msg_mod
     
@@ -67,7 +67,7 @@ class Translator():
     
     @property
     def help_mod(self):
-        """ help_mod property getter """
+        """ help_mod property getter, setter """
         
         return self._help_mod
     
@@ -144,6 +144,7 @@ class Translator():
         """Methods gets language
 
         Args:
+           none
 
         Returns:
            str: language

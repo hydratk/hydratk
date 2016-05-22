@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""Simple JMS client for request based processing
 
 .. module:: network.jms.simplejms
    :platform: Unix
@@ -12,13 +12,15 @@ from hydratk.lib.network.jms import jms_client
 from hydratk.lib.system import fs
 
 class JMSClient(jms_client.JMSClient, object):
+    """Class JMSClient
+    """
+    
     _request   = None    
     _response  = None
-
     
     @property
     def request(self):
-        """ request property getter """
+        """ request property getter, setter """
         
         return self._request
     
@@ -54,6 +56,9 @@ class JMSClient(jms_client.JMSClient, object):
                              )
                
 class JMSRequest(object):
+    """Class JMSRequest
+    """
+    
     _msg                   = None
     _destination_queue     = None
     _jms_type              = None        
@@ -74,7 +79,7 @@ class JMSRequest(object):
         
     @property
     def destination_queue(self):
-        """ destination_queue property getter """
+        """ destination_queue property getter, setter """
         
         return self._destination_queue
     
@@ -86,7 +91,7 @@ class JMSRequest(object):
     
     @property
     def jms_type(self):
-        """ jms_type property getter """
+        """ jms_type property getter, setter """
         
         return self._jms_type
     
@@ -98,7 +103,7 @@ class JMSRequest(object):
     
     @property
     def msg(self):
-        """ msg property getter """
+        """ msg property getter, setter """
         
         return self._msg
     
@@ -110,7 +115,7 @@ class JMSRequest(object):
                      
     @property
     def message(self):
-        """ message property getter """
+        """ message property getter, setter """
         
         return self._msg
     
@@ -121,6 +126,9 @@ class JMSRequest(object):
         self._msg = msg
         
 class JMSRequestMessage(object):
+    """Class JMSRequestMessage
+    """
+    
     _bind_lchr = '['
     _bind_rchr = ']'
     _content   = None
@@ -145,7 +153,7 @@ class JMSRequestMessage(object):
                 
     @property
     def content(self):
-        """ content property getter """
+        """ content property getter, setter """
                 
         return self._content
     

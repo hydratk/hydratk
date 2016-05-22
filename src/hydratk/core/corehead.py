@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit
+"""HydraTK core module
 
 .. module:: core.corehead
    :platform: Unix
@@ -49,6 +49,9 @@ import hydratk.core.dbconfig as dbconfig
 from hydratk.lib.translation import translator
 
 class AsyncCallBackHandler(object):
+    """Class AsyncCallBackHandler        
+    """
+        
     _hc = None
     
     def __init__(self, hc):
@@ -74,8 +77,11 @@ class AsyncCallBackHandler(object):
 
     
 class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
-    """Class CoreHead         
+    """Class CoreHead 
+       
+       Inherited from MessageHead, EventHandler, Debugger, Profiler, Logger        
     """
+    
     _runlevel         = const.RUNLEVEL_SHUTDOWN
     _config           = None   
     _language         = const.DEFAULT_LANGUAGE 
@@ -126,10 +132,11 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         
         Callback for functionality h_bootstrap
         
-        Args:            
+        Args:    
+           none        
            
         Returns:
-            bool: True       
+           bool: True       
                 
         """  
             
@@ -154,14 +161,15 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         """Method creates configuration database
         
         Callback for command create-config-db
-        Database filename is taken from option --config-db-file (prio 1)
-                                        configuration System/DBConfig/db_file (prio 2) 
+        Database filename is taken from option --config-db-file (prio 1), configuration System/DBConfig/db_file (prio 2)
+         
         If database exists it can be recreated using option -f|--force, otherwise is kept   
         
         Args:            
+           none
            
         Returns:
-            bool: result       
+           bool: result       
                 
         """          
         
@@ -200,12 +208,14 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         
         When it is not active, application is stopped
         
-        Configuration options - Core/MessageService/id
-                                Core/MessageService/transport_type, only IPC is supported now
-                                Core/MessageService/address
-                                Core/Service/pid_file  
+        Configuration options:
+        Core/MessageService/id 
+        Core/MessageService/transport_type
+        Core/MessageService/address
+        Core/Service/pid_file  
         
-        Args:            
+        Args:
+           none            
            
         Returns:
            void  
@@ -353,7 +363,6 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         
         Process polls messages from queue
         
-        TODO explain parameters
         Args:            
            i (int): process id
            status (int): activity status
@@ -430,7 +439,8 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
     def _check_co_privmsg(self):
         """Method checks queue for observer messages and processes them
         
-        Args:            
+        Args:      
+           none      
            
         Returns:
            void      
@@ -489,7 +499,8 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         
         Message is sent via event if present (method doesn't wait if queue is empty)
         
-        Args:         
+        Args:    
+           none     
            
         Returns:
            bool: True/False if queue is/isn't empty   
@@ -518,7 +529,8 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
     def _check_cw_privmsg(self):
         """Method checks queue for worker messages and processes them
         
-        Args:            
+        Args:       
+           none     
            
         Returns:
            void      
@@ -543,7 +555,8 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
     def _check_cw_activity(self):
         """Method checks worker activity
         
-        Args:            
+        Args:     
+           none       
            
         Returns:
            void      
@@ -571,7 +584,8 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         
         Command must have registered callback
         
-        Args:            
+        Args:  
+           none          
            
         Returns:
            void      
@@ -590,7 +604,8 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         
         Database file is stored in configuration System/DBConfig/db_file
         
-        Args:            
+        Args:     
+           none       
            
         Returns:
            void      
@@ -620,7 +635,8 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         
         Each file is reported via event htk_before_append_extension_config_file
         
-        Args:            
+        Args:  
+           none          
            
         Returns:
            void
@@ -689,7 +705,8 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
     def _load_base_config(self): 
         """Method loads base configuration from file
         
-        Args:          
+        Args:        
+           none  
            
         Returns:
            void 
@@ -716,14 +733,16 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         
         Debug, language, message router, count of workers
                 
-        Configuration options - System/Debug/enabled
-                              - System/Debug/level
-                              - System/Language/id
-                              - Core/Options/run_mode
-                              - Core/MessageRoute/id
-                              - Core/Workers/total
+        Configuration options:
+        System/Debug/enabled
+        System/Debug/level
+        System/Language/id
+        Core/Options/run_mode
+        Core/MessageRoute/id
+        Core/Workers/total
         
-        Args:         
+        Args:
+           none         
            
         Returns:
            void 
@@ -814,9 +833,11 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         """Method loads extensions specified in configuration
         
         Internal extensions are imported as module
+        
         External extensions are included to PYTHONPATH
 
         Args:         
+           none
            
         Returns:
            void 
@@ -997,6 +1018,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         """Method imports global langtexts and command help  
 
         Args:  
+           none
            
         Returns:
            void
@@ -1027,7 +1049,8 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
     def _reg_self_command_hooks(self):  
         """Method registers global commands hooks
 
-        Args:  
+        Args: 
+           none 
            
         Returns:
            void
@@ -1052,6 +1075,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         Initialize translator, import global langtexts, register hooks
 
         Args:  
+           none
            
         Returns:
            bool: True
@@ -1093,6 +1117,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         Load configuration from several sources - base, extensions, database
 
         Args:  
+           none
            
         Returns:
            bool: True
@@ -1115,6 +1140,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         Load extensions
 
         Args:  
+           none
            
         Returns:
            bool: True
@@ -1139,6 +1165,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         Parse command options
 
         Args:  
+           none
            
         Returns:
            bool: True
@@ -1156,6 +1183,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         Subscribe managers if running in parallel processing mode
 
         Args:  
+           none
            
         Returns:
            bool: True
@@ -1185,6 +1213,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         Process command
 
         Args:  
+           none
            
         Returns:
            bool: True
@@ -1207,8 +1236,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         
         Returns:            
            int: number of processed callbacks
-                   
-           
+                              
         """
         
         processed_callbacks = 0
@@ -1253,6 +1281,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         """Method initializes command line according to configuration
         
         Args:
+           none
         
         Returns:            
            void                
@@ -1387,6 +1416,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         """Method registers signal hooks supported for services
         
         Args:
+           none
         
         Returns:            
            void         
@@ -1406,6 +1436,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         Bootstrap, runlevels
         
         Args:
+           none
         
         Returns:            
            void         
@@ -1430,6 +1461,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         """Method registers event hooks
         
         Args:
+           none
         
         Returns:            
            void         
@@ -1457,6 +1489,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         Recognized commands are handled, unrecognized are ignored
         
         Args:
+           none
         
         Returns:            
            void  
@@ -1599,6 +1632,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         """Method registers signal hooks
         
         Args:
+           none
         
         Returns:            
            void
@@ -1632,6 +1666,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         Initialize observer process
         
         Args:
+           none
         
         Returns:            
            void
@@ -1684,6 +1719,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         Configuration options - Core/Service/pid_file
         
         Args:
+           none
         
         Returns:            
            void
@@ -1719,6 +1755,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         """Method initializes message router
 
         Args:
+           none
         
         Returns:            
            void
@@ -1732,6 +1769,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         """Method prints extension list
 
         Args:
+           none
         
         Returns:            
            void

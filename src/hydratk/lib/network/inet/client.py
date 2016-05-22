@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""TCP/UDP client
 
 .. module:: network.inet.client
    :platform: Unix
@@ -26,6 +26,8 @@ from socket import socket, error, gethostbyaddr, getaddrinfo, setdefaulttimeout
 from socket import AF_INET, AF_INET6, SOCK_STREAM, SOCK_DGRAM, SHUT_RDWR
 
 class Client:
+    """Class Client
+    """
 
     _mh = None
     _lay3_prot = None

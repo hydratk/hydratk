@@ -1,7 +1,0 @@
-.. Extensions
-
-==========
-Extensions
-==========
-
-

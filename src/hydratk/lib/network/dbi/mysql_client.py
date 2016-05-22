@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""MySQL DB client
 
 .. module:: network.dbi.mysql_client
    :platform: Unix
@@ -24,6 +24,8 @@ from MySQLdb import Error, connect
 from string import replace
 
 class DBClient():
+    """Class DBClient
+    """
     
     _mh = None
     _client = None
@@ -135,7 +137,8 @@ class DBClient():
     def disconnect(self):
         """Method disconnects from database
         
-        Args:            
+        Args:   
+           none         
              
         Returns:
            bool: result

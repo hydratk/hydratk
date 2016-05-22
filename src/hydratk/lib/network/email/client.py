@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""Generic EMAIL client factory
 
 .. module:: network.email.client
    :platform: Unix

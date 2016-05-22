@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit
+"""HydraTK core integrated profiler
 
 .. module:: core.profiler
    :platform: Unix
@@ -10,6 +10,9 @@
 import cProfile
 
 class Profiler(object):
+    """Class Profiler
+    """
+    
     _pr = None
     
     def __init__(self):
@@ -18,6 +21,7 @@ class Profiler(object):
         Called when object is initialized
         
         Args:
+           none
 
         """
                 
@@ -28,6 +32,7 @@ class Profiler(object):
         """Method starts profiler
         
         Args:
+           none
         
         Returns:            
            void
@@ -40,6 +45,7 @@ class Profiler(object):
         """Method stops profiler
         
         Args:
+           none
         
         Returns:            
            void
@@ -52,6 +58,7 @@ class Profiler(object):
         """Method sets profiler command line configuration (options -p, --profile)
         
         Args:
+           none
         
         Returns:            
            void

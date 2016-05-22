@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit library
+"""Pycurl wrapped object oriented soap client solution
 
 .. module:: network.soap.simplesoap
    :platform: Unix
@@ -61,6 +61,9 @@ curl_info_map  = {
 HTTP_AUTH_BASIC = pycurl.HTTPAUTH
 
 class SoapResponse(object):
+    """Class SoapResponse
+    """
+    
     _msg          = None
     _resp_headers = []
     _resp_code    = 0    
@@ -115,7 +118,8 @@ class SoapResponse(object):
     def _apply_info(self):
         """Methods stores response code
 
-        Args:           
+        Args:        
+           none   
 
         Returns:
            void
@@ -139,14 +143,16 @@ class SoapResponse(object):
         
         
 class SoapRequest(object):
+    """Class SoapRequest
+    """
+    
     _msg         = None
     _req_url     = None
     _req_method  = pycurl.POST
     _req_headers = [
                      "Content-type: text/xml; charset=utf-8"
                    ]
-    
-    
+        
     def __init__(self, request_url=None):
         """Class constructor
         
@@ -161,7 +167,7 @@ class SoapRequest(object):
     
     @property
     def url(self):
-        """ url property getter """
+        """ url property getter, setter """
         
         return self._req_url
     
@@ -173,7 +179,7 @@ class SoapRequest(object):
             
     @property
     def headers(self):
-        """ header property getter """
+        """ header property getter, setter """
         
         return self._req_headers
     
@@ -185,7 +191,7 @@ class SoapRequest(object):
     
     @property
     def msg(self):
-        """ msg property getter """
+        """ msg property getter, setter """
         
         return self._msg
     
@@ -197,7 +203,7 @@ class SoapRequest(object):
                      
     @property
     def message(self):
-        """ message propery getter """
+        """ message propery getter, setter """
         
         return self._msg
     
@@ -209,6 +215,9 @@ class SoapRequest(object):
          
 
 class SoapResponseMessage(object):
+    """Class SoapResponseMessage
+    """
+    
     _content = None
     
     def __init__(self, content=None):
@@ -226,7 +235,7 @@ class SoapResponseMessage(object):
             
     @property
     def content(self):
-        """ content property getter """
+        """ content property getter, setter """
         
         return self._content
     
@@ -238,6 +247,9 @@ class SoapResponseMessage(object):
 
 
 class SoapRequestMessage(XMLValidate):
+    """Class SoapRequestMessage
+    """
+    
     _bind_lchr = '['
     _bind_rchr = ']'
     _content   = None
@@ -262,7 +274,7 @@ class SoapRequestMessage(XMLValidate):
                 
     @property
     def content(self):       
-        """ content property getter """
+        """ content property getter, setter """
          
         return self._content
     
@@ -313,6 +325,7 @@ class SoapRequestMessage(XMLValidate):
         """Methods validates request xml according to xsd
 
         Args:
+           none
 
         Returns:
            tuple: result (bool), message (str)
@@ -331,6 +344,8 @@ class SoapRequestMessage(XMLValidate):
         return (result, msg)
            
 class SoapClient():
+    """Class SoapClient
+    """
     
     _connection_timeout = 30
     _request            = None    
@@ -339,7 +354,7 @@ class SoapClient():
 
     @property
     def request(self):
-        """ request property getter """
+        """ request property getter, setter """
         
         return self._request
     
@@ -361,6 +376,7 @@ class SoapClient():
         Called when object is initialized
 
         Args:
+           none
     
         """
                 

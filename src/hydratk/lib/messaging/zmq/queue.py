@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit library
+"""A Zeromq queue driver
 
 .. module:: lib.messaging.zmq.queue
    :platform: Unix
@@ -12,6 +12,9 @@ import zmq
 from pyx.messaging import queue
 
 class Queue(zmq):
+    """Class Queue
+    """
+    
     __options = {}
     __type    = None
     __queue = None
@@ -90,6 +93,7 @@ class Queue(zmq):
         """Methods destroys queue
 
         Args:
+           none
 
         Returns:
            void
@@ -102,6 +106,7 @@ class Queue(zmq):
         """Methods connects to queue
 
         Args:
+           none
 
         Returns:
            void

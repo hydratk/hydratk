@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Datagen extension
+"""Extension for data generators
 
 .. module:: datagen.datagen
    :platform: Unix
@@ -12,11 +12,14 @@ from hydratk.core import extension
 from hydratk.lib.console.commandlinetool import CommandlineTool
 
 class Extension(extension.Extension):
+    """Class Extension
+    """
     
     def _init_extension(self):
         """Method initializes extension
         
         Args:            
+           none
            
         Returns:
            void    
@@ -34,7 +37,8 @@ class Extension(extension.Extension):
         
         Commands gen-asn1, gen-json, gen-xml
         
-        Args:            
+        Args:
+           none            
            
         Returns:
            void    
@@ -65,6 +69,7 @@ class Extension(extension.Extension):
         Encode text file, decode binary file according to ASN.1 specification
         
         Args:
+           none
         
         Returns:
            void                 
@@ -114,6 +119,7 @@ class Extension(extension.Extension):
         Generate sample JSON file according to JSON specification  
         
         Args:
+           none
         
         Returns:
            void                 
@@ -147,6 +153,7 @@ class Extension(extension.Extension):
         Generate sample XML file according to WSDL/XSD specification 
         
         Args:
+           none
         
         Returns:
            void                  

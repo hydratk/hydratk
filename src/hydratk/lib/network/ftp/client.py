@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""Generic FTP client factory
 
 .. module:: network.ftp.client
    :platform: Unix

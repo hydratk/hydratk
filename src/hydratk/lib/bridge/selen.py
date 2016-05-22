@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""Bridge to Selenium webdriver
 
 .. module:: bridge.selen
    :platform: Unix
@@ -42,6 +42,8 @@ from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support.ui import WebDriverWait
 
 class SeleniumBridge():
+    """Class SeleniumBridge
+    """
     
     _mh = None
     _client = None
@@ -132,7 +134,8 @@ class SeleniumBridge():
     def close(self):
         """Method closes client
         
-        Args:            
+        Args:    
+           none        
              
         Returns:
            bool: result

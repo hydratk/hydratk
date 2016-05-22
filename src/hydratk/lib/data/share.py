@@ -1,4 +1,7 @@
 class My(object):
+    """Class My
+    """
+    
     _pocket      = None    
     _piles       = {}      
         
@@ -61,7 +64,10 @@ class My(object):
                 result = True
         return result
      
-class Pocket(object):    
+class Pocket(object):  
+    """Class Pocket
+    """
+      
     _data = {}
     
     def show(self):
@@ -83,7 +89,7 @@ class Pocket(object):
             
     @property
     def content(self):
-        """ content property getter """
+        """ content property getter, setter """
         
         return self._data
     
@@ -114,7 +120,8 @@ class Pocket(object):
     def purge(self):
         """Method purges pocket
         
-        Args:   
+        Args: 
+           none  
            
         Returns:
            void   

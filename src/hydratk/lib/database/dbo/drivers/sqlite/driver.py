@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""DBO SQlite driver
 
 .. module:: database.dbo.drivers.sqlite.driver
    :platform: Unix
@@ -13,6 +13,9 @@ import os
 from hydratk.lib.database.dbo import dbodriver 
 
 class DBODriver(dbodriver.DBODriver):
+    """Class DBODriver
+    """
+    
     _mode           = 'FILE' #MEMORY
     _dbfile         = None
     _driver_options = {
@@ -89,6 +92,7 @@ class DBODriver(dbodriver.DBODriver):
         """Method connects to database
         
         Args:   
+           none
            
         Returns:
            void
@@ -107,7 +111,8 @@ class DBODriver(dbodriver.DBODriver):
     def close(self):
         """Method disconnects from database
         
-        Args:   
+        Args:  
+           none 
            
         Returns:
            void
@@ -125,7 +130,8 @@ class DBODriver(dbodriver.DBODriver):
     def commit(self):
         """Method commits transaction
         
-        Args:   
+        Args:
+           none   
            
         Returns:
            void
@@ -184,7 +190,8 @@ class DBODriver(dbodriver.DBODriver):
     def rollback(self):
         """Method rollbacks transaction
         
-        Args:   
+        Args: 
+           none  
            
         Returns:
            void
@@ -255,7 +262,8 @@ class DBODriver(dbodriver.DBODriver):
     def database_exists(self):
         """Method checks if database exists
         
-        Args:   
+        Args: 
+           none 
            
         Returns:
            bool: result
@@ -274,7 +282,8 @@ class DBODriver(dbodriver.DBODriver):
     def remove_database(self):
         """Method deletes database file
         
-        Args:   
+        Args:
+           none   
            
         Returns:
            bool: result
@@ -290,7 +299,8 @@ class DBODriver(dbodriver.DBODriver):
     def erase_database(self):
         """Method drops database
         
-        Args:   
+        Args:  
+           none 
            
         Returns:
            void

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""POP email client
 
 .. module:: network.email.pop_client
    :platform: Unix
@@ -25,6 +25,8 @@ from socket import error
 from string import replace
 
 class EmailClient:
+    """Class EmailClient
+    """
     
     _mh = None
     _client = None
@@ -158,6 +160,7 @@ class EmailClient:
         """Method disconnects from server
         
         Args:
+           none
            
         Returns:
            bool: result         
@@ -177,7 +180,8 @@ class EmailClient:
     def email_count(self):
         """Method gets email count   
         
-        Args:     
+        Args: 
+           none    
            
         Returns: 
            int: count       
@@ -200,6 +204,7 @@ class EmailClient:
         """Method gets email list
         
         Args:
+           none
            
         Returns: 
            list: email ids       

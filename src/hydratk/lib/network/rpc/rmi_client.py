@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""Java RMI client
 
 .. module:: network.rpc.rmi_client
    :platform: Unix
@@ -23,6 +23,8 @@ from hydratk.core import event
 from hydratk.lib.bridge.java import JavaBridge
 
 class RPCClient():
+    """Class RPCClient
+    """
     
     _mh = None
     _bridge = None
@@ -56,6 +58,7 @@ class RPCClient():
         """Method stops JVM  
         
         Args:
+           none
         
         Returns:
            void

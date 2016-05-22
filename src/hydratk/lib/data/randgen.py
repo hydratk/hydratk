@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit library
+"""Module for random data generation
 
 .. module:: lib.data.gen
    :platform: Unix
@@ -15,9 +15,10 @@ def gen_systimestamp():
     """Method generates system timestamp
         
     Args:
+       none
         
     Returns:
-        str: timestamp in format YYYY-MM-DDTHH24:MI:SS    
+       str: timestamp in format YYYY-MM-DDTHH24:MI:SS    
                 
     """    
     
@@ -27,9 +28,10 @@ def gen_sysdate():
     """Method generates system date
         
     Args:
+       none   
         
     Returns:
-        str: date in format YYYY-MM-DD   
+       str: date in format YYYY-MM-DD   
                 
     """       
     
@@ -39,10 +41,10 @@ def gen_message_id(prefix='hydratk'):
     """Method generates random message id
         
     Args:
-        prefix (str): message prefix
+       prefix (str): message prefix
         
     Returns:
-        str: message id in format hydratk-time-random 3-digit number  
+       str: message id in format hydratk-time-random 3-digit number  
                 
     """       
     
@@ -52,13 +54,13 @@ def gen_id(n=10):
     """Method generates random number
         
     Args:
-        n (int): number of digits
+       n (int): number of digits
         
     Returns:
-        str: random n-digit number
+       str: random n-digit number
         
     Raises:
-        error: ValueError
+       error: ValueError
                 
     """  
     

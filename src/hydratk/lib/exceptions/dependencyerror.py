@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit library
+"""Class for dependency error exception
 
 .. module:: lib.exceptions.dependencyerror
    :platform: Unix
@@ -9,9 +9,8 @@
 """
 
 class DependencyError(Exception):
-    '''
-    classdocs
-    '''
+    """Class DependencyError
+    """
 
     def __init__(self, error_num, args, msg):
         """Class constructor

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is part of Hydra Toolkit library
+"""Generic JMS client factory
 
 .. module:: network.jms.client
    :platform: Unix

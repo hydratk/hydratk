@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit library
+"""Module for string pretty formatting
 
 .. module:: lib.string.prettify
    :platform: Unix

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra Toolkit library
+"""Utilities for advanced work and validation of xml data format
 
 .. module:: lib.data.xmlgen
    :platform: Unix
@@ -13,6 +13,9 @@ import os
 from hydratk.lib.exceptions.inputerror import InputError
 
 class XMLValidate(object):
+    """Class XMLValidate
+    """
+    
     _xml_schema = None
     
     def xsd_validate_file(self, xml_file):
