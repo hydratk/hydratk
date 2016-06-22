@@ -13,38 +13,38 @@ It is controlled via command track with following options.
 
 Mandatory:
 
-* --app <name>: application, use testlink
-* --action <name>: action, read|create|update
+* --tr-app <name>: application, use testlink
+* --tr-action <name>: action, read|create|update
 
 Optional:
 
-* --type <name>: entity type, test-suite|test|test-plan|build
-* --output <path>: filename, action output is written, supported for action: read
-* --url <string>: url, configurable
-* --dev-key <string>: developer key, configurable
-* --project <string>: project, configurable
-* --id <num>: record id, mandatory for actions: update, read (for use cases read test|read test plan)
-* --fields <list>: request record fields, configurable, list form - name1,name2, supported for action: read
-* --params <dict>: record params, dictionary form - name1:value,name2:value, supported for actions create|update
-* --path <string>: directory path, dir1/di2 , mandatory for use cases: read/create test suite|create test
-* --steps <dict>: test steps, steps delimited by pipe, step in dictionary form - name1:value,name2:value|name1:value,name2:value, supported for use case create test
+* --tr-type <name>: entity type, test-suite|test|test-plan|build
+* --tr-output <path>: filename, action output is written, supported for action: read
+* --tr-url <string>: url, configurable
+* --tr-dev-key <string>: developer key, configurable
+* --tr-project <string>: project, configurable
+* --tr-id <num>: record id, mandatory for actions: update, read (for use cases read test|read test plan)
+* --tr-fields <list>: request record fields, configurable, list form - name1,name2, supported for action: read
+* --tr-params <dict>: record params, dictionary form - name1:value,name2:value, supported for actions create|update
+* --tr-path <string>: directory path, dir1/di2 , mandatory for use cases: read/create test suite|create test
+* --tr-steps <dict>: test steps, steps delimited by pipe, step in dictionary form - name1:value,name2:value|name1:value,name2:value, supported for use case create test
 
 Configuration
 ^^^^^^^^^^^^^
 
 Use section testlink in configuration file.
 
-* url: TestLink server url, used as --url option
-* dev_key: develope key, used as --dev-key option
-* project: project, used as --project option                                                                                                  
-* return_fields: record fields returned within read (all by default), used as --fields option, use list form, name1,name2,name3                                      
-* required_fields: required fields to create new record, user will be asked if not provided in --params option, use list form, name1,name2,name3                                     
+* url: TestLink server url, used as --tr-url option
+* dev_key: develope key, used as --tr-dev-key option
+* project: project, used as --tr-project option                                                                                                  
+* return_fields: record fields returned within read (all by default), used as --tr-fields option, use list form, name1,name2,name3                                      
+* required_fields: required fields to create new record, user will be asked if not provided in --tr-params option, use list form, name1,name2,name3                                     
 * default_values: default field values to create new record, used both for required and optional fields, use dictionary form, name: value                                      
 * lov: list of values for required fields, list will be offered to user within create, use dictionary form, name: value1,value2,value3
 
 TestLink supports multiple test entities, but configuration parameters (return_fields, required_fields, default_values, lov) are used 
 for entity test only. 
-Parameters for remaining entities must be provided by option --params.
+Parameters for remaining entities must be provided by option --tr-params.
 
   .. code-block:: yaml
   
@@ -73,16 +73,16 @@ Some parameters are configured to make command examples shorter.
      # type=test-suite
      # path is provided, user will be prompted if missing
      # returns tests under test suite, output is printed
-     $ htk --app testlink --action read --type test-suite --path "suite 1/suite 3" track
+     $ htk --tr-app testlink --tr-action read --tr-type test-suite --tr-path "suite 1/suite 3" track
      
      # read test
      # id=3, type=test
-     $ htk --app testlink --action read --type test --id 3 track
+     $ htk --tr-app testlink --tr-action read --tr-type test --tr-id 3 track
      
      # create test suite
      # type=test-suite
      # path contains also new suite name (suite 1 is existing folder, suite 3 is new folder)
-     $ htk --app testlink --action create --type test-suite --path "suite 1/suite 3" track
+     $ htk --tr-app testlink --tr-action create --tr-type test-suite --tr-path "suite 1/suite 3" track
      
      Record 165 created
      
@@ -90,7 +90,7 @@ Some parameters are configured to make command examples shorter.
      # entity=test
      # path is provided
      # required fields are provided or have configured default values
-     $ htk --app testlink --action create --type test --path "suite 1/suite 3" --params "testcasename:case3,authorlogin:admin,summary:test" track
+     $ htk --tr-app testlink --tr-action create --tr-type test --tr-path "suite 1/suite 3" --tr-params "testcasename:case3,authorlogin:admin,summary:test" track
      
      Record 3 created
      
@@ -98,45 +98,45 @@ Some parameters are configured to make command examples shorter.
      # entity=test
      # path is provided
      # required fields are provided or have configured default values     
-     $ htk --app testlink --action create --type test --path "suite 1/suite 3" --params "testcasename:case3,authorlogin:admin,summary:test" 
-           --steps "actions:act1,expected_results:res1|actions:act2,expected_results:res2" track
+     $ htk --tr-app testlink --tr-action create --tr-type test --tr-path "suite 1/suite 3" --tr-params "testcasename:case3,authorlogin:admin,summary:test" 
+           --tr-steps "actions:act1,expected_results:res1|actions:act2,expected_results:res2" track
      
      Record 4 created
      
      # read test plan
      # id=166, type=test-plan
      # returns tests under test plan, output is written to text file
-     $ htk --app testlink --action read --type test-plan --id 166 --output tests.txt track
+     $ htk --tr-app testlink --tr-action read --tr-type test-plan --tr-id 166 --tr-output tests.txt track
      
      # create test plan
      # type=test-plan
      # required fields are provided
-     $ htk --app testlink --action create --type test-plan --params "name:plan 1" track
+     $ htk --tr-app testlink --tr-action create --tr-type test-plan --tr-params "name:plan 1" track
      
      Record 166 created
      
      # create build
      # type=build
      # required fields are provided
-     $ htk --app testlink --action create --type build --params "plan:2,name:build 1" track
+     $ htk --tr-app testlink --tr-action create --tr-type build --tr-params "plan:2,name:build 1" track
      
      Record 168 created
      
      # add test to plan
      # add test 3 to test plan 166, type=test-plan
-     $ htk --app testlink --action update --type test-plan --id 166 --params "test:3" track
+     $ htk --tr-app testlink --tr-action update --tr-type test-plan --tr-id 166 --tr-params "test:3" track
      
      Record 166 updated
      
      # update test execution
      # id=3, type=test, add test to test plan 167, status false
-     $ htk --app testlink --action update --type test --id 3 --params "plan:167,status:f" track
+     $ htk --tr-app testlink --tr-action update --tr-type test --tr-id 3 --tr-params "plan:167,status:f" track
      
      Record 3 updated   
      
      .. note::
      
-        Use option --type carefully    
+        Use option --tr-type carefully    
         
 API
 ^^^

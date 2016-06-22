@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
 from install.pre_install import run_pre_install
 from install.post_install import run_post_install

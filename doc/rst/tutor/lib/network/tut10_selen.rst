@@ -11,7 +11,7 @@ API
 Module hydratk.lib.bridge.selen
 
 Constructor requires attribute browser, PhantomJS (headless browser) is chosen by default.
-Browser libraries except PhantomJS are not bundled with HydraTK and must be installed individually.  
+Browser libraries including PhantomJS are not bundled with HydraTK and must be installed individually.  
 
 Supported browsers:
 

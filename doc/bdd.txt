@@ -1,5 +1,0 @@
-BDD
-
-and in database "test" table "data1" column "testvar" is "1" 
-
-def in_database_table_column_is($db,$table,$column,$value)

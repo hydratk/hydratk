@@ -60,15 +60,6 @@ cycles
 data
 ^^^^
 
-.. _refman_hydra_lib_data_loader:
-
-* loader
-
-.. automodule:: hydratk.lib.data.loader
-   :member-order: bysource
-
-.. _refman_hydra_lib_data_randgen:
-
 * randgen
 
 .. automodule:: hydratk.lib.data.randgen
@@ -86,14 +77,7 @@ data
 * shmm
 
 .. automodule:: hydratk.lib.data.shmm
-   :member-order: bysource
-
-.. _refman_hydra_lib_data_xml:
-
-* xml
-
-.. automodule:: hydratk.lib.data.xml
-   :member-order: bysource   
+   :member-order: bysource 
 
 .. _refman_hydra_lib_database:
 

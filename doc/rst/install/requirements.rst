@@ -11,7 +11,7 @@ Basic
 ^^^^^
 * Any OS Unix - distributions Debian, Red Hat, etc with apt-get or yum package manager
 * Python interpreter - versions `2.7x <https://www.python.org/downloads/release/python-2711/>`_, `3.1x <https://www.python.org/download/releases/3.1.4/>`_, `PyPy 2.6x <http://pypy.org/download.html>`_
-* `PIP <https://pypi.python.org/pypi/pip>`_ module to enable installation from PyPi repository
+* Python modules `pip <https://pypi.python.org/pypi/pip>`_ and setuptools <https://pypi.python.org/pypi/setuptools>`_ 
 
 .. note::
 
@@ -33,4 +33,4 @@ These libraries will be installed automatically, if not installed yet.
 
 .. note:: 
 
-   Modules pyzmq and setproctitle require some other libraries (written in C) which will be also installed.
+   Modules pyzmq and setproctitle require some other libraries which will be also installed.

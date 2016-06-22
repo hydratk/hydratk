@@ -13,33 +13,33 @@ It is controlled via command track with following options.
 
 Mandatory:
 
-* --app <name>: application, use trac
-* --action <name>: action, read|create|update|delete
+* --tr-app <name>: application, use trac
+* --tr-action <name>: action, read|create|update|delete
 
 Optional:
 
-* --input <path>: filename, content is written to ticket description, supported for actions: create|update
-* --output <path>: filename, action output is written, supported for action: read
-* --url <string>: url, configurable
-* --user <string>: username, configurable
-* --passw <string>: password, configurable
-* --project <string>: project, configurable
-* --id <num>: record id, optional for action: read, mandatory for action: update|delete
-* --fields <list>: request record fields, configurable, list form - name1,name2, supported for action: read
-* --query <string>: query, Trac specific expression, supported for action: read
-* --params <dict>: record params, dictionary form - name1:value,name2:value, supported for actions create|update
+* --tr-input <path>: filename, content is written to ticket description, supported for actions: create|update
+* --tr-output <path>: filename, action output is written, supported for action: read
+* --tr-url <string>: url, configurable
+* --tr-user <string>: username, configurable
+* --tr-passw <string>: password, configurable
+* --tr-project <string>: project, configurable
+* --tr-id <num>: record id, optional for action: read, mandatory for action: update|delete
+* --tr-fields <list>: request record fields, configurable, list form - name1,name2, supported for action: read
+* --tr-query <string>: query, Trac specific expression, supported for action: read
+* --tr-params <dict>: record params, dictionary form - name1:value,name2:value, supported for actions create|update
 
 Configuration
 ^^^^^^^^^^^^^
 
 Use section trac in configuration file.
 
-* url: Trac server url, used as --url option
-* user: username, used as --user option
-* passw: password, used as --passw option
-* project: project, used as --project option                                                                                                  
-* return_fields: record fields returned within read (all by default), used as --fields option, use list form, name1,name2,name3                                      
-* required_fields: required fields to create new record, user will be asked if not provided in --params option, use list form, name1,name2,name3                                     
+* url: Trac server url, used as --tr-url option
+* user: username, used as --tr-user option
+* passw: password, used as --tr-passw option
+* project: project, used as --tr-project option                                                                                                  
+* return_fields: record fields returned within read (all by default), used as --tr-fields option, use list form, name1,name2,name3                                      
+* required_fields: required fields to create new record, user will be asked if not provided in --tr-params option, use list form, name1,name2,name3                                     
 * default_values: default field values to create new record, used both for required and optional fields, use dictionary form, name: value                                      
 * lov: list of values for required fields, list will be offered to user within create, use dictionary form, name: value1,value2,value3
 
@@ -73,7 +73,7 @@ Some parameters are configured to make command examples shorter.
      
      # read tickets
      # tickets which are not closed, configured fields are returned
-     $ htk --app trac --action read --query "status!=closed" track   
+     $ htk --tr-app trac --tr-action read --tr-query "status!=closed" track   
      
      [{'priority': 'major', 'type': 'enhancement', 'description': 'make it better', 'summary': 'Make i2 better'}, 
       {'priority': 'major', 'type': 'defect', 'description': 'This is a test', 'summary': 'Testing Trac opening a ticket'}, 
@@ -91,19 +91,19 @@ Some parameters are configured to make command examples shorter.
      
      # create ticket
      # required fields are provided or have configured default value
-     htk --app trac --action create --params "summary:hydra test,description:hydra desc" track
+     htk --tr-app trac --tr-action create --tr-params "summary:hydra test,description:hydra desc" track
      
      Record 16 created     
      
      # update ticket
      # id=16, field keywords is updated
-     htk --app trac --action update --id 16 --params "keywords:hydratk" track
+     htk --tr-app trac --tr-action update --tr-id 16 --tr-params "keywords:hydratk" track
      
      Record 16 updated 
      
      # delete ticket
      # id=6
-     $ htk --app trac --action delete --id 6 track 
+     $ htk --tr-app trac --tr-action delete --tr-id 6 track 
      
      Record 6 deleted    
      

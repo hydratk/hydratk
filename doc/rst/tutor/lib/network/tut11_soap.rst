@@ -21,7 +21,7 @@ Methods:
      API uses HydraTK core functionalities so it must be running.
 
 Examples
-========
+^^^^^^^^
 
   .. code-block:: python
      

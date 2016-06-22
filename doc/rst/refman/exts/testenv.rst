@@ -13,50 +13,50 @@ testenv
 .. automodule:: hydratk.extensions.testenv.testenv
    :member-order: bysource
 
-.. _refman_ext_testenv_application:
+.. _refman_ext_testenv_bootstrapper:
 
-application
-^^^^^^^^^^^
+bootstrapper
+^^^^^^^^^^^^
 
-* rest_handler
-
-.. automodule:: hydratk.extensions.testenv.application.rest_handler
+.. automodule:: hydratk.extensions.testenv.bootstrapper
    :member-order: bysource
+   
+.. _refman_ext_testenv_db_handler:   
+   
+db_handler
+^^^^^^^^^^
 
-* soap_handler
-
-.. automodule:: hydratk.extensions.testenv.application.soap_handler
+.. automodule:: hydratk.extensions.testenv.db_handler
    :member-order: bysource
-
-* web_server
-
-.. automodule:: hydratk.extensions.testenv.application.web_server
-   :member-order: bysource
-
-.. _refman_ext_testenv_entities:
-
+   
+.. _refman_ext_testenv_entities:   
+   
 entities
 ^^^^^^^^
 
-.. automodule:: hydratk.extensions.testenv.entities.crm_entities
+.. automodule:: hydratk.extensions.testenv.entities
    :member-order: bysource
+   
+.. _refman_ext_testenv_rest_handler:   
+   
+rest_handler
+^^^^^^^^^^^^
 
-.. _refman_ext_testenv_interfaces:
+.. automodule:: hydratk.extensions.testenv.rest_handler
+   :member-order: bysource
+   
+.. _refman_ext_testenv_soap_handler:   
+   
+soap_handler
+^^^^^^^^^^^^
 
-interfaces
+.. automodule:: hydratk.extensions.testenv.soap_handler
+   :member-order: bysource
+   
+.. _refman_ext_testenv_web_server:   
+   
+web_server
 ^^^^^^^^^^
 
-* db_int
-
-.. automodule:: hydratk.extensions.testenv.interfaces.db_int
-   :member-order: bysource
-
-* rest_int
-
-.. automodule:: hydratk.extensions.testenv.interfaces.rest_int
-   :member-order: bysource
-
-* soap_int
-
-.. automodule:: hydratk.extensions.testenv.interfaces.soap_int
-   :member-order: bysource
+.. automodule:: hydratk.extensions.testenv.web_server
+   :member-order: bysource               

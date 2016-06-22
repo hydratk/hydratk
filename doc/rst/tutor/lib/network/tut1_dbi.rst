@@ -75,6 +75,8 @@ SQLite
 Oracle
 ^^^^^^
 
+Oracle client is not bundled with HydraTK and must be installed individually.
+
   .. code-block:: python
   
      # import library
@@ -112,6 +114,14 @@ Oracle
 JDBC
 ^^^^
 
+Part of JDBC client library is implemented in Java as a wrapper application which uses Java JDBC API.
+Python client library uses Java bridge to create Java object instance. 
+Specific Java libraries are needed to access database via JDBC, they are not bundled with hydratk.
+ 
+After installation do following actions:
+1. Check that directory /var/local/hydratk/java was created and contains files: DBClient.java, DBClient.class.
+2. Store specific client jar file to same directory (i.e. ojdbc6.jar).
+
   .. code-block:: python
   
      # import library
@@ -121,7 +131,7 @@ JDBC
      client = db.DBClient('jdbc', True)  
      
      # connect to database
-     lient.connect(driver='oracle.jdbc.driver.OracleDriver', conn_str='jdbc:oracle:thin:@localhost:49161/XE', user='crm', passw='crm')   
+     client.connect(driver='oracle.jdbc.driver.OracleDriver', conn_str='jdbc:oracle:thin:@localhost:49161/XE', user='crm', passw='crm')   
      
      # select records from table
      # returns bool, list of rows

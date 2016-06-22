@@ -35,6 +35,16 @@ Methods:
 JMS
 ^^^
 
+Part of JMS client library is implemented in Java as a wrapper application which uses Java JMS API.
+Python client library uses Java bridge to create Java object instance.
+Specific Java libraries are needed to access JMS providers (WebLogic, HornetQ, OpenMQ, ActiveMQ etc.). 
+JMS API has no low level communication protocol specification so there is no universal client library.
+These libraries are not bundled with hydratk. 
+
+After installation do following actions:
+1. Check that directory /var/local/hydratk/java was created and contains files: JMSClient.java, JMSClient.class, JMSMessage.class, javaee.jar
+2. Store specific client jar file to same directory (i.e. activemq-all-5.13.0.jar).
+
   .. code-block:: python
   
      # import library
