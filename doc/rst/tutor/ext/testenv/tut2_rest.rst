@@ -3,7 +3,7 @@
 Tutorial 2: REST interface
 ==========================
 
-Sample Yoda script is located in /var/local/hydratk/yoda/yoda-tests/testenv/rest.yoda.
+Sample Yoda script is located in /var/local/hydratk/yoda/yoda-tests/testenv/rest.jedi.
 
 Important snippets are commented.
 
@@ -13,7 +13,7 @@ Connect
   .. code-block:: python
   
      # import helpers
-     import testenv_helpers as hlp
+     import yodahelpers.testenv.helpers as hlp
     
      # create REST client instance and connect
      client = hlp.rest()

@@ -10,13 +10,12 @@
 
 from config import config as cfg
 import command as cmd
-from setuptools.command.install import install
-from os import path
 
 def run_post_install():
     """Method runs post-install tasks
 
     Args:
+       none
 
     Returns:
        void
@@ -42,21 +41,4 @@ def set_access_rights():
     """    
     
     for dir, right in cfg['rights'].items():
-        cmd.set_rights(dir, right)
-
-        
-def compile_java_classes():
-    """Method compiles Java classes
-
-    Args:
-
-    Returns:
-       void
-    
-    """    
-    
-    dir = cfg['java']['dir'] 
-    if (path.exists(dir)):
-        classpath = cfg['java']['classpath']
-        for file in cfg['java']['files']:
-            cmd.compile_java_class(dir, file, classpath)                                 
+        cmd.set_rights(dir, right)                                

@@ -1,8 +1,0 @@
-uuid hw:
-ls  /dev/disk/by-uuid
-cat /sys/class/dmi/id/product_uuid
-cat /sys/class/dmi/id/board_serial
-
-uuid sw:
-os install id /var/lib/dbus/machine-id
-hostid

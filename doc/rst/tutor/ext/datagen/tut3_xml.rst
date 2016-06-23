@@ -12,13 +12,13 @@ It is controlled via command gen-xml with following options.
 
 Mandatory:
 
-* --spec <path>: path to WSDL/XML specification file
-* --element <name>: root element title
+* --gen-spec <path>: path to WSDL/XML specification file
+* --gen-element <name>: root element title
 
 Optional:
 
-* --envelope: include SOAP envelope, used for WSDL specification
-* --output <path>: path to output file, sample is written to file sample.xml by default
+* --gen-envelope: include SOAP envelope, used for WSDL specification
+* --gen-output <path>: path to output file, sample is written to file sample.xml by default
 
 Specification
 ^^^^^^^^^^^^^
@@ -315,7 +315,7 @@ Create sample for element CreateContactPersonRequest including SOAP envelope fro
 
   .. code-block:: bash
   
-     $ htk --spec ONE-CRM_ContactPersonManagement.wsdl --element CreateContactPersonRequest --envelope --output output.xml gen-xml
+     $ htk --gen-spec ONE-CRM_ContactPersonManagement.wsdl --gen-element CreateContactPersonRequest --gen-envelope --gen-output output.xml gen-xml
       
      Sample generated  
      
@@ -381,7 +381,7 @@ Create sample for element RequestMessage from XSD, ordinary xml in other words (
 
   .. code-block:: bash
   
-     $ htk --spec IntegrationMessage.xsd --element RequestMessage gen-xml
+     $ htk --gen-spec IntegrationMessage.xsd --gen-element RequestMessage gen-xml
      
      Sample generated
      
@@ -427,7 +427,7 @@ Messages with error detail are printed in debug mode.
 
  .. code-block:: bash
  
-    $ htk --spec IntegrationMessage.xsd2 --element RequestMessage gen-xml
+    $ htk --gen-spec IntegrationMessage.xsd2 --gen-element RequestMessage gen-xml
     
     File IntegrationMessage.xsd2 not found
     Import specification error  
@@ -436,7 +436,7 @@ Messages with error detail are printed in debug mode.
 
   .. code-block:: bash
   
-     $ htk --spec IntegrationMessage.xsd --element RequestMessage2 gen-xml
+     $ htk --gen-spec IntegrationMessage.xsd --gen-element RequestMessage2 gen-xml
      
      Error: hydratk.extensions.datagen.xmlgen:toxml:0: error: Type 'NoneType' cannot be serialized. 
      Generation error
@@ -445,7 +445,7 @@ Messages with error detail are printed in debug mode.
 
   .. code-block:: bash
      
-     $ htk --spec IntegrationMessage.xsd --element RequestMessage gen-xml
+     $ htk --gen-spec IntegrationMessage.xsd --gen-element RequestMessage gen-xml
      
      Error: hydratk.extensions.datagen.xmlgen:import_spec:0: error: <unknown>:12:2: not well-formed (invalid token) 
      Import specification error
@@ -454,7 +454,7 @@ Messages with error detail are printed in debug mode.
 
   .. code-block:: bash
   
-     $ htk --spec ONE-CRM_ContactPersonManagement.wsdl --element CreateContactPersonRequest --envelope --output output.xml gen-xml
+     $ htk --gen-spec ONE-CRM_ContactPersonManagement.wsdl --gen-element CreateContactPersonRequest --gen-envelope --gen-output output.xml gen-xml
   
      Error: hydratk.extensions.datagen.xmlgen:import_spec:0: error: <urlopen error [Errno 2] No such file or directory: '/home/lynus/hydratk/ONE-CRM_ContactPersonManagement2.xsd'> 
      Import specification error

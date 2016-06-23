@@ -199,3 +199,41 @@ term
 
 .. automodule:: hydratk.lib.network.term.ssh_client
    :member-order: bysource   
+   
+.. _refman_lib_bridge:
+
+bridge   
+^^^^^^   
+   
+.. _refman_lib_bridge_java:
+
+* java
+
+.. automodule:: hydratk.lib.bridge.java
+   :member-order: bysource
+   
+.. _refman_lib_bridge_selen:   
+   
+* selen
+
+.. automodule:: hydratk.lib.bridge.selen
+   :member-order: bysource    
+
+.. _refman_lib_data:
+
+data
+^^^^  
+   
+.. _refman_hydra_lib_data_loader:
+
+* loader
+
+.. automodule:: hydratk.lib.data.loader
+   :member-order: bysource
+
+.. _refman_hydra_lib_data_xml:
+
+* xml
+
+.. automodule:: hydratk.lib.data.xml
+   :member-order: bysource  

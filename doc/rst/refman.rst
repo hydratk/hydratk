@@ -33,5 +33,4 @@ Libraries
 .. toctree::
    :maxdepth: 1
 
-   refman/libs/bridge
    refman/libs/network   

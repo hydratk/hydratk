@@ -24,6 +24,21 @@ Methods:
   .. note::
    
      API uses HydraTK core functionalities so it must be running.
+     
+Configuration
+^^^^^^^^^^^^^
+
+Common configuration file contains 2 parameters
+
+* jvm_path: path to JVM library (file libjvm.so), JVM is found by bridge in default configuration
+* classpath: path with Java files (class, jar) to be added to JVM classpath
+
+  .. code-block:: python
+
+     Libraries:
+       hydratk.lib.bridge.java:
+         jvm_path: default
+         classpath: /var/local/hydratk/java     
          
 Examples
 ^^^^^^^^

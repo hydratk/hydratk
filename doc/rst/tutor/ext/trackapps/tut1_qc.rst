@@ -13,40 +13,40 @@ It is controlled via command track with following options.
 
 Mandatory:
 
-* --app <name>: application, use qc
-* --action <name>: action, read|create|update|delete
+* --tr-app <name>: application, use qc
+* --tr-action <name>: action, read|create|update|delete
 
 Optional:
 
-* --type <name>: entity type, default defect, defect|test-folder|test|test-set-folder|test-set|test-instance
-* --input <path>: filename, content is written to defect description, supported for actions: create|update
-* --output <path>: filename, action output is written, supported for action: read
-* --url <string>: url, configurable
-* --user <string>: username, configurable
-* --passw <string>: password, configurable
-* --domain <string>: domain, configurable
-* --project <string>: project, configurable
-* --id <num>: record id, optional for action: read, mandatory for actions: update|delete
-* --fields <list>: request record fields, configurable, list form - name1,name2, supported for action: read
-* --query <string>: query, QC specific expression, supported for action: read
-* --order-by <dict>: record ordering, dictionary form - name1:direction|name2:direction, direction asc|desc, supported for action: read
-* --limit <num>: record limit, supported for action: read
-* --offset <num>: record offset, supported for action: read
-* --params <dict>: record params, dictionary form - name1:value,name2:value, supported for actions create|update
-* --path <string>: directory path, dir1/di2, mandatory for use cases: read/create test folder|read/create test set, create test
+* --tr-type <name>: entity type, default defect, defect|test-folder|test|test-set-folder|test-set|test-instance
+* --tr-input <path>: filename, content is written to defect description, supported for actions: create|update
+* --tr-output <path>: filename, action output is written, supported for action: read
+* --tr-url <string>: url, configurable
+* --tr-user <string>: username, configurable
+* --tr-passw <string>: password, configurable
+* --tr-domain <string>: domain, configurable
+* --tr-project <string>: project, configurable
+* --tr-id <num>: record id, optional for action: read, mandatory for actions: update|delete
+* --tr-fields <list>: request record fields, configurable, list form - name1,name2, supported for action: read
+* --tr-query <string>: query, QC specific expression, supported for action: read
+* --tr-order-by <dict>: record ordering, dictionary form - name1:direction|name2:direction, direction asc|desc, supported for action: read
+* --tr-limit <num>: record limit, supported for action: read
+* --tr-offset <num>: record offset, supported for action: read
+* --tr-params <dict>: record params, dictionary form - name1:value,name2:value, supported for actions create|update
+* --tr-path <string>: directory path, dir1/di2, mandatory for use cases: read/create test folder|read/create test set, create test
 
 Configuration
 ^^^^^^^^^^^^^
 
 Use section qc in configuration file.
 
-* url: QC server url, used as --url option
-* user: username, used as --user option
-* passw: password, used as --passw option
-* domain: domain, used as --domain option
-* project: project, used as --project option                                                                                                  
-* return_fields: record fields returned within read (all by default), used as --fields option, use list form, name1,name2,name3                                      
-* required_fields: required fields to create new record, user will be asked if not provided in --params option, use list form, name1,name2,name3                                     
+* url: QC server url, used as --tr-url option
+* user: username, used as --tr-user option
+* passw: password, used as --tr-passw option
+* domain: domain, used as --tr-domain option
+* project: project, used as --tr-project option                                                                                                  
+* return_fields: record fields returned within read (all by default), used as --tr-fields option, use list form, name1,name2,name3                                      
+* required_fields: required fields to create new record, user will be asked if not provided in --tr-params option, use list form, name1,name2,name3                                     
 * default_values: default field values to create new record, used both for required and optional fields, use dictionary form, name: value                                      
 * lov: list of values for required fields, list will be offered to user within create, use dictionary form, name: value1,value2,value3
 
@@ -104,42 +104,42 @@ Defects
   
      # read defect 
      # id=8594, two fields are returned
-     $ htk --app qc --action read --id 8594 --fields "summary,project" track
+     $ htk --tr-app qc --tr-action read --tr-id 8594 --tr-fields "summary,project" track
      
      [{u'summary': u'hydra test', u'project': u'SimpleOnlineCompany'}]
      
      # read defects 
      # query name starts with CRM, output is written to text file 
-     $ htk --app qc --action read --query "{name[CRM*]}" --output defects.txt track
+     $ htk --tr-app qc --tr-action read --tr-query "{name[CRM*]}" --tr-output defects.txt track
      
      # read defect
      # id=8594, connection parameters are provided
      # they are mandatory, if they are missing and not configured, user will be prompted
-     $ htk --app qc --action read --url --user user --passw passw --domain dom --project proj --id 8594 track   
+     $ htk --tr-app qc --tr-action read --tr-url --tr-user user --tr-passw passw --tr-domain dom --tr-project proj --tr-id 8594 track   
      
      # create defect 
      # required fields are provided or have configured default value
      # if some required field is missing and configured, user will be prompted (including lov if configured)
-     $ htk --app qc --action create --params "name:hydra,description:hydra desc" track
+     $ htk --tr-app qc --tr-action create --tr-params "name:hydra,description:hydra desc" track
 
      Record 8595 created
 
      # create defect 
      # description is read from text file
      # required fields are provided or have configured default value
-     $ htk --app qc --action create --params "name:hydra" --input defect.txt track
+     $ htk --tr-app qc --tr-action create --tr-params "name:hydra" --tr-input defect.txt track
      
      Record 8595 created
      
      # update defect
      # id=8595, id is mandatory, user will be prompted if missing
-     $ htk --app --action update --id 8595 --params "status:Closed" track
+     $ htk --tr-app qc --tr-action update --tr-id 8595 --tr-params "status:Closed" track
      
      Record 8595 updated
      
      # delete defect
      # id=8595, id is mandatory, user will be prompted if missing
-     $ htk --app --action delete --id 8595 track
+     $ htk --tr-app --tr-action delete --tr-id 8595 track
      
      Record 8595 deleted             
      
@@ -151,29 +151,29 @@ Test entities
      # returns test under folder (test plan), output is printed
      # type=test-folder
      # path is mandatory, user will be prompted if missing
-     $ htk --app qc --action read --type test-folder --path "Subject/.Trash/VAS" track
+     $ htk --tr-app qc --tr-action read --tr-type test-folder --tr-path "Subject/.Trash/VAS" track
      
      # read test
      # id=1234, type=test
-     $ htk --app qc --action read --type test --id 1234 track
+     $ htk --tr-app qc --tr-action read --tr-type test --tr-id 1234 track
      
      # create test folder
      # type=test-folder
      # path contains also new folder name (Subject/.Trash/VAS/ is existing folder, hydra is new folder)
-     $ htk --app qc --action create --type test-folder --path "Subject/.Trash/VAS/hydra" track
+     $ htk --tr-app qc --tr-action create --tr-type test-folder --tr-path "Subject/.Trash/VAS/hydra" track
      
      Record 1238 created
      
      # create test
      # type=test
      # required fields are provided or have configured default values
-     $ htk --app qc --action create --type test --path "Subject/.Trash/VAS/hydra" --params "name:test,subtype-id:MANUAL" track
+     $ htk --tr-app qc --tr-action create --tr-type test --tr-path "Subject/.Trash/VAS/hydra" --tr-params "name:test,subtype-id:MANUAL" track
      
      Record 1235 created
      
      # update test
      # type=test
-     $ htk --app qc --action update --type test --id 1235 --params "name:test 2" track
+     $ htk --tr-app qc --tr-action update --tr-type test --tr-id 1235 --tr-params "name:test 2" track
      
      Record 1235 updated
      
@@ -181,12 +181,12 @@ Test entities
      # type=test-set-folder
      # returns test sets under folder (test lab), output is written to text file
      # path is provided (folder id is not used)
-     $ htk --app qc --action read --type test-set-folder --path "Root/.Trash/VAS" --output sets.txt track
+     $ htk --tr-app qc --tr-action read --tr-type test-set-folder --tr-path "Root/.Trash/VAS" --tr-output sets.txt track
      
      # create test set folder
      # type=test-set-folder
      # path contains also new folder name (Root/.Trash/VAS is existing folder, hydra is new folder)
-     $ htk --app qc --action create --type test-set-folder --path "Root/.Trash/VAS/hydra" track
+     $ htk --tr-app qc --tr-action create --tr-type test-set-folder --tr-path "Root/.Trash/VAS/hydra" track
      
      Record 1239 created
      
@@ -194,7 +194,7 @@ Test entities
      # type=test-set
      # path is provided
      # required fields are provided or have configured default values
-     $ htk --app qc --action create --type test-set --qc-path "Root/.Trash/VAS/hydra" --params "name:set1,'subtype-id:hp.qc.test-set.default'" track
+     $ htk --tr-app qc --tr-action create --tr-type test-set --tr-qc-path "Root/.Trash/VAS/hydra" --tr-params "name:set1,'subtype-id:hp.qc.test-set.default'" track
      
      Record 1236 created
      
@@ -202,14 +202,14 @@ Test entities
      # type=test-instance
      # assign test 1235 to test set 1236 
      # required fields are provided or have configured default values
-     $ htk --app qc --action create --type test-instance --params "cycle-id:1236,test-id:1235,test-order:1,subtype-id:hp.qc.test-instance.MANUAL" track
+     $ htk --tr-app qc --tr-action create --tr-type test-instance --tr-params "cycle-id:1236,test-id:1235,test-order:1,subtype-id:hp.qc.test-instance.MANUAL" track
      
      Record 1237 created
      
      # update test instance
      # type=test-instance (test run)
      # id=1237, close it
-     $ htk --app qc --action update --type test-instance --id 1237 --params "status:Closed" track
+     $ htk --tr-app qc --tr-action update --tr-type test-instance --tr-id 1237 --tr-params "status:Closed" track
      
      Record 1237 updated  
      

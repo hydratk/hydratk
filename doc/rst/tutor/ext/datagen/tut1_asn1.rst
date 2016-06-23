@@ -13,14 +13,14 @@ It is controlled via command gen-asn1 with following options.
 
 Mandatory:
 
-* --action <name>: encode|decode, encode from json to bin, decode from bin to json
-* --spec <path>: path to ASN.1 specification file
-* --element <name>: root element title
-* --input <path>: path to input json file for encode, bin file for decode
+* --gen-action <name>: encode|decode, encode from json to bin, decode from bin to json
+* --gen-spec <path>: path to ASN.1 specification file
+* --gen-element <name>: root element title
+* --gen-input <path>: path to input json file for encode, bin file for decode
 
 Optional: 
 
-* --output <path>: path to output file, output is written to file <input> with changed suffix by default
+* --gen-output <path>: path to output file, output is written to file <input> with changed suffix by default
 
 Specification
 ^^^^^^^^^^^^^
@@ -95,7 +95,7 @@ Encode the file using command gen-asn1.
      
   .. code-block:: bash
   
-     $ htk --action encode --spec spec.asn --input input.json --element TestSeq2 --output output.bin gen-asn1  
+     $ htk --gen-action encode --gen-spec spec.asn --gen-input input.json --gen-element TestSeq2 --gen-output output.bin gen-asn1  
      
      encode finished
      
@@ -116,7 +116,7 @@ Now let's try to decode generated file output.bin.
 
   .. code-block:: bash
   
-     $ htk --action decode --spec spec.asn --input output.bin --element TestSeq2 gen-asn1
+     $ htk --gen-action decode --gen-spec spec.asn --gen-input output.bin --gen-element TestSeq2 gen-asn1
      
      decode finished
      
@@ -132,7 +132,7 @@ Messages with error detail are printed in debug mode.
 
  .. code-block:: bash
  
-    $ htk --action encode --spec spec2.asn --element TestSeq2 --input input.json gen-asn1
+    $ htk --gen-action encode --gen-spec spec2.asn --gen-element TestSeq2 --gen-input input.json gen-asn1
     
     File spec2.asn not found
     Import specification error  
@@ -141,7 +141,7 @@ Messages with error detail are printed in debug mode.
 
   .. code-block:: bash
   
-     $ htk --action encode --spec spec.asn --element TestSeq3 --input input.json gen-asn1
+     $ htk --gen-action encode --gen-spec spec.asn --gen-element TestSeq3 --gen-input input.json gen-asn1
      
      Error: hydratk.extensions.datagen.asn1codec:encode:0: error: 'TestSeq3'     
      encode error
@@ -150,7 +150,7 @@ Messages with error detail are printed in debug mode.
 
   .. code-block:: bash
   
-     $ htk --action encode --spec spec.asn --element TestSeq2 --input input2.json gen-asn1
+     $ htk --gen-action encode --gen-spec spec.asn --gen-element TestSeq2 --gen-input input2.json gen-asn1
   
      File input2.json not found
      encode error     
@@ -159,7 +159,7 @@ Messages with error detail are printed in debug mode.
 
   .. code-block:: bash
      
-     $ htk --action encode --spec spec.asn --element TestSeq2 --input input.json gen-asn1
+     $ htk --gen-action encode --gen-spec spec.asn --gen-element TestSeq2 --gen-input input.json gen-asn1
      
      unable to process 1 objects:
      TestSeq2
@@ -171,7 +171,7 @@ Messages with error detail are printed in debug mode.
 
   .. code-block:: bash
   
-     $ htk --action encode --spec spec.asn --element TestSeq2 --input input.json gen-asn1
+     $ htk --gen-action encode --gen-spec spec.asn --gen-element TestSeq2 --gen-input input.json gen-asn1
   
      Error: hydratk.extensions.datagen.asn1codec:encode:0: error: TestSeq2.f: invalid SEQ / SET / CLASS value type 
      encode error

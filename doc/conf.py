@@ -19,9 +19,11 @@ import sphinx_rtd_theme
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #sys.path.insert(0, os.path.abspath('.'))
 sys.path.append("/projects/src/hydratk/src")
-sys.path.append("/projects/src/hydratk-ext-yoda/src")
+sys.path.append("/projects/src/hydratk-lib-network/src")
+sys.path.append("/projects/src/hydratk-ext-datagen/src")
 sys.path.append("/projects/src/hydratk-ext-testenv/src")
 sys.path.append("/projects/src/hydratk-ext-trackapps/src")
+sys.path.append("/projects/src/hydratk-ext-yoda/src")
 
 # -- General configuration -----------------------------------------------------
 

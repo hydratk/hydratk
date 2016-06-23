@@ -12,6 +12,14 @@ trackapps
 
 .. automodule:: hydratk.extensions.trackapps.trackapps
    :member-order: bysource
+   
+.. _refman_ext_trackapps_bootstrapper:   
+   
+bootstrapper
+^^^^^^^^^^^^
+
+.. automodule:: hydratk.extensions.trackapps.bootstrapper
+   :member-order: bysource   
 
 .. _refman_ext_trackapps_qc:
 

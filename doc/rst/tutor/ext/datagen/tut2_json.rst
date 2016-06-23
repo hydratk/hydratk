@@ -12,11 +12,11 @@ It is controlled via command gen-json with following options.
 
 Mandatory:
 
-* --spec <path>: path to JSON specification file
+* --gen-spec <path>: path to JSON specification file
 
 Optional:
 
-* --output <path>: path to output file, sample is written to file sample.json by default
+* --gen-output <path>: path to output file, sample is written to file sample.json by default
 
 Specification
 ^^^^^^^^^^^^^
@@ -93,7 +93,7 @@ Generator
 
   .. code-block:: bash
   
-     $ htk --spec spec.json --output output.json gen-json  
+     $ htk --gen-spec spec.json --gen-output output.json gen-json  
      
      Sample generated
      
@@ -135,7 +135,7 @@ Messages with error detail are printed in debug mode.
 
  .. code-block:: bash
  
-    $ htk --spec spec3.json gen-json
+    $ htk --gen-spec spec3.json gen-json
     
     File spec3.json not found
     Import specification error     
@@ -144,7 +144,7 @@ Messages with error detail are printed in debug mode.
 
   .. code-block:: bash
      
-     $ htk --spec spec.json gen-json    
+     $ htk --gen-spec spec.json gen-json    
     
      JSON parsing error at line 1, column 6 (position 5): Unterminated object.
      Import specification error 
@@ -153,7 +153,7 @@ Messages with error detail are printed in debug mode.
 
   .. code-block:: bash
   
-     $ htk --spec spec.json gen-json    
+     $ htk --gen-spec spec.json gen-json    
   
      Error: hydratk.extensions.datagen.jsongen:tojson:0: error: File /home/lynus/hydratk/spec3.json not found 
      Generation error     

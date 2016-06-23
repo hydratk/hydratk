@@ -12,6 +12,14 @@ datagen
 
 .. automodule:: hydratk.extensions.datagen.datagen
    :member-order: bysource
+   
+.. _refman_ext_datagen_bootstrapper: 
+
+bootstrapper
+^^^^^^^^^^^^
+
+.. automodule:: hydratk.extensions.datagen.bootstrapper
+   :member-order: bysource    
 
 .. _refman_ext_datagen_asn1:
 

@@ -1,4 +1,4 @@
-.. BenchMark
+.. _tutor_benchmark:
 
 =========
 BenchMark
