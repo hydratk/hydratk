@@ -135,10 +135,10 @@ class MessageHead(object):
         dmsg("Processing message: {}".format(msg))
         if type(msg).__name__ == 'dict' and 'type' in msg and msg['type'] is not None and msg['type'] != '': 
             fn_id = "cmsg_{}".format(msg['type'])
-            print("Running hook {}".format(fn_id))
+            dmsg("Running hook {}".format(fn_id),3)
             self.run_fn_hook(fn_id, msg)
         else:
-            print("Invalid message", msg)
+            dmsg("Invalid message {}".format(str(msg)),3)
         
             
     def _send_msg(self, msg):
@@ -201,7 +201,10 @@ class MessageHead(object):
                     cb_error_no, cb_error_msg = cb_result
             except Exception as ex:
                 cb_error_no = -1
-                traceback.print_tb(exc_traceback) 
+                ex_type, ex, tb = sys.exc_info()
+                print(ex_type)
+                print(ex)
+                traceback.print_tb(tb) 
             
                         
             ticket_content['completed'] = True

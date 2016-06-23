@@ -23,7 +23,7 @@ class DBO(object):
     _dbo_driver  = None
     _driver_name = None
     
-    def __init__(self, dsn, username=None, password=None, options={}):
+    def __init__(self, dsn, username=None, password=None, options={}, autoconnect=True):
         """ Class constructor
         
         Called when object is initialized
@@ -52,7 +52,7 @@ class DBO(object):
         else: raise DBOException('Not existing driver: {0}'.format(driver_name))
                 
         try:
-            self._dbo_driver = dbo_driver_mod.DBODriver(dsn, username, password, options)                        
+            self._dbo_driver = dbo_driver_mod.DBODriver(dsn, username, password, options, autoconnect)                        
         
         except Exception as e:
             print(e)     

@@ -71,7 +71,7 @@ SERVICE_STATUS_STARTED = 1
 ''' Processes '''
 PROCESS_JOIN_TIMEOUT = 10
 
-''' Run levels '''
+'''Run Workflow levels '''
 RUNLEVEL_SHUTDOWN   = 0
 RUNLEVEL_BASEINIT   = 1
 RUNLEVEL_CONFIG     = 2
