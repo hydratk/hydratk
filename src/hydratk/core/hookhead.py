@@ -34,6 +34,7 @@ class ModuleLoader():
             self._import_package_messages(module_name, packages_map[module_name])
             return None   
         else:
+            #TODO remove, this is for testing purposes only
             if module_name == 'yodahelpers.o2.soc.pc.customerusage':
                 print("Load request {} {}".format(module_name, package_path))                
                 self._package_path = package_path        
