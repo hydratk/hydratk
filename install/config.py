@@ -1,12 +1,4 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra toolkit
-
-.. module:: install.config
-   :platform: Unix
-   :synopsis: Module with install config
-.. moduleauthor:: Petr Rašek <bowman@hydratk.org>
-
-"""
 
 config = {
   'pre_tasks' : [
@@ -14,6 +6,7 @@ config = {
                 ],
 
   'post_tasks' : [
+                  'copy_files',
                   'set_access_rights'
                  ],
           
@@ -25,10 +18,10 @@ config = {
                'xtermcolor>=1.3'                                                  
               ],
           
-  'files' : [
-             ('/etc/hydratk',                ['etc/hydratk/hydratk.conf']), 
-             ('/var/local/hydratk/dbconfig', ['var/local/hydratk/dbconfig/__init__.py'])         
-            ],
+  'files' : {
+             'etc/hydratk/hydratk.conf'               : '/etc/hydratk' ,
+             'var/local/hydratk/dbconfig/__init__.py' : '/var/local/hydratk/dbconfig'        
+            },
           
   'libs' : {
             'pyzmq>=14.7.0'       : {                        
@@ -53,13 +46,13 @@ config = {
                                                  ],
                                      'yum'     : [
                                                   'redhat-rpm-config', 
-                                                   'python-devel'
+                                                  'python-devel'
                                                  ]
                                     }                    
            },
           
   'rights' : {
-              '/etc/hydratk'       : 'a+rwx',
+              '/etc/hydratk'       : 'a+r',
               '/var/local/hydratk' : 'a+rwx'
              }                              
 }

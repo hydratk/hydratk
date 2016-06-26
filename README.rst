@@ -2,7 +2,7 @@
 README for HydraTK
 ==================
 
-| HydraTk (Hydra Toolkit) is fully extendable object oriented application toolkit with nice modular architecture. 
+| HydraTK (Hydra Toolkit) is fully extendable object oriented application toolkit with nice modular architecture. 
 | It's useful mainly for creating utilities for system analysis and general testing.
 | It has decent portfolio of features:
 

@@ -1,25 +1,17 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra toolkit
-
-.. module:: install.command
-   :platform: Unix
-   :synopsis: Module for common commands used in installation tasks
-.. moduleauthor:: Petr Rašek <bowman@hydratk.org>
-
-"""
 
 from subprocess import call, Popen, PIPE
+from os import path
 
-def get_pck_manager():
-    """Method detects package managers
+def is_install_cmd(argv):
 
-    Args:
-       none
+    res = False    
+    if ('install' in argv or 'bdist_egg' in argv or 'bdist_wheel' in argv):
+        res = True
 
-    Returns:
-       list: managers
-    
-    """    
+    return res
+
+def get_pck_manager():   
     
     pck_managers = ['apt-get', 'yum']
     
@@ -30,16 +22,7 @@ def get_pck_manager():
     
     return pckm  
 
-def is_installed(app):
-    """Method checks if application is installed
-
-    Args:
-       app (str): application
-
-    Returns:
-       bool: result
-    
-    """      
+def is_installed(app):    
     
     cmd = ['which', app]
     proc = Popen(cmd, stdout=PIPE)
@@ -48,19 +31,9 @@ def is_installed(app):
     result = True if (len(out[0]) > 0) else False
     return result   
 
-def install_pck(pckm, pck):
-    """Method installs package
-
-    Args:
-       pckm (str): package manager, apt-get|yum
-       pck (str): package name
-
-    Returns:
-       void
+def install_pck(pckm, pck):    
     
-    """     
-    
-    print('Installing package: {0}'.format(pck))
+    print('Installing package {0}'.format(pck))
     
     if (pckm == 'apt-get'):
         cmd = 'apt-get -y install {0}'.format(pck)
@@ -68,22 +41,31 @@ def install_pck(pckm, pck):
         cmd = 'yum -y install {0}'.format(pck)
         
     if (call(cmd, shell=True) != 0):
-        print('Failed to install package {0}'.format(pck))                                                       
+        print('Failed to install package {0}'.format(pck)) 
+        
+def create_dir(dst):
+    
+    if (not path.exists(dst)):
+        
+        print('Creating directory {0}'.format(dst))
+        cmd = 'mkdir -p {0}'.format(dst)
+        
+        if (call(cmd, shell=True) != 0):
+            print('Failed to create directory {0}'.format(dst))     
+        
+def copy_file(src, dst):
+    
+    create_dir(dst)   
+          
+    print ('Copying file {0} to {1}'.format(src, dst))
+    cmd = 'cp {0} {1}'.format(src, dst) 
+    
+    if (call(cmd, shell=True) != 0):
+        print('Failed to copy {0} to {1}'.format(src, dst))                                                             
            
-def set_rights(path, rights, recursive=True):
-    """Method sets acces rights
-
-    Args:
-       path (str): directory or file path
-       rights (str): access rights in Unix style
-       recursive (bool): set recursive rights
-
-    Returns:
-       void
+def set_rights(path, rights, recursive=True):   
     
-    """     
-    
-    print('Setting rights for {0}'.format(path))
+    print('Setting rights {0} for {1}'.format(rights, path))
     
     if (recursive):
         cmd = 'chmod -R {0} {1}'.format(rights, path)

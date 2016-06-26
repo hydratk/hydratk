@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
+from sys import argv
 from install.pre_install import run_pre_install
 from install.post_install import run_post_install
 
 with open("README.rst", "r") as f:
-    readme = f.readlines()
-    
-requires, data_files = run_pre_install()    
+    readme = f.read()
     
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -26,6 +25,8 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Application Frameworks",
     "Topic :: Utilities"
 ]
+
+requires = run_pre_install(argv)
 
 entry_points = {
                 'console_scripts': [
@@ -47,9 +48,8 @@ setup(
       install_requires=requires,
       package_dir={'' : 'src'},
       classifiers=classifiers,
-      zip_safe=False,
-      data_files=data_files,
+      zip_safe=False,      
       entry_points=entry_points
      )
 
-run_post_install()
+run_post_install(argv)

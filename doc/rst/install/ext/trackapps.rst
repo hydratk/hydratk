@@ -5,19 +5,23 @@ TrackApps
 
 You have 2 options how to install TrackApps extension.
 
-PIP
-^^^
+Package
+^^^^^^^
 
-Install it via Python package manager PIP
+Install it via Python package managers PIP or easy_install
 
   .. code-block:: bash
   
      $ sudo pip install hydratk-ext-trackapps 
+     
+  .. code-block:: bash
+  
+     $ sudo easy_install hydratk-ext-trackapps
 
-GitHub
+Source
 ^^^^^^
 
-Download the source code from GitHub and install it manually.
+Download the source code from GitHub or Pypi and install it manually.
 
   .. code-block:: bash
   
@@ -25,14 +29,36 @@ Download the source code from GitHub and install it manually.
      $ cd ./hydratk-ext-trackapps
      $ sudo python setup.py install
      
+  .. code-block:: bash
+  
+     $ wget https://python.org/packages/hydratk-ext-trackapps-0.1.0.tar.gz -O hydratk-ext-trackapps.tar.gz
+     $ tar -xf hydratk-ext-trackapps.tar.gz
+     $ cd ./hydratk-ext-trackapps
+     $ sudo python setup.py install
+  
+Requirements
+^^^^^^^^^^^^     
+     
+The extension requires hydratk, hydratk-lib-network.  
+     
 Installation
 ^^^^^^^^^^^^
 
 See installation example.
-The extension requires hydratk, hydratk-lib-network.
 
   .. code-block:: bash
   
+     running install
+     running bdist_egg
+     running egg_info
+     writing requirements to src/hydratk_ext_trackapps.egg-info/requires.txt
+     writing src/hydratk_ext_trackapps.egg-info/PKG-INFO
+     writing top-level names to src/hydratk_ext_trackapps.egg-info/top_level.txt
+     writing dependency_links to src/hydratk_ext_trackapps.egg-info/dependency_links.txt
+     writing entry points to src/hydratk_ext_trackapps.egg-info/entry_points.txt
+     reading manifest file 'src/hydratk_ext_trackapps.egg-info/SOURCES.txt'
+     reading manifest template 'MANIFEST.in'
+     writing manifest file 'src/hydratk_ext_trackapps.egg-info/SOURCES.txt'
      installing library code to build/bdist.linux-x86_64/egg
      running install_lib
      running build_py
@@ -40,26 +66,43 @@ The extension requires hydratk, hydratk-lib-network.
      creating build/lib.linux-x86_64-2.7
      creating build/lib.linux-x86_64-2.7/hydratk
      copying src/hydratk/__init__.py -> build/lib.linux-x86_64-2.7/hydratk
+     creating build/lib.linux-x86_64-2.7/hydratk/extensions
+     copying src/hydratk/extensions/__init__.py -> build/lib.linux-x86_64-2.7/hydratk/extensions
+     creating build/lib.linux-x86_64-2.7/hydratk/extensions/trackapps
+     copying src/hydratk/extensions/trackapps/trackapps.py -> build/lib.linux-x86_64-2.7/hydratk/extensions/trackapps
      ...
      
      byte-compiling build/bdist.linux-x86_64/egg/hydratk/__init__.py to __init__.pyc
      byte-compiling build/bdist.linux-x86_64/egg/hydratk/extensions/__init__.py to __init__.pyc
      ...
      
-     Installed /usr/local/lib/python2.7/dist-packages/hydratk_ext_trackapps-0.1.0-py2.7.egg
-     Processing dependencies for hydratk-ext-trackapps==0.1.0
-     Searching for hydratk-lib-network==0.1.0
-     Best match: hydratk-lib-network 0.1.0
-     Processing hydratk_lib_network-0.1.0-py2.7.egg
-     hydratk-lib-network 0.1.0 is already the active version in easy-install.pth
+     installing package data to build/bdist.linux-x86_64/egg
+     running install_data
+     copying etc/hydratk/conf.d/hydratk-ext-trackapps.conf -> /etc/hydratk/conf.d
+     creating build/bdist.linux-x86_64/egg/EGG-INFO
+     copying src/hydratk_ext_trackapps.egg-info/PKG-INFO -> build/bdist.linux-x86_64/egg/EGG-INFO
+     copying src/hydratk_ext_trackapps.egg-info/SOURCES.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+     copying src/hydratk_ext_trackapps.egg-info/dependency_links.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+     copying src/hydratk_ext_trackapps.egg-info/entry_points.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+     copying src/hydratk_ext_trackapps.egg-info/requires.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+     copying src/hydratk_ext_trackapps.egg-info/top_level.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+     creating dist
+     creating 'dist/hydratk_ext_trackapps-0.1.0a0-py2.7.egg' and adding 'build/bdist.linux-x86_64/egg' to it
+     removing 'build/bdist.linux-x86_64/egg' (and everything under it)
+     Processing hydratk_ext_trackapps-0.1.0a0-py2.7.egg
+     creating /usr/local/lib/python2.7/dist-packages/hydratk_ext_trackapps-0.1.0a0-py2.7.egg
+     Extracting hydratk_ext_trackapps-0.1.0a0-py2.7.egg to /usr/local/lib/python2.7/dist-packages
+     Adding hydratk-ext-trackapps 0.1.0a0 to easy-install.pth file
+     Installing trackapps script to /usr/local/bin
+     Installed /usr/local/lib/python2.7/dist-packages/hydratk_ext_trackapps-0.1.0a0-py2.7.egg
+     Processing dependencies for hydratk-ext-trackapps==0.1.0a0
+     Finished processing dependencies for hydratk-ext-trackapps==0.1.0a0
+    
+Application installs following (paths depend on your OS configuration)
 
-     Using /usr/local/lib/python2.7/dist-packages/hydratk_lib_network-0.1.0-py2.7.egg
-     Searching for hydratk==0.3.0a0.dev1
-     Best match: hydratk 0.3.0a0.dev1
-     Processing hydratk-0.3.0a0.dev1-py2.7.egg
-     hydratk 0.3.0a0.dev1 is already the active version in easy-install.pth
-     Using /usr/local/lib/python2.7/dist-packages/pycparser-2.14-py2.7.egg
-     Finished processing dependencies for hydratk-ext-trackapps==0.1.0
+* trackapps command in /usr/local/bin/trackapps
+* modules in /usr/local/lib/python2.7/dist-packages/hydratk_ext_trackapps-0.1.0-py2.7.egg
+* configuration file in /etc/hydratk/conf.d/hydratk-ext-trackapps.conf     
        
 Run
 ^^^
@@ -156,10 +199,4 @@ You can run TrackApps also in standalone mode.
        -f, --force - enforces command
        -i, --interactive - turns on interactive mode
        -l, --language <language> - sets the text output language, the list of available languages is specified in the docs
-       -m, --run-mode <mode> - sets the running mode, the list of available languages is specified in the docs                
-
-Application installs following (paths depend on your OS configuration)
-
-* trackapps command in /usr/local/bin/trackapps
-* modules in /usr/local/lib/python2.7/dist-packages/hydratk_ext_trackapps-0.1.0-py2.7.egg
-* configuration file in /etc/hydratk/conf.d/hydratk-ext-trackapps.conf                   
+       -m, --run-mode <mode> - sets the running mode, the list of available languages is specified in the docs                                  

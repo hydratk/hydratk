@@ -1,54 +1,25 @@
 # -*- coding: utf-8 -*-
-"""This code is a part of Hydra toolkit
-
-.. module:: install.pre_install
-   :platform: Unix
-   :synopsis: Module for pre-install tasks
-.. moduleauthor:: Petr Rašek <bowman@hydratk.org>
-
-"""
 
 from config import config as cfg
 import command as cmd
 
-def run_pre_install():
-    """Method runs pre-install tasks
-
-    Args:
-       none
-
-    Returns:
-       tuple: requires (list), data_files (list)
-    
-    """    
-    
-    print('********************************')
-    print('*    HydraTK installation      *')
-    print('********************************')    
+def run_pre_install(argv):  
     
     requires = cfg['modules']
-    data_files = cfg['files']
+    
+    if (cmd.is_install_cmd(argv)):      
      
-    print('**************************************') 
-    print('*     Running pre-install tasks      *')    
-    print('**************************************')
+        print('**************************************') 
+        print('*     Running pre-install tasks      *')    
+        print('**************************************')
     
-    for task in cfg['pre_tasks']:
-        print('\n*** Running task: {0} ***\n'.format(task))
-        globals()[task](requires)          
+        for task in cfg['pre_tasks']:
+            print('\n*** Running task: {0} ***\n'.format(task))
+            globals()[task](requires)          
     
-    return (requires, data_files)  
+    return requires 
 
-def install_libs_from_repo(requires):
-    """Method installs libraries from repositories
-
-    Args:
-       requires (list): required libraries
-
-    Returns:
-       void
-    
-    """        
+def install_libs_from_repo(requires):       
     
     pckm = cmd.get_pck_manager()[0]  
          

@@ -63,7 +63,7 @@ lib_setup_py = '''# -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
 
 with open("README.rst", "r") as f:
-    readme = f.readlines()
+    readme = f.read()
     
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -222,7 +222,7 @@ extension_setup_py = '''# -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
 
 with open("README.rst", "r") as f:
-    readme = f.readlines()
+    readme = f.read()
     
 classifiers = [
     "Development Status :: 3 - Alpha",
