@@ -59,7 +59,7 @@ class My(object):
         if pile_id is None or pile_id == '':
             raise ValueError("Pile id cannot be NoneType or an empty string")
         else:
-            if pile_id in self._piles.items():
+            if pile_id in self._piles.keys():
                 del self._piles[pile_id]
                 result = True
         return result

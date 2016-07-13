@@ -32,8 +32,8 @@ Test-Scenario-1:
         this.test_result = str(res)
         assert (res == ((), {}, )), 'args = (), kwargs = {}'
         
-    Test-Condition-1: 
-      Id: tco_01
+    Test-Condition-2: 
+      Id: tco_02
       Name: tco_args
       Desc: Initialize message with arguments
       

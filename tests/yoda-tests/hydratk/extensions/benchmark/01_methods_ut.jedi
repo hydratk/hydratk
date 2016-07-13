@@ -233,10 +233,12 @@ Test-Scenario-7:
       
       Test: |
         mh = MasterHead.get_head()
-        ext = mh._ext['BenchMark'] 
+        ext = mh._ext['BenchMark']
+        ext._check_cycles = 1 
         ext._calc_flops_test()
         res = ext._test_results['1 GFLOP']
       
       Validate: |             
         this.test_result = res
-        assert (res != ''), '_test_results is not empty'                           
+        assert (res != ''), '_test_results is not empty'    
+        ext._check_cycles = 10                        

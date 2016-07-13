@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Module for time unit operations
 
-.. module:: lib.system.time
+.. module:: lib.system.mtime
    :platform: Unix
    :synopsis: Module for time unit operations
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
@@ -26,4 +26,5 @@ def microtime(get_as_float=False) :
     if get_as_float:
         return time.time()
     else:
-        return '%f %d' % math.modf(time.time())
+        micro = math.modf(time.time())
+        return '%d %f' % (micro[1], micro[0])

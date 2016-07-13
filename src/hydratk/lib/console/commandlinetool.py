@@ -253,8 +253,9 @@ class CommandlineTool():
         result +=  CommandlineTool._cp_string + "\n"
         have_options = ' [options..]' if len(CommandlineTool._short_opt) > 0 or len(CommandlineTool._long_opt) > 1 else ''
         have_commands = ' <command>' if len(CommandlineTool._commands) > 0 else ''
-        result += "Syntax: "+sys.argv[0]+have_options+have_commands+"\n" if CommandlineTool._trn == None else CommandlineTool._trn.msg('htk_help_syntax',sys.argv[0]) + "\n"
-        result += "For list of all available commands and options type {h}"+sys.argv[0]+" help{e}" if CommandlineTool._trn == None else CommandlineTool._trn.msg('htk_help_on_help',sys.argv[0])
+        cmd = (sys.argv[0]).split('/')[-1]
+        result += "Syntax: "+sys.argv[0]+have_options+have_commands+"\n" if CommandlineTool._trn == None else CommandlineTool._trn.msg('htk_help_syntax',cmd) + "\n"        
+        result += "For list of all available commands and options type {h}"+cmd+" help{e}" if CommandlineTool._trn == None else CommandlineTool._trn.msg('htk_help_on_help',cmd)
         
         #apply decorations    
         result = CommandlineTool.parse_shell_text(result)
@@ -278,7 +279,8 @@ class CommandlineTool():
         result +=  CommandlineTool._cp_string + "\n"
         have_options = ' [options..]' if len(CommandlineTool._short_opt) > 0 or len(CommandlineTool._long_opt) > 1 else ''
         have_commands = ' <command>' if len(CommandlineTool._commands) > 0 else ''
-        result += "Syntax: "+sys.argv[0]+have_options+have_commands+"\n\n" if CommandlineTool._trn == None else CommandlineTool._trn.msg('htk_help_syntax',sys.argv[0]) + "\n\n"
+        cmd = (sys.argv[0]).split('/')[-1]
+        result += "Syntax: "+cmd+have_options+have_commands+"\n\n" if CommandlineTool._trn == None else CommandlineTool._trn.msg('htk_help_syntax',cmd) + "\n\n"
         if (have_commands):
             result += "Commands:\n" if CommandlineTool._trn == None else CommandlineTool._trn.msg('htk_help_commands') + "\n" 
             if (len(CommandlineTool._cmd_text) > 0):

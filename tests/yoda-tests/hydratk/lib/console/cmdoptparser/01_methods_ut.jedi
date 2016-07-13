@@ -140,7 +140,7 @@ Test-Scenario-3:
       Validate: |            
         this.test_result = str(res)
         assert (res == 'xx'), '_options[{0}] = xx'.format(group) 
-        del op_options[group] 
+        del op._options[group] 
         
     Test-Condition-3: 
       Id: tco_03

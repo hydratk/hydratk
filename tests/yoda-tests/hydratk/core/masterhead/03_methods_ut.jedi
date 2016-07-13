@@ -344,7 +344,7 @@ Test-Scenario-4:
         assert (not res), 'register_command_option_hook = False'
         res = this.test_result = mh._cmd_option_hooks[opt][1]['callback'].__name__
         assert (res == callback.__name__), '_cmd_option_hooks[{0}] = {1}'.format(opt, callback.__name__)  
-        del mh._cmd_opt_hooks[opt]         
+        del mh._cmd_option_hooks[opt]         
         
   Test-Case-2:
     Id: tc_02
@@ -367,7 +367,7 @@ Test-Scenario-4:
         res = this.test_result = mh._cmd_option_hooks[opt[0]['command_option']][0]['callback'].__name__
         assert (res == opt[0]['callback'].__name__), '_cmd_option_hooks[{0}] = {1}'.format(opt[0]['command_option'], opt[0]['callback'].__name__)    
         res = this.test_result = mh._cmd_option_hooks[opt[1]['command_option']][0]['callback'].__name__
-        assert (res == opt[1]['callback'].__name__), '_cmd_option_hooks[{0}] = {1}'.format(opt[1]['command'_option], opt[1]['callback'].__name__) 
+        assert (res == opt[1]['callback'].__name__), '_cmd_option_hooks[{0}] = {1}'.format(opt[1]['command_option'], opt[1]['callback'].__name__) 
         
     Test-Condition-2: 
       Id: tco_02
@@ -377,7 +377,7 @@ Test-Scenario-4:
       Test: |
         opt[0]['callback'] = hlp.dummy_method_2
         opt[1]['callback'] = hlp.dummy_method
-        res = mh.register_command_option_hook(cmd)
+        res = mh.register_command_option_hook(opt)
       
       Validate: | 
         this.test_result = res
@@ -571,9 +571,9 @@ Test-Scenario-6:
         exp_hook = {'callback': event[1]['callback'].__name__, 'unpack_args': False}
         res = mh._event_hooks[ev_name][prio][0]        
         res['callback'] = event[1]['callback'].__name__
-        print mh._event_hooks['x']
         this.test_result = str(res)
         assert (res == exp_hook), '_event_hooks[{0}] = {1}'.format(ev_name, exp_hook)   
+        res['callback'] = event[1]['callback'] 
               
     Test-Condition-2: 
       Id: tco_02
@@ -641,7 +641,7 @@ Test-Scenario-7:
         event, callback, unpack_args, prio = 'x', hlp.dummy_method, True, 1
         res = mh.register_event_hook(event, callback, unpack_args, prio)
         callback, unpack_args = hlp.dummy_method_2, False
-        res = mh.replace_event_hook(event, callback, {'callback': callback, 'unpack_args': unpack_args})
+        res = mh.replace_event_hook(event, hlp.dummy_method, {'callback': callback, 'unpack_args': unpack_args})
       
       Validate: |   
         this.test_result = res
@@ -671,7 +671,7 @@ Test-Scenario-7:
       
       Test: |
         try:
-            mh.replace_event_hook(event, 'callback', {'callback': callback, 'unpack_args': unpack_args})
+            mh.replace_event_hook(event, 'callback', {'callback': 'callback', 'unpack_args': unpack_args})
             ex = False
         except Exception:
             ex = True

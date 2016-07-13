@@ -66,7 +66,7 @@ class MessageRouter():
            
         """
                 
-        if id != '' and id not in self._service_list.values():
+        if id != '' and id not in self._service_list.keys():
             service = {}
             if (transport_type in (SERVICE_TRANSPORT_TYPE_ZMQ_IPC, SERVICE_TRANSPORT_TYPE_ZMQ_TCP)):
                 service['transport_type'] = transport_type
@@ -74,7 +74,6 @@ class MessageRouter():
                 service['options'] = options 
                 self._service_list[id] = service
             else:
-                print('transport type: '+SERVICE_TRANSPORT_TYPE_ZMQ_IPC+ "\n")
                 raise InputError(ERROR_SERVICE_INVALID_TRANSPORT_TYPE, id, self._trn.msg('htk_mrouter_sid_invalid_tt', transport_type))            
                                              
         else:

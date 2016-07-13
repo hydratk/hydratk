@@ -36,9 +36,9 @@ class Extension(object):
                 
         """ 
                 
-        if hasattr(self.__class__, '_wrap_hydra_attrs') and self._wrap_hydra_attrs == True:
+        if hasattr(self, '_wrap_hydra_attrs') and self._wrap_hydra_attrs == True:
             if hasattr(self._mh, name):
-                return self._mh[name]
+                return self._mh.__dict__[name]
         raise AttributeError("'module' object has no attribute '{}'".format(name))
       
     def __init__(self, core_instance=None):

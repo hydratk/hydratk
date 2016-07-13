@@ -82,6 +82,7 @@ Test-Scenario-2:
       Validate: |        
         res = this.test_result = len(mh._async_fn_tickets)        
         assert (res == 1), '_async_fn_tickets contain 1 ticket'
+        del mh._async_fn_tickets[id]
         
 Test-Scenario-3:
   Id: ts_03
@@ -174,9 +175,10 @@ Test-Scenario-4:
         mh = MessageHead()
         mh._async_ticket_seq = 1000
         mh._reset_async_ticket_seq()
+        res = mh._async_ticket_seq
       
-      Validate: |          
-        res = this.test_result = mh._async_ticket_seq
+      Validate: |       
+        this.test_result = res
         assert (res == 0), '_async_ticket_seq = 0'
         
 Test-Scenario-5:

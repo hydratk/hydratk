@@ -212,7 +212,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         for o in sys.argv:            
             if o == '-m' or o == '--run-mode':                
                 if sys.argv.index(o) < (len(sys.argv) - 1):                    
-                    mode = int(sys.argv[i + 1])                    
+                    mode = int(sys.argv[i + 1]) if (sys.argv[i + 1].isdigit()) else 0                   
                     if (mode in [
                                  const.CORE_RUN_MODE_SINGLE_APP,
                                  const.CORE_RUN_MODE_PP_APP,
@@ -308,7 +308,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         for o in sys.argv:
             if o == 'help': break
             if o == '-p' or o == '--profile':                                
-                if sys.argv.index(o) < (len(sys.argv) - 1):
+                if sys.argv.index(o) < (len(sys.argv) - 2):
                     stats_file = sys.argv[i + 1]                    
                     if stats_file is not None and stats_file != '':
                         enable_profiler = True
@@ -367,7 +367,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                     debug_channel = sys.argv[i + 1]  
                     if unicode(debug_channel,'utf-8').isnumeric():
                         self._debug_channel = [int(debug_channel)]                                         
-                        self.dmsg('htk_on_debug_info', self._trn.msg('htk_debug_level_set', self._debug_level), self.fromhere())                  
+                        self.dmsg('htk_on_debug_info', self._trn.msg('htk_debug_channel_set', self._debug_channel[0]), self.fromhere())                  
                         debug_channel_changed = True
                     elif type(debug_channel).__name__ == 'str' and debug_channel != '' and ',' in debug_channel:
                         dch = debug_channel.split(',')
@@ -409,10 +409,10 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                     commandopt.short_opt[optg] = ''
                 if opt not in commandopt.short_opt[optg]:
                     commandopt.short_opt[optg] += opt
-                    opt = "-{}".format(opt)
+                    opts = "-{}".format(opt)
                     if optg not in commandopt.opt:
                         commandopt.opt[optg] = {}
-                    commandopt.opt[optg][opt] = {
+                    commandopt.opt[optg][opts] = {
                                                     'd_opt'          : d_opt,
                                                     'has_value'      : value_expected,
                                                     'allow_multiple' : allow_multiple                           
@@ -422,10 +422,10 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 commandopt.short_opt[opt_group] = ''
             if opt not in commandopt.short_opt[opt_group]:
                 commandopt.short_opt[opt_group] += opt
-                opt = "-{}".format(opt)
+                opts = "-{}".format(opt)
                 if opt_group not in commandopt.opt:
                     commandopt.opt[opt_group] = {}
-                commandopt.opt[opt_group][opt] = {
+                commandopt.opt[opt_group][opts] = {
                                                 'd_opt'          : d_opt,
                                                 'has_value'      : value_expected,
                                                 'allow_multiple' : allow_multiple                           
@@ -458,10 +458,10 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                     commandopt.long_opt[optg] = []
                 if opt not in commandopt.long_opt[optg]:
                     commandopt.long_opt[optg].append(opt)
-                    opt = "--{}".format(opt)
+                    optl = "--{}".format(opt)
                     if optg not in commandopt.opt:
                         commandopt.opt[optg] = {}
-                    commandopt.opt[optg][opt] = {
+                    commandopt.opt[optg][optl] = {
                                                     'd_opt'          : d_opt,
                                                     'has_value'      : value_expected,
                                                     'allow_multiple' : allow_multiple                           
@@ -471,10 +471,10 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 commandopt.long_opt[opt_group] = []
             if opt not in commandopt.long_opt[opt_group]:
                 commandopt.long_opt[opt_group].append(opt)
-                opt = "--{}".format(opt)
+                optl = "--{}".format(opt)
                 if opt_group not in commandopt.opt:
                     commandopt.opt[opt_group] = {}
-                commandopt.opt[opt_group][opt] = {
+                commandopt.opt[opt_group][optl] = {
                                                 'd_opt'          : d_opt,
                                                 'has_value'      : value_expected,
                                                 'allow_multiple' : allow_multiple                           
@@ -560,7 +560,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 commandopt.short_opt[profile] = ''
             
         else:
-            raise InputError("Option profile have to be non empty string type, got '{}' '{}'".format(profile, type(profile).__name__))
+            raise InputError(0, [], "Option profile have to be non empty string type, got '{}' '{}'".format(profile, type(profile).__name__))
         
     def set_cli_appl_title(self, help_title, cp_string):
         """Method sets custom application title    
@@ -581,7 +581,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             self._help_title = help_title
             self._cp_string = cp_string
         else:
-            raise InputError("help_title and cp_string have to be string type, got '{}' '{}'".format(type(help_title).__name__,type(cp_string).__name__))
+            raise InputError(0, [], "help_title and cp_string have to be string type, got '{}' '{}'".format(type(help_title).__name__,type(cp_string).__name__))
             
     def register_fn_hook(self, fn_id, callback=''):
         """Method adds/replaces functionality hook
@@ -783,18 +783,19 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                     record = {
                        'callback' : ch['callback']
                     }
-                    if cmd_opt not in self._cmd_opt_hooks:
-                        self._cmd_opt_hooks[cmd_opt] = []                                                                          
-                    self._cmd_opt_hooks[cmd_opt].append(record)  
+                    opt = ch['command_option']
+                    if opt not in self._cmd_option_hooks:
+                        self._cmd_option_hooks[opt] = []                                                                          
+                    self._cmd_option_hooks[opt].append(record)  
                     result = result + 1 
                                 
         elif (cmd_opt != '' and hasattr(callback, '__call__')):
             record = {
               'callback' : callback
             }
-            if cmd_opt not in self._cmd_opt_hooks:
-                self._cmd_opt_hooks[cmd_opt] = []                                                                          
-            self._cmd_opt_hooks[cmd_opt].append(record)                                                
+            if cmd_opt not in self._cmd_option_hooks:
+                self._cmd_option_hooks[cmd_opt] = []                                                                          
+            self._cmd_option_hooks[cmd_opt].append(record)                                                
             result = True            
         return result
         
@@ -859,8 +860,8 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
               'unpack_args' : unpack_args
             }
             priority = priority if priority >= 0 else const.EVENT_HOOK_PRIORITY
-            if eh['event'] not in self._event_hooks:
-                self._event_hooks[eh['event']] = {}    
+            if event not in self._event_hooks:
+                self._event_hooks[event] = {}    
             if priority not in self._event_hooks[event]:
                         self._event_hooks[event][priority] = []                                                                                                 
             self._event_hooks[event][priority].append(record)                                                           
@@ -908,13 +909,14 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 result = True
         else:
             result = 0
-            for priority, hooks in self._event_hooks[event].items():
-                item = 0            
-                for record in hooks:
-                    if record['callback'].__name__ == callback.__name__:
-                        del self._event_hooks[event][priority][item]
-                        result += 1
-                    item += 1
+            if event in self._event_hooks:
+                for priority, hooks in self._event_hooks[event].items():
+                    item = 0            
+                    for record in hooks:
+                        if callable(callback) and record['callback'].__name__ == callback.__name__:
+                            del self._event_hooks[event][priority][item]
+                            result += 1
+                        item += 1
                     
         return result
                     
@@ -959,19 +961,20 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
            mh.replace_event_hook('htk_on_warning', self.my_warning_handler, new_record) # replaces matching hook only, returns 1 
            
         """  
-                              
+                     
         if type(record).__name__ != 'dict':
             raise Exception("Invalid record type, dictionary expected")
         if not hasattr(record['callback'], '__call__'):
             raise Exception("Callback replacement is not callable")  
         result = 0
-        for priority, hooks in self._event_hooks[event].items():
-            item = 0            
-            for record in hooks:
-                if record['callback'].__name__ == callback.__name__:
-                    self._event_hooks[event][priority][item] = record
-                    result += 1
-                item += 1
+        if event in self._event_hooks:
+            for priority, hooks in self._event_hooks[event].items():
+                item = 0            
+                for rec in hooks:
+                    if callable(callback) and rec['callback'].__name__ == callback.__name__:
+                        self._event_hooks[event][priority][item] = record
+                        result += 1
+                    item += 1
         
         return result
             

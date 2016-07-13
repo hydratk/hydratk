@@ -23,8 +23,9 @@ class Extension(extension.Extension):
     """Class Extensions
     """
     
-    __test_results  = {}
-    __print_details = False
+    _test_results  = {}
+    _print_details = False
+    _check_cycles  = 10
     
     def _init_extension(self):
         """Method initializes extension
@@ -41,7 +42,7 @@ class Extension(extension.Extension):
         self._ext_name = 'BenchMark'
         self._ext_version = '0.1.0'
         self._ext_author = 'Petr Czaderna <pc@hydratk.org>'
-        self._ext_year = '2013'  
+        self._ext_year = '2013 - 2016'  
         
     def _register_actions(self):
         """Method registers actions
@@ -74,7 +75,7 @@ class Extension(extension.Extension):
                 
         """  
                 
-        self.__print_details = True if CommandlineTool.get_input_option('--details') == True else False
+        self._print_details = True if CommandlineTool.get_input_option('--details') == True else False
             
     def start_bench_fc(self):
         """Method handles command start-benchmark
@@ -90,7 +91,7 @@ class Extension(extension.Extension):
         self._mh.dmsg('htk_on_debug_info','received start benchmark command', self._mh.fromhere())
         self._setup_params()
         self._run_basic_tests()
-        if (self.__print_details):
+        if (self._print_details):
             self._print_test_info()
             
     def _run_basic_tests(self):
@@ -126,7 +127,7 @@ class Extension(extension.Extension):
                 
         """  
                               
-        for test_name, test_value in self.__test_results.items():
+        for test_name, test_value in self._test_results.items():
             print(test_name + ": "+ test_value.__str__())        
     
     def event_test_cb1(self, oevent):  
@@ -163,7 +164,7 @@ class Extension(extension.Extension):
             self._mh.fire_event(oevent)        
         t_end = dt.datetime.now()
         duration = (t_end - t_start)
-        self.__test_results['1Kb data Event througput(10 000 000)'] = duration.microseconds.__float__() / 1000000 
+        self._test_results['1Kb data Event througput(10 000 000)'] = duration.microseconds.__float__() / 1000000 
             
     def _factorial_test(self):   
         """Method tests factorial caluculation
@@ -178,11 +179,10 @@ class Extension(extension.Extension):
                           
         n            = 10000
         a            = 1
-        check_cycles = 10
         delta_list   = []
         low          = None
         high         = None
-        while(a <= check_cycles):            
+        while(a <= self._check_cycles):            
             base = 1
             t_start = dt.datetime.now()
             for i in range(n,0,-1):
@@ -203,7 +203,7 @@ class Extension(extension.Extension):
         shigh = (high.seconds.__float__() + (high.microseconds.__float__() / 1000000)).__str__()
         slow  = (low.seconds.__float__() + (low.microseconds.__float__() / 1000000)).__str__()         
         sduration = self._mh._trn.msg('benchmark_factorial_results',savg, shigh, slow)
-        self.__test_results['Factorial('+n.__str__()+')'] = sduration   
+        self._test_results['Factorial('+n.__str__()+')'] = sduration   
     
     def __fibcalc(self, n):
         """Method calculates Fibonacci number
@@ -232,13 +232,12 @@ class Extension(extension.Extension):
                 
         """ 
                 
-        check_cycles = 10
         delta_list   = []
         low          = None
         high         = None
         n            = 10000
         c            = 1
-        while(c <= check_cycles):
+        while(c <= self._check_cycles):
             t_start = dt.datetime.now()
             result = self.__fibcalc(n)               
             t_end = dt.datetime.now()
@@ -256,7 +255,7 @@ class Extension(extension.Extension):
         shigh = (high.seconds.__float__() + (high.microseconds.__float__() / 1000000)).__str__()
         slow  = (low.seconds.__float__() + (low.microseconds.__float__() / 1000000)).__str__()                
         sduration = self._mh._trn.msg('benchmark_fibonacci_results',savg, shigh, slow)
-        self.__test_results['Fibonacci('+n.__str__()+')'] = sduration
+        self._test_results['Fibonacci('+n.__str__()+')'] = sduration
         
         
     def _calc_flops_test(self):  
@@ -273,10 +272,9 @@ class Extension(extension.Extension):
         delta_list      = []
         low             = None
         high            = None
-        check_cycles    = 10
         float_increment = 0.0000000000019346 # random
         c               = 1
-        while(c <= check_cycles):
+        while(c <= self._check_cycles):
             t_start = dt.datetime.now()            
             start = 57.240000 # random
             floating_point = start          
@@ -298,5 +296,5 @@ class Extension(extension.Extension):
         shigh = (high.seconds.__float__() + (high.microseconds.__float__() / 1000000)).__str__()
         slow  = (low.seconds.__float__() + (low.microseconds.__float__() / 1000000)).__str__()      
         sduration = self._mh._trn.msg('benchmark_flops_results',savg, shigh, slow)
-        self.__test_results['1 GFLOP'] = sduration
+        self._test_results['1 GFLOP'] = sduration
         

@@ -84,7 +84,8 @@ class CmdOptParser(argparse.ArgumentParser):
         """  
                 
         if group_name is not None:
-            self._options[group_name] = {}
+            if group_name not in self._options:
+                self._options[group_name] = {}
         else:
             raise TypeError('Group name cannot be NoneType')
     
@@ -169,6 +170,7 @@ class CmdOptParser(argparse.ArgumentParser):
             result = True         
         elif  type(opt_group).__name__ == 'str':
             self._add_opt(option, d_option, has_value, allow_multiple, opt_group) 
+            result = True
         
         return result
     

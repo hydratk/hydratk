@@ -37,7 +37,7 @@ class MessageHead(object):
         """
                 
         if self._async_ticket_seq == self._async_ticket_seq_max:
-            self._reset_ticket_seq()
+            self._reset_async_ticket_seq()
         self._async_ticket_seq += 1             
         thrid = '0' if multiprocessing.current_process().name == 'MainProcess' else multiprocessing.current_process().name
         ticket_id = "{timestamp}-{thrid}-{ticket_seq}".format(timestamp = time.time(), thrid = thrid, ticket_seq = self._async_ticket_seq)
@@ -77,7 +77,7 @@ class MessageHead(object):
            
         """
                  
-        if ticket_id is not None or ticket_id != '':
+        if ticket_id is not None and ticket_id != '':
             if ticket_id in self._async_fn_tickets:                
                 del self._async_fn_tickets[ticket_id]
             else:

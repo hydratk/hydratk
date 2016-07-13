@@ -100,7 +100,7 @@ class DBConfig():
            list: records 
                 
         """               
-        enabled_filter = "enabled = 1" if active_only == True else "" 
+        enabled_filter = "enabled = 1" if active_only == True else "1 = 1" 
         with self._conn:
             cur = self._conn.cursor()
             cur.execute("select * from config where %s" % (enabled_filter))

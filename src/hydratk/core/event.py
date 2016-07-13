@@ -119,8 +119,8 @@ class Event(object):
            obj: data value
            
         """
-                
-        return self._data[key]
+        
+        return self._data[key] if (key in self._data) else None
     
     def set_data(self, key, value):
         """Method sets requested event data
@@ -152,7 +152,7 @@ class Event(object):
            
         """
                        
-        return self._args[num]        
+        return self._args[num] if (num < len(self._args)) else None        
     
     def set_argv(self, num, val=None):
         """Method sets requested event argument
@@ -166,8 +166,10 @@ class Event(object):
            
         """
                 
-        if isinstance(num, int):
-            self._args[num] = val
+        if isinstance(num, int) and num < len(self._args):
+            args = list(self._args)
+            args[num] = val
+            self._args = tuple(args)
     
     def stop_propagation(self):
         """Method stops event propagation

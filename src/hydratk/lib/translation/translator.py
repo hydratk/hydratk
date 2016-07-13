@@ -51,7 +51,7 @@ class Translator():
             else:                
                 print(type(messages))
                 print(messages)
-                raise ValueError('Cannot assign an empty messages, dictionary expected')    
+                raise ValueError('Cannot assign an invalid messages, dictionary expected')    
             
     @property
     def msg_mod(self):

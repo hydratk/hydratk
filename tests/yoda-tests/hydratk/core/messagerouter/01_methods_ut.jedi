@@ -112,7 +112,9 @@ Test-Scenario-2:
       
       Validate: |        
         this.test_result = ex
-        assert (ex), 'register_service raises InputError'    
+        assert (ex), 'register_service raises InputError'   
+        del router._service_list['srv1']
+        del router._service_list['srv2'] 
         
 Test-Scenario-3:
   Id: ts_03
@@ -183,12 +185,12 @@ Test-Scenario-3:
       
       Test: |
         options['socket_type'] = PUSH
-        router.register_service(id, transport, options)
         res = router.get_queue(id, 2, options).__class__.__name__
       
       Validate: |         
         this.test_result = res
-        assert (res == 'Socket'), 'get_queue = Socket'   
+        assert (res == 'Socket'), 'get_queue = Socket'
+        del router._service_list[id]   
         
 Test-Scenario-4:
   Id: ts_04

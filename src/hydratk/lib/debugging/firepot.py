@@ -78,10 +78,10 @@ class FirePot(object):
         if not FirePot._enabled: return False
         fmt = ''
         level = 'debug'
-        if type(args[0]).__name__ == 'str' and args[0] in FirePot._levels:
+        if len(args) > 0 and type(args[0]).__name__ == 'str' and args[0] in FirePot._levels:
             level = args.pop(0)
         
-        if type(args[0]).__name__ == 'str':
+        if len(args) > 0 and type(args[0]).__name__ == 'str':
             fmt = args.pop(0)
             
         ctime = time.time()
@@ -89,7 +89,7 @@ class FirePot(object):
         fraction = str(ctime).split('.')[1]
         item = {                
                 "name" : FirePot._name,
-                "args": [],
+                "args": args,
                 "level": level,
                 "timestamp": ctime,
                 "order": FirePot._counter,

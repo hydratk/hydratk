@@ -157,8 +157,8 @@ Test-Scenario-2:
       Test: |
         event = Event(id, *args, **kwargs)
       
-      Validate: |   
-        res = this.test_result = event.get_data('data1')
+      Validate: |
+        res = this.test_result = event.get_data('data3')
         assert (res == None), 'get_data = None'
         
     Test-Condition-7: 
@@ -214,7 +214,7 @@ Test-Scenario-2:
         event = Event(id, *args, **kwargs)
       
       Validate: |   
-        res = this.test_result = event.argv(1)
+        res = this.test_result = event.argv(3)
         assert (res == None), 'argv = None'        
         
     Test-Condition-11: 
@@ -224,7 +224,7 @@ Test-Scenario-2:
       
       Test: |
         event = Event(id, *args, **kwargs)
-        #event.set_argv(1, 3)
+        event.set_argv(1, 3)
       
       Validate: |   
         res = this.test_result = event.argv(1)
@@ -238,7 +238,7 @@ Test-Scenario-2:
       
       Test: |
         event = Event(id, *args, **kwargs)
-        #event.set_argv(3, 3)
+        event.set_argv(3, 3)
       
       Validate: |   
         res = this.test_result = event.argc()

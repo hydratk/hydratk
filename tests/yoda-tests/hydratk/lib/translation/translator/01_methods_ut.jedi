@@ -37,7 +37,7 @@ Test-Scenario-1:
       
       Test: |
         try:
-            Translator('')
+            Translator('x')
             ex = False
         except ValueError:
             ex = True

@@ -65,7 +65,7 @@ class FnCallBackMsg(Message):
         """
                 
         self.set_callback(callback)
-        self.set_args(args, kwargs)
+        self.set_args(*args, **kwargs)
     
     def set_callback(self, callback):
         """Method sets callback

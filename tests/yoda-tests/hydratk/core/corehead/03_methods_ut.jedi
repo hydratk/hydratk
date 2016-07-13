@@ -454,7 +454,7 @@ Test-Scenario-9:
         this.test_result = res
         assert (res), '_remove_pid_file = True'
         this.test_result = res = path.exists(file)
-        assert (res), 'file {0} removed'.format(file)
+        assert (not res), 'file {0} removed'.format(file)
         
     Test-Condition-2: 
       Id: tco_02

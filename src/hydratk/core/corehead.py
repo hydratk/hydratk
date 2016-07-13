@@ -184,11 +184,13 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                 if os.path.isfile(create_db_file) == False: 
                     self.dmsg('htk_on_debug_info', self._trn.msg('htk_create_cfg_db', create_db_file), self.fromhere())
                     self._write_config_db(create_db_file)
+                    result = True
                 else:
                     if force_cmd == True:
                         self.dmsg('htk_on_debug_info', self._trn.msg('htk_remove_cfg_db'), self.fromhere())
                         os.remove(create_db_file)
                         self._write_config_db(create_db_file)
+                        result = True
                     else:
                         self.dmsg('htk_on_debug_info', self._trn.msg('htk_cfg_db_exists'), self.fromhere())   
             else:
@@ -788,9 +790,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             if (not self.check_run_mode()):                
                 run_mode = self._config['Core']['Options']['run_mode']
                 self._run_mode = run_mode if run_mode in const.core_run_mode_enum_desc else const.DEFAULT_RUN_MODE                                        
-            self.dmsg('htk_on_debug_info', self._trn.msg('htk_run_mode_set', self._run_mode, const.core_run_mode_enum_desc[self._run_mode]), self.fromhere())
-            self._trn.set_language(self._language)
-            self._import_global_messages()                
+            self.dmsg('htk_on_debug_info', self._trn.msg('htk_run_mode_set', self._run_mode, const.core_run_mode_enum_desc[self._run_mode]), self.fromhere())             
         except Exception as exc:
             self.dmsg('htk_on_warning', self._trn.msg('htk_conf_opt_missing', 'General', 'language'), self.fromhere())
             
@@ -946,7 +946,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         """  
                 
         import pprint
-        pprint.pprint(sys.path)
+
         module = None
         expected_class = 'Extension'               
         mod_name, file_ext = os.path.splitext(os.path.split(filepath)[-1])                        
@@ -1625,7 +1625,8 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                 
         result = False
         if os.path.exists(pid_file) and os.path.isfile(pid_file):
-            result = os.unlink(pid_file)
+            os.unlink(pid_file)
+            result = True
         return result
     
     def _reg_self_signal_hooks(self):  

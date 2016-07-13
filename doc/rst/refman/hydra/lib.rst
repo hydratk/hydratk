@@ -153,33 +153,7 @@ exceptions
 * inputerror
 
 .. automodule:: hydratk.lib.exceptions.inputerror
-   :member-order: bysource  
-
-.. _refman_hydra_lib_messaging:
-
-messaging
-^^^^^^^^^
-
-.. _refman_hydra_lib_messaging_queue:
-
-* queue
-
-.. automodule:: hydratk.lib.messaging.queue
-   :member-order: bysource  
-
-.. _refman_hydra_lib_messaging_native:
-
-* native
-
-.. automodule:: hydratk.lib.messaging.native.queue
-   :member-order: bysource  
-
-.. _refman_hydra_lib_messaging_zmq:
-
-* zmq
-
-.. automodule:: hydratk.lib.messaging.zmq.queue
-   :member-order: bysource  
+   :member-order: bysource   
 
 .. _refman_hydra_lib_number:
 
@@ -238,11 +212,11 @@ system
 .. automodule:: hydratk.lib.system.io
    :member-order: bysource
 
-.. _refman_hydra_lib_system_time:
+.. _refman_hydra_lib_system_mtime:
 
-* time
+* mtime
 
-.. automodule:: hydratk.lib.system.time
+.. automodule:: hydratk.lib.system.mtime
    :member-order: bysource
 
 .. _refman_hydra_lib_system_utils:
