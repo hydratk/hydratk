@@ -1,0 +1,210 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/lib/debugging/firepot/01_methods_ut.jedi
+  Name: ts_enable
+  Desc: Test enable method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.debugging.firepot import FirePot    
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_enable
+    Desc: Enable state
+   
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_en
+      Desc: Enable
+      
+      Test: |
+        fp = FirePot.enable(True)
+        res = FirePot._enabled         
+      
+      Validate: |  
+        this.test_result = res
+        assert (res), '_enabled = True'
+        
+    Test-Condition-2:
+      Id: tco_02
+      Name: tco_dis
+      Desc: Disable
+      
+      Test: |
+        fp = FirePot.enable(None)
+        res = FirePot._enabled         
+      
+      Validate: |  
+        this.test_result = res
+        assert (not res), '_enabled = False'   
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/lib/debugging/firepot/01_methods_ut.jedi
+  Name: ts_enabled
+  Desc: Test enabled method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.debugging.firepot import FirePot    
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_enable
+    Desc: Get enable
+   
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_get
+      Desc: Get
+      
+      Test: |
+        FirePot._enabled = True
+        res = FirePot.enabled()         
+      
+      Validate: |  
+        this.test_result = res
+        assert (res), 'enabled = True'        
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/lib/debugging/firepot/01_methods_ut.jedi
+  Name: ts_log
+  Desc: Test log method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.debugging.firepot import FirePot    
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_log
+    Desc: Log item
+   
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_dis
+      Desc: Log disabled         
+      
+      Test: |
+        FirePot._enabled = False
+        res = FirePot.log()
+      
+      Validate: |
+        this.test_result = res
+        assert (not res), 'log = False'
+        this.test_result = res = FirePot._counter
+        assert (res == 0), '_counter = 0'
+        
+    Test-Condition-2:
+      Id: tco_02
+      Name: tco_no_args
+      Desc: Log without arguments
+      
+      Test: |
+        FirePot._enabled = True
+        res = FirePot.log()
+      
+      Validate: |          
+        this.test_result = res
+        assert (res), 'log = True'
+        this.test_result = res = FirePot._counter
+        assert (res == 1), '_counter = 1'
+        res = FirePot._items[0]
+        this.test_result = str(res)
+        assert (res['level'] == 'debug' and res['message'] == ''), 'level = debug, message is empty'  
+        FirePot._items = []
+        
+    Test-Condition-3:
+      Id: tco_03
+      Name: tco_args
+      Desc: Log with arguments
+      
+      Test: |
+        level, msg = 'error', 'test msg'
+        res = FirePot.log(level, msg)
+      
+      Validate: |        
+        this.test_result = res
+        assert (res), 'log = True'
+        res = FirePot._items[0]
+        this.test_result = str(res)
+        assert (res['level'] == level and res['message'] == msg), 'level = {0}, message = {1}'.format(level, msg)  
+        FirePot._items = []  
+        
+Test-Scenario-4:
+  Id: ts_04
+  Path: hydratk/lib/debugging/firepot/01_methods_ut.jedi
+  Name: ts_flush_items
+  Desc: Test flush_items method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.debugging.firepot import FirePot    
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_flush
+    Desc: Flush items
+   
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_flush
+      Desc: Flush
+      
+      Test: |
+        FirePot._enabled = True
+        FirePot.log('error', 'test msg')
+        FirePot.flush_items()
+        res = FirePot._items
+      
+      Validate: |                      
+        this.test_result = str(res)
+        assert (res == []), '_items is empty'
+        
+Test-Scenario-5:
+  Id: ts_05
+  Path: hydratk/lib/debugging/firepot/01_methods_ut.jedi
+  Name: ts_get_headers
+  Desc: Test get_headers method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.debugging.firepot import FirePot    
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_get_headers
+    Desc: Get headers
+   
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_empty
+      Desc: Empty headers
+      
+      Test: |
+        res = FirePot.get_headers()        
+      
+      Validate: |    
+        this.test_result = res
+        assert (not res), 'get_headers = False'
+        
+    Test-Condition-2:
+      Id: tco_02
+      Name: tco_headers
+      Desc: Get headers
+      
+      Test: |
+        FirePot._enabled = True
+        FirePot.log('error', 'test msg')
+        res = FirePot.get_headers()        
+      
+      Validate: |        
+        this.test_result = str(res)
+        assert (len(res) > 0), 'get_headers is not empty'

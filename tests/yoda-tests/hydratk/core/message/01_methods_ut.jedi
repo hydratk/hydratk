@@ -1,0 +1,158 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/core/message/01_methods_ut.jedi
+  Name: ts_init
+  Desc: Test method __init__
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.message import FnCallBackMsg
+    from yodahelpers.hydratk.core.events import dummy_method
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_init
+    Desc: Initialize message
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_no_args
+      Desc: Initialize message without arguments
+      
+      Test: |
+        msg = FnCallBackMsg(dummy_method)
+      
+      Validate: |
+        res = this.test_result = msg.__class__.__name__
+        assert (res == 'FnCallBackMsg'), '__init__ = FnCallBackMsg'
+        res = this.test_result = msg._callback.__name__
+        assert (res == 'dummy_method'), '_callback = dummy_method'
+        res = (msg._args, msg._kwargs)
+        this.test_result = str(res)
+        assert (res == ((), {}, )), 'args = (), kwargs = {}'
+        
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_args
+      Desc: Initialize message with arguments
+      
+      Test: |
+        args, kwargs = ('arg1', 'arg2'), {'data1': 1, 'data2': 2}        
+        msg = FnCallBackMsg(dummy_method, *args, **kwargs)
+      
+      Validate: |
+        res = this.test_result = msg.__class__.__name__
+        assert (res == 'FnCallBackMsg'), '__init__ = FnCallBackMsg'
+        res = this.test_result = msg._callback.__name__
+        assert (res == 'dummy_method'), '_callback = dummy_method'
+        res = (msg._args, msg._kwargs)
+        this.test_result = str(res)
+        assert (res == (args, kwargs)), 'args = {0}, kwargs = {1}'.format(args, kwargs) 
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/core/message/01_methods_ut.jedi
+  Name: ts_set_callback
+  Desc: Test method set_callback
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.message import FnCallBackMsg
+    from yodahelpers.hydratk.core.events import dummy_method, dummy_method_2
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_cb
+    Desc: Set callback
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_cb
+      Desc: Set callback
+      
+      Test: |
+        msg = FnCallBackMsg(dummy_method)
+        msg.set_callback(dummy_method_2)
+      
+      Validate: |              
+        res = this.test_result = msg._callback.__name__
+        assert (res == 'dummy_method_2'), '_callback = dummy_method_2'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_cb
+      Desc: Set invalid callback, error is raised
+      
+      Test: |        
+        try:
+            msg.set_callback('callback')
+            ex = False
+        except TypeError:
+            ex = True
+      
+      Validate: |              
+        assert (ex), 'set_callback raises TypeError'  
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/core/message/01_methods_ut.jedi
+  Name: ts_set_args
+  Desc: Test method set_args
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.message import FnCallBackMsg
+    from yodahelpers.hydratk.core.events import dummy_method
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_args
+    Desc: Set arguments
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_args
+      Desc: Set arguments
+      
+      Test: |
+        msg = FnCallBackMsg(dummy_method)
+        args, kwargs = ('arg1', 'arg2'), {'data1': 1, 'data2': 2}
+        msg.set_args(*args, **kwargs)
+      
+      Validate : |             
+        res = (msg._args, msg._kwargs)
+        this.test_result = str(res)
+        assert (res == (args, kwargs)), 'args = {0}, kwargs = {1}'.format(args, kwargs)
+        
+Test-Scenario-4:
+  Id: ts_04
+  Path: hydratk/core/message/01_methods_ut.jedi
+  Name: ts_run
+  Desc: Test method run
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.message import FnCallBackMsg
+    from yodahelpers.hydratk.core.events import dummy_method
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_run
+    Desc: Run callback
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_run
+      Desc: Run callback
+      
+      Test: |
+        msg = FnCallBackMsg(dummy_method)
+        res = msg.run()
+      
+      Validate: |      
+        this.test_result = res
+        assert (res), 'run = True'  

@@ -1,0 +1,669 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/lib/translation/translator/01_methods_ut.jedi
+  Name: ts_init
+  Desc: Test __init__ method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.translation.translator import Translator
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_init
+    Desc: Initialize translator
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_init
+      Desc: Initialize translator
+      
+      Test: |
+        msg = {'msg': 1, 'msg2': 2}
+        trn = Translator(msg)
+      
+      Validate: |
+        res = this.test_result = trn.__class__.__name__
+        assert (res == 'Translator'), '__init__ = Translator'
+        res = trn._messages
+        this.test_result = str(res)
+        assert (res == msg), '_messages = {0}'.format(msg)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_msg
+      Desc: Invalid messages, error is raised
+      
+      Test: |
+        try:
+            Translator('')
+            ex = False
+        except ValueError:
+            ex = True
+      
+      Validate: |    
+        this.test_result = ex
+        assert (ex), '__init__ raises ValueError'    
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/lib/translation/translator/01_methods_ut.jedi
+  Name: ts_props
+  Desc: Test properties
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.translation.translator import Translator
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_msg_mod
+    Desc: Properties msg_mod
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_getter
+      Desc: Getter
+              
+      Test: |
+        trn = Translator({})
+        res = trn.msg_mod
+      
+      Validate: |
+        this.test_result = res
+        exp = trn._msg_mod
+        assert (res == exp), 'msg_mod = {0}'.format(exp)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_setter
+      Desc: Setter
+      
+      Test: |
+        data = 'test'
+        trn.msg_mod = data
+        res = trn.msg_mod
+      
+      Validate: |        
+        this.test_result = res
+        assert (res == data), 'msg_mod = {0}'.format(data)
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_help_mod
+    Desc: Properties help_mod
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_getter
+      Desc: Getter
+              
+      Test: |
+        trn = Translator({})
+        res = trn.help_mod
+      
+      Validate: |
+        this.test_result = res
+        exp = trn._help_mod
+        assert (res == exp), 'help_mod = {0}'.format(exp)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_setter
+      Desc: Setter
+      
+      Test: |
+        data = 'test'
+        trn.help_mod = data
+        res = trn.help_mod
+      
+      Validate: |        
+        this.test_result = res
+        assert (res == data), 'help_mod = {0}'.format(data) 
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/lib/translation/translator/01_methods_ut.jedi
+  Name: ts_simple_methods
+  Desc: Test simple methods
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.translation.translator import Translator
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_set_help_mod
+    Desc: Set help module
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_set
+      Desc: Set help module
+      
+      Test: |
+        trn = Translator({})
+        data = 'test'
+        trn.set_help_mod(data)
+        res = trn._help_mod
+      
+      Validate: |          
+        this.test_result = res
+        assert (res == data), '_help_mod = {0}'.format(data)     
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_set_debug_level
+    Desc: Set debug level
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_set
+      Desc: Set debug level
+      
+      Test: |
+        trn = Translator({})
+        trn.set_debug_level(2)
+        res = trn._debug_level
+      
+      Validate: |             
+        this.test_result = res
+        assert (res == 2), '_debug_level = 2'     
+        
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_min_level
+      Desc: Set minimal level
+      
+      Test: |
+        trn.set_debug_level(0)
+        res = trn._debug_level
+      
+      Validate: |        
+        this.test_result = res
+        assert (res == 1), '_debug_level = 1'
+        
+  Test-Case-3:
+    Id: tc_03
+    Name: tc_get_language
+    Desc: Get language
+    
+    Test: |
+      trn = Translator({})
+      res = trn.get_language()
+    
+    Validate: |        
+      this.test_result = res
+      exp = trn._language
+      asser (res == exp), 'get_language = {0}'.format(exp)
+      
+  Test-Case-4:
+    Id: tc_04
+    Name: tc_set_language
+    Desc: Set language
+    
+    Test: |
+      trn = Translator({})
+      trn.set_language('cs')
+      res = trn.get_language()
+    
+    Validate: |      
+      this.test_result = res
+      assert (res == 'cs'), 'get_language = cs'
+      
+Test-Scenario-4:
+  Id: ts_04
+  Path: hydratk/lib/translation/translator/01_methods_ut.jedi
+  Name: ts_register_messages
+  Desc: Test register_messages method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.translation.translator import Translator
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_reg_msg
+    Desc: Register messages
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_reg
+      Desc: Register messages
+      
+      Test: |
+        trn = Translator({})
+        msg = {'msg': 1, 'msg2': 2}
+        res = trn.register_messages(msg)
+      
+      Validate: |      
+        this.test_result = res
+        assert (res), 'register_messages = True'
+        res = trn._messages
+        this.test_result = str(res)
+        assert (res == msg), '_messages = {0}'.format(msg)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_msg
+      Desc: Invalid messages, error is raised
+      
+      Test: |
+        try:
+            trn.register_messages('')
+            ex = False
+        except ValueError:
+            ex = True
+      
+      Validate: |        
+        this.test_result = ex
+        assert (ex), 'register_messages raises ValueError'
+        
+Test-Scenario-5:
+  Id: ts_05
+  Path: hydratk/lib/translation/translator/01_methods_ut.jedi
+  Name: ts_lmsg
+  Desc: Test lmsg method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.translation.translator import Translator
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_lmsg
+    Desc: Resolve langtext
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_no_params
+      Desc: Resolve langtext without parameters
+      
+      Test: |
+        lang, key, text = 'en', 'test', 'test msg'
+        msg = {lang: {key: text}}
+        trn = Translator(msg)
+        res = trn.lmsg(lang, key)
+      
+      Validate: |        
+        this.test_result = res
+        assert (res == text), 'lmsg = {0}'.format(text)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_params
+      Desc: Resolve langtext with parameters      
+      
+      Test: |
+        text = 'test %s msg %s'
+        msg[lang][key] = text
+        trn._messages = msg
+        res = trn.lmsg(lang, key, *('1', '2'))
+      
+      Validate: |  
+        this.test_result = res
+        exp = text % ('1', '2')
+        assert (res == exp), 'lmsg = {0}'.format(exp)
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid
+      Desc: Invalid langtext, error is raised
+      
+      Test: |
+        try:
+            trn.lmsg('cs', key)
+            ex = False
+        except KeyError:
+            ex = True
+      
+      Validate: |              
+        this.test_result = ex
+        assert (ex), 'lmsg raises KeyError'
+        
+Test-Scenario-6:
+  Id: ts_06
+  Path: hydratk/lib/translation/translator/01_methods_ut.jedi
+  Name: ts_msg
+  Desc: Test msg method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.translation.translator import Translator
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_msg
+    Desc: Resolve message
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_no_params
+      Desc: Resolve message without parameters
+      
+      Test: |
+        key, text = 'test', 'test msg'
+        msg = {key: [text]}
+        trn = Translator(msg)
+        res = trn.msg(key)
+      
+      Validate: |        
+        this.test_result = res
+        assert (res == text), 'msg = {0}'.format(text)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_params
+      Desc: Resolve message with parameters      
+      
+      Test: |
+        text = 'test {0} msg {1}'
+        msg[key] = [text]
+        trn._messages = msg
+        res = trn.msg(key, *('1', '2'))
+      
+      Validate: |  
+        this.test_result = res
+        exp = text.format('1', '2')
+        assert (res == exp), 'msg = {0}'.format(exp)
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_low_prio
+      Desc: Resolve message with low priority
+      
+      Test: |
+        key, text = 'test', ['test msg1', 'test msg2']
+        msg = {key: text}
+        trn._messages = msg
+        trn._debug_level = 1
+        res = trn.msg(key)
+      
+      Validate: |    
+        this.test_result = res
+        assert (res == text[0]), 'msg = {0}'.format(text[0])       
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_high_prio
+      Desc: Resolve message with high priority
+      
+      Test: |
+        trn._debug_level = 2
+        res = trn.msg(key)
+      
+      Validate: |    
+        this.test_result = res
+        assert (res == text[1]), 'msg = {0}'.format(text[1])            
+        
+    Test-Condition-5: 
+      Id: tco_05
+      Name: tco_invalid
+      Desc: Invalid message
+      
+      Test: |
+        key = 'key'
+        res = trn.msg(key)
+        
+      Validate: |              
+        this.test_result = res
+        assert (res == key), 'msg = {0}'.format(key) 
+        
+Test-Scenario-7:
+  Id: ts_07
+  Path: hydratk/lib/translation/translator/01_methods_ut.jedi
+  Name: ts_add_msg
+  Desc: Test add_msg method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.translation.translator import Translator
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_msg
+    Desc: Add message
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_single_msg
+      Desc: Add single message
+      
+      Test: |
+        id, msg = 'test', 'test msg'
+        trn = Translator({})
+        res = trn.add_msg(msg, id)
+      
+      Validate: |
+        this.test_result = res
+        assert (res == 1), 'add_msg = 1'
+        exp = {id: msg}
+        res = trn._messages
+        this.test_result = str(res)
+        assert (res == exp), '_messages = {0}'.format(exp)
+        trn._messages = {}
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_mult_msg
+      Desc: Add multiple messages
+      
+      Test: |
+        msg = {'test': 'test msg', 'test2': 'test msg2'}
+        res = trn.add_msg(msg)
+      
+      Validate: |        
+        this.test_result = res
+        assert (res == 2), 'add_msg = 2'
+        res = trn._messages
+        this.test_result = str(res)
+        assert (res == msg), '_messages = {0}'.format(msg)
+        trn._messages = {}
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid_msg
+      Desc: Invalid message
+      
+      Test: |
+        res = trn.add_msg('')
+      
+      Validate: |        
+        this.test_result = res
+        assert (res == 0), 'add_msg = 0'
+        res = trn._messages
+        this.test_result = str(res)
+        assert (res == {}), '_messages = {}'
+        
+Test-Scenario-8:
+  Id: ts_08
+  Path: hydratk/lib/translation/translator/01_methods_ut.jedi
+  Name: ts_add_help
+  Desc: Test add_help method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.translation.translator import Translator
+    from yodahelpers.hydratk.lib.translator import HelpTrn
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_add_help
+    Desc: Add help texts
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_cmd
+      Desc: Add help commands
+      
+      Test: |
+        trn = Translator({})
+        trn._help_mod = HelpTrn()
+        cmd = {'cmd': '1', 'cmd2': '2'}
+        hlp = HelpTrn(cmd=cmd)
+        res = trn.add_help(hlp)      
+      
+      Validate: |        
+        this.test_result = res
+        assert (res == 2), 'add_help = 2'
+        res = trn._help_mod.help_cmd
+        this.test_result = str(res)
+        assert (res == cmd), '_help_mod.help_cmd = {0}'.format(cmd)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_opt
+      Desc: Add help options
+      
+      Test: |
+        trn = Translator({})
+        trn._help_mod = HelpTrn()
+        opt = {'opt': '1', 'opt2': '2'}
+        hlp = HelpTrn({}, opt, {})
+        res = trn.add_help(hlp)      
+      
+      Validate: |        
+        this.test_result = res
+        assert (res == 2), 'add_help = 2'
+        res = trn._help_mod.help_opt
+        this.test_result = str(res)
+        assert (res == opt), '_help_mod.help_opt = {0}'.format(opt)   
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_cmd_args
+      Desc: Add help command arguments
+      
+      Test: |
+        trn = Translator({})
+        trn._help_mod = HelpTrn()
+        args = {'arg': '1', 'arg2': '2'}
+        hlp = HelpTrn({}, {}, args)
+        res = trn.add_help(hlp)      
+      
+      Validate: |        
+        this.test_result = res
+        assert (res == 2), 'add_help = 2'
+        res = trn._help_mod.help_cmd_args
+        this.test_result = str(res)
+        assert (res == args), '_help_mod.help_cmd_args = {0}'.format(args)  
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_empty
+      Desc: Add empty help
+      
+      Test: |
+        trn = Translator({})
+        trn._help_mod = HelpTrn()
+        hlp = HelpTrn({}, {}, {})
+        res = trn.add_help(hlp)      
+      
+      Validate: |        
+        this.test_result = res
+        assert (res == 0), 'add_help = 0'        
+        
+    Test-Condition-5: 
+      Id: tco_05
+      Name: tco_full
+      Desc: Add full help
+      
+      Test: |
+        trn = Translator({})
+        trn._help_mod = HelpTrn()
+        hlp = HelpTrn(cmd, opt, args)
+        res = trn.add_help(hlp)      
+      
+      Validate: |        
+        this.test_result = res
+        assert (res == 6), 'add_help = 6'    
+        
+Test-Scenario-9:
+  Id: ts_09
+  Path: hydratk/lib/translation/translator/01_methods_ut.jedi
+  Name: ts_lang_add_msg
+  Desc: Test lang_add_msg method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.translation.translator import Translator
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_lmsg
+    Desc: Add langtext
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_single_msg
+      Desc: Add single message  
+      
+      Test: |
+        trn = Translator({})        
+        lang, msg = 'en', {'test': 'test msg'}
+        trn._messages[lang] = {}
+        res = trn.lang_add_msg(msg, lang)
+      
+      Validate: |                        
+        this.test_result = res
+        assert (res == 1), 'lang_add_msg = 1'
+        exp = {lang: msg}
+        res = trn._messages
+        assert (res == exp), '_messages = {0}'.format(exp)
+        trn._messages = {}
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_mult_msg
+      Desc: Add multiple message  
+      
+      Test: |
+        trn._messages[lang] = {}
+        msg = {'test': 'test msg', 'test2': 'test msg2'}
+        res = trn.lang_add_msg(msg, lang)
+      
+      Validate: |                        
+        this.test_result = res
+        assert (res == 2), 'lang_add_msg = 2'
+        exp = {lang: msg}
+        res = trn._messages
+        assert (res == exp), '_messages = {0}'.format(exp)        
+        this.test_result = str(res)
+        trn._messages = {}
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid_msg
+      Desc: Invalid message
+      
+      Test: |
+        res = trn.lang_add_msg({'':''}, lang)
+      
+      Validate: |         
+        this.test_result = res
+        assert (res == 0), 'lang_add_msg = 0'
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_invalid_lang
+      Desc: Invalid language, error is raised
+      
+      Test: |
+        try:
+            trn.lang_add_msg('', 'e')
+            ex = False
+        except ValueError:
+            ex = True                     
+      
+      Validate: |
+        this.test_result = ex
+        assert (ex), 'lang_add_msg raises ValueError'

@@ -1,0 +1,310 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/core/eventhandler/01_methods_ut.jedi
+  Name: ts_eh_htk_on_debug_info
+  Desc: Test _eh_htk_on_debug_info method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead  
+    import sys
+    from StringIO import StringIO      
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_debug
+    Desc: Print debug message
+   
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_debug
+      Desc: Print debug message  
+      
+      Test: |
+        mh = MasterHead.get_head()
+        mh._debug = True
+        old = sys.stdout
+        sys.stdout = res = StringIO()
+        msg = 'testmsg'
+        mh._eh_htk_on_debug_info('test', msg)
+        res = res.getvalue()
+        sys.stdout = old            
+      
+      Validate: |  
+        this.test_result = res
+        assert (msg in res), '_eh_htk_on_debug_info contains {0}'.format(msg) 
+        mh._debug = False 
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/core/eventhandler/01_methods_ut.jedi
+  Name: ts_eh_htk_on_warning
+  Desc: Test _eh_htk_on_warning method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import sys
+    from StringIO import StringIO
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_warning
+    Desc: Print warning message
+   
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_warning
+      Desc: Print warning message
+      
+      Test: |
+        mh = MasterHead.get_head()
+        old = sys.stdout
+        sys.stdout = res = StringIO()
+        msg = 'testmsg'
+        mh._eh_htk_on_warning('test', msg)
+        res = res.getvalue()
+        sys.stdout = old        
+      
+      Validate: |       
+        this.test_result = res
+        assert (msg in res), '_eh_htk_on_warning contains {0}'.format(msg)  
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/core/eventhandler/01_methods_ut.jedi
+  Name: ts_eh_htk_on_extension_warning
+  Desc: Test _eh_htk_on_extension_warning method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import sys
+    from StringIO import StringIO
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_warning
+    Desc: Print warning message
+   
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_warning
+      Desc: Print warning message
+      
+      Test: |
+        mh = MasterHead.get_head()
+        old = sys.stdout
+        sys.stdout = res = StringIO()
+        msg = 'testmsg'
+        mh._eh_htk_on_extension_warning('test', msg)
+        res = res.getvalue()
+        sys.stdout = old        
+      
+      Validate: |       
+        this.test_result = res
+        assert (msg in res), '_eh_htk_on_extension_warning contains {0}'.format(msg) 
+        
+Test-Scenario-4:
+  Id: ts_04
+  Path: hydratk/core/eventhandler/01_methods_ut.jedi
+  Name: ts_eh_htk_on_error
+  Desc: Test _eh_htk_on_error method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import sys
+    from StringIO import StringIO
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_error
+    Desc: Print error message
+   
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_error
+      Desc: Print error message
+      
+      Test: |
+        mh = MasterHead.get_head()
+        old = sys.stdout
+        sys.stdout = res = StringIO()
+        msg = 'testmsg'
+        mh._eh_htk_on_error('test', msg)
+        res = res.getvalue()
+        sys.stdout = old        
+      
+      Validate: |       
+        this.test_result = res
+        assert (msg in res), '_eh_htk_on_error contains {0}'.format(msg)        
+        
+Test-Scenario-5:
+  Id: ts_05
+  Path: hydratk/core/eventhandler/01_methods_ut.jedi
+  Name: ts_eh_htk_on_exception
+  Desc: Test _eh_htk_on_exception method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import sys
+    from StringIO import StringIO
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_exception
+    Desc: Print exception message
+   
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_exception
+      Desc: Print exception message
+      
+      Test: |
+        mh = MasterHead.get_head()
+        old = sys.stdout
+        sys.stdout = res = StringIO()
+        msg = 'testmsg'
+        mh._eh_htk_on_exception('test', 'testex', msg, None)
+        res = res.getvalue()
+        sys.stdout = old        
+      
+      Validate: |       
+        this.test_result = res
+        assert (msg in res), '_eh_htk_on_exception contains {0}'.format(msg)  
+        
+Test-Scenario-6:
+  Id: ts_06
+  Path: hydratk/core/eventhandler/01_methods_ut.jedi
+  Name: ts_eh_htk_on_extension_error
+  Desc: Test _eh_htk_on_extension_error method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import sys
+    from StringIO import StringIO
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_exception
+    Desc: Print exception message
+   
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_exception
+      Desc: Print exception message
+      
+      Test: |
+        mh = MasterHead.get_head()
+        old = sys.stdout
+        sys.stdout = res = StringIO()
+        msg = 'testmsg'
+        mh._eh_htk_on_extension_error('test', msg)
+        res = res.getvalue()
+        sys.stdout = old        
+      
+      Validate: |       
+        this.test_result = res
+        assert (msg in res), '_eh_htk_on_extension_error contains {0}'.format(msg)    
+        
+Test-Scenario-7:
+  Id: ts_07
+  Path: hydratk/core/eventhandler/01_methods_ut.jedi
+  Name: ts_eh_htk_on_cprint
+  Desc: Test _eh_htk_on_cprint method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import sys
+    from StringIO import StringIO
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_cprint
+    Desc: Print messages
+   
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_cprint
+      Desc: Print message
+      
+      Test: |
+        mh = MasterHead.get_head()
+        old = sys.stdout
+        sys.stdout = res = StringIO()
+        msg = 'testmsg'
+        mh._eh_htk_on_cprint('test', msg)
+        res = res.getvalue()
+        sys.stdout = old        
+      
+      Validate: |       
+        this.test_result = res
+        assert (msg in res), '_eh_htk_on_cprint contains {0}'.format(msg)             
+        
+Test-Scenario-8:
+  Id: ts_08
+  Path: hydratk/core/eventhandler/01_methods_ut.jedi
+  Name: ts__ec_sig_handler
+  Desc: Test _ec_sig_handler method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead  
+    import sys
+    from StringIO import StringIO
+    from signal import SIGPIPE      
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_signal
+    Desc: Print signal message
+   
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_reg_signal
+      Desc: Registered signal  
+      
+      Test: |
+        mh = MasterHead.get_head()
+        mh._debug = True
+        old = sys.stdout
+        sys.stdout = res = StringIO()
+        msg = 'testmsg'
+        mh._ec_sig_handler('test', SIGPIPE)
+        res = res.getvalue()
+        sys.stdout = old            
+      
+      Validate: |  
+        this.test_result = res
+        assert ('SIGPIPE' in res), '_ec_sig_handler contains SIGPIPE'    
+        
+    Test-Condition-2:
+      Id: tco_02
+      Name: tco_no_reg_signal
+      Desc: Not registered signal  
+      
+      Test: |
+        mh = MasterHead.get_head()
+        mh._debug = True
+        old = sys.stdout
+        sys.stdout = res = StringIO()
+        msg = 'testmsg'
+        mh._ec_sig_handler('test', 17)
+        res = res.getvalue()
+        sys.stdout = old            
+      
+      Validate: |  
+        this.test_result = res
+        assert ('17' in res), '_ec_sig_handler contains {0}'.format(17)                                                         

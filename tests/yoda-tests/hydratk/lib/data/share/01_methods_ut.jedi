@@ -1,0 +1,248 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/lib/data/share/01_methods_ut.jedi
+  Name: ts_pocket
+  Desc: Test Pocket class
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.data.share import Pocket    
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_content
+    Desc: Test content property
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_getter
+      Desc: Get content
+      
+      Test: |
+        p = Pocket()
+        res = p.content
+      
+      Validate: |
+        this.test_result = str(res)
+        assert (res == {}), 'content = {}'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_setter
+      Desc: Set content
+      
+      Test: |
+        data = {'data': 1, 'data2': 2}
+        p.content = data
+        res = p.content
+      
+      Validate: |
+        this.test_result = str(res)
+        assert (res == data), 'content = {0}'.format(data)
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid_data
+      Desc: Set invalid content, error is raised
+      
+      Test: |
+        try:
+            p.content = []
+            ex = False
+        except ValueError:
+            ex = True
+      
+      Validate: |
+        this.test_result = ex
+        assert (res), 'content raises ValueError' 
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_fill
+    Desc: Test fill method
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_fill
+      Desc: Fill pocket
+      
+      Test: |
+        p = Pocket()
+        data = {'data': 1, 'data2':2}
+        p.fill(data)
+        res = p._data
+      
+      Validate: |                       
+        this.test_result = str(res)
+        assert (res == data), '_data = {0}'.format(data)
+        
+  Test-Case-3:
+    Id: tc_03
+    Name: tc_purge
+    Desc: Test purge method
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_purge
+      Desc: Purge pocket
+      
+      Test: |
+        p = Pocket()
+        data = {'data': 1, 'data2':2}
+        p.purge
+        res = p._data
+      
+      Validate: |                       
+        this.test_result = str(res)
+        assert (res == {}), '_data = {}'     
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/lib/data/share/01_methods_ut.jedi
+  Name: ts_my
+  Desc: Test My class
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.data.share import My    
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_pocket
+    Desc: Test pocket property
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_pocket
+      Desc: Get and create pocket
+      
+      Test: |
+        p = My()
+        res = p._pocket
+      
+      Validate: |
+        this.test_result = res
+        assert (res == None), '_pocket = None'
+        res = this.test_result = p.pocket.__class__.__name__
+        assert (res == 'Pocket'), 'pocket = Pocket'
+        res = this.test_result = p._pocket.__class__.__name__
+        assert (res == 'Pocket'), '_pocket = Pocket'
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_piles
+    Desc: Test piles property
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_piles
+      Desc: Get piles
+      
+      Test: |
+        p = My()
+        res = p.piles
+      
+      Validate: |
+        this.test_result = str(res)
+        exp = p._piles
+        assert (res == exp), 'piles = {0}'.format(exp)
+        
+  Test-Case-3:
+    Id: tc_03
+    Name: tc_pile
+    Desc: Test pile method
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_create
+      Desc: Create pile
+      
+      Test: |
+        p = My()
+        res = p.pile('test').__class__.__name__
+      
+      Validate: |       
+        this.test_result = res
+        exp = p._piles['test'].__class__.__name__
+        assert (res == exp), 'pile = Pile'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_get
+      Desc: Get pile
+      
+      Test: |
+        res = p.pile('test').__class__.__name__
+      
+      Validate: |       
+        this.test_result = res
+        exp = p._piles['test'].__class__.__name__
+        assert (res == exp), 'pile = Pile'  
+        assert (len(p._piles.keys()) == 1), '_piles contains 1 item' 
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid_pile
+      Desc: Invalid pile id, error is raised
+      
+      Test: | 
+        try:
+            p.pile('')
+            ex = False
+        except ValueError:
+            ex = True
+      
+      Validate: |     
+        this.test_result = ex
+        assert (ex), 'pile raises ValueError'
+        
+  Test-Case-4:
+    Id: tc_04
+    Name: tc_drop_pile
+    Desc: Test drop_pile method
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_drop
+      Desc: Drop pile
+      
+      Test: |
+        p = My()
+        id = 'test'
+        p.pile(id)
+        res = p.drop_pile(id)
+      
+      Validate: |       
+        this.test_result = res
+        assert (res), 'drop_pile = True'
+        assert (len(p._piles.keys()) == 0), '_piles is empty'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_not_exist
+      Desc: Drop not existing pile        
+       
+      Test: |
+        res = p.drop_pile(id)
+      
+      Validate: | 
+        this.test_result = res
+        assert (not res), 'drop_pile = False'
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid_pile
+      Desc: Invalid pile id, error is raised
+      
+      Test: | 
+        try:
+            p.drop_pile('')
+            ex = False
+        except ValueError:
+            ex = True
+      
+      Validate: |     
+        this.test_result = ex
+        assert (ex), 'drop_pile raises ValueError'        

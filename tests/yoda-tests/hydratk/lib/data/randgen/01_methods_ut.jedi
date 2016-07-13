@@ -1,0 +1,144 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/lib/data/randgen/01_methods_ut.jedi
+  Name: ts_gen_systimestamp
+  Desc: Test gen_systimestamp method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.data.randgen import gen_systimestamp
+    from time import strftime
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_timestamp
+    Desc: Generate timestamp
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_gen
+      Desc: Generate timestamp
+      
+      Test: |
+        res = gen_systimestamp()
+      
+      Validate: |
+        this.test_result = res
+        exp = strftime('%Y-%m-%dT%H:%M:%S')
+        assert (res == exp), 'gen_systimestamp = {0}'.format(exp)
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/lib/data/randgen/01_methods_ut.jedi
+  Name: ts_gen_sysdate
+  Desc: Test gen_sysdate method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.data.randgen import gen_sysdate
+    from time import strftime
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_date
+    Desc: Generate date
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_gen
+      Desc: Generate date
+      
+      Test: |
+        res = gen_sysdate()
+      
+      Validate: |
+        this.test_result = res
+        exp = strftime('%Y-%m-%d')
+        assert (res == exp), 'gen_systimestamp = {0}'.format(exp)      
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/lib/data/randgen/01_methods_ut.jedi
+  Name: ts_gen_message_id
+  Desc: Test gen_message_id method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.data.randgen import gen_message_id
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_msgid
+    Desc: Generate message id
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_msgid
+      Desc: Generate message id          
+      
+      Test: |
+        prefix = 'test'
+        res = gen_message_id(prefix)
+      
+      Validate: |
+        this.test_result = res
+        assert (prefix in res), 'gen_message_id contains {0}'.format(prefix)
+        
+Test-Scenario-4:
+  Id: ts_04
+  Path: hydratk/lib/data/randgen/01_methods_ut.jedi
+  Name: ts_gen_id
+  Desc: Test gen_id method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.data.randgen import gen_id
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_id
+    Desc: Generate random id
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_1_digit
+      Desc: Generate id with 1 digit
+      
+      Test: |
+        res = gen_id(1)
+      
+      Validate: |      
+        this.test_result = res
+        assert(len(res) == 1), 'gen_id = 1 digit'     
+        
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_10_digits
+      Desc: Generate id with 10 digits
+      
+      Test: |
+        res = gen_id(10)
+      
+      Validate: |      
+        this.test_result = res
+        assert(len(res) == 10), 'gen_id = 10 digits'   
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid
+      Desc: Invalid number of digits, error is raised
+      
+      Test: |
+        try:
+            gen_id(0)
+            ex = False
+        except ValueError:
+            ex = True
+      
+      Validate: |      
+        this.test_result = ex
+        assert(ex), 'gen_id raises ValueError'                        

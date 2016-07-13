@@ -1,0 +1,1085 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/core/masterhead/01_methods_ut.jedi
+  Name: ts_init
+  Desc: Test method __init__
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_inst_creation
+    Desc: MasterHead instance creation, not allowed by direct call
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_inst_not_created
+      Desc: Instance not created yet, error raised   
+      
+      Test: | 
+        try:
+            mh = MasterHead()
+            ex = False
+        except ValueError:
+            ex = True
+         
+      Validate: |
+        this.test_result = ex
+        assert (ex), '__init__ raises ValueError'        
+    
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_hooks
+      Desc: Instance created, check registered hooks
+      
+      Test: |
+        mh = MasterHead.get_head()
+        
+      Validate: |
+        res = this.test_result = MasterHead._instance.__class__.__name__
+        assert (res == 'MasterHead'), '_instance = MasterHead' 
+        res = this.test_result = MasterHead._instance_created
+        assert (res), '_instance_created = True' 
+        fn_hooks = sorted(mh._fn_hooks.keys())         
+        exp_hooks = ['cmsg_async_ext_fn', 'cmsg_async_fn', 'cmsg_async_fn_ex', 'h_bootstrap', 'h_runlevel_appl', 'h_runlevel_baseinit',
+                    'h_runlevel_cli', 'h_runlevel_config', 'h_runlevel_core', 'h_runlevel_extensions']
+        this.test_result = str(fn_hooks)                    
+        assert (fn_hooks == exp_hooks), '_fn_hooks = {0}'.format(exp_hooks)                
+      
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_inst_created
+      Desc: Instance already created, error raised
+      
+      Test: |
+        try:
+            mh = MasterHead.get_head()
+            mh = MasterHead()   
+            ex = False
+        except ValueError:
+            ex = True 
+            
+      Validate: |
+        this.test_result = ex
+        assert (ex), '__init__ raises ValueError'  
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/core/masterhead/01_methods_ut.jedi
+  Name: ts_exception_handler
+  Desc: Test method exception_handler
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead  
+    import yodahelpers.hydratk.core.events as hlp     
+    
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_exception
+    Desc: Exception handler, fires event
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_exception
+      Desc: Exception handled, event fired 
+      
+      Test: | 
+        hlp.events = []
+        mh = MasterHead.get_head()
+        tup = type, value, tb = 'xxx', 'yyy', None
+        hlp.reg_ev_hook(mh, 'htk_on_uncaught_exception')
+        mh.exception_handler(*tup)        
+         
+      Validate: |
+        out = hlp.events
+        this.test_result = len(out)
+        assert (len(out) == 1), 'len(events) = 1'
+        event = out[0]
+        this.test_result = str([event._id, event._args, event._data])
+        assert (event._id == 'htk_on_uncaught_exception'), '_id = htk_on_uncaught_exception'
+        assert (event._args == tup), '_args = {0}'.format(tup)
+        assert (event._data['type'] == type and event._data['value'] == value and event._data['traceback'] == tb), '_data = {0}'.format(tup) 
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_ex_not_handled
+      Desc: Exception not handled, exception raised
+      
+      Test: |
+        ex = False
+        mh.exception_handler(type, value, 'xxx')
+        ex = True
+
+      Validate: |
+        this.test_result = ex
+        assert (ex), 'exception_handler raises Exception'
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/core/masterhead/01_methods_ut.jedi
+  Name: ts_get_translator
+  Desc: Test method get_translator
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead    
+    
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_translator
+    Desc: Translator object
+   
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_translator
+      Desc: Translator object returned                                 
+      
+      Test: |
+        mh = MasterHead.get_head()
+        out = mh.get_translator()
+        
+      Validate: |   
+        this.test_result = out.__class__.__name__     
+        assert (out.__class__.__name__ == 'Translator'), 'get_translator = Translator'
+        this.test_result = mh._trn.__class__.__name__
+        assert (out == mh._trn), '_trn = Translator'
+        
+Test-Scenario-4:
+  Id: ts_04
+  Path: hydratk/core/masterhead/01_methods_ut.jedi
+  Name: ts_get_head
+  Desc: Test method get_head
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead    
+    
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_head
+    Desc: MasterHead created   
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_head
+      Desc: MasterHead object returned                                 
+      
+      Test: |
+        mh = MasterHead.get_head()
+        
+      Validate: |
+        out = this.test_result = mh.__class__.__name__
+        assert (out == 'MasterHead'), 'get_head = MasterHead'
+        out = this.test_result = mh._instance.__class__.__name__
+        assert (mh == mh._instance), '_instance = MasterHead'       
+        
+Test-Scenario-5:
+  Id: ts_05
+  Path: hydratk/core/masterhead/01_methods_ut.jedi
+  Name: ts_get_config
+  Desc: Test method get_config
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead    
+    
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_config
+    Desc: dict object
+   
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_config
+      Desc: dict object returned                                 
+      
+      Test: |
+        mh = MasterHead.get_head()
+        out = mh.get_config()
+        
+      Validate: |   
+        this.test_result = out.__class__.__name__     
+        assert (out.__class__.__name__ == 'dict'), 'get_config = dict'
+        this.test_result = mh._config.__class__.__name__
+        assert (out == mh._config), '_config = dict'     
+        
+Test-Scenario-6:
+  Id: ts_06
+  Path: hydratk/core/masterhead/01_methods_ut.jedi
+  Name: ts_check_run_mode
+  Desc: Test method check_run_mode
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1     
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import hydratk.core.const as const  
+    import sys
+    
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_cmd_opt
+    Desc: Command options
+   
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_no_opt
+      Desc: No command option
+      
+      Test: |
+        mh = MasterHead.get_head()
+        res = mh.check_run_mode()
+      
+      Validate: |            
+        this.test_result = res
+        assert (not res), 'check_run_mode = False'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_shortopt
+      Desc: Invalid short option
+      
+      Test: |
+        sys.argv.insert(-1, '--m')
+        sys.argv.insert(-1, '1')
+        res = mh.check_run_mode()
+      
+      Validate: |            
+        this.test_result = res
+        assert (not res), 'check_run_mode = False'        
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid_longtopt
+      Desc: Invalid long option
+      
+      Test: |
+        sys.argv[-3] = '-run-mode'
+        res = mh.check_run_mode()
+      
+      Validate: |            
+        this.test_result = res
+        assert (not res), 'check_run_mode = False'  
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_valid_shortopt
+      Desc: Valid short option
+      
+      Test: |
+        sys.argv[-3] = '-m'
+        res = mh.check_run_mode()
+      
+      Validate: |            
+        this.test_result = res
+        assert (res), 'check_run_mode = True' 
+        
+    Test-Condition-5: 
+      Id: tco_05
+      Name: tco_valid_longtopt
+      Desc: Valid long option
+      
+      Test: |
+        sys.argv[-3] = '--run-mode'
+        res = mh.check_run_mode()
+        del sys.argv[-3:-1]
+      
+      Validate: |            
+        this.test_result = res
+        assert (res), 'check_run_mode = True'
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_modes
+    Desc: Run mode values
+   
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_no_val
+      Desc: No mode value, temporary try-except due to error
+      
+      Test: |
+        try:
+            mh = MasterHead.get_head()
+            sys.argv.insert(-1, '-m')
+            res = mh.check_run_mode()
+        except ValueError:
+            res = True
+            
+      Validate: |                                   
+        this.test_result = res
+        assert (not res), 'check_run_mode = False'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_val
+      Desc: Invalid mode value
+      
+      Test: |
+        sys.argv.insert(-1, '0')
+        res = mh.check_run_mode()
+      
+      Validate: |                                   
+        this.test_result = res
+        assert (not res), 'check_run_mode = False'        
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_mode_1
+      Desc: Single app mode
+      
+      Test: |
+        sys.argv[-2] = '1'
+        res = mh.check_run_mode()
+      
+      Validate: |                                   
+        this.test_result = res
+        assert (res), 'check_run_mode = True' 
+        res = this.test_result = mh._run_mode
+        assert (res == const.CORE_RUN_MODE_SINGLE_APP), '_run_mode = 1'
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_mode_2
+      Desc: Parallel app mode
+      
+      Test: |
+        sys.argv[-2] = '2'
+        res = mh.check_run_mode()
+      
+      Validate: |                                   
+        this.test_result = res
+        assert (res), 'check_run_mode = True' 
+        res = this.test_result = mh._run_mode
+        assert (res == const.CORE_RUN_MODE_PP_APP), '_run_mode = 2'
+        
+    Test-Condition-5: 
+      Id: tco_05
+      Name: tco_mode_3
+      Desc: Parallel daemon mode
+      
+      Test: |
+        sys.argv[-2] = '3'
+        res = mh.check_run_mode()
+        del sys.argv[-3:-1]
+      
+      Validate: |                                   
+        this.test_result = res
+        assert (res), 'check_run_mode = True' 
+        res = this.test_result = mh._run_mode
+        assert (res == const.CORE_RUN_MODE_PP_DAEMON), '_run_mode = 3' 
+        
+Test-Scenario-7:
+  Id: ts_07
+  Path: hydratk/core/masterhead/01_methods_ut.jedi
+  Name: ts_check_language
+  Desc: Test method check_language
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1     
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import sys
+    
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_cmd_opt
+    Desc: Command options
+   
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_no_opt
+      Desc: No command option
+      
+      Test: |
+        mh = MasterHead.get_head()
+        res = mh.check_language()
+      
+      Validate: |            
+        this.test_result = res
+        assert (not res), 'check_language = False'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_shortopt
+      Desc: Invalid short option
+      
+      Test: |
+        sys.argv.insert(-1, '--l')
+        sys.argv.insert(-1, 'en')
+        res = mh.check_language()
+      
+      Validate: |            
+        this.test_result = res
+        assert (not res), 'check_language = False'        
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid_longtopt
+      Desc: Invalid long option
+      
+      Test: |
+        sys.argv[-3] = '-language'
+        res = mh.check_language()
+      
+      Validate: |            
+        this.test_result = res
+        assert (not res), 'check_language = False'  
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_valid_shortopt
+      Desc: Valid short option
+      
+      Test: |
+        sys.argv[-3] = '-l'
+        res = mh.check_language()
+      
+      Validate: |            
+        this.test_result = res
+        assert (res), 'check_language = True' 
+        
+    Test-Condition-5: 
+      Id: tco_05
+      Name: tco_valid_longtopt
+      Desc: Valid long option
+      
+      Test: |
+        sys.argv[-3] = '--language'
+        res = mh.check_language()
+        del sys.argv[-3:-1]
+      
+      Validate: |            
+        this.test_result = res
+        assert (res), 'check_language = True'
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_langs
+    Desc: Language values
+   
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_no_val
+      Desc: No language value
+      
+      Test: |
+        mh = MasterHead.get_head()
+        sys.argv.insert(-1, '-l')
+        res = mh.check_language()
+            
+      Validate: |                                   
+        this.test_result = res
+        assert (not res), 'check_language = False'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_val
+      Desc: Invalid language value
+      
+      Test: |
+        sys.argv.insert(-1, 'de')
+        res = mh.check_language()
+      
+      Validate: |                                   
+        this.test_result = res
+        assert (not res), 'check_language = False'        
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_lang_en
+      Desc: English language
+      
+      Test: |
+        sys.argv[-2] = 'en'
+        res = mh.check_language()
+      
+      Validate: |                                   
+        this.test_result = res
+        assert (res), 'check_language = True' 
+        res = this.test_result = mh._language
+        assert (res == 'en'), '_language = en'
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_lang_cs
+      Desc: Czech language
+      
+      Test: |
+        sys.argv[-2] = 'cs'
+        res = mh.check_language()
+        del sys.argv[-3:-1]
+      
+      Validate: |                                   
+        this.test_result = res
+        assert (res), 'check_language = True' 
+        res = this.test_result = mh._language
+        assert (res == 'cs'), '_language = cs'  
+        
+Test-Scenario-8:
+  Id: ts_08
+  Path: hydratk/core/masterhead/01_methods_ut.jedi
+  Name: ts_check_config
+  Desc: Test method check_config
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1     
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import hydratk.core.const as const
+    import sys
+    
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_cmd_opt
+    Desc: Command options
+   
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_no_opt
+      Desc: No command option
+      
+      Test: |
+        mh = MasterHead.get_head()
+        res = mh.check_config()
+      
+      Validate: |            
+        this.test_result = res
+        assert (not res), 'check_config = False'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_shortopt
+      Desc: Invalid short option
+      
+      Test: |
+        sys.argv.insert(-1, '--c')
+        sys.argv.insert(-1, const.CONFIG_FILE)
+        res = mh.check_config()
+      
+      Validate: |            
+        this.test_result = res
+        assert (not res), 'check_config = False'        
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid_longtopt
+      Desc: Invalid long option
+      
+      Test: |
+        sys.argv[-3] = '-config'
+        res = mh.check_config()
+      
+      Validate: |            
+        this.test_result = res
+        assert (not res), 'check_config = False'  
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_valid_shortopt
+      Desc: Valid short option
+      
+      Test: |
+        sys.argv[-3] = '-c'
+        res = mh.check_config()
+      
+      Validate: |            
+        this.test_result = res
+        assert (res), 'check_config = True' 
+        
+    Test-Condition-5: 
+      Id: tco_05
+      Name: tco_valid_longtopt
+      Desc: Valid long option
+      
+      Test: |
+        sys.argv[-3] = '--config'
+        res = mh.check_config()
+        del sys.argv[-3:-1]
+      
+      Validate: |            
+        this.test_result = res
+        assert (res), 'check_config = True'     
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_config
+    Desc: Config values
+   
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_no_val
+      Desc: No config value
+      
+      Test: |
+        mh = MasterHead.get_head()
+        sys.argv.insert(-1, '-c')
+        res = mh.check_config()
+            
+      Validate: |                                   
+        this.test_result = res
+        assert (not res), 'check_config = False'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_val
+      Desc: Invalid config value
+      
+      Test: |
+        sys.argv.insert(-1, '/etc/hydratk2/hydratk.conf')
+        res = mh.check_config()
+      
+      Validate: |                                   
+        this.test_result = res
+        assert (not res), 'check_config = False' 
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_valid_val
+      Desc: Default config value
+      
+      Test: |
+        sys.argv[-2] = const.CONFIG_FILE
+        res = mh.check_config()
+        del sys.argv[-3:-1]
+      
+      Validate: |                                   
+        this.test_result = res
+        assert (res), 'check_config = True' 
+        res = this.test_result = mh._config_file
+        assert (res == const.CONFIG_FILE), '_config_file = {0}'.format(const.CONFIG_FILE) 
+        
+Test-Scenario-9:
+  Id: ts_09
+  Path: hydratk/core/masterhead/01_methods_ut.jedi
+  Name: ts_check_profile
+  Desc: Test method check_profile
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1     
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import sys
+    
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_cmd_opt
+    Desc: Command options
+   
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_no_opt
+      Desc: No command option
+      
+      Test: |
+        mh = MasterHead.get_head()
+        res = mh.check_profile()[0]
+      
+      Validate: |            
+        this.test_result = res
+        assert (not res), 'check_profile = False'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_shortopt
+      Desc: Invalid short option
+      
+      Test: |
+        sys.argv.insert(-1, '--p')
+        sys.argv.insert(-1, 'xxx')
+        res = mh.check_profile()[0]
+      
+      Validate: |            
+        this.test_result = res
+        assert (not res), 'check_profile = False'        
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid_longtopt
+      Desc: Invalid long option
+      
+      Test: |
+        sys.argv[-3] = '-profile'
+        res = mh.check_profile()[0]
+      
+      Validate: |            
+        this.test_result = res
+        assert (not res), 'check_profile = False'  
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_valid_shortopt
+      Desc: Valid short option
+      
+      Test: |
+        sys.argv[-3] = '-p'
+        res = mh.check_profile()[0]
+      
+      Validate: |            
+        this.test_result = res
+        assert (res), 'check_profile = True' 
+        
+    Test-Condition-5: 
+      Id: tco_05
+      Name: tco_valid_longtopt
+      Desc: Valid long option
+      
+      Test: |
+        sys.argv[-3] = '--profile'
+        res = mh.check_profile()[0]
+        del sys.argv[-3:-1]
+      
+      Validate: |            
+        this.test_result = res
+        assert (res), 'check_profile = True'      
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_config
+    Desc: Profile values
+   
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_no_val
+      Desc: No config value
+      
+      Test: |
+        mh = MasterHead.get_head()
+        sys.argv.insert(-1, '-p')
+        res = mh.check_profile()
+            
+      Validate: |                                   
+        this.test_result = str(res)
+        assert (res == (False, '')), 'check_profile = (False, \'\')'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_val
+      Desc: Invalid profile value
+      
+      Test: |
+        sys.argv.insert(-1, '')
+        res = mh.check_profile()
+      
+      Validate: |                                   
+        this.test_result = str(res)
+        assert (res == (False, '')), 'check_profile = (False, \'\')' 
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_valid_val
+      Desc: Valid profile value
+      
+      Test: |
+        stat = './stat.log'
+        sys.argv[-2] = stat
+        res = mh.check_profile()
+        del sys.argv[-3:-1]
+      
+      Validate: |                                   
+        this.test_result = str(res)
+        assert (res == (True, stat)), 'check_profile = (True, {0})'.format(stat)  
+        
+Test-Scenario-10:
+  Id: ts_10
+  Path: hydratk/core/masterhead/01_methods_ut.jedi
+  Name: ts_check_debug
+  Desc: Test method check_debug
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1     
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import sys
+    
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_cmd_opt
+    Desc: Command options
+   
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_no_opt
+      Desc: No command option
+      
+      Test: |
+        mh = MasterHead.get_head()
+        res = mh.check_debug()
+      
+      Validate: |            
+        this.test_result = res
+        assert (not res), 'check_debug = False'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_shortopt
+      Desc: Invalid short option
+      
+      Test: |
+        sys.argv.insert(-1, '--d')
+        sys.argv.insert(-1, '1')
+        res = mh.check_debug()
+      
+      Validate: |            
+        this.test_result = res
+        assert (not res), 'check_debug = False'        
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid_longtopt
+      Desc: Invalid long option
+      
+      Test: |
+        sys.argv[-3] = '-debug'
+        res = mh.check_debug()
+      
+      Validate: |            
+        this.test_result = res
+        assert (not res), 'check_debug = False'  
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_valid_shortopt
+      Desc: Valid short option
+      
+      Test: |
+        sys.argv[-3] = '-d'
+        res = mh.check_debug()
+      
+      Validate: |            
+        this.test_result = res
+        assert (res), 'check_debug = True' 
+        
+    Test-Condition-5: 
+      Id: tco_05
+      Name: tco_valid_longtopt
+      Desc: Valid long option
+      
+      Test: |
+        sys.argv[-3] = '--debug'
+        res = mh.check_debug()
+        del sys.argv[-3:-1]
+      
+      Validate: |            
+        this.test_result = res
+        assert (res), 'check_debug = True'
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_modes
+    Desc: Debug level values
+   
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_no_val
+      Desc: No debug value
+      
+      Test: |
+        mh = MasterHead.get_head()
+        sys.argv.insert(-1, '-d')
+        res = mh.check_debug()
+            
+      Validate: |                                   
+        this.test_result = res
+        assert (not res), 'check_debug = False'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_val
+      Desc: Invalid debug value
+      
+      Test: |
+        sys.argv.insert(-1, 'a')
+        res = mh.check_debug()
+      
+      Validate: |                                   
+        this.test_result = res
+        assert (not res), 'check_debug = False'        
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_debug_1
+      Desc: Debug level 1
+      
+      Test: |
+        sys.argv[-2] = '1'
+        res = mh.check_debug()
+        del sys.argv[-3:-1]
+      
+      Validate: |                                   
+        this.test_result = res
+        assert (res), 'check_debug = True' 
+        res = this.test_result = mh._debug_level
+        assert (res == 1), '_debug_level = 1'     
+        res = this.test_result = mh._debug
+        assert (res), '_debug = True'               
+        
+Test-Scenario-11:
+  Id: ts_11
+  Path: hydratk/core/masterhead/01_methods_ut.jedi
+  Name: ts_check_debug_channel
+  Desc: Test method check_debug_channel
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1     
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import sys
+    
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_cmd_opt
+    Desc: Command options
+   
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_no_opt
+      Desc: No command option
+      
+      Test: |
+        mh = MasterHead.get_head()
+        res = mh.check_debug_channel()
+      
+      Validate: |            
+        this.test_result = res
+        assert (not res), 'check_debug_channel = False'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_shortopt
+      Desc: Invalid short option
+      
+      Test: |
+        sys.argv.insert(-1, '--e')
+        sys.argv.insert(-1, '1')
+        res = mh.check_debug_channel()
+      
+      Validate: |            
+        this.test_result = res
+        assert (not res), 'check_debug_channel = False'        
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid_longtopt
+      Desc: Invalid long option
+      
+      Test: |
+        sys.argv[-3] = '-debug-channel'
+        res = mh.check_debug_channel()
+      
+      Validate: |            
+        this.test_result = res
+        assert (not res), 'check_debug_channel = False'  
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_valid_shortopt
+      Desc: Valid short option
+      
+      Test: |
+        sys.argv[-3] = '-e'
+        res = mh.check_debug_channel()
+      
+      Validate: |            
+        this.test_result = res
+        assert (res), 'check_debug_channel = True' 
+        
+    Test-Condition-5: 
+      Id: tco_05
+      Name: tco_valid_longtopt
+      Desc: Valid long option
+      
+      Test: |
+        sys.argv[-3] = '--debug-channel'
+        res = mh.check_debug_channel()
+        del sys.argv[-3:-1]
+      
+      Validate: |            
+        this.test_result = res
+        assert (res), 'check_debug_channel = True'
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_modes
+    Desc: Debug channel values
+   
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_no_val
+      Desc: No channel value
+      
+      Test: |
+        mh = MasterHead.get_head()
+        sys.argv.insert(-1, '-e')
+        res = mh.check_debug_channel()
+            
+      Validate: |                                   
+        this.test_result = res
+        assert (not res), 'check_debug_channel = False'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_val
+      Desc: Invalid channel value
+      
+      Test: |
+        sys.argv.insert(-1, 'a')
+        res = mh.check_debug_channel()
+      
+      Validate: |                                   
+        this.test_result = res
+        assert (not res), 'check_debug_channel = False'        
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_channel_1
+      Desc: Debug channel 1
+      
+      Test: |
+        sys.argv[-2] = '1'
+        res = mh.check_debug_channel()
+      
+      Validate: |                                   
+        this.test_result = res
+        assert (res), 'check_debug_channel = True' 
+        res = mh._debug_channel
+        this.test_result = str(res)
+        assert (res == [1]), '_debug_channel = [1]'     
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_channel_mult
+      Desc: Debug channel multiple
+      
+      Test: |
+        sys.argv[-2] = '1,2'
+        res = mh.check_debug_channel()
+      
+      Validate: |                                   
+        this.test_result = res
+        assert (res), 'check_debug_channel = True' 
+        res = mh._debug_channel
+        this.test_result = str(res)
+        assert (res == [1,2]), '_debug_channel = [1,2]' 
+        
+    Test-Condition-5: 
+      Id: tco_05
+      Name: tco_invalid_delim
+      Desc: Invalid delimiter
+      
+      Test: |
+        sys.argv[-2] = '1;2'
+        res = mh.check_debug_channel()
+        del sys.argv[-3:-1]
+      
+      Validate: |                                   
+        this.test_result = res
+        assert (not res), 'check_debug_channel = False'                                                                                                               

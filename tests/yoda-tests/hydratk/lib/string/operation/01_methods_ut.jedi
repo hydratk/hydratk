@@ -1,0 +1,162 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/lib/string/operation/01_methods_ut.jedi
+  Name: ts_mreplace
+  Desc: Test mreplace method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.string.operation import mreplace 
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_replace
+    Desc: Multiple replace
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_no_keys
+      Desc: No keys to replace
+      
+      Test: |
+        text = 'test 1234 test'
+        res = mreplace(text, {'124': '421', 'rest': 'est'})
+      
+      Validate: |
+        this.test_result = res
+        assert (res == text), 'mreplace = {0}'.format(text)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_single_key
+      Desc: Single key to replace
+      
+      Test: |
+        res = mreplace(text, {'test ': '', '124': '421'})
+      
+      Validate: |        
+        this.test_result = res
+        exp = '1234 test'
+        assert (res == exp), 'mreplace = {0}'.format(exp)
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_mult_keys
+      Desc: Multiple keys to replace
+      
+      Test: |
+        res = mreplace(text, {'test ': '', '1234 ': '4'})
+      
+      Validate: |        
+        this.test_result = res
+        exp = '4test'
+        assert (res == exp), 'mreplace = {0}'.format(exp)       
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/lib/string/operation/01_methods_ut.jedi
+  Name: ts_str_split
+  Desc: Test str_split method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.string.operation import str_split 
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_split
+    Desc: Split string
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_one_char
+      Desc: Split string per one character
+      
+      Test: |
+        text = '12345'
+        res = str_split(text, 1)
+      
+      Validate: |         
+        this.test_result = str(res)
+        assert (len(res) == 5), 'str_split = 5 substrings'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_two_chars
+      Desc: Split string per two characters
+      
+      Test: |
+        res = str_split(text, 2)
+      
+      Validate: |         
+        this.test_result = str(res)
+        assert (len(res) == 3), 'str_split = 3 substrings'      
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_four_chars
+      Desc: Split string per four characters
+      
+      Test: |
+        res = str_split(text, 4)
+      
+      Validate: |         
+        this.test_result = str(res)
+        assert (len(res) == 2), 'str_split = 2 substrings'
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_all_chars
+      Desc: Split string per all characters
+      
+      Test: |
+        res = str_split(text, 5)
+      
+      Validate: |         
+        this.test_result = str(res)
+        assert (len(res) == 1), 'str_split = 1 substring'   
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/lib/string/operation/01_methods_ut.jedi
+  Name: ts_strip_accents
+  Desc: Test strip_accents method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.string.operation import strip_accents 
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_strip
+    Desc: Strip accents
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_no_strip
+      Desc: Text without accent to strip                         
+      
+      Test: |
+        text = '12345'
+        res = strip_accents(text)
+      
+      Validate: |
+        this.test_result = res
+        assert (res == text), 'strip_accents = {0}'.format(text)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_strip
+      Desc: Text with accent to strip                         
+      
+      Test: |
+        text = 'Příliš žluťoučký kůň úpěl ďábelské ódy'
+        res = strip_accents(text)
+      
+      Validate: |
+        this.test_result = res
+        exp = 'Prilis zlutoucky kun upel dabelske ody'
+        assert (res == exp), 'strip_accents = {0}'.format(exp)        

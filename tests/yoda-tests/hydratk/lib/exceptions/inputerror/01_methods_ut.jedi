@@ -1,0 +1,31 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/lib/exceptions/inputerror/01_methods_ut.jedi
+  Name: ts_inputerror
+  Desc: Test InputError class
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.exceptions.inputerror import InputError 
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_init
+    Desc: Initialize InputError
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_init
+      Desc: Initialization
+      
+      Test: |
+        error_num, args, message = 1, (1, 2), 'msg' 
+        err = InputError(error_num, args, message)
+      
+      Validate: |
+        res = this.test_result = err.__class__.__name__
+        assert (res == 'InputError'), '__init__ = InputError'
+        res = [err.error_num, err.args, err.message]
+        this.test_result = str(res)
+        assert (res == [error_num, args, message]), 'error_num = {0}, args = {1}, message = {2}'.format(error_num, args, message)

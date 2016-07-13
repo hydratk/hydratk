@@ -1,0 +1,389 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/lib/console/commandlinetool/01_methods_ut.jedi
+  Name: ts_set_translator
+  Desc: Test set_translator method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.console.commandlinetool import CommandlineTool
+    from hydratk.core.masterhead import MasterHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_translator
+    Desc: Set translator
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_set
+      Desc: Set translator reference
+      
+      Test: |
+        mh = MasterHead.get_head()
+        CommandlineTool.set_translator(mh._trn)
+      
+      Validate: |
+        res = this.test_result = CommandlineTool._trn.__class__.__name__
+        assert (res == 'Translator'), '_trn = Translator'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_trn
+      Desc: Set invalid translator, error is raised
+      
+      Test: |
+        try:
+            CommandlineTool.set_translator(mh)
+            ex = False
+        except ValueError:
+            ex = True   
+      
+      Validate: |    
+        this.test_result = ex
+        assert (ex), 'set_translator raises ValueError'    
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/lib/console/commandlinetool/01_methods_ut.jedi
+  Name: ts_set_possible_commands
+  Desc: Test set_possible_commands method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.console.commandlinetool import CommandlineTool
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_commands
+    Desc: Set commands
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_set
+      Desc: Set commands
+      
+      Test: |
+        cmd = ['x', 'y']
+        CommandlineTool.set_possible_commands(cmd)
+        res = CommandlineTool._commands
+      
+      Validate: |        
+        this.test_result = str(res)
+        assert (res == cmd), '_commands = {0}'.format(cmd)
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/lib/console/commandlinetool/01_methods_ut.jedi
+  Name: ts_set_possible_options
+  Desc: Test set_possible_options method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.console.commandlinetool import CommandlineTool
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_options
+    Desc: Set options
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_set
+      Desc: Set options
+      
+      Test: |
+        shortopt, longopt = ['-x', '-y'], ['--x', '--y']
+        CommandlineTool.set_possible_options(shortopt, longopt)
+        res = [CommandlineTool._short_opt, CommandlineTool._long_opt]
+      
+      Validate: |        
+        this.test_result = str(res)
+        assert (res == [shortopt, longopt]), '_short_opt = {0}, _long_opt = {1}'.format(shortop, longopt)       
+        
+Test-Scenario-4:
+  Id: ts_04
+  Path: hydratk/lib/console/commandlinetool/01_methods_ut.jedi
+  Name: ts_set_help
+  Desc: Test set_help method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.console.commandlinetool import CommandlineTool
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_help
+    Desc: Set help
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_set
+      Desc: Set help
+      
+      Test: |
+        title, cp, cmd, opt = 'test', 'cp_test', {'x': 'desc'}, {'-x': 'desc2'}
+        CommandlineTool.set_help(title, cp, cmd, opt)
+        res = [CommandlineTool._title, CommandlineTool._cp_string, CommandlineTool._cmd_text, CommandlineTool._opt_text]
+      
+      Validate: |        
+        this.test_result = str(res)
+        assert (res == [title, cp, cmd, opt]), '_title = {0}, _cp_string = {1}, _cmd_text = {2}, _opt_text = {3}'.format(
+                title, cp, cmd, opt)         
+                
+Test-Scenario-5:
+  Id: ts_05
+  Path: hydratk/lib/console/commandlinetool/01_methods_ut.jedi
+  Name: ts_get_command_options_desc
+  Desc: Test get_command_options_desc method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.console.commandlinetool import CommandlineTool
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_single_opt
+    Desc: Get single option description
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_single_cmd
+      Desc: Option for single command
+      
+      Test: |  
+        opt, desc, cmd = '-x', 'test desc', 'test' 
+        CommandlineTool._opt_text[opt] = {'description': desc, 'commands': cmd}
+        res = CommandlineTool.get_command_options_desc(cmd)    
+      
+      Validate: |  
+        this.test_result = str(res)
+        exp = [opt + ' - ' + desc]
+        assert (res == exp), 'get_command_options = {0}'.format(exp) 
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_mult_cmd
+      Desc: Option for multiple commands
+      
+      Test: |  
+        cmd = ('test', 'test2')
+        CommandlineTool._opt_text[opt] = {'description': desc, 'commands': cmd}
+        res1 = CommandlineTool.get_command_options_desc(cmd[0])    
+        res2 = CommandlineTool.get_command_options_desc(cmd[1])  
+      
+      Validate: |  
+        this.test_result = str(res1)
+        exp = [opt + ' - ' + desc]
+        assert (res1 == exp), 'get_command_options = {0}'.format(exp)         
+        this.test_result = str(res2)
+        assert (res2 == exp), 'get_command_options = {0}'.format(exp) 
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid_cmd
+      Desc: Option for invalid command
+      
+      Test: |
+        res = CommandlineTool.get_command_options_desc('x')
+      
+      Validate: |              
+        this.test_result = str(res)
+        assert (res == []), 'get_command_options_desc = []'
+        del CommandlineTool._opt_text[opt]
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_mult_opt
+    Desc: Get multiple options description
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_single_cmd
+      Desc: Options for single command        
+        
+      Test: |  
+        opt, desc, cmd = ['-x', '-y'], ['test desc', 'test desc2'], 'test' 
+        CommandlineTool._opt_text[opt[0]] = {'description': desc[0], 'commands': cmd}
+        CommandlineTool._opt_text[opt[1]] = {'description': desc[1], 'commands': cmd} 
+        res = CommandlineTool.get_command_options_desc(cmd)    
+      
+      Validate: |  
+        this.test_result = str(res)
+        exp = [opt[0] + ' - ' + desc[0], opt[1] + ' - ' + desc[1]]
+        assert (res == exp), 'get_command_options = {0}'.format(exp)         
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_mult_cmd
+      Desc: Options for multiple commands
+      
+      Test: |  
+        cmd = ('test', 'test2')
+        CommandlineTool._opt_text[opt[0]] = {'description': desc[0], 'commands': cmd}
+        CommandlineTool._opt_text[opt[1]] = {'description': desc[1], 'commands': cmd} 
+        res1 = CommandlineTool.get_command_options_desc(cmd[0])    
+        res2 = CommandlineTool.get_command_options_desc(cmd[1])  
+      
+      Validate: |  
+        this.test_result = str(res1)
+        exp = [opt[0] + ' - ' + desc[0], opt[1] + ' - ' + desc[1]]
+        assert (res1 == exp), 'get_command_options = {0}'.format(exp)         
+        this.test_result = str(res2)
+        assert (res2 == exp), 'get_command_options = {0}'.format(exp)
+        del CommandlineTool._opt_text[opt[0]] 
+        del CommandlineTool._opt_text[opt[1]]         
+        
+Test-Scenario-6:
+  Id: ts_06
+  Path: hydratk/lib/console/commandlinetool/01_methods_ut.jedi
+  Name: ts_get_input_command
+  Desc: Test get_input_command method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.console.commandlinetool import CommandlineTool
+    from sys import argv
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_get_cmd
+    Desc: Get input command
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_exist_cmd
+      Desc: Existing command
+              
+      Test: |
+        cmd = 'test'
+        CommandlineTool._commands.append(cmd)
+        argv.append(cmd)
+        res = CommandlineTool.get_input_command()
+      
+      Validate: |
+        this.test_result = res
+        assert (res == cmd), 'get_input_command = {0}'.format(cmd)
+        del CommandlineTool._commands[-1]
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_cmd
+      Desc: Invalid command
+      
+      Test: |
+        res = CommandlineTool.get_input_command()
+      
+      Validate: | 
+        this.test_result = res
+        assert (res != cmd), 'get_input_command != {0}'.format(cmd)
+        del argv[-1]       
+        
+Test-Scenario-7:
+  Id: ts_07
+  Path: hydratk/lib/console/commandlinetool/01_methods_ut.jedi
+  Name: ts_create_short_help
+  Desc: Test create_short_help method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.console.commandlinetool import CommandlineTool
+    from sys import argv
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_short_help
+    Desc: Get short help
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_help
+      Desc: Short help
+      
+      Test: |
+        res = CommandlineTool.create_short_help()
+      
+      Validate: |  
+        this.test_result = res      
+        title, cp = CommandlineTool._title[3:-4], CommandlineTool._cp_string[3:-4]
+        assert (title in res and cp in res), 'create_short_help contains {0}, {1}'.format(title, cp)       
+        assert ('options' in res and 'command' in res), 'create_short_help contains options, command'  
+        cmd = argv[0].split(' ')[-1]
+        assert (cmd in res), 'create_short_help contains {0}'.format(cmd)            
+        
+Test-Scenario-8:
+  Id: ts_08
+  Path: hydratk/lib/console/commandlinetool/01_methods_ut.jedi
+  Name: ts_create_help
+  Desc: Test create_help method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.console.commandlinetool import CommandlineTool
+    from sys import argv
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_long_help
+    Desc: Get long help
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_help
+      Desc: Long help        
+        
+      Test: |
+        res = CommandlineTool.create_help()
+        
+      Validate: |
+        this.test_result = res
+        title, cp = CommandlineTool._title[3:-4], CommandlineTool._cp_string[3:-4]
+        assert (title in res and cp in res), 'create_help contains {0}, {1}'.format(title, cp)       
+        assert ('options' in res and 'command' in res), 'create_help contains options, command'  
+        cmd = argv[0].split(' ')[-1]
+        assert (cmd in res), 'create_help contains {0}'.format(cmd)    
+        
+        cmds = CommandlineTool._cmd_text.keys()
+        for cmd in cmds:
+            assert(cmd[3:-4] in res), 'create_help contains {0}'.format(cmd[3:-4])
+        opts = CommandlineTool._opt_text.keys()
+        for opt in opts:
+            assert(opt[3:-4] in res), 'create_help contains {0}'.format(opt[3:-4])            
+                     
+Test-Scenario-9:
+  Id: ts_09
+  Path: hydratk/lib/console/commandlinetool/01_methods_ut.jedi
+  Name: ts_parse_shell_text
+  Desc: Test parse_shell_text method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.console.commandlinetool import CommandlineTool
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_parse
+    Desc: Parse text
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_parse
+      Desc: Parse ext
+                      
+      Test: |
+        chars = '{h}{u}{e}'
+        text = 'test' + chars
+        res = CommandlineTool.parse_shell_text(text)
+      
+      Validate: |                      
+        this.test_result = res
+        assert (chars not in res), 'parse_shell_text doesn\'t contain {0}'.format(chars)

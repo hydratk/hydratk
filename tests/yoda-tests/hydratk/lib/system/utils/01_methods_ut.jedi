@@ -1,0 +1,164 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/lib/system/utils/01_methods_ut.jedi
+  Name: ts_module_version
+  Desc: Test module_version method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.system.utils import Utils
+    from pkg_resources import DistributionNotFound
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_mod_ver
+    Desc: Get module version
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_exist_mod
+      Desc: Existing module
+      
+      Test: |
+        res = float(Utils.module_version('xtermcolor'))
+      
+      Validate: |
+        this.test_result = res
+        assert (res >= 0.0), 'module_version >= 0.0'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_mod
+      Desc: Invalid module, error is raised
+      
+      Test: |
+        try:
+            Utils.module_version('x')
+            ex = False
+        except DistributionNotFound:
+            ex = True
+      
+      Validate: |        
+        this.test_result = ex
+        assert (ex), 'module_version raises DistributionNotFound'
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/lib/system/utils/01_methods_ut.jedi
+  Name: ts_module_loaded
+  Desc: Test module_loaded method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.system.utils import Utils
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_mod_loaded
+    Desc: Check if module is loaded
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_exist_mod
+      Desc: Existing module   
+      
+      Test: |
+        res = Utils.module_loaded('xtermcolor')
+      
+      Validate: |     
+        this.test_result = res
+        assert (res), 'module_loaded = True'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_mod
+      Desc: Invalid module   
+      
+      Test: |
+        res = Utils.module_loaded('x')
+      
+      Validate: |     
+        this.test_result = res
+        assert (not res), 'module_loaded = False'   
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/lib/system/utils/01_methods_ut.jedi
+  Name: ts_module_exists
+  Desc: Test module_exists method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.system.utils import Utils
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_mod_exist
+    Desc: Check if module exists
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_exist_mod
+      Desc: Existing module   
+      
+      Test: |
+        res = Utils.module_exists('Utils')
+      Validate: |     
+        this.test_result = res
+        assert (res), 'module_exists = True'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_mod
+      Desc: Invalid module   
+      
+      Test: |
+        res = Utils.module_exists('x')
+      
+      Validate: |     
+        this.test_result = res
+        assert (not res), 'module_exists = False' 
+        
+Test-Scenario-4:
+  Id: ts_04
+  Path: hydratk/lib/system/utils/01_methods_ut.jedi
+  Name: ts_module_version_ok
+  Desc: Test module_version_ok method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.system.utils import Utils
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_mod_ver
+    Desc: Check module version
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_valid_mod
+      Desc: Valid module version
+      
+      Test: |
+        cur = Utils.module_version('xtermcolor')
+        res = Utils.module_version_ok('1.3', cur)
+      
+      Validate: |
+        this.test_result = res
+        assert (res), 'module_version_ok = True'    
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_mod
+      Desc: Invalid module version
+      
+      Test: |
+        res = Utils.module_version_ok('99.1', cur)
+      
+      Validate: |
+        this.test_result = res
+        assert (not res), 'module_version_ok = False'                              

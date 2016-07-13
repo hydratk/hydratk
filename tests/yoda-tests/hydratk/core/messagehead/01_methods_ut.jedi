@@ -1,0 +1,211 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/core/messagehead/01_methods_ut.jedi
+  Name: ts_new_async_ticket_id
+  Desc: Test method _new_async_ticket_id
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.messagehead import MessageHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_ticket_id
+    Desc: Generate ticket id
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_first_id
+      Desc: Generate first ticket id
+      
+      Test: |
+        mh = MessageHead()
+        res = mh._new_async_ticket_id()
+      
+      Validate: |
+        this.test_result = res
+        assert ('-0-1' in res), '_async_ticket_id contains -0-1'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_last_id
+      Desc: Generate last ticket id
+      
+      Test: |
+        max = mh._async_ticket_seq_max
+        mh._async_ticket_seq = max-1
+        res = mh._new_async_ticket_id()
+      
+      Validate: |        
+        this.test_result = res
+        assert (str(max) in res), '_new_async_ticket_id contains {0}'.format(max)
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_seq_reset
+      Desc: Ticket id sequence reset
+      
+      Test: |
+        res = mh._new_async_ticket_id()
+      
+      Validate: |  
+        this.test_result = res
+        assert ('-0-1' in res), '_async_ticket_id contains -0-1' 
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/core/messagehead/01_methods_ut.jedi
+  Name: ts_new_async_ticket
+  Desc: Test method _new_async_ticket
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_ticket
+    Desc: Generate ticket
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_ticket
+      Desc: Generate ticket
+      
+      Test: |
+        mh = MasterHead.get_head()
+        id = mh._new_async_ticket_id()
+        mh._new_async_ticket(id)
+      
+      Validate: |        
+        res = this.test_result = len(mh._async_fn_tickets)        
+        assert (res == 1), '_async_fn_tickets contain 1 ticket'
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/core/messagehead/01_methods_ut.jedi
+  Name: ts_delete_async_ticket
+  Desc: Test method _delete_async_ticket
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_del_ticket
+    Desc: Delete ticket
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_del
+      Desc: Delete ticket
+      
+      Test: |
+        mh = MasterHead.get_head()
+        id = mh._new_async_ticket_id()
+        mh._new_async_ticket(id)
+        res1 = len(mh._async_fn_tickets) 
+        mh._delete_async_ticket(id)
+        
+      Validate: |        
+        this.test_result = res1
+        assert (res1 == 1), '_async_fn_tickets contains 1 ticket' 
+        res = this.test_result = len(mh._async_fn_tickets)        
+        assert (res == 0), '_async_fn_tickets is empty'   
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_id
+      Desc: Invalid ticket id, error is raised
+      
+      Test: |
+        try:
+          mh._delete_async_ticket('')
+          ex = False
+        except TypeError:
+          ex = True
+      
+      Validate: |  
+        this.test_result = ex
+        assert (ex), '_delete_async_ticket raises TypeError'     
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_not_exist_id
+      Desc: Not existing ticket id, error is raised
+      
+      Test: |
+        try:
+          mh._delete_async_ticket(id)
+          ex = False
+        except KeyError:
+          ex = True
+      
+      Validate: |  
+        this.test_result = ex
+        assert (ex), '_delete_async_ticket raises KeyError'                
+        
+Test-Scenario-4:
+  Id: ts_04
+  Path: hydratk/core/messagehead/01_methods_ut.jedi
+  Name: ts_reset_async_ticket_seq
+  Desc: Test method _reset_async_ticket_seq
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.messagehead import MessageHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_reset
+    Desc: Reset sequence
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_reset
+      Desc: Reset sequence
+      
+      Test: |
+        mh = MessageHead()
+        mh._async_ticket_seq = 1000
+        mh._reset_async_ticket_seq()
+      
+      Validate: |          
+        res = this.test_result = mh._async_ticket_seq
+        assert (res == 0), '_async_ticket_seq = 0'
+        
+Test-Scenario-5:
+  Id: ts_05
+  Path: hydratk/core/messagehead/01_methods_ut.jedi
+  Name: ts_reg_msg_handlers
+  Desc: Test method _reg_msg_handlers
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_reg
+    Desc: Register message hooks
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_reg
+      Desc: Register message hooks
+      
+      Test: |
+        mh = MasterHead.get_head()
+        mh._reg_msg_handlers()
+        res = mh._fn_hooks.keys() 
+      
+      Validate: |        
+        this.test_result = str(res)
+        exp = ['cmsg_async_fn_ex', 'cmsg_async_fn', 'cmsg_async_ext_fn']
+        assert (exp[0] in res and exp[1] in res and exp[2] in res), '_fn_hooks contain {0}'.format(exp) 

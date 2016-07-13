@@ -3,7 +3,7 @@
 Tutorial 3: SOAP interface
 ==========================
 
-Sample Yoda script is located in /var/local/hydratk/yoda/yoda-tests/testenv/soap.jedi.
+Sample Yoda script is located in /var/local/hydratk/yoda/yoda-tests/hydratk/extensions/testenv/soap.jedi.
 
 Connect
 ^^^^^^^
@@ -11,7 +11,7 @@ Connect
   .. code-block:: python
   
      # import helpers
-     import yodahelpers.testenv.helpers as hlp
+     import yodahelpers.hydratk.extensions.testenv.helpers as hlp
     
      # create SOAP client instance and connect
      client = hlp.soap()

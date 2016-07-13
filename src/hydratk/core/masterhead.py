@@ -122,7 +122,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         except Exception as e:
             # import traceback
             print('Fatal error - Unhandled exception thrown in exception handler:')
-            print('Type: %s' % extype)
+            print('type: %s' % extype)
             print('value: %s' % value)
             # print(repr(traceback.format_tb(traceback)))
     

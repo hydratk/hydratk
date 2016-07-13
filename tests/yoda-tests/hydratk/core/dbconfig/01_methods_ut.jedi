@@ -1,0 +1,196 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/core/dbconfig/01_methods_ut.jedi
+  Name: ts_connect
+  Desc: Test method connect
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.dbconfig import DBConfig
+    from os import path, remove
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_connect
+    Desc: Connect database
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_init_db
+      Desc: Initialize database
+      
+      Test: |
+        db_file = 'test.db3'
+        db = DBConfig(db_file)
+        db.connect()
+        res = True if (path.exists(db_file)) else False
+        
+      Validate: |   
+        this.test_result = res
+        assert (res), 'db created'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_exist_db
+      Desc: Existing database
+      
+      Test: |        
+        db = DBConfig(db_file)
+        db.connect()
+        res = db._conn
+        
+      Validate: |   
+        this.test_result = str(res)
+        assert (res != None), 'db connected'   
+        remove(db_file)    
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/core/dbconfig/01_methods_ut.jedi
+  Name: ts_writedb
+  Desc: Test method writedb
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.dbconfig import DBConfig
+    from sqlite3 import connect
+    from yaml import load
+    from os import remove
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_writedb
+    Desc: Write database
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_create_struct
+      Desc: Create dabase structure
+      
+      Test: |
+        db_file = 'test.db3'
+        db = DBConfig(db_file)
+        db.connect()
+        
+        with open('/etc/hydratk/hydratk.conf', 'r') as f:
+            cfg = load(f.read())
+        
+        res = db.writedb(cfg)
+      
+      Validate: |    
+        this.test_result = res
+        assert (res), 'writedb = True'  
+        conn = connect(db_file)
+        records = this.test_result = len(conn.cursor().execute('select * from config').fetchall())
+        recs = len(cfg.keys())
+        assert (records >= recs), 'count of records >= {0}'.format(recs)
+        remove(db_file) 
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/core/dbconfig/01_methods_ut.jedi
+  Name: ts_cfg2db
+  Desc: Test method cfg2db
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.dbconfig import DBConfig
+    from yaml import load
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_cfg2db
+    Desc: Convert to db format
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_cfg2db
+      Desc: Convert to db format
+      
+      Test: |
+        with open('/etc/hydratk/hydratk.conf', 'r') as f:
+            file_cfg = load(f.read())
+            
+        cfg = []
+        for gk, gv in file_cfg.items():
+            for ok, ov in gv.items():
+                for kk, kv in ov.items():
+                    cfg.append({'grp' : gk, 'obj' : ok, 'key' : kk, 'value' : kv})            
+            
+        db = DBConfig('')
+        db_cfg = db.cfg2db(file_cfg)        
+      
+      Validate: |  
+        res = this.test_result = len(db_cfg)
+        exp_len = len(cfg)
+        assert (res == exp_len), 'cfg2db = {0} records'.format(exp_len) 
+        
+Test-Scenario-4:
+  Id: ts_04
+  Path: hydratk/core/dbconfig/01_methods_ut.jedi
+  Name: ts_db2cfg
+  Desc: Test method db2cfg
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.dbconfig import DBConfig
+    from yaml import load
+    from sqlite3 import connect
+    from os import remove
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_cfg2db
+    Desc: Convert to cfg format
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_db2cfg
+      Desc: Convert to cfg format   
+      
+      Test: |
+        with open('/etc/hydratk/hydratk.conf', 'r') as f:
+            file_cfg = load(f.read())
+        
+        db_file = 'test.db3'    
+        db = DBConfig(db_file)
+        db.connect()
+        db.writedb(file_cfg)
+        db_cfg = db.db2cfg()       
+      
+      Validate: |        
+        res = this.test_result = len(db_cfg)
+        exp_len = len(db.cfg2db(file_cfg))
+        assert (res == exp_len), 'db2cfg = {0} records'.format(exp_len)   
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_active_rec
+      Desc: Convert all records   
+      
+      Test: |                   
+        conn = connect(db_file)
+        conn.cursor().execute('update config set enabled = 0')
+        conn.commit()
+        db_cfg = db.db2cfg(False)
+      
+      Validate: |        
+        res = this.test_result = len(db_cfg)
+        assert (res == exp_len), 'db2cfg = {0} records'.format(exp_len)         
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_active_rec
+      Desc: Convert active records   
+      
+      Test: |                   
+        db_cfg = db.db2cfg(True)
+      
+      Validate: |        
+        res = this.test_result = len(db_cfg)
+        assert (res == 0), 'db2cfg = 0 records'
+        remove(db_file)           

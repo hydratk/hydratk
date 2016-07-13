@@ -1,0 +1,521 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/core/debugger/01_methods_ut.jedi
+  Name: ts_fromhere
+  Desc: Test fromhere method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.debugger import Debugger
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_fromhere
+    Desc: Print code location
+    
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_level_one
+      Desc: Trace level one
+      
+      Test: |
+        debug = Debugger()
+        res = debug.fromhere()
+      
+      Validate: |
+        this.test_result = str(res)
+        exp = {'file': '<string>', 'line': 2, 'module': '<string>', 
+               'func': '<module>', 'call_path': '__main__'}
+        assert (res == exp), 'fromhere = {0}'.format(exp)
+        
+    Test-Condition-2:
+      Id: tco_02
+      Name: tco_level_two
+      Desc: Trace level two
+      
+      Test: |
+        res = debug.fromhere(2)        
+      
+      Validate: |
+        this.test_result = str(res)
+        res['file'] = res['file'].split('/')[-1]
+        assert (res['line'] > 0), 'fromhere[line] > 0'
+        del res['line']      
+        exp = {'file': 'testengine.py', 'module': 'testengine', 
+               'func': 'execute', 'call_path': 'hydratk.extensions.yoda.testengine'}
+        assert (res == exp), 'fromhere = {0}'.format(exp) 
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/core/debugger/01_methods_ut.jedi
+  Name: ts_function
+  Desc: Test function method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.debugger import Debugger
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_function
+    Desc: Get function name
+    
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_function
+      Desc: Get function name
+      
+      Test: |
+        debug = Debugger()
+        res = debug.function()
+      
+      Validate: |             
+        this.test_result = res
+        exp = '<module>'
+        assert (res == exp), 'function = {0}'.format(exp) 
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/core/debugger/01_methods_ut.jedi
+  Name: ts_file
+  Desc: Test file method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.debugger import Debugger
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_file
+    Desc: Get file name
+    
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_file
+      Desc: Get file name
+      
+      Test: |
+        debug = Debugger()
+        res = debug.file()
+      
+      Validate: |             
+        this.test_result = res
+        exp = '<string>'
+        assert (res == exp), 'file = {0}'.format(exp)    
+        
+Test-Scenario-4:
+  Id: ts_04
+  Path: hydratk/core/debugger/01_methods_ut.jedi
+  Name: ts_line
+  Desc: Test line method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.debugger import Debugger
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_line
+    Desc: Get line number
+    
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_line
+      Desc: Get line number
+      
+      Test: |
+        debug = Debugger()
+        res = debug.line()
+      
+      Validate: |             
+        this.test_result = res
+        exp = 2
+        assert (res == exp), 'line = {0}'.format(exp)     
+        
+Test-Scenario-5:
+  Id: ts_05
+  Path: hydratk/core/debugger/01_methods_ut.jedi
+  Name: ts_module
+  Desc: Test module method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.debugger import Debugger
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_module
+    Desc: Get module name
+    
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_module
+      Desc: Get module name
+      
+      Test: |
+        debug = Debugger()
+        res = debug.module()
+      
+      Validate: |             
+        this.test_result = res
+        exp = '<string>'
+        assert (res == exp), 'module = {0}'.format(exp) 
+        
+Test-Scenario-6:
+  Id: ts_06
+  Path: hydratk/core/debugger/01_methods_ut.jedi
+  Name: ts_errmsg
+  Desc: Test errmsg method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.debugger import Debugger
+    import sys
+    from StringIO import StringIO
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_errmsg
+    Desc: Print error message
+   
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_errmsg
+      Desc: Print error message  
+      
+      Test: |
+        debug = Debugger()
+        old = sys.stdout
+        sys.stdout = res = StringIO()
+        data = (1, 2, 3)
+        debug.errmsg(*data)
+        res = res.getvalue()
+        sys.stdout = old
+      
+      Validate: |                        
+        this.test_result = res
+        assert (res[:-1] == str(data)), 'errmsg prints {0}'.format(data)
+        
+Test-Scenario-7:
+  Id: ts_07
+  Path: hydratk/core/debugger/01_methods_ut.jedi
+  Name: ts_dmsg
+  Desc: Test dmsg method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead  
+    import yodahelpers.hydratk.core.events as hlp      
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_dmsg
+    Desc: Print debug message
+   
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_debug
+      Desc: Print debug message  
+      
+      Test: |
+        mh = MasterHead.get_head()
+        mh._debug = True
+        hlp.events = []
+        ev_id = 'test'
+        hlp.reg_ev_hook(mh, ev_id)        
+        mh.dmsg(ev_id)
+        res = hlp.events[0]._id
+      
+      Validate: |  
+        this.test_result = res
+        assert (res == ev_id), 'dmsg raises {0} event'.format(ev_id)
+        
+    Test-Condition-2:
+      Id: tco_02
+      Name: tco_no_debug
+      Desc: Omit debug message  
+      
+      Test: |
+        mh._debug = False
+        hlp.events = []
+        hlp.reg_ev_hook(mh, ev_id)        
+        mh.dmsg(ev_id)
+        res = hlp.events
+      
+      Validate: |  
+        this.test_result = len(res)
+        assert (len(res) == 0), 'dmsg raises no event'      
+                 
+Test-Scenario-8:
+  Id: ts_08
+  Path: hydratk/core/debugger/01_methods_ut.jedi
+  Name: ts_match_channel
+  Desc: Test match_channel method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.debugger import Debugger
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_match_channel
+    Desc: Match debug channel
+   
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_no_channels
+      Desc: No debug channels                 
+      
+      Test: |
+        debug = Debugger()
+        res = debug.match_channel(0)
+      
+      Validate: |
+        this.test_result = res
+        assert (res), 'match_channel = True'
+        
+    Test-Condition-2:
+      Id: tco_02
+      Name: tco_single_channel
+      Desc: Single debug channel
+      
+      Test: |
+        id = 1
+        debug._debug_channel = [id]
+        res = debug.match_channel(id)
+      
+      Validate: |          
+        this.test_result = res
+        assert (res), 'match_channel = True'
+        
+    Test-Condition-3:
+      Id: tco_03
+      Name: tco_mult_channel
+      Desc: Multiple debug channels
+      
+      Test: |
+        id = [1, 2]
+        debug._debug_channel = id
+        res = debug.match_channel(id)
+      
+      Validate: |          
+        this.test_result = res
+        assert (res), 'match_channel = True' 
+        
+    Test-Condition-4:
+      Id: tco_04
+      Name: tco_invalid_channel
+      Desc: Invalid debug channel
+      
+      Test: |        
+        res = debug.match_channel(3)
+      
+      Validate: |          
+        this.test_result = res
+        assert (not res), 'match_channel = False'   
+        
+Test-Scenario-9:
+  Id: ts_09
+  Path: hydratk/core/debugger/01_methods_ut.jedi
+  Name: ts_dout
+  Desc: Test dout method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import sys
+    from StringIO import StringIO
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_dout
+    Desc: Print debug message
+   
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_dout
+      Desc: Print debug message
+      
+      Test: |
+        mh = MasterHead.get_head()
+        mh._debug = True
+        old = sys.stdout
+        sys.stdout = res = StringIO()
+        msg = 'testmsg'
+        mh.dout(msg)
+        res = res.getvalue()
+        sys.stdout = old        
+      
+      Validate: |       
+        this.test_result = res
+        assert (msg in res), 'dout contains {0}'.format(msg) 
+        
+    Test-Condition-2:
+      Id: tco_02
+      Name: tco_dis_debug
+      Desc: Disabled debug
+      
+      Test: |
+        mh._debug = False
+        old = sys.stdout
+        sys.stdout = res = StringIO()
+        mh.dout(msg)
+        res = res.getvalue()
+        sys.stdout = old          
+      
+      Validate: |     
+        this.test_result = res
+        assert (msg not in res), 'dout does not contain {0}'.format(msg)  
+        
+    Test-Condition-3:
+      Id: tco_03
+      Name: tco_dis_level
+      Desc: Disabled debug level
+      
+      Test: |
+        mh._debug = True
+        old = sys.stdout
+        sys.stdout = res = StringIO()
+        msg = 'testmsg'
+        mh.dout(msg, level=2)
+        res = res.getvalue()
+        sys.stdout = old          
+      
+      Validate: |     
+        this.test_result = res
+        assert (msg not in res), 'dout does not contain {0}'.format(msg) 
+        
+    Test-Condition-4:
+      Id: tco_04
+      Name: tco_dis_channel
+      Desc: Disabled debug channel
+      
+      Test: |
+        mh._debug_channel = [1]
+        old = sys.stdout
+        sys.stdout = res = StringIO()
+        msg = 'testmsg'
+        mh.dout(msg, channel=2)
+        res = res.getvalue()
+        sys.stdout = old          
+      
+      Validate: |     
+        this.test_result = res
+        assert (msg not in res), 'dout does not contain {0}'.format(msg)    
+        
+Test-Scenario-10:
+  Id: ts_10
+  Path: hydratk/core/debugger/01_methods_ut.jedi
+  Name: ts_wout
+  Desc: Test wout method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import sys
+    from StringIO import StringIO
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_wout
+    Desc: Print warning message
+   
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_wout
+      Desc: Print warning message
+      
+      Test: |
+        mh = MasterHead.get_head()
+        old = sys.stdout
+        sys.stdout = res = StringIO()
+        msg = 'testmsg'
+        mh.wout(msg)
+        res = res.getvalue()
+        sys.stdout = old        
+      
+      Validate: |       
+        this.test_result = res
+        assert (msg in res), 'wout contains {0}'.format(msg)        
+        
+Test-Scenario-11:
+  Id: ts_11
+  Path: hydratk/core/debugger/01_methods_ut.jedi
+  Name: ts_errout
+  Desc: Test errout method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import sys
+    from StringIO import StringIO
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_errout
+    Desc: Print warning message
+   
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_errout
+      Desc: Print error message
+      
+      Test: |
+        mh = MasterHead.get_head()
+        old = sys.stdout
+        sys.stdout = res = StringIO()
+        msg = 'testmsg'
+        mh.errout(msg)
+        res = res.getvalue()
+        sys.stdout = old        
+      
+      Validate: |       
+        this.test_result = res
+        assert (msg in res), 'errout contains {0}'.format(msg)      
+        
+Test-Scenario-12:
+  Id: ts_12
+  Path: hydratk/core/debugger/01_methods_ut.jedi
+  Name: ts_exout
+  Desc: Test exout method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import sys
+    from StringIO import StringIO
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_exout
+    Desc: Print exception message
+   
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_exout
+      Desc: Print exception message
+      
+      Test: |
+        mh = MasterHead.get_head()
+        old = sys.stdout
+        sys.stdout = res = StringIO()
+        type, msg = 'testex', 'testmsg'
+        mh.exout(type, msg, None)
+        res = res.getvalue()
+        sys.stdout = old        
+      
+      Validate: |       
+        this.test_result = res
+        assert (type in res and msg in res), 'exout contains {0}, {1}'.format(type, msg)                                                                      

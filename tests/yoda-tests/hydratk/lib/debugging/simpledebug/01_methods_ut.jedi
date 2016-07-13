@@ -1,0 +1,34 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/lib/debugging/simpledebug/01_methods_ut.jedi
+  Name: ts_dmsg
+  Desc: Test dmsg method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead  
+    import yodahelpers.hydratk.core.events as hlp      
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_dmsg
+    Desc: Print debug message
+   
+    Test-Condition-1:
+      Id: tco_01
+      Name: tco_debug
+      Desc: Print debug message  
+      
+      Test: |
+        mh = MasterHead.get_head()
+        mh._debug = True
+        hlp.events = []
+        ev_id = 'test'
+        hlp.reg_ev_hook(mh, ev_id)        
+        mh.dmsg(ev_id)
+        res = hlp.events[0]._id
+      
+      Validate: |  
+        this.test_result = res
+        assert (res == ev_id), 'dmsg raises {0} event'.format(ev_id)

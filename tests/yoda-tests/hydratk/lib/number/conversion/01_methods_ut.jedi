@@ -1,0 +1,39 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/lib/number/conversion/01_methods_ut.jedi
+  Name: ts_int2bool
+  Desc: Test int2bool method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.number.conversion import int2bool 
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_conv
+    Desc: Conversion
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_true
+      Desc: Convert number to True
+      
+      Test: |
+        res = int2bool(1)
+      
+      Validate: |
+        this.test_result = res
+        assert (res), 'int2bool = True'
+        
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_false
+      Desc: Convert number to False
+      
+      Test: |
+        res = int2bool(0)
+      
+      Validate: |
+        this.test_result = res
+        assert (not res), 'int2bool = False'        

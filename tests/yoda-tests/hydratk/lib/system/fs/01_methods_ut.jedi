@@ -1,0 +1,141 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/lib/system/fs/01_methods_ut.jedi
+  Name: ts_rmkdir
+  Desc: Test rmkdir method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.system.fs import rmkdir 
+    from os import path, system
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_mkdir
+    Desc: Create directory
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_single_dir
+      Desc: Single directory
+      
+      Test: |
+        dir = './test_htk'
+        res = rmkdir(dir)
+      
+      Validate: |
+        this.test_result = res
+        assert (res), 'rmkdir = True'
+        res = this.test_result = path.exists(dir)
+        assert (res), '{0} directory exists'.format(dir)
+        system('rm -fR {0}'.format(dir))
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_mult_dir
+      Desc: Multiple nested directories
+      
+      Test: |
+        dir = './test_htk/test_htk2/test_htk3'
+        res = rmkdir(dir)
+      
+      Validate: |
+        this.test_result = res
+        assert (res), 'rmkdir = True'
+        res = this.test_result = path.exists(dir)
+        assert (res), '{0} directory exists'.format(dir)    
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_exist_dir
+      Desc: Existing directory
+      
+      Test: |
+        res = rmkdir(dir)
+      
+      Validate: |
+        this.test_result = res
+        assert (not res), 'rmkdir = False'
+        res = this.test_result = path.exists(dir)     
+        system('rm -fR {0}'.format('./test_htk'))   
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_invalid_dir
+      Desc: Invalid directory, error is raised
+      
+      Test: |
+        try:
+            rmkdir('/dev/null/test')
+            ex = False
+        except Exception:
+            ex = True
+      
+      Validate: |
+        this.test_result = ex
+        assert (ex), 'rmkdir raises Exception'                   
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/lib/system/fs/01_methods_ut.jedi
+  Name: ts_file_get_contents
+  Desc: Test file_get_contents method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.system.fs import file_get_contents 
+    from os import system
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_read
+    Desc: Read file
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_read
+      Desc: Read file
+      
+      Test: |
+        file = 'test.txt'
+        system('cat /etc/passwd > {0}'.format(file))
+        res = file_get_contents(file)
+      
+      Validate: |     
+        this.test_result = res
+        assert (res != None), 'file_get_contents != None'
+        system('rm -f {0}'.format(file))
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/lib/system/fs/01_methods_ut.jedi
+  Name: ts_file_put_contents
+  Desc: Test file_put_contents method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.system.fs import file_get_contents, file_put_contents 
+    from os import system
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_read
+    Desc: Read file
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_read
+      Desc: Read file
+      
+      Test: |
+        file = 'test.txt'
+        file_put_contents(file, 'test1234')
+        res = file_get_contents(file)
+      
+      Validate: |     
+        this.test_result = res
+        assert (res != None), 'file_get_contents != None'
+        system('rm -f {0}'.format(file))        

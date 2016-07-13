@@ -1,0 +1,104 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/core/hookhead/01_methods_ut.jedi
+  Name: ts_find_module
+  Desc: Test find_module method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import sys
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_find_module
+    Desc: Find module
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_exist_pck
+      Desc: Find existing package
+      
+      Test: |
+        mh = MasterHead.get_head()
+        pck = 'hydratk.lib.bridge.java'
+        res = mh.find_module(pck, None)
+      
+      Validate: |
+        this.test_result = res
+        assert (res == None), 'find_module = None'
+        pck = 'hydratk.translation.lib.bridge.java'
+        assert (pck in sys.modules), 'modules contain {0}'.format(pck)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_no_exist_pck
+      Desc: Find not existing package
+      
+      Test: |
+        mh = MasterHead.get_head()
+        pck = 'hydratk.lib.bridge.java2'
+        res = mh.find_module(pck, None)
+      
+      Validate: |
+        this.test_result = res
+        assert (res == None), 'find_module = None'
+        pck = 'hydratk.translation.lib.bridge.java2'
+        assert (pck not in sys.modules), 'modules does not contain {0}'.format(pck) 
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/core/hookhead/01_methods_ut.jedi
+  Name: ts_load_module
+  Desc: Test load_module method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import sys
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_load_module
+    Desc: Load module
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_trn_pck
+      Desc: Translation message
+      
+      Test: |
+        mh = MasterHead.get_head()
+        res = mh.load_module('hydratk.lib.bridge.java')
+      
+      Validate: |               
+        this.test_result = res
+        assert (res == None), 'load_module = None'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_sys_mod
+      Desc: System module
+      
+      Test: |
+        res = mh.load_module('__main__')
+      
+      Validate: |        
+        this.test_result = str(res)
+        assert (res != None), 'load_module != None'
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_mod
+      Desc: Import module
+      
+      Test: |
+        mod = 'socket'
+        res = mh.load_module(mod)
+      
+      Validate: |        
+        this.test_result = str(res)
+        assert (res != None), 'load_module != None'
+        assert (mod in sys.modules), '{0} imported'.format(mod)        

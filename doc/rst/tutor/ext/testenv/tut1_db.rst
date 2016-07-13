@@ -3,7 +3,7 @@
 Tutorial 1: DB interface
 ========================
 
-Sample Yoda script is located in /var/local/hydratk/yoda/yoda-tests/testenv/db.jedi.
+Sample Yoda script is located in /var/local/hydratk/yoda/yoda-tests/hydratk/extensions/testenv/db.jedi.
 
 Important snippets are commented.
 
@@ -13,7 +13,7 @@ Connect
   .. code-block:: python
   
      # import helpers
-     import yodahelpers.testenv.helpers as hlp
+     import yodahelpers.hydratk.extensions.testenv.helpers as hlp
     
      # create DB client instance and connect
      client = hlp.db()

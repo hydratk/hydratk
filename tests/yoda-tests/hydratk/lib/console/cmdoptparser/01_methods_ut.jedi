@@ -1,0 +1,471 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/lib/console/cmdoptparser/01_methods_ut.jedi
+  Name: ts_error
+  Desc: Test error method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.console.cmdoptparser import CmdOptParser, CmdOptParserError
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_error
+    Desc: Error message
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_error
+      Desc: Error message, error is raised
+      
+      Test: |
+        try:
+            op = CmdOptParser()
+            op.error('test')
+            ex = False
+        except CmdOptParserError:
+            ex = True
+      
+      Validate: |
+        this.test_result = ex
+        assert (ex), 'error raises CmdOptParserError'
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/lib/console/cmdoptparser/01_methods_ut.jedi
+  Name: ts_set_default_opt_group
+  Desc: Test set_default_opt_group method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.console.cmdoptparser import CmdOptParser, CmdOptParserUndefined
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_default_group
+    Desc: Default option group
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_new_group
+      Desc: Set new default option group
+      
+      Test: |
+        op = CmdOptParser()
+        group = 'test'
+        op._options[group] = {}
+        op.set_default_opt_group(group)
+      
+      Validate: |        
+        res = this.test_result = op._opt_group
+        assert (res == group), '_opt_group = {0}'.format(group)
+        op.set_default_opt_group('default')
+        del op._options[group]
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_no_exist_group
+      Desc: Set not existing option group, error is raised
+      
+      Test: |
+        try: 
+            op.set_default_opt_group(group)
+            ex = False
+        except CmdOptParserUndefined:
+            ex = True
+      
+      Validate: |     
+        this.test_result = ex
+        assert (ex), 'set_default_opt_group raises CmdOptParserUndefined'   
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid_group
+      Desc: Set invalid option group, error is raised
+      
+      Test: |
+        try: 
+            op.set_default_opt_group(None)
+            ex = False
+        except TypeError:
+            ex = True
+      
+      Validate: |     
+        this.test_result = ex
+        assert (ex), 'set_default_opt_group raises TypeError'   
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/lib/console/cmdoptparser/01_methods_ut.jedi
+  Name: ts_add_opt_group
+  Desc: Test add_opt_group method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.console.cmdoptparser import CmdOptParser
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_add_group
+    Desc: Add option group
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_new_group
+      Desc: Add new group
+      
+      Test: |
+        op = CmdOptParser()
+        group = 'test'
+        op.add_opt_group(group)
+        res = op._options[group]
+      
+      Validate: |            
+        this.test_result = str(res)
+        assert (res == {}), '_options[{0}] = {}'.format(group)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_exist_group
+      Desc: Add exist group, won't be overidden
+      
+      Test: |
+        op._options[group] = 'xx'
+        op.add_opt_group(group)
+        res = op._options[group]
+      
+      Validate: |            
+        this.test_result = str(res)
+        assert (res == 'xx'), '_options[{0}] = xx'.format(group) 
+        del op_options[group] 
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid_group
+      Desc: Add invalid group, error is raised
+      
+      Test: |
+        try:
+            op.add_opt_group(None)
+            ex = False
+        except TypeError:
+            ex = True 
+      
+      Validate: |              
+        this.test_result = ex
+        assert (ex), 'add_opt_group raises TypeError'
+        
+Test-Scenario-4:
+  Id: ts_04
+  Path: hydratk/lib/console/cmdoptparser/01_methods_ut.jedi
+  Name: ts_add_opt
+  Desc: Test _add_opt method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.console.cmdoptparser import CmdOptParser, CmdOptParserError
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_single_opt
+    Desc: Add single option 
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_new_group
+      Desc: Add new group  
+      
+      Test: |
+        op = CmdOptParser()
+        group, opt = 'test', '-x'
+        res = op._add_opt(opt, opt_group=group)
+      
+      Validate: |     
+        this.test_result = res
+        assert (res), '_add_opt = True'
+        exp = {'action': 'store_true'}
+        res = op._options[group][opt]
+        this.test_result = str(res)
+        assert (res == exp), '_options[{0}][{1}] = {2}'.format(group, opt, exp)
+        del op._options[group][opt]    
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_opt_single_val
+      Desc: Add new option with single value
+      
+      Test: |
+        d_opt, has_value, allow_multiple = 'x', True, False
+        res = op._add_opt(opt, d_opt, has_value, allow_multiple, group)
+      
+      Validate: |     
+        this.test_result = res
+        assert (res), '_add_opt = True'
+        exp = {'dest': d_opt, 'action': 'store'}
+        res = op._options[group][opt]
+        this.test_result = str(res)
+        assert (res == exp), '_options[{0}][{1}] = {2}'.format(group, opt, exp)
+        del op._options[group][opt]      
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_opt_mult_val
+      Desc: Add new option with multiple values
+      
+      Test: |
+        allow_multiple = True
+        res = op._add_opt(opt, d_opt, has_value, allow_multiple, group)
+      
+      Validate: |     
+        this.test_result = res
+        assert (res), '_add_opt = True'
+        exp = {'dest': d_opt, 'action': 'append'}
+        res = op._options[group][opt]
+        this.test_result = str(res)
+        assert (res == exp), '_options[{0}][{1}] = {2}'.format(group, opt, exp)
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_exist_opt
+      Desc: Add existing option, error is raised
+      
+      Test: |
+        try:
+            op._add_opt(opt, opt_group=group)
+            ex = False
+        except CmdOptParserError:
+            ex = True
+      
+      Validate: |     
+        this.test_result = ex
+        assert (ex), '_add_opt raises CmdOptParserError'      
+        del op._options[group] 
+        
+    Test-Condition-5: 
+      Id: tco_05
+      Name: tco_invalid_opt
+      Desc: Add invalid option, error is raised
+      
+      Test: |
+        try:
+            op._add_opt(None)
+            ex = False
+        except TypeError:
+            ex = True
+      
+      Validate: |     
+        this.test_result = ex
+        assert (ex), '_add_opt raises TypeError'    
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_mult_opt
+    Desc: Add multiple options 
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_new_group
+      Desc: Add new group
+      
+      Test: |
+        op = CmdOptParser()
+        group = 'test'
+        options = ['x', 'y']
+        opt = [{'option': options[0], 'action': 'store_true'}, {'option': options[1], 'action': 'store_true'}]        
+        res = op._add_opt(opt, opt_group=group)
+      
+      Validate: |                            
+        this.test_result = res
+        assert (res), '_add_opt = True'
+        exp = {options[0]: {'action': opt[0]['action']}, options[1]: {'action': opt[1]['action']}}
+        res = op._options[group]
+        this.test_result = str(res)
+        assert (res == exp), '_options = {0}'.format(exp)
+        op._options[group] = {}
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_opt_single_val
+      Desc: Add new options with single value
+      
+      Test: |
+        opt[0] = {'option': options[0], 'dest': 'x', 'action': 'store'}
+        opt[1] = {'option': options[1], 'dest': 'y', 'action': 'store'}
+        res = op._add_opt(opt, opt_group=group)
+      
+      Validate: |        
+        this.test_result = res
+        assert (res), '_add_opt = True'
+        exp = {options[0]: {'action': opt[0]['action'], 'dest': opt[0]['dest']}, 
+               options[1]: {'action': opt[1]['action'], 'dest': opt[1]['dest']}}
+        res = op._options[group]
+        this.test_result = str(res)
+        assert (res == exp), '_options = {0}'.format(exp)
+        op._options[group] = {}     
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_opt_mult_val
+      Desc: Add new options with multiple value
+      
+      Test: |
+        opt[0] = {'option': options[0], 'dest': 'x', 'action': 'append'}
+        opt[1] = {'option': options[1], 'dest': 'y', 'action': 'append'}
+        res = op._add_opt(opt, opt_group=group)
+      
+      Validate: |        
+        this.test_result = res
+        assert (res), '_add_opt = True'
+        exp = {options[0]: {'action': opt[0]['action'], 'dest': opt[0]['dest']}, 
+               options[1]: {'action': opt[1]['action'], 'dest': opt[1]['dest']}}
+        res = op._options[group]
+        this.test_result = str(res)
+        assert (res == exp), '_options = {0}'.format(exp)
+        del op._options[group]         
+        
+Test-Scenario-5:
+  Id: ts_05
+  Path: hydratk/lib/console/cmdoptparser/01_methods_ut.jedi
+  Name: ts_add_opt
+  Desc: Test add_opt method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.console.cmdoptparser import CmdOptParser
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_single_opt
+    Desc: Add single option 
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_new_group
+      Desc: Add new group  
+      
+      Test: |
+        op = CmdOptParser()
+        group, opt = 'test', '-x'
+        res = op.add_opt(opt, opt_group=group)
+      
+      Validate: |     
+        this.test_result = res
+        assert (res), 'add_opt = True'
+        exp = {'action': 'store_true'}
+        res = op._options[group][opt]
+        this.test_result = str(res)
+        assert (res == exp), '_options[{0}][{1}] = {2}'.format(group, opt, exp)
+        del op._options[group][opt]    
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_opt_single_val
+      Desc: Add new option with single value
+      
+      Test: |
+        d_opt, has_value, allow_multiple = 'x', True, False
+        res = op.add_opt(opt, d_opt, has_value, allow_multiple, group)
+      
+      Validate: |     
+        this.test_result = res
+        assert (res), 'add_opt = True'
+        exp = {'dest': d_opt, 'action': 'store'}
+        res = op._options[group][opt]
+        this.test_result = str(res)
+        assert (res == exp), '_options[{0}][{1}] = {2}'.format(group, opt, exp)
+        del op._options[group][opt]      
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_opt_mult_val
+      Desc: Add new option with multiple values
+      
+      Test: |
+        allow_multiple = True
+        res = op.add_opt(opt, d_opt, has_value, allow_multiple, group)
+      
+      Validate: |     
+        this.test_result = res
+        assert (res), 'add_opt = True'
+        exp = {'dest': d_opt, 'action': 'append'}
+        res = op._options[group][opt]
+        this.test_result = str(res)
+        assert (res == exp), '_options[{0}][{1}] = {2}'.format(group, opt, exp)   
+        del op._options[group]
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_mult_opt
+    Desc: Add multiple options 
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_new_groups
+      Desc: Add new groups              
+      
+      Test: |
+        op = CmdOptParser()
+        group, opt = ['test', 'test2'], '-x'
+        res = op.add_opt(opt, opt_group=group)
+      
+      Validate: |
+        this.test_result = res
+        assert (res), 'add_opt = True'
+        exp = {'action': 'store_true'}
+        res = op._options[group[0]][opt]
+        this.test_result = str(res)
+        assert (res == exp), '_options[{0}][{1}] = {2}'.format(group[0], opt, exp)
+        res = op._options[group[1]][opt]
+        this.test_result = str(res)
+        assert (res == exp), '_options[{0}][{1}] = {2}'.format(group[1], opt, exp)        
+        del op._options[group[0]][opt]   
+        del op._options[group[1]][opt]   
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_opt_single_val
+      Desc: Add new options with single value
+      
+      Test: |
+        d_opt, has_value, allow_multiple = 'x', True, False
+        res = op.add_opt(opt, d_opt, has_value, allow_multiple, group)
+      
+      Validate: |     
+        this.test_result = res
+        assert (res), 'add_opt = True'
+        exp = {'dest': d_opt, 'action': 'store'}
+        res = op._options[group[0]][opt]
+        this.test_result = str(res)
+        assert (res == exp), '_options[{0}][{1}] = {2}'.format(group[0], opt, exp)
+        res = op._options[group[1]][opt]
+        this.test_result = str(res)
+        assert (res == exp), '_options[{0}][{1}] = {2}'.format(group[1], opt, exp)        
+        del op._options[group[0]][opt] 
+        del op._options[group[1]][opt]      
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_opt_mult_val
+      Desc: Add new options with multiple values
+      
+      Test: |
+        allow_multiple = True
+        res = op.add_opt(opt, d_opt, has_value, allow_multiple, group)
+      
+      Validate: |     
+        this.test_result = res
+        assert (res), 'add_opt = True'
+        exp = {'dest': d_opt, 'action': 'append'}
+        res = op._options[group[0]][opt]
+        this.test_result = str(res)
+        assert (res == exp), '_options[{0}][{1}] = {2}'.format(group[0], opt, exp)  
+        res = op._options[group[1]][opt]
+        this.test_result = str(res)
+        assert (res == exp), '_options[{0}][{1}] = {2}'.format(group[1], opt, exp)           
+        del op._options[group[0]]  
+        del op._options[group[1]]                  

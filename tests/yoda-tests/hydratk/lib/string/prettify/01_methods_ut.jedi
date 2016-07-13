@@ -1,0 +1,54 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/lib/string/prettify/01_methods_ut.jedi
+  Name: ts_xml_prettify
+  Desc: Test xml_prettify method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.string.prettify import xml_prettify 
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_pretiffy
+    Desc: Pretiffy xml
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_one_level
+      Desc: XML with one level
+      
+      Test: |
+        xml = '<?xml version=\"1.0\" ?><lev1>level 1</lev1>'
+        res = xml_prettify(xml)
+      
+      Validate: |
+        this.test_result = res
+        assert (len(res.split('\n')) == 2), 'xml_prettify = 2 lines'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_two_levels
+      Desc: XML with two levels
+      
+      Test: |
+        xml = '<?xml version=\"1.0\" ?><lev1><lev2>level 2</lev2></lev1>'
+        res = xml_prettify(xml)
+      
+      Validate: |
+        this.test_result = res
+        assert (len(res.split('\n')) == 4), 'xml_prettify = 4 lines'        
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_mult_elem
+      Desc: XML with multiple elements
+      
+      Test: |
+        xml = '<?xml version=\"1.0\" ?><lev1><lev2>level 2.1</lev2><lev2>level 2.2</lev2></lev1>'
+        res = xml_prettify(xml)
+      
+      Validate: |
+        this.test_result = res
+        assert (len(res.split('\n')) == 5), 'xml_prettify = 5 lines'             

@@ -184,7 +184,7 @@ class Event(object):
     
     @property
     def skip_before_hook(self):
-        """ skip_before_hook  property getter """
+        """ skip_before_hook property getter """
         
         return self._skip_before_hook
     

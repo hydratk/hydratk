@@ -1,0 +1,682 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/core/masterhead/03_methods_ut.jedi
+  Name: ts_register_fn_hook
+  Desc: Test method register_fn_hook
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import yodahelpers.hydratk.core.events as hlp
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_single_hook
+    Desc: Register single functionality hook
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_new_hook
+      Desc: New functionality hook
+      
+      Test: |
+        mh = MasterHead.get_head()
+        fn_id, callback = 'test', hlp.dummy_method
+        res = mh.register_fn_hook(fn_id, callback)
+      
+      Validate: | 
+        this.test_result = res
+        assert (res), 'register_fn_hook = True'
+        res = this.test_result = mh._fn_hooks[fn_id].__name__
+        assert (res == callback.__name__), '_fn_hooks[{0}] = {1}'.format(fn_id, callback.__name__)
+    
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_exist_hook
+      Desc: Existing functionality hook, it is overidden
+      
+      Test: |
+        callback = hlp.dummy_method_2
+        res = mh.register_fn_hook(fn_id, callback)
+      
+      Validate: | 
+        this.test_result = res
+        assert (res), 'register_fn_hook = True'
+        res = this.test_result = mh._fn_hooks[fn_id].__name__
+        assert (res == callback.__name__), '_fn_hooks[{0}] = {1}'.format(fn_id, callback.__name__)   
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid_hook
+      Desc: Invalid functionality hook, no callback
+      
+      Test: |       
+        res = mh.register_fn_hook(fn_id, 'callback')
+      
+      Validate: | 
+        this.test_result = res
+        assert (not res), 'register_fn_hook = False'
+        res = this.test_result = mh._fn_hooks[fn_id].__name__
+        assert (res == callback.__name__), '_fn_hooks[{0}] = {1}'.format(fn_id, callback.__name__)  
+        del mh._fn_hooks[fn_id]    
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_mult_hook
+    Desc: Register multiple functionality hooks
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_new_hooks
+      Desc: New functionality hooks
+      
+      Test: |
+        mh = MasterHead.get_head()
+        fn_id = [{'fn_id':'test', 'callback':hlp.dummy_method}, {'fn_id':'test2', 'callback':hlp.dummy_method_2}]
+        res = mh.register_fn_hook(fn_id)
+      
+      Validate: | 
+        this.test_result = res
+        assert (res == 2), 'register_fn_hook = 2'
+        res = this.test_result = mh._fn_hooks[fn_id[0]['fn_id']].__name__
+        assert (res == fn_id[0]['callback'].__name__), '_fn_hooks[{0}] = {1}'.format(fn_id[0]['fn_id'], fn_id[0]['callback'].__name__)    
+        res = this.test_result = mh._fn_hooks[fn_id[1]['fn_id']].__name__
+        assert (res == fn_id[1]['callback'].__name__), '_fn_hooks[{0}] = {1}'.format(fn_id[1]['fn_id'], fn_id[1]['callback'].__name__) 
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_exist_hooks
+      Desc: Existing functionality hooks, they are overidden
+      
+      Test: |
+        fn_id[0]['callback'] = hlp.dummy_method_2
+        fn_id[1]['callback'] = hlp.dummy_method
+        res = mh.register_fn_hook(fn_id)
+      
+      Validate: | 
+        this.test_result = res
+        assert (res == 2), 'register_fn_hook = 2'
+        res = this.test_result = mh._fn_hooks[fn_id[0]['fn_id']].__name__
+        assert (res == fn_id[0]['callback'].__name__), '_fn_hooks[{0}] = {1}'.format(fn_id[0]['fn_id'], fn_id[0]['callback'].__name__)    
+        res = this.test_result = mh._fn_hooks[fn_id[1]['fn_id']].__name__
+        assert (res == fn_id[1]['callback'].__name__), '_fn_hooks[{0}] = {1}'.format(fn_id[1]['fn_id'], fn_id[1]['callback'].__name__) 
+        del mh._fn_hooks[fn_id[0]['fn_id']]
+        del mh._fn_hooks[fn_id[1]['fn_id']]      
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/core/masterhead/03_methods_ut.jedi
+  Name: ts_run_fn_hook
+  Desc: Test method run_fn_hook
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import yodahelpers.hydratk.core.events as hlp
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_run_hook
+    Desc: Run functionality hook
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_pass_hook
+      Desc: Run hook which passes
+      
+      Test: |
+        mh = MasterHead.get_head()
+        fn_id, callback = 'test', hlp.dummy_method
+        mh.register_fn_hook(fn_id, callback)
+        
+        try:
+            mh.run_fn_hook(fn_id)
+            ex = False
+        except Exception:
+            ex = True
+      
+      Validate: | 
+        this.test_result = ex
+        assert (not ex), 'run_fn_hook not raises Exception'     
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_fail_hook
+      Desc: Run hook which fails, error is raised
+      
+      Test: |
+        mh = MasterHead.get_head()
+        mh.register_fn_hook(fn_id, callback=hlp.dummy_method_2)
+        
+        try:
+            mh.run_fn_hook(fn_id)
+            ex = False
+        except Exception:
+            ex = True
+      
+      Validate: | 
+        this.test_result = ex
+        assert (ex), 'run_fn_hook raises Exception'  
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_no_hook
+      Desc: Run not registered gook, error is not raised
+      
+      Test: |
+        try:
+            mh.run_fn_hook('xxx')
+            ex = False
+        except Exception:
+            ex = True
+      
+      Validate: | 
+        this.test_result = ex
+        assert (not ex), 'run_fn_hook not raises Exception' 
+        del mh._fn_hooks[fn_id] 
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/core/masterhead/03_methods_ut.jedi
+  Name: ts_register_command_hook
+  Desc: Test method register_command_hook
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import yodahelpers.hydratk.core.events as hlp
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_single_hook
+    Desc: Register single command hook 
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_new_hook
+      Desc: New command hook
+      
+      Test: |
+        mh = MasterHead.get_head()
+        cmd, callback = 'test', hlp.dummy_method
+        res = mh.register_command_hook(cmd, callback)
+      
+      Validate: | 
+        this.test_result = res
+        assert (res), 'register_command_hook = True'
+        res = this.test_result = mh._cmd_hooks[cmd][0]['callback'].__name__
+        assert (res == callback.__name__), '_cmd_hooks[{0}] = {1}'.format(cmd, callback.__name__)   
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_exist_hook
+      Desc: Existing command hook, it is extended
+      
+      Test: |
+        callback = hlp.dummy_method_2
+        res = mh.register_command_hook(cmd, callback)
+      
+      Validate: | 
+        this.test_result = res
+        assert (res), 'register_command_hook = True'
+        res = this.test_result = mh._cmd_hooks[cmd][1]['callback'].__name__
+        assert (res == callback.__name__), '_cmd_hooks[{0}] = {1}'.format(cmd, callback.__name__)   
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid_hook
+      Desc: Invalid command hook, no callback
+      
+      Test: |       
+        res = mh.register_command_hook(cmd, 'callback')
+      
+      Validate: | 
+        this.test_result = res
+        assert (not res), 'register_command_hook = False'
+        res = this.test_result = mh._cmd_hooks[cmd][1]['callback'].__name__
+        assert (res == callback.__name__), '_cmd_hooks[{0}] = {1}'.format(cmd, callback.__name__)  
+        del mh._cmd_hooks[cmd]         
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_mult_hook
+    Desc: Register multiple command hooks
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_new_hooks
+      Desc: New command hooks
+      
+      Test: |
+        mh = MasterHead.get_head()
+        cmd = [{'command':'test', 'callback':hlp.dummy_method}, {'command':'test2', 'callback':hlp.dummy_method_2}]
+        res = mh.register_command_hook(cmd)
+      
+      Validate: | 
+        this.test_result = res
+        assert (res == 2), 'register_command_hook = 2'
+        res = this.test_result = mh._cmd_hooks[cmd[0]['command']][0]['callback'].__name__
+        assert (res == cmd[0]['callback'].__name__), '_cmd_hooks[{0}] = {1}'.format(cmd[0]['command'], cmd[0]['callback'].__name__)    
+        res = this.test_result = mh._cmd_hooks[cmd[1]['command']][0]['callback'].__name__
+        assert (res == cmd[1]['callback'].__name__), '_cmd_hooks[{0}] = {1}'.format(cmd[1]['command'], cmd[1]['callback'].__name__) 
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_exist_hooks
+      Desc: Existing command hooks, they are extended
+      
+      Test: |
+        cmd[0]['callback'] = hlp.dummy_method_2
+        cmd[1]['callback'] = hlp.dummy_method
+        res = mh.register_command_hook(cmd)
+      
+      Validate: | 
+        this.test_result = res
+        assert (res == 2), 'register_command_hook = 2'
+        res = this.test_result = mh._cmd_hooks[cmd[0]['command']][1]['callback'].__name__
+        assert (res == cmd[0]['callback'].__name__), '_cmd_hooks[{0}] = {1}'.format(cmd[0]['command'], cmd[0]['callback'].__name__)    
+        res = this.test_result = mh._cmd_hooks[cmd[1]['command']][1]['callback'].__name__
+        assert (res == cmd[1]['callback'].__name__), '_cmd_hooks[{0}] = {1}'.format(cmd[1]['command'], cmd[1]['callback'].__name__) 
+        del mh._cmd_hooks[cmd[0]['command']] 
+        del mh._cmd_hooks[cmd[1]['command']]      
+        
+Test-Scenario-4:
+  Id: ts_04
+  Path: hydratk/core/masterhead/03_methods_ut.jedi
+  Name: ts_register_command_option_hook
+  Desc: Test method register_command_option_hook
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import yodahelpers.hydratk.core.events as hlp
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_single_hook
+    Desc: Register single command option hook 
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_new_hook
+      Desc: New option hook
+      
+      Test: |
+        mh = MasterHead.get_head()
+        opt, callback = 'x', hlp.dummy_method
+        res = mh.register_command_option_hook(opt, callback)
+      
+      Validate: | 
+        this.test_result = res
+        assert (res), 'register_command_option_hook = True'
+        res = this.test_result = mh._cmd_option_hooks[opt][0]['callback'].__name__
+        assert (res == callback.__name__), '_cmd_option_hooks[{0}] = {1}'.format(opt, callback.__name__)  
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_exist_hook
+      Desc: Existing option hook, it is extended
+      
+      Test: |
+        callback = hlp.dummy_method_2
+        res = mh.register_command_option_hook(opt, callback)
+      
+      Validate: | 
+        this.test_result = res
+        assert (res), 'register_command_option_hook = True'
+        res = this.test_result = mh._cmd_option_hooks[opt][1]['callback'].__name__
+        assert (res == callback.__name__), '_cmd_option_hooks[{0}] = {1}'.format(opt, callback.__name__)   
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid_hook
+      Desc: Invalid option hook, no callback
+      
+      Test: |       
+        res = mh.register_command_option_hook(opt, 'callback')
+      
+      Validate: | 
+        this.test_result = res
+        assert (not res), 'register_command_option_hook = False'
+        res = this.test_result = mh._cmd_option_hooks[opt][1]['callback'].__name__
+        assert (res == callback.__name__), '_cmd_option_hooks[{0}] = {1}'.format(opt, callback.__name__)  
+        del mh._cmd_opt_hooks[opt]         
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_mult_hook
+    Desc: Register multiple command option hooks
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_new_hooks
+      Desc: New options hooks
+      
+      Test: |
+        mh = MasterHead.get_head()
+        opt = [{'command_option':'test', 'callback':hlp.dummy_method}, {'command_option':'test2', 'callback':hlp.dummy_method_2}]
+        res = mh.register_command_option_hook(opt)
+      
+      Validate: | 
+        this.test_result = res
+        assert (res == 2), 'register_command_option_hook = 2'
+        res = this.test_result = mh._cmd_option_hooks[opt[0]['command_option']][0]['callback'].__name__
+        assert (res == opt[0]['callback'].__name__), '_cmd_option_hooks[{0}] = {1}'.format(opt[0]['command_option'], opt[0]['callback'].__name__)    
+        res = this.test_result = mh._cmd_option_hooks[opt[1]['command_option']][0]['callback'].__name__
+        assert (res == opt[1]['callback'].__name__), '_cmd_option_hooks[{0}] = {1}'.format(opt[1]['command'_option], opt[1]['callback'].__name__) 
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_exist_hooks
+      Desc: Existing option hooks, they are extended
+      
+      Test: |
+        opt[0]['callback'] = hlp.dummy_method_2
+        opt[1]['callback'] = hlp.dummy_method
+        res = mh.register_command_option_hook(cmd)
+      
+      Validate: | 
+        this.test_result = res
+        assert (res == 2), 'register_command_option_hook = 2'
+        res = this.test_result = mh._cmd_option_hooks[opt[0]['command_option']][1]['callback'].__name__
+        assert (res == opt[0]['callback'].__name__), '_cmd_option_hooks[{0}] = {1}'.format(opt[0]['command_option'], opt[0]['callback'].__name__)    
+        res = this.test_result = mh._cmd_option_hooks[opt[1]['command_option']][1]['callback'].__name__
+        assert (res == opt[1]['callback'].__name__), '_cmd_option_hooks[{0}] = {1}'.format(opt[1]['command_option'], opt[1]['callback'].__name__) 
+        del mh._cmd_option_hooks[opt[0]['command_option']] 
+        del mh._cmd_option_hooks[opt[1]['command_option']]      
+        
+Test-Scenario-5:
+  Id: ts_05
+  Path: hydratk/core/masterhead/03_methods_ut.jedi
+  Name: ts_register_event_hook
+  Desc: Test method register_event_hook
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import hydratk.core.const as const
+    import yodahelpers.hydratk.core.events as hlp
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_single_hook
+    Desc: Register single event hook 
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_new_hook
+      Desc: New event hook
+      
+      Test: |
+        mh = MasterHead.get_head()
+        event, callback, prio = 'x', hlp.dummy_method, 1
+        res = mh.register_event_hook(event, callback, True, prio)
+      
+      Validate: | 
+        this.test_result = res
+        assert (res), 'register_event_hook = True'
+        exp_hook = {'callback': callback.__name__, 'unpack_args': True}
+        res = mh._event_hooks[event][prio][0]
+        res['callback'] = callback.__name__
+        this.test_result = str(res)
+        assert (res == exp_hook), '_event_hooks[{0}] = {1}'.format(event, exp_hook)   
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_exist_hook
+      Desc: Existing event hook, it is extended
+      
+      Test: |
+        callback = hlp.dummy_method_2
+        res = mh.register_event_hook(event, callback, False, prio)
+      
+      Validate: | 
+        this.test_result = res
+        assert (res), 'register_event_hook = True'
+        exp_hook = {'callback': callback.__name__, 'unpack_args': False}
+        res = mh._event_hooks[event][prio][1]
+        res['callback'] = callback.__name__
+        this.test_result = str(res)
+        assert (res == exp_hook), '_event_hooks[{0}] = {1}'.format(event, exp_hook)     
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid_hook
+      Desc: Invalid event hook, no callback
+      
+      Test: |       
+        res = mh.register_event_hook(event, 'callback', True, prio)
+      
+      Validate: | 
+        this.test_result = res
+        assert (not res), 'register_event_hook = False'
+        exp_hook = {'callback': callback.__name__, 'unpack_args': False}
+        res = mh._event_hooks[event][prio][1]
+        res['callback'] = callback.__name__
+        this.test_result = str(res)
+        assert (res == exp_hook), '_event_hooks[{0}] = {1}'.format(event, exp_hook)   
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_default_prio
+      Desc: New event hook with default priority
+      
+      Test: |
+        res = mh.register_event_hook(event, callback, True)
+      
+      Validate: | 
+        this.test_result = res
+        assert (res), 'register_event_hook = True'
+        exp_hook = {'callback': callback.__name__, 'unpack_args': True}
+        res = mh._event_hooks[event][const.EVENT_HOOK_PRIORITY][0]
+        res['callback'] = callback.__name__
+        this.test_result = str(res)
+        assert (res == exp_hook), '_event_hooks[{0}] = {1}'.format(event, exp_hook) 
+        del mh._event_hooks[event]   
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_mult_hook
+    Desc: Register multiple event hooks 
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_new_hooks
+      Desc: New event hooks
+      
+      Test: |
+        mh = MasterHead.get_head()
+        prio = 1
+        event = [{'event': 'x', 'callback': hlp.dummy_method, 'unpack_args': True, 'priority': prio},
+                 {'event': 'y', 'callback': hlp.dummy_method_2, 'unpack_args': False, 'priority': prio}]
+        res = mh.register_event_hook(event)
+
+      Validate: | 
+        this.test_result = res
+        assert (res == 2), 'register_event_hook = 2'
+        exp_hook = {'callback': event[0]['callback'].__name__, 'unpack_args': event[0]['unpack_args']}
+        res = mh._event_hooks[event[0]['event']][prio][0]
+        res['callback'] = event[0]['callback'].__name__
+        this.test_result = str(res)        
+        assert (res == exp_hook), '_event_hooks[{0}] = {1}'.format(event[0]['event'], exp_hook)  
+        exp_hook = {'callback': event[1]['callback'].__name__, 'unpack_args': event[1]['unpack_args']}
+        res = mh._event_hooks[event[1]['event']][prio][0]
+        res['callback'] = event[1]['callback'].__name__
+        this.test_result = str(res)
+        assert (res == exp_hook), '_event_hooks[{0}] = {1}'.format(event[1]['event'], exp_hook)  
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_exist_hooks
+      Desc: Existing event hooks, they are extended
+      
+      Test: |
+        event[0]['callback'] = hlp.dummy_method
+        event[1]['callback'] = hlp.dummy_method_2
+        res = mh.register_event_hook(event)
+      
+      Validate: | 
+        this.test_result = res
+        assert (res == 2), 'register_event_hook = 2'
+        exp_hook = {'callback': event[0]['callback'].__name__, 'unpack_args': event[0]['unpack_args']}
+        res = mh._event_hooks[event[0]['event']][prio][1]
+        res['callback'] = event[0]['callback'].__name__
+        this.test_result = str(res)
+        assert (res == exp_hook), '_event_hooks[{0}] = {1}'.format(event[0]['event'], exp_hook)  
+        exp_hook = {'callback': event[1]['callback'].__name__, 'unpack_args': event[1]['unpack_args']}
+        res = mh._event_hooks[event[1]['event']][prio][1]
+        res['callback'] = event[1]['callback'].__name__
+        this.test_result = str(res)
+        assert (res == exp_hook), '_event_hooks[{0}] = {1}'.format(event[1]['event'], exp_hook) 
+        del mh._event_hooks[event[0]['event']]
+        del mh._event_hooks[event[1]['event']]   
+        
+Test-Scenario-6:
+  Id: ts_06
+  Path: hydratk/core/masterhead/03_methods_ut.jedi
+  Name: ts_unregister_event_hook
+  Desc: Test method unregister_event_hook
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import yodahelpers.hydratk.core.events as hlp
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_unregister
+    Desc: Unregister event hook 
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_single_cb
+      Desc: Single hook callback
+      
+      Test: |
+        ev_name, prio = 'x', 1
+        event = [{'event': ev_name, 'callback': hlp.dummy_method, 'unpack_args': True, 'priority': prio},
+                 {'event': ev_name, 'callback': hlp.dummy_method_2, 'unpack_args': False, 'priority': prio}]
+        res = mh.register_event_hook(event)
+        res = mh.unregister_event_hook(ev_name, event[0]['callback'])
+        
+      Validate: | 
+        this.test_result = res
+        assert (res == 1), 'unregister_event_hook = 1'
+        exp_hook = {'callback': event[1]['callback'].__name__, 'unpack_args': False}
+        res = mh._event_hooks[ev_name][prio][0]        
+        res['callback'] = event[1]['callback'].__name__
+        print mh._event_hooks['x']
+        this.test_result = str(res)
+        assert (res == exp_hook), '_event_hooks[{0}] = {1}'.format(ev_name, exp_hook)   
+              
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_cb
+      Desc: Invalid hook callback
+      
+      Test: |     
+        res = mh.unregister_event_hook(ev_name, 'callback')
+      
+      Validate: | 
+        this.test_result = res
+        assert (res == 0), 'unregister_event_hook = 0'              
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_whole_hook
+      Desc: Whole eventhook
+      
+      Test: |
+        res = mh.unregister_event_hook(ev_name)
+      
+      Validate: | 
+        this.test_result = res
+        assert (res == 1), 'unregister_event_hook = True'
+        res = mh._event_hooks.keys()
+        this.test_result = str(res)
+        assert (ev_name not in res), '_event_hooks does not contain {0}'.format(ev_name)   
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_invalid_event
+      Desc: Invalid event hook
+      
+      Test: |
+        res = mh.unregister_event_hook('')
+      
+      Validate: | 
+        this.test_result = res
+        assert (not res), 'unregister_event_hook = False' 
+        
+Test-Scenario-7:
+  Id: ts_07
+  Path: hydratk/core/masterhead/03_methods_ut.jedi
+  Name: ts_replace_event_hook
+  Desc: Test method replace_event_hook
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import yodahelpers.hydratk.core.events as hlp
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_replace
+    Desc: Replace event hook 
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_replace_cb
+      Desc: Replace callback    
+      
+      Test: |
+        mh = MasterHead.get_head()
+        event, callback, unpack_args, prio = 'x', hlp.dummy_method, True, 1
+        res = mh.register_event_hook(event, callback, unpack_args, prio)
+        callback, unpack_args = hlp.dummy_method_2, False
+        res = mh.replace_event_hook(event, callback, {'callback': callback, 'unpack_args': unpack_args})
+      
+      Validate: |   
+        this.test_result = res
+        assert (res == 1), 'replace_event_hook = 1'
+        exp_hook = {'callback': callback.__name__, 'unpack_args': unpack_args}
+        res = mh._event_hooks[event][prio][0]
+        res['callback'] = callback.__name__
+        this.test_result = str(res)
+        assert (res == exp_hook), '_event_hooks[{0}] = {1}'.format(event, exp_hook)  
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_hook
+      Desc: Invalid event hook    
+      
+      Test: |
+        res = mh.replace_event_hook('', callback, {'callback': callback, 'unpack_args': unpack_args})
+      
+      Validate: |   
+        this.test_result = res
+        assert (res == 0), 'replace_event_hook = 0'                        
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid_cb
+      Desc: Invalid callback, error is raised    
+      
+      Test: |
+        try:
+            mh.replace_event_hook(event, 'callback', {'callback': callback, 'unpack_args': unpack_args})
+            ex = False
+        except Exception:
+            ex = True
+      
+      Validate: |   
+        this.test_result = ex
+        assert (ex), 'replace_event_hook raises Exception' 
+        del mh._event_hooks[event]                                                                                                                 

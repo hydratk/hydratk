@@ -1,0 +1,232 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/core/propertyhead/01_methods_ut.jedi
+  Name: ts_props
+  Desc: Test properties
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    from yodahelpers.hydratk.core.events import dummy_method
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_getters
+    Desc: Property getters
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_current_async_ticket_id
+      Desc: Getter current_async_ticket_id
+      
+      Test: |
+        mh = MasterHead.get_head()
+        res = mh.current_async_ticket_id
+      
+      Validate: |
+        this.test_result = res
+        exp = mh._current_async_ticket_id
+        assert (res == exp), 'current_async_ticket_id = {0}'.format(exp)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_async_fn_tickets
+      Desc: Getter async_fn_tickets_id
+      
+      Test: |
+        res = mh.async_fn_tickets
+      
+      Validate: |
+        this.test_result = str(res)
+        exp = mh._async_fn_tickets
+        assert (res == exp), 'async_fn_tickets = {0}'.format(exp)    
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_fn_cb_shared
+      Desc: Getter fn_cb_shared
+      
+      Test: |
+        res = mh.fn_cb_shared
+      
+      Validate: |
+        this.test_result = str(res)
+        exp = mh._fn_cb_shared
+        assert (res == exp), 'fn_cb_shared = {0}'.format(exp)  
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_cbm
+      Desc: Getter cbm
+      
+      Test: |
+        res = mh.cbm
+      
+      Validate: |
+        this.test_result = str(res)
+        exp = mh._cbm
+        assert (res == exp), 'cbm = {0}'.format(exp)  
+        
+    Test-Condition-5: 
+      Id: tco_05
+      Name: tco_cli_cmdopt_profile
+      Desc: Getter cli_cmd_opt_profile
+      
+      Test: |
+        res = mh.cli_cmdopt_profile
+      
+      Validate: |
+        this.test_result = str(res)
+        exp = mh._opt_profile
+        assert (res == exp), 'cli_cmdopt_profile = {0}'.format(exp) 
+        
+    Test-Condition-6: 
+      Id: tco_06
+      Name: tco_cfg
+      Desc: Getter cfg
+      
+      Test: |
+        res = mh.cfg
+      
+      Validate: |
+        this.test_result = str(res)
+        exp = mh._config
+        assert (res == exp), 'cfg = {0}'.format(exp)  
+        
+    Test-Condition-6: 
+      Id: tco_06
+      Name: tco_debug
+      Desc: Getter debug
+      
+      Test: |
+        res = mh.debug
+      
+      Validate: |
+        this.test_result = res
+        exp = mh._debug
+        assert (res == exp), 'debug = {0}'.format(exp) 
+        
+    Test-Condition-7: 
+      Id: tco_07
+      Name: tco_ext_cfg
+      Desc: Getter ext_cfg
+      
+      Test: |
+        res = mh.ext_cfg
+      
+      Validate: |
+        this.test_result = str(res)
+        exp = mh._config['Extensions']
+        assert (res == exp), 'ext_cfg = {0}'.format(exp)
+        
+    Test-Condition-8: 
+      Id: tco_08
+      Name: tco_lang
+      Desc: Getter lang
+      
+      Test: |
+        res = mh.lang
+      
+      Validate: |
+        this.test_result = res
+        exp = mh._language
+        assert (res == exp), 'lang = {0}'.format(exp)      
+        
+    Test-Condition-9: 
+      Id: tco_09
+      Name: tco_runlevel
+      Desc: Getter runlevel
+      
+      Test: |
+        res = mh.runlevel
+      
+      Validate: |
+        this.test_result = res
+        exp = mh._runlevel
+        assert (res == exp), 'runlevel = {0}'.format(exp)  
+        
+    Test-Condition-10: 
+      Id: tco_10
+      Name: tco_run_mode
+      Desc: Getter run_mode
+      
+      Test: |
+        res = mh.run_mode
+      
+      Validate: |
+        this.test_result = res
+        exp = mh._run_mode
+        assert (res == exp), 'run_mode = {0}'.format(exp)    
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_setters
+    Desc: Property setters
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_async_fn_tickets
+      Desc: Setter async_fn_tickets
+      
+      Test: |
+        mh = MasterHead.get_head()
+        data = {'data1': 1, 'data2': 2}
+        mh.async_fn_tickets = data
+        res = mh.async_fn_tickets
+      
+      Validate: |
+        this.test_result = str(res)
+        assert (res == data), 'async_fn_tickets = {0}'.format(data)   
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_fn_cb_shared
+      Desc: Setter fn_cb_shared
+      
+      Test: |
+        mh.fn_cb_shared = dummy_method
+        res = mh.fn_cb_shared.__name__
+      
+      Validate: |
+        this.test_result = res
+        assert (res == 'dummy_method'), 'fn_cb_shared = dummy_method'  
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_lang
+      Desc: Setter lang
+      
+      Test: |
+        mh.lang = 'cs'
+        res = mh.lang
+      
+      Validate: |
+        this.test_result = res
+        assert (res == 'cs'), 'lang = cs'     
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_run_mode
+      Desc: Setter run_mode
+      
+      Test: |
+        mh.run_mode = 1
+        res = mh.run_mode
+      
+      Validate: |
+        this.test_result = res
+        assert (res == 1), 'run_mode = 1'    
+        
+    Test-Condition-5: 
+      Id: tco_05
+      Name: tco_invalid_run_mode
+      Desc: Set invalid run_mode, won't be overidden
+      
+      Test: |
+        mh.run_mode = 0
+        res = mh.run_mode
+      
+      Validate: |
+        this.test_result = res
+        assert (res == 1), 'run_mode = 1'                                                                                                              

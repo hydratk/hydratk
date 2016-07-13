@@ -1,0 +1,376 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/core/corehead/02_methods_ut.jedi
+  Name: ts_load_extension
+  Desc: Test _load_extension method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import hydratk.core.commandopt as cmdopt
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_load_ext
+    Desc: Load extension
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_dis_ext
+      Desc: Disabled extension
+      
+      Test: |
+        mh = MasterHead.get_head()
+        ext = 'BenchMark'
+        del mh._ext[ext]
+        del cmdopt.cmd['htk'][cmdopt.cmd['htk'].index('start-benchmark')]
+        mh._config['Extensions'][ext]['enabled'] = 0
+        mh._load_extension(ext, mh._config['Extensions'][ext])
+        res = (ext not in mh._ext)
+      
+      Validate: |
+        this.test_result = res
+        assert (res), '_ext does not contain {0}'.format(ext)    
+    
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_en_ext
+      Desc: Enabled extension
+      
+      Test: |
+        mh._config['Extensions'][ext]['enabled'] = 1
+        mh._load_extension(ext, mh._config['Extensions'][ext])
+        res = (ext in mh._ext)
+      
+      Validate: |
+        this.test_result = res
+        assert (res), '_ext contains {0}'.format(ext)
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_duplicate
+      Desc: Duplicate extension, error is raised
+      
+      Test: |
+        try:
+          mh._load_extension(ext, mh._config['Extensions'][ext])
+          ex = False
+        except Exception:
+          ex = True
+      
+      Validate: |        
+        this.test_result = res
+        assert (res), '_load_extension raises Exception'
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/core/corehead/02_methods_ut.jedi
+  Name: ts_extension_module_import
+  Desc: Test _extension_module_import method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_import_mod
+    Desc: Import module
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_import
+      Desc: Import module
+      
+      Test: |
+        mh = MasterHead.get_head()
+        mod = 'socket'
+        res = mh._extension_module_import(mod).__name__
+      
+      Validate: |        
+        this.test_result = res
+        assert (res == mod), '_extension_module_import = {0}'.format(mod)
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/core/corehead/02_methods_ut.jedi
+  Name: ts_load_module_from_file
+  Desc: Test _load_module_from_file method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_load_mod
+    Desc: Load module
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_ext
+      Desc: Load extension
+      
+      Test: |
+        mh = MasterHead.get_head()
+        file = '/var/local/hydratk/yoda/helpers/yodahelpers/hydratk/core/extensions.py'
+        res = mh._load_module_from_file(file).__name__
+      
+      Validate: |      
+        this.test_result = res
+        assert (res == 'extensions'), '_load_module_from_file = extensions'
+    
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_no_ext
+      Desc: Load none-extension
+      
+      Test: |
+        file = '/var/local/hydratk/yoda/helpers/yodahelpers/hydratk/core/events.py'
+        res = mh._load_module_from_file(file)
+      
+      Validate: |      
+        this.test_result = res
+        assert (res == None), '_load_module_from_file = None'  
+        
+Test-Scenario-4:
+  Id: ts_04
+  Path: hydratk/core/corehead/02_methods_ut.jedi
+  Name: ts_import_extension_messages
+  Desc: Test _import_extension_messages method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_import_msg
+    Desc: Import messages
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_import
+      Desc: Import messages
+      
+      Test: |    
+        mh = MasterHead.get_head()
+        
+        del mh._trn._help_mod.help_cmd['start-benchmark']
+        for msg in mh._trn._messages.keys():
+            if ('benchmark' in msg):
+                del mh._trn._messages[msg]       
+      
+        path = 'hydratk.extensions.benchmark'
+        mh._import_extension_messages(path)
+        res = ('benchmark_test_msg' in mh._trn._messages.keys())
+      
+      Validate: |
+        this.test_result = res
+        assert (res), '_trn._messages contains benchmark_test_msg'
+        this.test_result = res = ('start-benchmark' in mh._trn._help_mod.help_cmd.keys())
+        assert (res), '_trn._help_mod.help_cmd contains start-benchmark'
+        
+Test-Scenario-5:
+  Id: ts_05
+  Path: hydratk/core/corehead/02_methods_ut.jedi
+  Name: ts_import_package_messages
+  Desc: Test _import_package_messages method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_import_msg
+    Desc: Import messages
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_import
+      Desc: Import messages
+      
+      Test: |
+        mh = MasterHead.get_head()        
+        mh._import_package_messages('hydratk.lib.bridge.selen', 'hydratk.translation.lib.bridge.selen')    
+        res = ('htk_selen_opening' in mh._trn._messages.keys())
+      
+      Validate: |   
+        this.test_result = res
+        assert (res), '_trn._messages contains htk_selen_opening'
+        this.test_result = res = ('htk_java_starting_jvm' not in mh._trn._messages.keys())
+        assert (res), '_trn._messages does not contain htk_java_starting_jvm'
+        
+Test-Scenario-6:
+  Id: ts_06
+  Path: hydratk/core/corehead/02_methods_ut.jedi
+  Name: ts_reg_self_command_hooks
+  Desc: Test _reg_self_command_hooks method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_import_msg
+    Desc: Import messages
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_import
+      Desc: Import messages       
+      
+      Test: |
+        mh = MasterHead.get_head()
+        cmd = 'list-extensions'        
+        del mh._cmd_hooks[cmd]
+        mh._reg_self_command_hooks()
+        res = (cmd in mh._cmd_hooks)
+        
+      Validate: | 
+        this.test_result = res
+        assert (res), '_cmd_hooks contain {0}'.format(cmd)
+        
+Test-Scenario-7:
+  Id: ts_07
+  Path: hydratk/core/corehead/02_methods_ut.jedi
+  Name: ts_runlevel_baseinit
+  Desc: Test _runlevel_baseinit method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import hydratk.core.const as const
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_runlevel
+    Desc: Run level baseinit
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_run
+      Desc: Run level
+      
+      Test: |
+        mh = MasterHead.get_head()
+        res = mh._runlevel_baseinit()
+      
+      Validate: |              
+        this.test_result = res
+        assert (res), '_runlevel_baseinit = True'
+        exp = const.RUNLEVEL_BASEINIT
+        this.test_result = res = mh._runlevel
+        assert (res == exp), '_runlevel = {0}'.format(exp)
+        mh._runlevel = const.RUNLEVEL_APPL
+        
+Test-Scenario-8:
+  Id: ts_08
+  Path: hydratk/core/corehead/02_methods_ut.jedi
+  Name: ts_runlevel_config
+  Desc: Test _runlevel_config method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import hydratk.core.const as const
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_runlevel
+    Desc: Run level config
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_run
+      Desc: Run level
+      
+      Test: |
+        mh = MasterHead.get_head()
+        res = mh._runlevel_config()
+      
+      Validate: |              
+        this.test_result = res
+        assert (res), '_runlevel_config = True'
+        exp = const.RUNLEVEL_CONFIG
+        this.test_result = res = mh._runlevel
+        assert (res == exp), '_runlevel = {0}'.format(exp)
+        mh._runlevel = const.RUNLEVEL_APPL            
+        
+Test-Scenario-9:
+  Id: ts_09
+  Path: hydratk/core/corehead/02_methods_ut.jedi
+  Name: ts_runlevel_cli
+  Desc: Test _runlevel_cli method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import hydratk.core.const as const
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_runlevel
+    Desc: Run level cli
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_run
+      Desc: Run level
+      
+      Test: |
+        mh = MasterHead.get_head()
+        res = mh._runlevel_cli()
+      
+      Validate: |              
+        this.test_result = res
+        assert (res), '_runlevel_cli = True'
+        exp = const.RUNLEVEL_CLI
+        this.test_result = res = mh._runlevel
+        assert (res == exp), '_runlevel = {0}'.format(exp)
+        mh._runlevel = const.RUNLEVEL_APPL    
+        
+Test-Scenario-10:
+  Id: ts_10
+  Path: hydratk/core/corehead/02_methods_ut.jedi
+  Name: ts_runlevel_core
+  Desc: Test _runlevel_core method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import hydratk.core.const as const
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_runlevel
+    Desc: Run level core
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_run
+      Desc: Run level
+      
+      Test: |
+        mh = MasterHead.get_head()
+        res = mh._runlevel_core()
+      
+      Validate: |              
+        this.test_result = res
+        assert (res), '_runlevel_core = True'
+        exp = const.RUNLEVEL_CORE
+        this.test_result = res = mh._runlevel
+        assert (res == exp), '_runlevel = {0}'.format(exp)
+        mh._runlevel = const.RUNLEVEL_APPL                                                        

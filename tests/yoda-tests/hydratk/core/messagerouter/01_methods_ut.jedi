@@ -1,0 +1,222 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/core/messagerouter/01_methods_ut.jedi
+  Name: ts_init
+  Desc: Test __init__ method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.messagerouter import MessageRouter
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_init
+    Desc: Initialize router
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_init
+      Desc: Initialize router
+      
+      Test: |
+        id = 'tomcat02'
+        router = MessageRouter(id)
+        res = router.__class__.__name__
+      
+      Validate: |
+        this.test_result = res
+        assert (res == 'MessageRouter'), '__init__ = MessageRouter'
+        this.test_result = res = router._id
+        assert (res == id), '_id = {0}'.format(id)
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/core/messagerouter/01_methods_ut.jedi
+  Name: ts_register_service
+  Desc: Test register_service method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.messagerouter import MessageRouter
+    from hydratk.lib.exceptions.inputerror import InputError
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_reg_service
+    Desc: Register service
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_ipc
+      Desc: IPC transport
+      
+      Test: |
+        router = MessageRouter('tomcat02')
+        id = 'srv1'
+        res = router.register_service(id, 1, {})
+      
+      Validate: |        
+        this.test_result = res
+        assert (res), 'register_service = True'
+        exp = {'transport_type': 1, 'active': False, 'options': {}}
+        res = router._service_list[id]
+        this.test_result = str(res)
+        assert (res == exp), '_service_list[{0}] = {1}'.format(id, exp)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_tcp
+      Desc: TCP transport
+      
+      Test: |
+        id = 'srv2'
+        res = router.register_service(id, 2, {})
+      
+      Validate: |        
+        this.test_result = res
+        assert (res), 'register_service = True'
+        exp = {'transport_type': 2, 'active': False, 'options': {}}
+        res = router._service_list[id]
+        this.test_result = str(res)
+        assert (res == exp), '_service_list[{0}] = {1}'.format(id, exp)    
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid_transport
+      Desc: Invalid transport, error is raised
+      
+      Test: |
+        try:
+            res = router.register_service('srv3', 3, {})
+            ex = False
+        except InputError:
+            ex = True
+      
+      Validate: |        
+        this.test_result = ex
+        assert (ex), 'register_service raises InputError'  
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_duplicate
+      Desc: Duplicate service, error is raised
+      
+      Test: |
+        try:
+            res = router.register_service('srv2', 2, {})
+            ex = False
+        except InputError:
+            ex = True
+      
+      Validate: |        
+        this.test_result = ex
+        assert (ex), 'register_service raises InputError'    
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/core/messagerouter/01_methods_ut.jedi
+  Name: ts_get_queue
+  Desc: Test get_queue method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.messagerouter import MessageRouter
+    from zmq import PUSH, PULL
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_queue
+    Desc: Get queue reference
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_no_reg
+      Desc: Not registered service                                       
+      
+      Test: |
+        router = MessageRouter('tomcat02')
+        res = router.get_queue('srv1', 1)
+              
+      Validate: |
+        this.test_result = res
+        assert (not res), 'get_queue = False'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_bind
+      Desc: Bind queue
+      
+      Test: |
+        id, transport, options = 'srv1', 1, {'address': './test.socket', 'socket_type': PULL}
+        router.register_service(id, transport, options)
+        res = router.get_queue(id, 1, options).__class__.__name__
+      
+      Validate: |         
+        this.test_result = res
+        assert (res == 'Socket'), 'get_queue = Socket'
+        this.test_result = res = router._service_list[id]['active']
+        assert (res), '_active = True'
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_bind_active
+      Desc: Bind active queue, error is raised
+      
+      Test: |
+        try:
+            router.get_queue(id, 1, options)
+            ex = False
+        except Exception:
+            ex = True
+      
+      Validate: |         
+        this.test_result = ex
+        assert (ex), 'get_queue raises Exception'       
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_connect
+      Desc: Connect queue
+      
+      Test: |
+        options['socket_type'] = PUSH
+        router.register_service(id, transport, options)
+        res = router.get_queue(id, 2, options).__class__.__name__
+      
+      Validate: |         
+        this.test_result = res
+        assert (res == 'Socket'), 'get_queue = Socket'   
+        
+Test-Scenario-4:
+  Id: ts_04
+  Path: hydratk/core/messagerouter/01_methods_ut.jedi
+  Name: ts_get_service_address
+  Desc: Test get_service_address method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.messagerouter import MessageRouter
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_address
+    Desc: Get service address
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_get
+      Desc: Get address
+      
+      Test: |
+        router = MessageRouter('tomcat02')
+        id, addr = 'srv1', './test.socket'
+        router.register_service(id, 1, {'address': addr})
+        res = router.get_service_address(id)
+      
+      Validate: |                    
+        this.test_result = res
+        assert (res == addr), 'get_service_address = {0}'.format(addr)

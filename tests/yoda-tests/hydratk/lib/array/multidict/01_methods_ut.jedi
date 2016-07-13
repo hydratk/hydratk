@@ -1,0 +1,55 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/lib/array/multidict/01_methods_ut.jedi
+  Name: ts_init
+  Desc: Test __init__ method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.array.multidict import MultiDict
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_init
+    Desc: Initilize MultiDict
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_empty
+      Desc: Initialize empty dictionary
+      
+      Test: |
+        d = MultiDict()
+        
+      Validate: |
+        this.test_result = str(d)
+        assert (d == {}), '__init__ = {}'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_add
+      Desc: Add item
+      
+      Test: |
+        key, value = 'data1', 1
+        data = {key: value}
+        d[key] = value
+        
+      Validate: |
+        this.test_result = str(d)
+        assert (d == data), 'd = {0}'.format(data) 
+        res = this.test_result = d.__repr__()
+        assert (res == str(data)), '__repr__ = {0}'.format(data)       
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_del
+      Desc: Delete item
+      
+      Test: |
+        del d[key]
+        
+      Validate: |
+        this.test_result = str(d)
+        assert (d == {}), 'd = {}'           

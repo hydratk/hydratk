@@ -1,0 +1,47 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/lib/system/time/01_methods_ut.jedi
+  Name: ts_microtime
+  Desc: Test microtime method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.system.timem import microtime 
+    from time import time
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_microtime
+    Desc: Get microtime
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_float
+      Desc: Get as float
+      
+      Test: |
+        now = str(int(time()))[:-4]
+        res = microtime(True)
+      
+      Validate: |
+        this.test_result = res
+        assert (type(res).__name__ == 'float'), 'microtime = float'
+        res = this.test_result = str(int(res))[:-4]
+        assert (res == now), 'microtime contains {0}'.format(now)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_str
+      Desc: Get as str
+      
+      Test: |
+        now = str(int(time()))[:-4]
+        res = microtime()
+      
+      Validate: |
+        this.test_result = res
+        assert (type(res).__name__ == 'str'), 'microtime = str'
+        res = res.split(' ')
+        assert (res[0][:-4] == now), 'microtime contains {0}'.format(now)
+        assert (float(res[1]) < 1.0), 'microtime contains microseconds'                 

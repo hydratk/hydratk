@@ -1,0 +1,537 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/core/corehead/03_methods_ut.jedi
+  Name: ts_run_command_option_hooks
+  Desc: Test _run_command_option_hooks method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    from yodahelpers.hydratk.core.events import dummy_method
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_run_hook
+    Desc: Run option hook
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_single
+      Desc: Run single callback
+      
+      Test: |
+        mh = MasterHead.get_head()
+        opt, val = '-x', 'x'
+        mh._cmd_option_hooks[opt] = [{'callback': dummy_method}]
+        res = mh._run_command_option_hooks(opt, val)
+      
+      validate: |
+        this.test_result = res
+        assert (res == 1), '_run_command_option_hooks = 1'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_mult
+      Desc: Run multiple callbacks
+      
+      Test: |
+        mh._cmd_option_hooks[opt].append({'callback': dummy_method})
+        res = mh._run_command_option_hooks(opt, val)
+      
+      validate: |
+        this.test_result = res
+        assert (res == 2), '_run_command_option_hooks = 2'      
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_no_hook
+      Desc: Not registered hook
+      
+      Test: |
+        del mh._cmd_option_hooks[opt]
+        res = mh._run_command_option_hooks(opt, val)
+      
+      validate: |
+        this.test_result = res
+        assert (res == 0), '_run_command_option_hooks = 0'  
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/core/corehead/03_methods_ut.jedi
+  Name: ts_run_command_hooks
+  Desc: Test _run_command_option_hooks method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    from yodahelpers.hydratk.core.events import dummy_method
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_run_hook
+    Desc: Run command hook
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_single
+      Desc: Run single callback
+      
+      Test: |
+        mh = MasterHead.get_head()
+        cmd = 'test'
+        mh._cmd_hooks[cmd] = [{'callback': dummy_method}]
+        res = mh._run_command_hooks(cmd)
+      
+      validate: |
+        this.test_result = res
+        assert (res == 1), '_run_command_hooks = 1'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_mult
+      Desc: Run multiple callbacks
+      
+      Test: |
+        mh._cmd_hooks[cmd].append({'callback': dummy_method})
+        res = mh._run_command_hooks(cmd)
+      
+      validate: |
+        this.test_result = res
+        assert (res == 2), '_run_command_hooks = 2'      
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_no_hook
+      Desc: Not registered hook
+      
+      Test: |
+        del mh._cmd_hooks[cmd]
+        res = mh._run_command_hooks(cmd)
+      
+      validate: |
+        this.test_result = res
+        assert (res == 0), '_run_command_hooks = 0'   
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/core/corehead/03_methods_ut.jedi
+  Name: ts_set_default_cli_params
+  Desc: Test _set_default_cli_params method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    from hydratk.lib.console.commandlinetool import CommandlineTool
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_set_params
+    Desc: Set default params
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_cmd
+      Desc: Set commands
+      
+      Test: |    
+        mh = MasterHead.get_head()
+        CommandlineTool._commands = []
+        mh._set_default_cli_params()                    
+        res = CommandlineTool._commands
+      
+      Validate: |
+        this.test_result = str(res)
+        assert (res != []), '_commands is not empty'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_shortopt
+      Desc: Set short options
+      
+      Test: |  
+        CommandlineTool._short_opt = ''
+        mh._set_default_cli_params()                    
+        res = CommandlineTool._short_opt
+      
+      Validate: |
+        this.test_result = str(res)
+        assert (res != ''), '_short_opt is not empty'    
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_longopt
+      Desc: Set long options
+      
+      Test: |   
+        CommandlineTool._long_opt = {}
+        mh._set_default_cli_params()                    
+        res = CommandlineTool._long_opt
+      
+      Validate: |
+        this.test_result = str(res)
+        assert (res != {}), '_long_opt is not empty'  
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_cmdtext
+      Desc: Set command text
+      
+      Test: |   
+        CommandlineTool._cmd_text = {}
+        mh._set_default_cli_params()                    
+        res = CommandlineTool._cmd_text
+      
+      Validate: |
+        this.test_result = str(res)
+        assert (res != {}), '_cmd_text is not empty'        
+        
+    Test-Condition-5: 
+      Id: tco_05
+      Name: tco_opttext
+      Desc: Set option text
+      
+      Test: |   
+        CommandlineTool._opt_text = {}
+        mh._set_default_cli_params()                    
+        res = CommandlineTool._opt_text
+      
+      Validate: |
+        this.test_result = str(res)
+        assert (res != {}), '_opt_text is not empty' 
+        
+Test-Scenario-4:
+  Id: ts_04
+  Path: hydratk/core/corehead/03_methods_ut.jedi
+  Name: ts_set_pid_file
+  Desc: Test _set_pid_file method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    from os import path, getpid
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_cpid_file
+    Desc: PID file
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_create
+      Desc: Create file
+      
+      Test: |
+        mh = MasterHead.get_head()
+        file = './htk.pid'
+        res = mh._set_pid_file(file)
+      
+      Validate: |                             
+        this.test_result = res
+        exp = getpid()
+        assert (res == exp), '_set_pid_file = {0}'.format(exp)
+        this.test_result = res = path.exists(file)
+        assert (res), 'file {0} created'.format(file)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_rewrite
+      Desc: Rewrite file
+      
+      Test: |
+        res = mh._set_pid_file(file)
+      
+      Validate: |                             
+        this.test_result = res
+        exp = getpid()
+        assert (res == exp), '_set_pid_file = {0}'.format(exp)
+        this.test_result = res = path.exists(file)
+        assert (res), 'file {0} exists'.format(file)  
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid
+      Desc: Invalid file
+      
+      Test: |
+        res = mh._set_pid_file('')
+        
+      Validate: |
+        this.test_result = res
+        exp = getpid()    
+        assert (res == exp), '_set_pid_file = {0}'.format(exp)  
+        
+Test-Scenario-5:
+  Id: ts_05
+  Path: hydratk/core/corehead/03_methods_ut.jedi
+  Name: ts_reg_service_signal_hooks
+  Desc: Test _reg_service_signal_hooks method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_signal_hook
+    Desc: Register signal hooks
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_reg
+      Desc: Register hooks
+      
+      Test: |
+        mh = MasterHead.get_head()
+        ev_id = 'htk_on_signal'
+        mh._reg_service_signal_hooks()
+        res = mh._event_hooks[ev_id]
+      
+      Validate: |                
+        this.test_result = str(res)
+        assert (res != None), '_event_hooks[{0}] is not empty'.format(ev_id)
+        
+Test-Scenario-6:
+  Id: ts_06
+  Path: hydratk/core/corehead/03_methods_ut.jedi
+  Name: ts_reg_self_fn_hooks
+  Desc: Test _reg_self_fn_hooks method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_fn_hook
+    Desc: Register functionality hooks
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_reg
+      Desc: Register hooks        
+      
+      Test: |
+        mh = MasterHead.get_head()
+        fn = ['h_bootstrap', 'h_runlevel_baseinit', 'h_runlevel_config', 'h_runlevel_extensions',
+              'h_runlevel_cli', 'h_runlevel_core', 'h_runlevel_appl']
+        
+        for hook in fn:
+            del mh._fn_hooks[hook]
+            
+        mh._reg_self_fn_hooks()
+        res = mh._fn_hooks
+      
+      Validate: |
+        this.test_result = str(res)
+        
+        for hook in fn:
+            assert (hook in mh._fn_hooks), '_fn_hooks contains {0}'.format(hook)
+            
+Test-Scenario-7:
+  Id: ts_07
+  Path: hydratk/core/corehead/03_methods_ut.jedi
+  Name: ts_reg_self_event_hooks
+  Desc: Test _reg_self_event_hooks method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_event_hook
+    Desc: Register event hooks
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_reg
+      Desc: Register hooks
+      
+      Test: |
+        mh = MasterHead.get_head()
+        ev_id = 'htk_on_cprint'
+        del mh._event_hooks[ev_id]
+        mh._reg_self_event_hooks()
+        res = mh._event_hooks[ev_id]
+      
+      Validate: |                
+        this.test_result = str(res)
+        assert (res != None), '_event_hooks[{0}] is not empty'.format(ev_id)   
+        
+Test-Scenario-8:
+  Id: ts_08
+  Path: hydratk/core/corehead/03_methods_ut.jedi
+  Name: ts_parse_cli_args
+  Desc: Test _parse_cli_args method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    from hydratk.lib.console.commandlinetool import CommandlineTool
+    from yodahelpers.hydratk.core.events import events, reg_ev_hook
+    from sys import argv
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_parse_cli
+    Desc: Parse cli arguments
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_cmd
+      Desc: Registered command                 
+      
+      Test: |
+        mh = MasterHead.get_head()
+        cmd = 'test'
+        CommandlineTool._commands.append(cmd)
+        argv.append(cmd)
+        ev_id = 'htk_on_cmd_options'
+        reg_ev_hook(mh, ev_id)
+        mh._parse_cli_args()
+        res = mh._command
+      
+      Validate: |
+        this.test_result = res
+        assert (res == cmd), '_command = {0}'.format(cmd)
+        this.test_result = res = events[0]._id
+        assert (res == ev_id), '_parse_cli_args fires {0}'.format(ev_id)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_cmd
+      Desc: Not registered command                 
+      
+      Test: |
+        del CommandlineTool._commands[-1]
+        mh._parse_cli_args()
+        res = mh._command
+      
+      Validate: |
+        this.test_result = res
+        assert (res == 'run'), '_command = {0}'.format('run')
+        this.test_result = res = events[0]._id
+        assert (res == ev_id), '_parse_cli_args fires {0}'.format(ev_id)
+        del argv[-1]        
+        
+Test-Scenario-9:
+  Id: ts_09
+  Path: hydratk/core/corehead/03_methods_ut.jedi
+  Name: ts_remove_pid_file
+  Desc: Test _remove_pid_file method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    from os import path
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_remove_pid
+    Desc: Remove PID file
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_remove
+      Desc: Remove file
+      
+      Test: |
+        mh = MasterHead.get_head()
+        file = './htk.pid'
+        mh._set_pid_file(file)
+        res = mh._remove_pid_file(file)
+      
+      Validate: |           
+        this.test_result = res
+        assert (res), '_remove_pid_file = True'
+        this.test_result = res = path.exists(file)
+        assert (res), 'file {0} removed'.format(file)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_no_remove
+      Desc: Remove not existing file
+      
+      Test: |
+        res = mh._remove_pid_file(file)
+      
+      Validate: |               
+        this.test_result = res
+        assert (not res), '_remove_pid_file = False'   
+        
+Test-Scenario-10:
+  Id: ts_10
+  Path: hydratk/core/corehead/03_methods_ut.jedi
+  Name: ts_reg_self_signal_hooks
+  Desc: Test _reg_self_signal_hooks method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_signal_hooks
+    Desc: Register signal hooks
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_reg
+      Desc: Register hooks
+      
+      Test: |
+        mh = MasterHead.get_head()
+        ev_id = ['htk_on_signal', 'htk_on_sigint', 'htk_on_sigterm', 'htk_on_sigpipe']
+        mh._reg_self_signal_hooks()
+        res = mh._event_hooks
+      
+      Validate: |            
+        this.test_result = str(res)
+        
+        for hook in ev_id:
+            assert (hook in mh._event_hooks.keys()), '_event_hooks contains {0}'.format(hook)
+            
+Test-Scenario-11:
+  Id: ts_11
+  Path: hydratk/core/corehead/03_methods_ut.jedi
+  Name: ts_list_extensions
+  Desc: Test _list_extensions method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import sys
+    from StringIO import StringIO
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_list_ext
+    Desc: List extensions
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_list
+      Desc: List extensions
+      
+      Test: |
+        mh = MasterHead.get_head()
+        old = sys.stdout
+        sys.stdout = res = StringIO()
+        mh._list_extensions()
+        sys.stdout = old
+        res = res.getvalue()
+      
+      Validate: |    
+        this.test_result = res
+        assert ('Yoda' in res), '_list_extensions prints Yoda'          

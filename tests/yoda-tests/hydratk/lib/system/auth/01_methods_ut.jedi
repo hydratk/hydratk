@@ -1,0 +1,51 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/lib/system/auth/01_methods_ut.jedi
+  Name: ts_check_auth
+  Desc: Test check_auth method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.system.auth import check_auth 
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_auth
+    Desc: User authentication
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_auth
+      Desc: User authentication
+      
+      Test: |
+        res = check_auth('lynus', 'bowman')
+      
+      Validate: |
+        this.test_result = res
+        assert (res), 'check_auth = True'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_passw
+      Desc: Invalid password
+      
+      Test: |
+        res = check_auth('lynus', 'bowman2')
+      
+      Validate: |
+        this.test_result = res
+        assert (not res), 'check_auth = False'        
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid_user
+      Desc: Invalid user
+      
+      Test: |
+        res = check_auth('lynus2', 'bowman2')
+      
+      Validate: |
+        this.test_result = res
+        assert (not res), 'check_auth = False'          

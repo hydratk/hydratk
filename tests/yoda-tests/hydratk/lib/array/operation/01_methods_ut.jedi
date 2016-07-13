@@ -1,0 +1,66 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/lib/array/operation/01_methods_ut.jedi
+  Name: ts_subdict
+  Desc: Test subdict method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.array.operation import subdict
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_subdict
+    Desc: Subdictionary
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_no_key
+      Desc: No key returned
+      
+      Test: |
+        d = {'data1': 1, 'data2': 2, 'data3': 3}
+        res = subdict(d, ['x'])
+      
+      Validate: |
+        this.test_result = str(res)
+        assert (res == {}), 'subdict = {}'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_one_key
+      Desc: One key returned
+      
+      Test: |
+        res = subdict(d, ['data1'])
+      
+      Validate: |
+        this.test_result = str(res)
+        exp = {'data1': 1}
+        assert (res == exp), 'subdict = {0}'.format(exp)
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_two_keys
+      Desc: Two keys returned
+      
+      Test: |
+        res = subdict(d, ['data1', 'data3'])
+      
+      Validate: |
+        this.test_result = str(res)
+        exp = {'data1': 1, 'data3': 3}
+        assert (res == exp), 'subdict = {0}'.format(exp)
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_all_keys
+      Desc: All keys returned
+      
+      Test: |
+        res = subdict(d, d.keys())
+      
+      Validate: |
+        this.test_result = str(res)
+        assert (res == d), 'subdict = {0}'.format(d)                        

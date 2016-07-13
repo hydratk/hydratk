@@ -1,0 +1,195 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/core/extension/01_methods_ut.jedi
+  Name: ts_init
+  Desc: Test method __init__
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    from yodahelpers.hydratk.core.extensions import DummyExtension
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_no_masterhead
+    Desc: Initialize extension without masterhead reference
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_init
+      Desc: Initialize extension
+      
+      Test: |
+        ext = DummyExtension()
+      
+      Validate: |
+        this.test_result = str(ext)
+        assert (ext.__class__.__name__ == 'DummyExtension'), '__init__ = DummyExtension'
+        res = [ext._ext_id, ext._ext_name, ext._ext_version, ext._ext_author, ext._ext_year]
+        this.test_result = str(res)
+        assert ('Undefined' not in res), '{0} does not contain Undefined'.format(res)
+        res = this.test_result = ext._deps
+        assert (res), '_check_dependencies = True'
+        res = this.test_result = ext._actions
+        assert (res), '_register_actions = True'
+        res = this.test_result = ext._imports
+        assert (res), '_do_imports = True'  
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_masterhead
+    Desc: Initialize extension with masterhead reference
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_init
+      Desc: Initialize extension                      
+      
+      Test: |
+        mh = MasterHead.get_head()
+        ext = DummyExtension(mh)
+      
+      Validate: |
+        this.test_result = str(ext)
+        assert (ext.__class__.__name__ == 'DummyExtension'), '__init__ = DummyExtension'
+        res = [ext._ext_id, ext._ext_name, ext._ext_version, ext._ext_author, ext._ext_year]
+        this.test_result = str(res)
+        assert ('Undefined' not in res), '{0} does not contain Undefined'.format(res)        
+        res = this.test_result = ext._deps
+        assert (res), '_check_dependencies = True'
+        res = this.test_result = ext._actions
+        assert (res), '_register_actions = True'
+        res = this.test_result = ext._imports
+        assert (res), '_do_imports = True' 
+        res = this.test_result = ext._mh.__class__.__name__
+        assert (res == 'MasterHead'), '_mh = MasterHead'   
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/core/extension/01_methods_ut.jedi
+  Name: ts_getattr
+  Desc: Test method __getattr__
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    from yodahelpers.hydratk.core.extensions import DummyExtension
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_getattr
+    Desc: Get attribute
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_exist_attr
+      Desc: Get existing attribute
+      
+      Test: |
+        mh = MasterHead.get_head()
+        ext = DummyExtension(mh)
+        res = ext.__getattr__('_language')
+      
+      Validate: |
+        this.test_result = res
+        assert (res == 'en'), '__getattr__ = en'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_attr
+      Desc: Get invalid attribute, error is raised
+      
+      Test: |
+        try:
+          ext.__getattr__('')
+          ex = False
+        except AttributeError:
+          ex = True
+      
+      Validate: |   
+        this.test_result = ex
+        assert (ex), '__getattr__ raises AttributeError'
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_no_wrap
+      Desc: Wrapping attributes not enabled, error is raised     
+      
+      Test: |
+        try:
+          ext._wrap_hydra_attrs = False
+          ext.__getattr__('')
+          ex = False
+        except AttributeError:
+          ex = True
+      
+      Validate: |   
+        this.test_result = ex
+        assert (ex), '__getattr__ raises AttributeError' 
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/core/extension/01_methods_ut.jedi
+  Name: ts_simple_methods
+  Desc: Test simple get methods
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodahelpers.hydratk.core.extensions import DummyExtension
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_get
+    Desc: Get methods
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_get_ext_name
+      Desc: Method get_ext_name
+      
+      Test: |
+        ext = DummyExtension()
+      
+      Validate: |             
+        res = this.test_result = ext.get_ext_name()
+        assert (res == ext._ext_name), 'get_ext_name = {0}'.format(ext._ext_name) 
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_get_ext_version
+      Desc: Method get_ext_version
+      
+      Test: |
+        ext = DummyExtension()
+      
+      Validate: |             
+        res = this.test_result = ext.get_ext_version()
+        assert (res == ext._ext_version), 'get_ext_version = {0}'.format(ext._ext_version)     
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_get_ext_author
+      Desc: Method get_ext_author
+      
+      Test: |
+        ext = DummyExtension()
+      
+      Validate: |             
+        res = this.test_result = ext.get_ext_author()
+        assert (res == ext._ext_author), 'get_ext_author = {0}'.format(ext._ext_author)  
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_get_ext_info
+      Desc: Method get_ext_info
+      
+      Test: |
+        ext = DummyExtension()
+      
+      Validate: |             
+        res = this.test_result = ext.get_ext_info()
+        exp = ext._ext_name + ' v' + ext._ext_version + ' (c) [' + ext._ext_year + ' '+ ext._ext_author + ']'
+        assert (res == exp), 'get_ext_info = {0}'.format(exp)                            

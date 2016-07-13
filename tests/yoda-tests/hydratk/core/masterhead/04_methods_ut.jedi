@@ -1,0 +1,88 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/core/masterhead/04_methods_ut.jedi
+  Name: ts_get_language
+  Desc: Test method get_language
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_get_lang
+    Desc: Get language
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_get_lang
+      Desc: Get language
+      
+      Test: |
+        mh = MasterHead.get_head()
+        res = mh.get_language()
+      
+      Validate: |
+        this.test_result = res
+        exp_lang = mh._language
+        assert (res == exp_lang), 'get_language = {0}'.format(exp_lang)
+ 
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/core/masterhead/04_methods_ut.jedi
+  Name: ts_have_command_action
+  Desc: Test method have_command_action
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_have_action
+    Desc: Have command action
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_have_action
+      Desc: Have command action
+      
+      Test: |
+        mh = MasterHead.get_head()
+        res = mh.have_command_action()
+      
+      Validate: |
+        this.test_result = res
+        assert (res), 'have_command_action = True'   
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/core/masterhead/04_methods_ut.jedi
+  Name: ts_get_command_action
+  Desc: Test method get_command_action
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_get_action
+    Desc: Get command action
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_get_action
+      Desc: Get command action
+      
+      Test: |
+        mh = MasterHead.get_head()
+        res = mh.get_command_action()
+      
+      Validate: |
+        this.test_result = res
+        exp_action = mh._command
+        assert (res == exp_action), 'get_command_action = {0}'.format(exp_action)        

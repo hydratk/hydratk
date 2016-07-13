@@ -1,0 +1,655 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/core/corehead/01_methods_ut.jedi
+  Name: ts_bootstrap
+  Desc: Test _bootstrap method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import hydratk.core.const as const
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_bootstrap
+    Desc: Process bootstrap
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_bootstrap
+      Desc: Process bootstrap
+      
+      Test: |
+        mh = MasterHead.get_head()
+        res = mh._bootstrap()
+      
+      Validate: |
+        this.test_result = res
+        assert (res), '_bootstrap = True'
+        exp = const.RUNLEVEL_APPL
+        res = this.test_result = mh._runlevel
+        assert (res == exp), '_runlevel = {0}'.format(exp) 
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/core/corehead/01_methods_ut.jedi
+  Name: ts_create_config_db
+  Desc: Test _create_config_db method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from os import system, path
+    from time import time
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_create
+    Desc: Create database
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_from_opt
+      Desc: Create database from option
+      
+      Test: |
+        file = './test.db3'
+        system('htk --config-db-file {0} create-config-db'.format(file))
+        res = path.exists(file)
+      
+      Validate: |        
+        this.test_result = res
+        assert (res), 'file {0} created'.format(file)
+        system('rm -f {0}'.format(file))
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_from_cfg
+      Desc: Create database from config param
+      
+      Test: |
+        file = '/var/local/hydratk/dbconfig/dbconfig.db3'
+        system('rm -f {0}'.format(file))
+        system('htk create-config-db')
+        res = path.exists(file)
+      
+      Validate: |        
+        this.test_result = res
+        assert (res), 'file {0} created'.format(file)        
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_force_short
+      Desc: Rewrite database by -f
+      
+      Test: |
+        file = '/var/local/hydratk/dbconfig/dbconfig.db3'
+        now = time()
+        system('htk -f create-config-db')
+        res = path.exists(file)
+      
+      Validate: |        
+        this.test_result = res
+        assert (res), 'file {0} created'.format(file)
+        res = this.test_result = path.getmtime(file)
+        assert (res > now), 'file is rewritten'         
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_force_long
+      Desc: Rewrite database by --force
+      
+      Test: |
+        file = '/var/local/hydratk/dbconfig/dbconfig.db3'
+        now = time()
+        system('htk --force create-config-db')
+        res = path.exists(file)
+      
+      Validate: |        
+        this.test_result = res
+        assert (res), 'file {0} created'.format(file) 
+        res = this.test_result = path.getmtime(file)
+        assert (res > now), 'file is rewritten'             
+        system('rm -f {0}'.format(file))          
+        
+    Test-Condition-5: 
+      Id: tco_05
+      Name: tco_useless_force
+      Desc: Create database with useless force
+      
+      Test: |
+        file = '/var/local/hydratk/dbconfig/dbconfig.db3'
+        system('htk --force create-config-db')
+        res = path.exists(file)
+      
+      Validate: |        
+        this.test_result = res
+        assert (res), 'file {0} created'.format(file) 
+        system('rm -f {0}'.format(file))
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_not_create
+    Desc: Database is not created
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_no_force
+      Desc: Database is not forced to rewrite   
+      
+      Test: |
+        file = '/var/local/hydratk/dbconfig/dbconfig.db3'
+        system('htk create-config-db')
+        now = time()        
+        system('htk create-config-db')
+        res = path.getmtime(file)
+      
+      Validate: |        
+        this.test_result = res
+        assert (res < now), 'file is not rewritten'
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/core/corehead/01_methods_ut.jedi
+  Name: ts_write_config_db
+  Desc: Test _write_config_db method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    from os import system, path
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_create
+    Desc: Create database
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_create
+      Desc: Create database
+      
+      Test: |
+        mh = MasterHead.get_head()
+        file = './test.db3'
+        mh._write_config_db(file)
+        res = path.exists(file)
+      
+      Validate: |             
+        this.test_result = res
+        assert (res), 'file {0} is created'.format(file)
+        system('rm -f {0}'.format(file))  
+        
+Test-Scenario-4:
+  Id: ts_04
+  Path: hydratk/core/corehead/01_methods_ut.jedi
+  Name: ts_do_command_action
+  Desc: Test _do_command_action method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    from hydratk.lib.console.commandlinetool import CommandlineTool
+    import sys
+    from StringIO import StringIO
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_do_command
+    Desc: Process command
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_def_cmd
+      Desc: Default command
+      
+      Test: |
+        mh = MasterHead.get_head()
+        mh._command = None
+        old = sys.stdout
+        sys.stdout = res = StringIO()
+        mh._do_command_action()       
+        sys.stdout = old
+        res = res.getvalue()
+      
+      Validate: |               
+        this.test_result = res
+        exp = 'yoda help'
+        assert (exp in res), 'print contains {0}'.format(exp)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_cmd_hook
+      Desc: Registered command hook
+      
+      Test: |
+        mh._command = cmd = 'test'
+        mh.register_command_hook(cmd, CommandlineTool.print_short_help)
+        sys.stdout = res = StringIO()
+        mh._do_command_action()
+        sys.stdout = old     
+        res = res.getvalue()   
+      
+      Validate: |   
+        this.test_result = res
+        assert (exp in res), 'print contains {0}'.format(exp)     
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_no_cmd_hook
+      Desc: Not registered command hook
+      
+      Test: |
+        del mh._cmd_hooks[cmd]
+        sys.stdout = res = StringIO()
+        mh._do_command_action()
+        sys.stdout = old    
+        res = res.getvalue()    
+      
+      Validate: |   
+        this.test_result = res
+        assert (exp not in res), 'print does not contain {0}'.format(exp)
+        mh._command = None    
+        
+Test-Scenario-5:
+  Id: ts_05
+  Path: hydratk/core/corehead/01_methods_ut.jedi
+  Name: ts_load_db_config
+  Desc: Test _load_db_config method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    from os import system
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_load_config
+    Desc: Load config from database
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_load
+      Desc: Load config   
+      
+      Test: |
+        system('htk create-config-db')
+        mh = MasterHead.get_head()
+        exp = mh._config['Libraries']
+        del mh._config['Libraries']
+        mh._load_db_config()
+        res = mh._config['Libraries']
+      
+      Validate: |                  
+        this.test_result = str(res)
+        assert (res == exp), '_config[Libraries] = {0}'.format(exp)     
+        system('rm -f {0}'.format('/var/local/hydratk/dbconfig/dbconfig.db3'))
+        
+Test-Scenario-6:
+  Id: ts_06
+  Path: hydratk/core/corehead/01_methods_ut.jedi
+  Name: ts_process_extension_configs
+  Desc: Test _process_extension_configs method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import yodahelpers.hydratk.core.events as events
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_ext_config
+    Desc: Load extension config from file
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_rewrite
+      Desc: Rewrite config parameter
+      
+      Test: |
+        mh = MasterHead.get_head()
+        ev_id = 'htk_before_append_extension_config_file'
+        events.reg_ev_hook(mh, ev_id)
+        mh._config['Extensions']['Yoda']['enabled'] = 0
+        mh._process_extension_configs()
+        res = mh._config['Extensions']['Yoda']['enabled']
+      
+      Validate: |           
+        this.test_result = str(res)
+        assert (res == 1), 'enabled = 1'
+        res = events.events[0]
+        this.test_result = str(res)
+        assert (res._id == ev_id), '_process_extension_configs fires {0}'.format(ev_id)
+        events.events = []
+        
+Test-Scenario-7:
+  Id: ts_07
+  Path: hydratk/core/corehead/01_methods_ut.jedi
+  Name: ts_append_extension_config_from_file
+  Desc: Test _append_extension_config_from_file method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_ext_config
+    Desc: Append extension config from file
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_rewrite
+      Desc: Rewrite config parameter   
+      
+      Test: |
+        mh = MasterHead.get_head()
+        mh._config['Extensions']['Yoda']['enabled'] = 0
+        mh._append_extension_config_from_file('/etc/hydratk/conf.d/hydratk-ext-yoda.conf')
+        res = mh._config['Extensions']['Yoda']['enabled']
+      
+      Validate: |           
+        this.test_result = str(res)
+        assert (res == 1), 'enabled = 1'        
+        
+Test-Scenario-8:
+  Id: ts_08
+  Path: hydratk/core/corehead/01_methods_ut.jedi
+  Name: ts_merge_base_config
+  Desc: Test _merge_base_config method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    from yaml import load
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_merge
+    Desc: Merge config
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_rewrite
+      Desc: Rewrite config parameter   
+      
+      Test: |
+        mh = MasterHead.get_head()
+        mh._config['Extensions']['Yoda']['enabled'] = 0
+        
+        with open('/etc/hydratk/conf.d/hydratk-ext-yoda.conf', 'r') as f:
+            cfg = load(f.read())
+        
+        mh._merge_base_config(cfg)
+        res = mh._config['Extensions']['Yoda']['enabled']
+      
+      Validate: |           
+        this.test_result = str(res)
+        assert (res == 1), 'enabled = 1'     
+        
+Test-Scenario-9:
+  Id: ts_09
+  Path: hydratk/core/corehead/01_methods_ut.jedi
+  Name: ts_load_base_config
+  Desc: Test _load_base_config method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_load_config
+    Desc: Load base config
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_load
+      Desc: Load config   
+      
+      Test: |
+        mh = MasterHead.get_head()
+        exp = mh._config['Libraries']
+        del mh._config['Libraries']
+        mh._load_base_config()
+        mh._process_extension_configs()
+        res = mh._config['Libraries']
+      
+      Validate: |                  
+        this.test_result = str(res)
+        assert (res == exp), '_config[Libraries] = {0}'.format(exp) 
+        
+Test-Scenario-10:
+  Id: ts_10
+  Path: hydratk/core/corehead/01_methods_ut.jedi
+  Name: ts_apply_config
+  Desc: Test _apply_config method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_debug
+    Desc: Debug config
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_en_debug
+      Desc: Enable debug
+      
+      Test: |
+        mh = MasterHead.get_head()
+        mh._config['System']['Debug']['enabled'] = 1
+        mh._debug = False
+        mh._apply_config()
+        res = mh._debug
+      
+      Validate: |    
+        this.test_result = res
+        assert (res), '_debug = True'    
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_dis_debug
+      Desc: Diasable debug
+      
+      Test: |
+        mh._config['System']['Debug']['enabled'] = 0
+        mh._apply_config()
+        res = mh._debug
+      
+      Validate: |    
+        this.test_result = res
+        assert (not res), '_debug = False'  
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_debug_level
+    Desc: Debug level config
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_high_level
+      Desc: Set high debug level
+      
+      Test: |
+        mh = MasterHead.get_head()
+        mh._config['System']['Debug']['level'] = 2
+        mh._debug_level = 1
+        mh._apply_config()
+        res = mh._debug_level
+      
+      Validate: |                                           
+        this.test_result = res
+        assert (res == 2), '_debug_level = 2'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_low_level
+      Desc: Set low debug level
+      
+      Test: |
+        mh._config['System']['Debug']['level'] = 0
+        mh._apply_config()
+        res = mh._debug_level
+      
+      Validate: |                                           
+        this.test_result = res
+        assert (res == 1), '_debug_level = 1' 
+        mh._config['System']['Debug']['level'] = 1   
+        
+  Test-Case-3:
+    Id: tc_03
+    Name: tc_language
+    Desc: Language config
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_cs
+      Desc: Set czech language
+      
+      Test: |
+        mh = MasterHead.get_head()
+        mh._config['System']['Language']['id'] = 'cs'
+        mh._language = 'en'
+        mh._apply_config()
+        res = mh._language
+      
+      Validate: |                                           
+        this.test_result = res
+        assert (res == 'cs'), '_language = cs'        
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_def
+      Desc: Set default language
+      
+      Test: |
+        mh._config['System']['Language']['id'] = 'x'
+        mh._language = 'en'
+        mh._apply_config()
+        res = mh._language
+      
+      Validate: |                                           
+        this.test_result = res
+        assert (res == 'en'), '_language = en'  
+        mh._config['System']['Language']['id'] = 'en'  
+        
+  Test-Case-4:
+    Id: tc_04
+    Name: tc_runmode
+    Desc: Run mode config
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_parallel
+      Desc: Set parallel mode
+      
+      Test: |
+        mh = MasterHead.get_head()
+        mh._config['Core']['Options']['run_mode'] = 2
+        mh._run_mode = 1
+        mh._apply_config()
+        res = mh._run_mode
+      
+      Validate: |                                           
+        this.test_result = res
+        assert (res == 2), '_run_mode = 2'   
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_def
+      Desc: Set default mode
+      
+      Test: |
+        mh._config['Core']['Options']['run_mode'] = 0
+        mh._apply_config()
+        res = mh._run_mode
+      
+      Validate: |                                           
+        this.test_result = res
+        assert (res == 1), '_run_mode = 1' 
+        mh._config['Core']['Options']['run_mode'] = 1  
+        
+  Test-Case-5:
+    Id: tc_05
+    Name: tc_router
+    Desc: Router id config
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_new
+      Desc: Set new router id
+      
+      Test: |
+        mh = MasterHead.get_head()
+        id = 'tomcat02'
+        mh._config['Core']['MessageRouter']['id'] = id
+        mh._apply_config()
+        res = mh._msg_router_id
+      
+      Validate: |                                           
+        this.test_result = res
+        assert (res == id), '_msg_router_id = {0}'.format(id)          
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_old
+      Desc: Set old router id
+      
+      Test: |
+        id = 'raptor01'
+        mh._config['Core']['MessageRouter']['id'] = id
+        mh._apply_config()
+        res = mh._msg_router_id
+      
+      Validate: |                                           
+        this.test_result = res
+        assert (res == id), '_msg_router_id = {0}'.format(id)  
+        
+  Test-Case-6:
+    Id: tc_06
+    Name: tc_workers
+    Desc: Workers count config
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_new
+      Desc: Set new workers count
+      
+      Test: |
+        mh = MasterHead.get_head()
+        cnt = 10
+        mh._config['Core']['Workers']['total'] = cnt
+        mh._apply_config()
+        res = mh._num_threads
+      
+      Validate: |                                           
+        this.test_result = res
+        assert (res == cnt), '_num_threads = {0}'.format(cnt)      
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_old
+      Desc: Set old workers count
+      
+      Test: |
+        cnt = 4
+        mh._config['Core']['Workers']['total'] = cnt
+        mh._apply_config()
+        res = mh._num_threads
+      
+      Validate: |                                           
+        this.test_result = res
+        assert (res == cnt), '_num_threads = {0}'.format(cnt)                                                                  

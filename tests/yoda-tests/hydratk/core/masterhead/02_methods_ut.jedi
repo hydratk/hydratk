@@ -1,0 +1,651 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/core/masterhead/02_methods_ut.jedi
+  Name: ts_match_short_option
+  Desc: Test method match_short_option
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import hydratk.core.commandopt as cmdopt
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_single_opt
+    Desc: Register single command option
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_new_group
+      Desc: New option group
+      
+      Test: |
+        mh = MasterHead.get_head()
+        group, opt = 'test', 'x'
+        mh.match_short_option(opt, True, 'force', True, group)        
+      
+      Validate: |
+        res = this.test_result = cmdopt.short_opt[group]
+        assert (res == opt), 'shortopt[{0}] = {1}'.format(group, opt)
+        opt_exp = {'d_opt':'force', 'has_value':True, 'allow_multiple':True}
+        res = cmdopt.opt[group]['-'+opt]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_new_opt
+      Desc: New option for existing group
+      
+      Test: |
+        opt = 'y'
+        mh.match_short_option(opt, False, None, False, group)
+      
+      Validate: |      
+        res = this.test_result = cmdopt.short_opt[group]
+        assert (opt in res), 'shortopt[{0}] contains {1}'.format(group, opt)  
+        opt_exp = {'d_opt':None, 'has_value':False, 'allow_multiple':False}
+        res = cmdopt.opt[group]['-'+opt]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_exist_opt
+      Desc: Existing option with new config, won't be overriden
+      
+      Test: |
+        mh.match_short_option(opt, True, 'force', True, group)
+      
+      Validate: |        
+        res = cmdopt.opt[group]['-'+opt]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)      
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_exist_opt_new_group
+      Desc: Existing option in new group, option is registered in both groups
+      
+      Test: |
+        group2 = 'test2'
+        mh.match_short_option(opt, False, None, False, group2)
+      
+      Validate: |        
+        res = this.test_result = cmdopt.short_opt[group2]
+        assert (res == opt), 'shortopt[{0}] = {1}'.format(group2, opt)
+        res = cmdopt.opt[group2]['-'+opt]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)    
+        res = cmdopt.opt[group]['-'+opt]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)
+        del cmdopt.short_opt[group]
+        del cmdopt.opt[group]   
+        del cmdopt.short_opt[group2]
+        del cmdopt.opt[group2]       
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_mult_opt
+    Desc: Register command option in multiple groups
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_new_groups
+      Desc: New option groups
+      
+      Test: |
+        mh = MasterHead.get_head()
+        group, opt = ['test', 'test2'], 'x'
+        mh.match_short_option(opt, True, 'force', True, group)        
+      
+      Validate: |
+        res = this.test_result = cmdopt.short_opt[group[0]]
+        assert (res == opt), 'shortopt[{0}] = {1}'.format(group[0], opt)
+        opt_exp = {'d_opt':'force', 'has_value':True, 'allow_multiple':True}
+        res = cmdopt.opt[group[0]]['-'+opt]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)
+        res = this.test_result = cmdopt.short_opt[group[1]]
+        assert (res == opt), 'shortopt[{0}] = {1}'.format(group[1], opt)
+        res = cmdopt.opt[group[1]]['-'+opt]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)        
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_new_opt
+      Desc: New option for existing groups
+      
+      Test: |
+        opt = 'y'
+        mh.match_short_option(opt, False, None, False, group)
+      
+      Validate: |        
+        res = this.test_result = cmdopt.short_opt[group[0]]
+        assert (opt in res), 'shortopt[{0}] contains {1}'.format(group[0], opt)        
+        opt_exp = {'d_opt':None, 'has_value':False, 'allow_multiple':False}
+        res = cmdopt.opt[group[0]]['-'+opt]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)
+        res = this.test_result = cmdopt.short_opt[group[1]]
+        assert (opt in res), 'shortopt[{0}] contains {1}'.format(group[1], opt)   
+        print cmdopt.opt[group[0]], cmdopt.opt[group[1]] 
+        res = cmdopt.opt[group[1]]['-'+opt]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)        
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_exist_opt
+      Desc: Existing option with new config, won't be overriden
+      
+      Test: |
+        mh.match_short_option(opt, True, 'force', True, group)
+      
+      Validate: |        
+        res = cmdopt.opt[group[0]]['-'+opt]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)  
+        res = cmdopt.opt[group[1]]['-'+opt]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)  
+      
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_invalid_group
+      Desc: Invalid group data type, error is raised
+      
+      Test: |
+        try:
+          mh.match_short_option(opt, opt_group={'test1':'test2'})
+          ex = False
+        except TypeError:
+          ex = True
+      
+      Validate: |     
+        this.test_result = ex
+        assert (ex), 'match_short_option raises TypeError'
+        del cmdopt.short_opt[group[0]]
+        del cmdopt.opt[group[0]]   
+        del cmdopt.short_opt[group[1]]
+        del cmdopt.opt[group[1]]       
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/core/masterhead/02_methods_ut.jedi
+  Name: ts_match_long_option
+  Desc: Test method match_long_option
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import hydratk.core.commandopt as cmdopt
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_single_opt
+    Desc: Register single command option
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_new_group
+      Desc: New option group
+      
+      Test: |
+        mh = MasterHead.get_head()
+        group, opt = 'test', 'x'
+        mh.match_long_option(opt, True, 'force', True, group)        
+      
+      Validate: |
+        res = cmdopt.long_opt[group]
+        this.test_result = str(res)
+        assert (res == [opt]), 'longopt[{0}] = [{1}]'.format(group, opt)
+        opt_exp = {'d_opt':'force', 'has_value':True, 'allow_multiple':True}
+        res = cmdopt.opt[group]['--'+opt]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_new_opt
+      Desc: New option for existing group
+      
+      Test: |
+        opt = 'y'
+        mh.match_long_option(opt, False, None, False, group)
+      
+      Validate: |      
+        res = cmdopt.long_opt[group]
+        this.test_result = str(res)
+        assert (opt in res), 'longopt[{0}] contains {1}'.format(group, opt)  
+        opt_exp = {'d_opt':None, 'has_value':False, 'allow_multiple':False}
+        res = cmdopt.opt[group]['--'+opt]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_exist_opt
+      Desc: Existing option with new config, won't be overriden
+      
+      Test: |
+        mh.match_long_option(opt, True, 'force', True, group)
+      
+      Validate: |        
+        res = cmdopt.opt[group]['--'+opt]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)      
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_exist_opt_new_group
+      Desc: Existing option in new group, option is registered in both groups
+      
+      Test: |
+        group2 = 'test2'
+        mh.match_long_option(opt, False, None, False, group2)
+      
+      Validate: |        
+        res = cmdopt.long_opt[group2]
+        this.test_result = str(res)
+        assert (opt in res), 'longopt[{0}] contains {1}'.format(group2, opt)
+        res = cmdopt.opt[group2]['--'+opt]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)    
+        res = cmdopt.opt[group]['--'+opt]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)
+        del cmdopt.long_opt[group]
+        del cmdopt.opt[group]   
+        del cmdopt.long_opt[group2]
+        del cmdopt.opt[group2]  
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_mult_opt
+    Desc: Register command option in multiple groups
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_new_groups
+      Desc: New option groups
+      
+      Test: |
+        mh = MasterHead.get_head()
+        group, opt = ['test', 'test2'], 'x'
+        mh.match_long_option(opt, True, 'force', True, group)        
+      
+      Validate: |
+        res = cmdopt.long_opt[group[0]]
+        this.test_result = str(res)
+        assert (opt in res), 'longopt[{0}] contains {1}'.format(group[0], opt)
+        opt_exp = {'d_opt':'force', 'has_value':True, 'allow_multiple':True}
+        res = cmdopt.opt[group[0]]['--'+opt]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)
+        res = cmdopt.long_opt[group[1]]
+        this.test_result = str(res)
+        assert (opt in res), 'longopt[{0}] = {1}'.format(group[1], opt)
+        res = cmdopt.opt[group[1]]['--'+opt]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)        
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_new_opt
+      Desc: New option for existing groups
+      
+      Test: |
+        opt = 'y'
+        mh.match_long_option(opt, False, None, False, group)
+      
+      Validate: |        
+        res = this.test_result = cmdopt.short_opt[group[0]]
+        assert (opt in res), 'longopt[{0}] contains {1}'.format(group[0], opt)        
+        opt_exp = {'d_opt':None, 'has_value':False, 'allow_multiple':False}
+        res = cmdopt.opt[group[0]]['--'+opt]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)
+        res = this.test_result = cmdopt.long_opt[group[1]]
+        assert (opt in res), 'longopt[{0}] contains {1}'.format(group[1], opt)   
+        print cmdopt.opt[group[0]], cmdopt.opt[group[1]] 
+        res = cmdopt.opt[group[1]]['--'+opt]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)        
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_exist_opt
+      Desc: Existing option with new config, won't be overriden
+      
+      Test: |
+        mh.match_long_option(opt, True, 'force', True, group)
+      
+      Validate: |        
+        res = cmdopt.opt[group[0]]['--'+opt]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)  
+        res = cmdopt.opt[group[1]]['--'+opt]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)  
+      
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_invalid_group
+      Desc: Invalid group data type, error is raised
+      
+      Test: |
+        try:
+          mh.match_long_option(opt, opt_group={'test1':'test2'})
+          ex = False
+        except TypeError:
+          ex = True
+      
+      Validate: |     
+        this.test_result = ex
+        assert (ex), 'match_long_option raises TypeError'
+        del cmdopt.long_opt[group[0]]
+        del cmdopt.opt[group[0]]   
+        del cmdopt.long_opt[group[1]]
+        del cmdopt.opt[group[1]]    
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/core/masterhead/02_methods_ut.jedi
+  Name: ts_match_cli_option
+  Desc: Test method match_cli_option
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import hydratk.core.commandopt as cmdopt
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_single_opt
+    Desc: Register command options
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_new_group
+      Desc: New option group
+      
+      Test: |
+        mh = MasterHead.get_head()
+        group, opt = 'test', ['x', 'xx']
+        mh.match_cli_option(opt, True, 'force', True, group)        
+      
+      Validate: |
+        res = this.test_result = cmdopt.short_opt[group]
+        assert (res == opt[0]), 'shortopt[{0}] = {1}'.format(group, opt[0])
+        res = cmdopt.long_opt[group]
+        this.test_result = str(res)
+        assert (opt[1] in res), 'longopt[{0}] contains {1}'.format(group, opt[1])        
+        opt_exp = {'d_opt':'force', 'has_value':True, 'allow_multiple':True}
+        res = cmdopt.opt[group]['-'+opt[0]]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)
+        res = cmdopt.opt[group]['--'+opt[1]]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)        
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_new_opt
+      Desc: New options for existing group
+      
+      Test: |
+        opt = ('y', 'yy')
+        mh.match_cli_option(opt, False, None, False, group)
+      
+      Validate: |      
+        res = this.test_result = cmdopt.short_opt[group]
+        assert (opt[0] in res), 'shortopt[{0}] contains {1}'.format(group, opt[0])  
+        res = cmdopt.long_opt[group]
+        this.test_result = str(res)
+        assert (opt[1] in res), 'longopt[{0}] contains {1}'.format(group, opt[1])          
+        opt_exp = {'d_opt':None, 'has_value':False, 'allow_multiple':False}
+        res = cmdopt.opt[group]['-'+opt[0]]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)
+        res = cmdopt.opt[group]['--'+opt[1]]
+        this.test_result = str(res)
+        assert (res == opt_exp), 'opt = {0}'.format(opt_exp)          
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid_opt
+      Desc: Invalid option data type, error is raised  
+      
+      Test: |
+        try:
+          mh.match_cli_option('x')
+          ex = False
+        except TypeError:
+          ex = True
+      
+      Validate: |     
+        this.test_result = ex
+        assert (ex), 'match_cli_option raises TypeError'
+        del cmdopt.short_opt[group]
+        del cmdopt.long_opt[group]
+        del cmdopt.opt[group]         
+        
+Test-Scenario-4:
+  Id: ts_04
+  Path: hydratk/core/masterhead/02_methods_ut.jedi
+  Name: ts_match_cli_command
+  Desc: Test method match_cli_command
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import hydratk.core.commandopt as cmdopt
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_cmd
+    Desc: Register command
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_new_group
+      Desc: New command group
+      
+      Test: |
+        mh = MasterHead.get_head()
+        group, cmd = 'test', 'x'
+        mh.match_cli_command(cmd, group)        
+      
+      Validate: |
+        res = cmdopt.cmd[group]
+        this.test_result = str(res)
+        assert (cmd in res), 'cmd[{0}] contains {1}'.format(group, cmd)       
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_new_cmd
+      Desc: New command for existing group
+      
+      Test: |
+        cmd = 'y'
+        mh.match_cli_command(cmd, group)
+      
+      Validate: |      
+        res = cmdopt.cmd[group]
+        this.test_result = str(res)
+        assert (cmd in res), 'cmd[{0}] contains {1}'.format(group, cmd)   
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_cmd_new_group
+      Desc: Existing command in new group, both are registered 
+      
+      Test: |
+        group2 = 'test2'
+        mh.match_cli_command(cmd, group2)
+      
+      Validate: |      
+        res = cmdopt.cmd[group2]
+        this.test_result = str(res)
+        assert (cmd in res), 'cmd[{0}] contains {1}'.format(group2, cmd)
+        res = cmdopt.cmd[group]
+        this.test_result = str(res)
+        assert (cmd in res), 'cmd[{0}] contains {1}'.format(group, cmd)           
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_exist_cmd
+      Desc: Existing command, error is raised  
+      
+      Test: |
+        try:
+          mh.match_cli_command(cmd, group)
+          ex = False
+        except ValueError:
+          ex = True
+      
+      Validate: |     
+        this.test_result = ex
+        assert (ex), 'match_cli_command raises ValueError'                             
+        
+    Test-Condition-5: 
+      Id: tco_05
+      Name: tco_invalid_cmd
+      Desc: Invalid command, error is raised  
+      
+      Test: |
+        try:
+          mh.match_cli_command('')
+          ex = False
+        except ValueError:
+          ex = True
+      
+      Validate: |     
+        this.test_result = ex
+        assert (ex), 'match_cli_command raises ValueError'   
+        del cmdopt.cmd[group]     
+        
+Test-Scenario-5:
+  Id: ts_05
+  Path: hydratk/core/masterhead/02_methods_ut.jedi
+  Name: ts_set_cli_cmdopt_profile
+  Desc: Test method set_cli_cmdopt_profile
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    import hydratk.core.commandopt as cmdopt
+    from hydratk.lib.exceptions.inputerror import InputError
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_profile
+    Desc: Register profile       
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_new_profile
+      Desc: New option profile
+      
+      Test: |
+        mh = MasterHead.get_head()
+        profile = 'test'
+        mh.set_cli_cmdopt_profile(profile)        
+      
+      Validate: |
+        res = [cmdopt.short_opt[profile], cmdopt.long_opt[profile], cmdopt.opt[profile]]
+        this.test_result = str(res)
+        assert (res[0] == ''), 'shortopt contains {0}'.format(profile)   
+        assert (res[1] == []), 'longopt contains {0}'.format(profile)  
+        assert (res[2] == {}), 'opt contains {0}'.format(profile)        
+    
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_exist_profile
+      Desc: Existing profile, it's not reregistered
+      
+      Test: |
+        mh.set_cli_cmdopt_profile(profile)        
+      
+      Validate: |
+        res = [cmdopt.short_opt[profile], cmdopt.long_opt[profile], cmdopt.opt[profile]]
+        this.test_result = str(res)
+        assert (res[0] == ''), 'shortopt contains {0}'.format(profile)   
+        assert (res[1] == []), 'longopt contains {0}'.format(profile)  
+        assert (res[2] == {}), 'opt contains {0}'.format(profile)   
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid_profile
+      Desc: Invalid profile, error is raised
+      
+      Test: |
+        try:
+            mh.set_cli_cmdopt_profile('')        
+            ex = False
+        except InputError:
+            ex = True
+      
+      Validate: |
+        this.test_result = ex
+        assert (ex), 'set_cli_command_profile raises InputError'
+        del cmdopt.short_opt[profile]  
+        del cmdopt.long_opt[profile] 
+        del cmdopt.opt[profile]    
+        
+Test-Scenario-6:
+  Id: ts_06
+  Path: hydratk/core/masterhead/02_methods_ut.jedi
+  Name: ts_set_cli_appl_title
+  Desc: Test method set_cli_appl_title
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    from hydratk.lib.exceptions.inputerror import InputError
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_title
+    Desc: Set application title       
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_title
+      Desc: Set application title
+      
+      Test: |
+        mh = MasterHead.get_head()
+        help, cp = 'test help', 'test copyright'
+        mh.set_cli_appl_title(help, cp)
+      
+      Validate: |                      
+        res = this.test_result = mh._help_title
+        assert (res == help), '_help_title = {0}'.format(help)      
+        res = this.test_result = mh._cp_string
+        assert (res == cp), '_cp_string = {0}'.format(cp)        
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_title
+      Desc: Invalid application title, error is raised
+      
+      Test: |
+        try:
+            mh.set_cli_appl_title(1, 2)
+            ex = False
+        except InputError:
+            ex = True
+      
+      Validate: |                      
+        this.test_result = ex
+        assert (ex), 'set_cli_appl_title raises InputError'                                                                                                                                                 

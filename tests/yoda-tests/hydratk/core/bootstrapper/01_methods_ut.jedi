@@ -1,0 +1,134 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/core/bootstrapper/01_methods_ut.jedi
+  Name: ts_check_dependencies
+  Desc: Test method _check_dependencies
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.bootstrapper import _check_dependencies
+    from hydratk.core.dependencies import dep_modules
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_valid_deps
+    Desc: Valid dependencies
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_valid_deps
+      Desc: Valid dependencies      
+      
+      Test: | 
+        out = this.test_result = _check_dependencies()        
+         
+      Validate: |        
+        assert (out), '_check_dependencies() = True'
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_invalid_deps
+    Desc: Invalid dependencies 
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_missing_mod
+      Desc: Missing module, changed dependencies
+      
+      Test: |             
+        dep_modules['test_mod'] = {'desc': 'test module'}
+        out = this.test_result = _check_dependencies()
+        
+      Validate: | 
+        assert (not out), '_check_dependencies() = False'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_removed_mod
+      Desc: Missing module removed, rollbacked dependencies 
+      
+      Test: |             
+        del dep_modules['test_mod']
+        out = this.test_result = _check_dependencies()
+        
+      Validate: |
+        assert (out), '_check_dependencies() = True'   
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_low_ver
+      Desc: Low module version, changed dependencies of yaml module
+      
+      Test: |             
+        dep_modules['yaml']['min-version'] = '99.1'
+        out = this.test_result = _check_dependencies()
+        
+      Validate: |
+        assert (not out), '_check_dependencies() = False'
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_correct_ver
+      Desc: Correct module version, rollbacked dependencies 
+      
+      Test: |             
+        dep_modules['yaml']['min-version'] = '3.11'
+        out = this.test_result = _check_dependencies()
+        
+      Validate: |
+        assert (out), '_check_dependencies() = True'                
+         
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/core/bootstrapper/01_methods_ut.jedi
+  Name: ts_run_app
+  Desc: Test method run_app
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from os import system
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_run_cmd
+    Desc: Run command
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_htk
+      Desc: Run command htk
+    
+      Test: |
+        out = this.test_result = system('htk')
+      
+      Validate: |
+        assert (out == 0), 'exit = 0'     
+      
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/core/bootstrapper/01_methods_ut.jedi
+  Name: ts_run_app_prof
+  Desc: Test method run_app_prof
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from os import system
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_run_cmd
+    Desc: Run command
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_htkprof
+      Desc: Run command htkprof
+    
+      Test: |
+        out = this.test_result = system('htkprof')
+      
+      Validate: |
+        assert (out == 0), 'exit = 0'            

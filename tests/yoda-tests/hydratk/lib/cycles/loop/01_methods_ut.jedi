@@ -1,0 +1,207 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/lib/cycles/loop/01_methods_ut.jedi
+  Name: ts_do_until
+  Desc: Test do_until method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.cycles.loop import do_until
+    from yodahelpers.hydratk.core.events import dummy_method
+    from time import time
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_positive
+    Desc: Positive result
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_positive
+      Desc: Positive result
+      
+      Test: |
+        start = time()
+        do_until((dummy_method,), True)
+        dur = time()-start
+      
+      Validate: |
+        this.test_result = dur
+        assert (dur < 1), 'do_until ends within 1s'
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_negative
+    Desc: Negative result
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_default
+      Desc: Default configuration  
+      
+      Test: |    
+        start = time()
+        do_until((dummy_method,), False)
+        dur = time()-start  
+      
+      Validate: |
+        this.test_result = dur
+        assert (dur > 9), 'do_until ends after 9s'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_delay
+      Desc: Delay  
+      
+      Test: |    
+        start = time()
+        do_until((dummy_method,), False, delay=0.13)
+        dur = time()-start  
+      
+      Validate: |
+        this.test_result = dur
+        assert (dur > 1), 'do_until ends after 1s'       
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_max_attempts
+      Desc: Max attempts
+      
+      Test: |    
+        start = time()
+        do_until((dummy_method,), False, until_max_attempts=2)
+        dur = time()-start  
+      
+      Validate: |
+        this.test_result = dur
+        assert (dur > 1), 'do_until ends after 1s'     
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_duration
+      Desc: Max duration
+      
+      Test: |    
+        start = time()
+        do_until((dummy_method,), False, until_duration=1)
+        dur = time()-start  
+      
+      Validate: |
+        this.test_result = dur
+        assert (dur > 1), 'do_until ends after 1s'       
+        
+    Test-Condition-5: 
+      Id: tco_05
+      Name: tco_exact_time
+      Desc: Exact time
+      
+      Test: |    
+        start = time()
+        do_until((dummy_method,), False, until_exact_time=start+1)
+        dur = time()-start  
+      
+      Validate: |
+        this.test_result = dur
+        assert (dur > 1), 'do_until ends after 1s'  
+        
+  Test-Case-3:
+    Id: tc_03
+    Name: tc_errors
+    Desc: Error handling
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_call_type
+      Desc: Invalid call type, error is raised
+      
+      Test: |
+        try:
+            do_until(dummy_method, True)
+            ex = False
+        except ValueError:
+            ex = True
+      
+      Validate: |                              
+        this.test_result = ex
+        assert (ex), 'do_until raises ValueError'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_callable
+      Desc: Invalid callable, error is raised
+      
+      Test: |
+        try:
+            do_until(('callable',), True)
+            ex = False
+        except ValueError:
+            ex = True
+      
+      Validate: |                              
+        this.test_result = ex
+        assert (ex), 'do_until raises ValueError'  
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_delay_type
+      Desc: Invalid delay type, error is raised
+      
+      Test: |
+        try:
+            do_until((dummy_method, ), True, delay='1')
+            ex = False
+        except ValueError:
+            ex = True
+      
+      Validate: |                              
+        this.test_result = ex
+        assert (ex), 'do_until raises ValueError'     
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_max_attempts_type
+      Desc: Invalid max_attempts type, error is raised
+      
+      Test: |
+        try:
+            do_until((dummy_method, ), True, until_max_attempts='1')
+            ex = False
+        except ValueError:
+            ex = True
+      
+      Validate: |                              
+        this.test_result = ex
+        assert (ex), 'do_until raises ValueError'   
+        
+    Test-Condition-5: 
+      Id: tco_05
+      Name: tco_duration_type
+      Desc: Invalid duration type, error is raised
+      
+      Test: |
+        try:
+            do_until((dummy_method, ), True, until_duration='1')
+            ex = False
+        except ValueError:
+            ex = True
+      
+      Validate: |                              
+        this.test_result = ex
+        assert (ex), 'do_until raises ValueError'  
+        
+    Test-Condition-6: 
+      Id: tco_06
+      Name: tco_exact_time_type
+      Desc: Invalid exact_time type, error is raised
+      
+      Test: |
+        try:
+            do_until((dummy_method, ), True, until_exact_time='1')
+            ex = False
+        except ValueError:
+            ex = True
+      
+      Validate: |                              
+        this.test_result = ex
+        assert (ex), 'do_until raises ValueError'                                  

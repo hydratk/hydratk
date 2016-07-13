@@ -1,0 +1,52 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/core/logger/01_methods_ut.jedi
+  Name: ts_spout
+  Desc: Test spout method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.logger import Logger
+    import sys
+    from StringIO import StringIO
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_spout
+    Desc: Print data
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_lf
+      Desc: Print linefeed
+      
+      Test: |
+        log = Logger()
+        data = 'test'
+        old = sys.stdout
+        sys.stdout = res = StringIO()
+        log.spout(data)
+        sys.stdout = old
+        res = res.getvalue()
+      
+      Validate: |      
+        this.test_result = res
+        assert (res == data+'\n'), 'spout prints {0}\\n'.format(data)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_no_lf
+      Desc: Print without linefeed
+      
+      Test: |
+        old = sys.stdout
+        sys.stdout = res = StringIO()
+        log._emulate_print = False
+        log.spout(data)
+        sys.stdout = old
+        res = res.getvalue()
+      
+      Validate: |      
+        this.test_result = res
+        assert (res == data), 'spout prints {0}'.format(data)        
