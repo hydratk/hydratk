@@ -36,11 +36,11 @@ def str_split(string, split_length=1):
        split_length (int): substrin length     
                
     Returns:            
-       str: string  
+       list: list of strings  
     
     """
             
-    return filter(None, re.split('(.{1,%d})' % split_length, string))
+    return list(filter(None, re.split('(.{1,%d})' % split_length, string)))
 
 
 def strip_accents(text):

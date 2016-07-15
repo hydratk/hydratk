@@ -310,7 +310,7 @@ class DBODriver(dbodriver.DBODriver):
         tables = list(self._cursor.execute("select name from sqlite_master where type is 'table'"))
         query = ''
         for col in tables:
-            query += "drop table if exists {};".format(col['name'])        
+            query += "drop table if exists {0};".format(col['name'])        
         self._cursor.executescript(query)
         self._cursor.execute("VACUUM;")
     

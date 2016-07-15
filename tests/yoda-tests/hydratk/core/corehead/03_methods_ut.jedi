@@ -512,7 +512,11 @@ Test-Scenario-11:
   Pre-Req: |
     from hydratk.core.masterhead import MasterHead
     import sys
-    from StringIO import StringIO
+    
+    try:
+        from StringIO import StringIO
+    except ImportError:
+        from io import StringIO
   
   Test-Case-1:
     Id: tc_01

@@ -9,7 +9,11 @@ Test-Scenario-1:
   Pre-Req: |
     from hydratk.core.masterhead import MasterHead  
     import sys
-    from StringIO import StringIO      
+
+    try:
+        from StringIO import StringIO
+    except ImportError:
+        from io import StringIO     
   
   Test-Case-1:
     Id: tc_01
@@ -47,7 +51,11 @@ Test-Scenario-2:
   Pre-Req: |
     from hydratk.core.masterhead import MasterHead
     import sys
-    from StringIO import StringIO
+ 
+    try:
+        from StringIO import StringIO
+    except ImportError:
+        from io import StringIO 
   
   Test-Case-1:
     Id: tc_01
@@ -83,7 +91,11 @@ Test-Scenario-3:
   Pre-Req: |
     from hydratk.core.masterhead import MasterHead
     import sys
-    from StringIO import StringIO
+
+    try:
+        from StringIO import StringIO
+    except ImportError:
+        from io import StringIO 
   
   Test-Case-1:
     Id: tc_01
@@ -119,7 +131,11 @@ Test-Scenario-4:
   Pre-Req: |
     from hydratk.core.masterhead import MasterHead
     import sys
-    from StringIO import StringIO
+
+    try:
+        from StringIO import StringIO
+    except ImportError:
+        from io import StringIO 
   
   Test-Case-1:
     Id: tc_01
@@ -155,7 +171,11 @@ Test-Scenario-5:
   Pre-Req: |
     from hydratk.core.masterhead import MasterHead
     import sys
-    from StringIO import StringIO
+
+    try:
+        from StringIO import StringIO
+    except ImportError:
+        from io import StringIO 
   
   Test-Case-1:
     Id: tc_01
@@ -191,7 +211,11 @@ Test-Scenario-6:
   Pre-Req: |
     from hydratk.core.masterhead import MasterHead
     import sys
-    from StringIO import StringIO
+
+    try:
+        from StringIO import StringIO
+    except ImportError:
+        from io import StringIO 
   
   Test-Case-1:
     Id: tc_01
@@ -227,7 +251,11 @@ Test-Scenario-7:
   Pre-Req: |
     from hydratk.core.masterhead import MasterHead
     import sys
-    from StringIO import StringIO
+
+    try:
+        from StringIO import StringIO
+    except ImportError:
+        from io import StringIO 
   
   Test-Case-1:
     Id: tc_01
@@ -263,8 +291,12 @@ Test-Scenario-8:
   Pre-Req: |
     from hydratk.core.masterhead import MasterHead  
     import sys
-    from StringIO import StringIO
     from signal import SIGPIPE      
+  
+    try:
+        from StringIO import StringIO
+    except ImportError:
+        from io import StringIO   
   
   Test-Case-1:
     Id: tc_01

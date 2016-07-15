@@ -8,14 +8,17 @@
 
 """
 import multiprocessing
-import zmq
-#import dill as pickle
-import cPickle as pickle
+import zmq 
 import base64
 import sys
 import traceback
 import time
 from hydratk.lib.debugging.simpledebug import dmsg
+
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle 
 
 class MessageHead(object):
     """Class MessageHead
@@ -81,9 +84,9 @@ class MessageHead(object):
             if ticket_id in self._async_fn_tickets:                
                 del self._async_fn_tickets[ticket_id]
             else:
-                raise KeyError("Ticket id: {} doesn't exists".format(ticket_id))
+                raise KeyError("Ticket id: {0} doesn't exists".format(ticket_id))
         else:
-            raise TypeError("Invalid ticket_id: {}".format(type(ticket_id).__name__))
+            raise TypeError("Invalid ticket_id: {0}".format(type(ticket_id).__name__))
             
     def _reset_async_ticket_seq(self):
         """Method resets ticket id sequence
@@ -132,13 +135,13 @@ class MessageHead(object):
                      
         pickled = base64.b64decode(msg)
         msg = pickle.loads(pickled)
-        dmsg("Processing message: {}".format(msg))
+        dmsg("Processing message: {0}".format(msg))
         if type(msg).__name__ == 'dict' and 'type' in msg and msg['type'] is not None and msg['type'] != '': 
-            fn_id = "cmsg_{}".format(msg['type'])
-            dmsg("Running hook {}".format(fn_id),3)
+            fn_id = "cmsg_{0}".format(msg['type'])
+            dmsg("Running hook {0}".format(fn_id),3)
             self.run_fn_hook(fn_id, msg)
         else:
-            dmsg("Invalid message {}".format(str(msg)),3)
+            dmsg("Invalid message {0}".format(str(msg)),3)
         
             
     def _send_msg(self, msg):
@@ -162,7 +165,7 @@ class MessageHead(object):
             print(ex_type)
             print(ex)
             traceback.print_tb(tb)
-        #print("Message send successfully {}".format(msg))
+        #print("Message send successfully {0}".format(msg))
         return True
 
     def _msg_async_fn(self, msg):

@@ -20,7 +20,7 @@ import random
 import pprint
 import collections
 import hashlib
-
+from codecs import encode
 
 class FirePot(object):
     """Class FirePot
@@ -143,10 +143,10 @@ class FirePot(object):
         if len(FirePot._items) > 0:
             result = collections.OrderedDict()
             json_buf = json.dumps({'logs': FirePot._items})                                  
-            json_buf = json_buf.encode('utf-8')                                    
-            json_buf = json_buf.encode('base64')            
-            id = int(hashlib.md5(json_buf).hexdigest(), 16)            
-            res = str_split(json_buf,76) #RFC 2045            
+            json_buf = encode(json_buf, 'utf-8')                                    
+            json_buf = encode(json_buf, 'base64')            
+            id = int(hashlib.md5(json_buf).hexdigest(), 16)          
+            res = str_split(json_buf.decode(),76) #RFC 2045            
             k = 0
             for v in res:
                 if v != "\n":

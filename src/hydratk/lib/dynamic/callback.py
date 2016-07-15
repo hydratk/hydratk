@@ -8,7 +8,10 @@
 
 """
 import sys
-import cPickle as pickle
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle  
 
 class CallBackProcessor(object):
     """Class CallBackProcessor
@@ -63,7 +66,7 @@ class CallBackProcessor(object):
             self._current_cb = self._cb_dproxy[fn_id]
             return self._wrap_fn
         
-        raise NameError("{} is not defined".format(fn_id))
+        raise NameError("{0} is not defined".format(fn_id))
 
 class CallBackTree(object):
     pass
@@ -92,7 +95,7 @@ class CallBack(object):
         elif type(callback).__name__ in ('str', 'function'):
             self.set_fn(callback)            
         else:
-            raise TypeError("callback: expected types: tuple,str,function, got {}".format(type(callback).__name__))
+            raise TypeError("callback: expected types: tuple,str,function, got {0}".format(type(callback).__name__))
     
           
     @property
@@ -220,7 +223,7 @@ class CallBackManager(object):
             if fn_id in self._cb_dproxy:
                 return self._cb_dproxy[fn_id]            
             
-            raise KeyError("Undefined callback id: {}".format(fn_id))
+            raise KeyError("Undefined callback id: {0}".format(fn_id))
         else:
             raise TypeError("fn_id: expected nonempty string")    
         
@@ -236,12 +239,12 @@ class CallBackManager(object):
                 if options['shared'] in (True, False):
                     shared = options['shared']
                 else: 
-                    raise ValueError("options['shared'] expected boolean, got {}". format(type(options['shared']).__name__))
+                    raise ValueError("options['shared'] expected boolean, got {0}". format(type(options['shared']).__name__))
             if 'async' in options:
                 if options['async'] in (True, False):
                     async = options['async']
                 else: 
-                    raise ValueError("options['async'] expected boolean, got {}". format(type(options['async']).__name__))
+                    raise ValueError("options['async'] expected boolean, got {0}". format(type(options['async']).__name__))
         rcb.shared = shared
         rcb.async  = async
         if shared == False:    
@@ -264,7 +267,7 @@ class CallBackManager(object):
         
 class SyncCallBackHandler(object):
     def cb_run(self, cb_obj):
-        print("sync: running request {}".format(cb_obj.fn_id), cb_obj.args, cb_obj.kwargs)
+        print("sync: running request {0}".format(cb_obj.fn_id), cb_obj.args, cb_obj.kwargs)
         if type(cb_obj.fn).__name__ == 'function':
             return cb_obj.fn(*cb_obj.args, **cb_obj.kwargs)
     
@@ -274,7 +277,7 @@ class SyncCallBackHandler(object):
 class AsyncCallBackHandler(object):
      
     def cb_run(self, cb_obj):
-        print("async: running request {}".format(cb_obj.fn_id), cb_obj.args, cb_obj.kwargs)
+        print("async: running request {0}".format(cb_obj.fn_id), cb_obj.args, cb_obj.kwargs)
     
     def cb_completed(self, req_id):
         pass

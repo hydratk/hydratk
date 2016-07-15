@@ -312,7 +312,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                     stats_file = sys.argv[i + 1]                    
                     if stats_file is not None and stats_file != '':
                         enable_profiler = True
-                        self.dmsg('htk_on_debug', "Profiler enabled, stats will be written to the: {}".format(stats_file), self.fromhere())                    
+                        self.dmsg('htk_on_debug', "Profiler enabled, stats will be written to the: {0}".format(stats_file), self.fromhere())                    
                 else:
                     self.dmsg('htk_on_warning', self._trn.msg('htk_opt_ignore', 'Profile', ''), self.fromhere())
                     
@@ -336,7 +336,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             if o == '-d' or o == '--debug':                
                 if sys.argv.index(o) < (len(sys.argv) - 1):                    
                     debug_level = sys.argv[i + 1]  
-                    if unicode(debug_level,'utf-8').isnumeric():
+                    if debug_level.encode().isdigit():
                         self._debug_level = int(debug_level) 
                         self._debug = True
                         self._trn.set_debug_level(debug_level)                
@@ -365,7 +365,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             if o == '-e' or o == '--debug-channel':                
                 if sys.argv.index(o) < (len(sys.argv) - 1):                    
                     debug_channel = sys.argv[i + 1]  
-                    if unicode(debug_channel,'utf-8').isnumeric():
+                    if debug_channel.encode('utf-8').isdigit():
                         self._debug_channel = [int(debug_channel)]                                         
                         self.dmsg('htk_on_debug_info', self._trn.msg('htk_debug_channel_set', self._debug_channel[0]), self.fromhere())                  
                         debug_channel_changed = True
@@ -409,7 +409,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                     commandopt.short_opt[optg] = ''
                 if opt not in commandopt.short_opt[optg]:
                     commandopt.short_opt[optg] += opt
-                    opts = "-{}".format(opt)
+                    opts = "-{0}".format(opt)
                     if optg not in commandopt.opt:
                         commandopt.opt[optg] = {}
                     commandopt.opt[optg][opts] = {
@@ -422,7 +422,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 commandopt.short_opt[opt_group] = ''
             if opt not in commandopt.short_opt[opt_group]:
                 commandopt.short_opt[opt_group] += opt
-                opts = "-{}".format(opt)
+                opts = "-{0}".format(opt)
                 if opt_group not in commandopt.opt:
                     commandopt.opt[opt_group] = {}
                 commandopt.opt[opt_group][opts] = {
@@ -432,7 +432,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                                             }
         
         else:
-            raise TypeError('opt_group can be only of type list or str, got {}'.format(type(opt_group).__name__))
+            raise TypeError('opt_group can be only of type list or str, got {0}'.format(type(opt_group).__name__))
         
     def match_long_option(self, opt, value_expected=False, d_opt=None, allow_multiple=False, opt_group='htk'):
         """Method registers command line long option check       
@@ -458,7 +458,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                     commandopt.long_opt[optg] = []
                 if opt not in commandopt.long_opt[optg]:
                     commandopt.long_opt[optg].append(opt)
-                    optl = "--{}".format(opt)
+                    optl = "--{0}".format(opt)
                     if optg not in commandopt.opt:
                         commandopt.opt[optg] = {}
                     commandopt.opt[optg][optl] = {
@@ -471,7 +471,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 commandopt.long_opt[opt_group] = []
             if opt not in commandopt.long_opt[opt_group]:
                 commandopt.long_opt[opt_group].append(opt)
-                optl = "--{}".format(opt)
+                optl = "--{0}".format(opt)
                 if opt_group not in commandopt.opt:
                     commandopt.opt[opt_group] = {}
                 commandopt.opt[opt_group][optl] = {
@@ -481,7 +481,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                                             }
         
         else:
-            raise TypeError('opt_group can be only of type list or str, got {}'.format(type(opt_group).__name__))
+            raise TypeError('opt_group can be only of type list or str, got {0}'.format(type(opt_group).__name__))
     
     
     def match_cli_option(self, opt, value_expected=False, d_opt=None, allow_multiple=False, opt_group='htk'):
@@ -500,7 +500,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """
         
         if type(opt).__name__ not in ('tuple, list'):
-            raise TypeError('option can be only of type tuple or list, got {}'.format(type(opt).__name__))
+            raise TypeError('option can be only of type tuple or list, got {0}'.format(type(opt).__name__))
         
         short_opt, long_opt = opt
         self.match_short_option(short_opt, value_expected, d_opt, allow_multiple, opt_group)
@@ -560,7 +560,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 commandopt.short_opt[profile] = ''
             
         else:
-            raise InputError(0, [], "Option profile have to be non empty string type, got '{}' '{}'".format(profile, type(profile).__name__))
+            raise InputError(0, [], "Option profile have to be non empty string type, got '{0}' '{1}'".format(profile, type(profile).__name__))
         
     def set_cli_appl_title(self, help_title, cp_string):
         """Method sets custom application title    
@@ -581,7 +581,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             self._help_title = help_title
             self._cp_string = cp_string
         else:
-            raise InputError(0, [], "help_title and cp_string have to be string type, got '{}' '{}'".format(type(help_title).__name__,type(cp_string).__name__))
+            raise InputError(0, [], "help_title and cp_string have to be string type, got '{0}' '{1}'".format(type(help_title).__name__,type(cp_string).__name__))
             
     def register_fn_hook(self, fn_id, callback=''):
         """Method adds/replaces functionality hook
@@ -1677,7 +1677,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         if fn_id is None or fn_id == '':
             raise TypeError("fn_id: expected nonempty string")
         if fn_id not in self._async_fn_ex:
-            raise KeyError("fn_id: {} is not registered".format(fn_id))
+            raise KeyError("fn_id: {0} is not registered".format(fn_id))
         thr_id = self.get_thrid()
         msg = {
            'type' : "async_fn_ex",
@@ -1727,12 +1727,12 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             raise TypeError("callback: tuple expected")
         obj, meth = callback
         if type(obj).__name__ not in ('Extension', 'str'):            
-            raise TypeError("callback object: expected instance or str, got {}".format(type(obj).__name__))
+            raise TypeError("callback object: expected instance or str, got {0}".format(type(obj).__name__))
         if type(meth).__name__ != 'str' or meth == '':
             raise TypeError("callback method: expected nonempty str")        
         ext_name = obj.get_ext_name() if type(obj).__name__ == 'Extension' else obj
         if ext_name not in self._ext:
-            raise KeyError("callback: undefined extension name: {}".format(ext_name))
+            raise KeyError("callback: undefined extension name: {0}".format(ext_name))
         
         result_obj  = None
         result_meth = None
@@ -1743,7 +1743,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 if result_callback == '':
                     raise TypeError("result_callback: empty string not acceptable")
                 if result_callback not in self._async_fn: #fn_id
-                    raise KeyError("result_callback fn_id: {} is not registered".format(result_callback)) 
+                    raise KeyError("result_callback fn_id: {0} is not registered".format(result_callback)) 
             else: #tuple
                 pass
             
@@ -1785,9 +1785,9 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         if ticket_id is not None and ticket_id != '':
             if ticket_id in self._async_fn_tickets:
                 return self._async_fn_tickets[ticket_id]
-            raise KeyError("Ticket id: {} doesn't exists".format(ticket_id))
+            raise KeyError("Ticket id: {0} doesn't exists".format(ticket_id))
         else:
-            raise TypeError("Invalid ticket_id: {}".format(type(ticket_id).__name__))
+            raise TypeError("Invalid ticket_id: {0}".format(type(ticket_id).__name__))
     
     def update_async_ticket_content(self, ticket_id, data):
         pass
@@ -1810,9 +1810,9 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         if ticket_id is not None and ticket_id != '':
             if ticket_id in self._async_fn_tickets:
                 return self._async_fn_tickets[ticket_id]['completed']
-            raise KeyError("Ticket id: {} doesn't exists".format(ticket_id))
+            raise KeyError("Ticket id: {0} doesn't exists".format(ticket_id))
         else:
-            raise TypeError("Invalid ticket_id: {}".format(type(ticket_id).__name__))
+            raise TypeError("Invalid ticket_id: {0}".format(type(ticket_id).__name__))
         
     def delete_async_ticket(self, ticket_id):
         """Method deletes ticket
@@ -1943,7 +1943,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             if extension_name in self._ext:                
                 return self._ext[extension_name]                
             else:
-                raise IndexError("Undefined extension {}".format(extension_name))
+                raise IndexError("Undefined extension {0}".format(extension_name))
         else:
             raise TypeError("Extension name string expected")
         

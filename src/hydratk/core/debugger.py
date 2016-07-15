@@ -234,7 +234,7 @@ class Debugger(object):
                 msg_format = self.cfg['System']['Debug']['msg_format']
             
             now = datetime.now()
-            now_ms = "{:.3f}".format(round(int(now.strftime("%f")).__float__() / 1000000,3))
+            now_ms = "{0}".format(round(int(now.strftime("%f")).__float__() / 1000000,3))
             now_ms = now_ms.split('.')[1]                          
             msg_text = msg_format.format(
                                     timestamp=now.strftime("%d/%m/%Y %H:%M:%S.{0}".format(now_ms)),

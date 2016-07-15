@@ -7,9 +7,10 @@
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
+
 try:
     import cPickle as pickle
-except:
+except ImportError:
     import pickle  
 
 def get_ctype_char_array(int_keys, lock = True):

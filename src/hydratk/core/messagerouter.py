@@ -110,7 +110,7 @@ class MessageRouter():
                         if (not os.path.exists(file_path)):                                                
                             os.makedirs(file_path)
                             ''' TODO set optimal default directory permission '''
-                    dmsg("Binding to message queue {} : socket type {}".format(addr_prefix + service_options['address'],options['socket_type']))          
+                    dmsg("Binding to message queue {0} : socket type {1}".format(addr_prefix + service_options['address'],options['socket_type']))          
                     q.bind(addr_prefix + service_options['address'])
                     service['active'] = True
                     self._service_list[service_id] = service
@@ -118,7 +118,7 @@ class MessageRouter():
                     raise Exception("Service queue is active use MESSAGE_QUEUE_ACTION_CONNECT instead")
             elif (action == MESSAGE_QUEUE_ACTION_CONNECT):
                 q.connect(addr_prefix + service_options['address'])
-                dmsg("Connecting to message queue {} : socket type {}".format(addr_prefix + service_options['address'],options['socket_type']))
+                dmsg("Connecting to message queue {0} : socket type {1}".format(addr_prefix + service_options['address'],options['socket_type']))
                 
              
             else:

@@ -58,7 +58,7 @@ class AsyncCallBackHandler(object):
         self._hc = hc
              
     def cb_run(self, cb_obj):
-        print("async: running request {}".format(cb_obj.fn_id), cb_obj.args, cb_obj.kwargs)
+        print("async: running request {0}".format(cb_obj.fn_id), cb_obj.args, cb_obj.kwargs)
         msg = {
        'type' : "async_fn_ex",
        'from' : 'htk_obsrv@core.raptor',
@@ -265,10 +265,10 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                     # initialize process as message queue sender
                     try:
                         #current.msgq   = self._msg_router.get_queue(self._core_msg_service_id, messagerouter.MESSAGE_QUEUE_ACTION_BIND, {'socket_type' : zmq.PULL} )
-                        #self.dmsg('htk_on_debug_info', "Message queue {} : socket type zmq.PULL connected".format(self._core_msg_service_id), self.fromhere())
+                        #self.dmsg('htk_on_debug_info', "Message queue {0} : socket type zmq.PULL connected".format(self._core_msg_service_id), self.fromhere())
                         
                         #current.msgq = self._msg_router.get_queue(self._core_msg_service_id, messagerouter.MESSAGE_QUEUE_ACTION_CONNECT, {'socket_type' : zmq.PUSH} )
-                        #self.dmsg('htk_on_debug_info', "Message queue {} : socket type zmq.PUSH connected {}".format(self._core_msg_service_id, type(current.msgq).__name__), self.fromhere())
+                        #self.dmsg('htk_on_debug_info', "Message queue {0} : socket type zmq.PUSH connected {1}".format(self._core_msg_service_id, type(current.msgq).__name__), self.fromhere())
                         context = zmq.Context()
                         sender = context.socket(zmq.PUSH)
                         #TODO workaround, will be changed in next version, by implementing new a message router
@@ -339,7 +339,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                         self.dmsg('htk_on_debug_info', self._trn.msg('htk_observer_sleep'), self.fromhere(), 5)            
                         time.sleep(const.CORE_OBSERVER_SLEEP_TIME)
                         #res = current.msgq.send("SOME Message text")
-                        #print("Observer sent message {}".format(res))   
+                        #print("Observer sent message {0}".format(res))   
                         self.dmsg('htk_on_debug_info', self._trn.msg('htk_observer_awake'), self.fromhere(), 5)
                      
                     # final cleanup                                        

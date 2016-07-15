@@ -161,7 +161,7 @@ Test-Scenario-4:
         mh = MasterHead.get_head()
         
         del mh._trn._help_mod.help_cmd['start-benchmark']
-        for msg in mh._trn._messages.keys():
+        for msg in list(mh._trn._messages.keys()):
             if ('benchmark' in msg):
                 del mh._trn._messages[msg]       
       

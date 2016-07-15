@@ -62,7 +62,7 @@ class CmdOptParser(argparse.ArgumentParser):
             if group_name in self._options:
                 self._opt_group = group_name
             else:
-                raise CmdOptParserUndefined('Undefined group {}'.format(group_name))
+                raise CmdOptParserUndefined('Undefined group {0}'.format(group_name))
         else:
             raise TypeError('Group name cannot be NoneType')
     
@@ -118,7 +118,7 @@ class CmdOptParser(argparse.ArgumentParser):
                     self._options[opt_group][kopt] = opt 
                 else:
                     if self._silent == False:
-                        raise CmdOptParserError('Option add duplicate {}'.format(option))
+                        raise CmdOptParserError('Option add duplicate {0}'.format(option))
             result = True
               
         elif type(option).__name__ == 'str':
@@ -140,9 +140,9 @@ class CmdOptParser(argparse.ArgumentParser):
                 
             else:
                 if self._silent == False:
-                    raise CmdOptParserError('Option add duplicate {}'.format(option))
+                    raise CmdOptParserError('Option add duplicate {0}'.format(option))
         else:
-            raise TypeError('Unsupported option type {}'.format(type(option)))                
+            raise TypeError('Unsupported option type {0}'.format(type(option)))                
         return result
 
         
@@ -193,14 +193,14 @@ class CmdOptParser(argparse.ArgumentParser):
             cur_opt = ''
             for c in short_opt:
                 if c != ':':
-                    cur_opt = "-{}".format(c)
+                    cur_opt = "-{0}".format(c)
                     d_option = opt_map[cur_opt] if cur_opt in opt_map else None
                     has_value = True if short_opt[i+1] == ':' else False
                     self.add_opt(cur_opt, d_option, has_value)
                 
         if type(long_opt).__name__ == 'list' and len(long_opt) > 0:
             for opt in long_opt:
-                cur_opt = "--{}".format(opt)
+                cur_opt = "--{0}".format(opt)
                 d_option = opt_map[cur_opt] if cur_opt in opt_map else None
                 has_value = True if opt[-1:] == '=' else False
                 self.add_opt(cur_opt, d_option, has_value)
@@ -221,7 +221,7 @@ class CmdOptParser(argparse.ArgumentParser):
         """  
                 
         if opt_group not in self._options:
-            raise CmdOptParserUndefined('Undefined group {}'.format(opt_group))  
+            raise CmdOptParserUndefined('Undefined group {0}'.format(opt_group))  
         for opt_name, opt_args in self._options[opt_group].items():            
             self.add_argument(opt_name, **opt_args)
             
@@ -244,7 +244,7 @@ class CmdOptParser(argparse.ArgumentParser):
                 
         """  
                 
-        for opt, value in opts.items():
+        for opt, value in list(opts.items()):
             if value in (None,False):
                 del opts[opt]
         return opts

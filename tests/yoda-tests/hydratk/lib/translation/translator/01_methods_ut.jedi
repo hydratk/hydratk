@@ -56,6 +56,7 @@ Test-Scenario-2:
   
   Pre-Req: |
     from hydratk.lib.translation.translator import Translator
+    from yodahelpers.hydratk.lib.translator import HelpTrn
   
   Test-Case-1:
     Id: tc_01
@@ -115,12 +116,12 @@ Test-Scenario-2:
       Desc: Setter
       
       Test: |
-        data = 'test'
+        data = HelpTrn()
         trn.help_mod = data
         res = trn.help_mod
       
       Validate: |        
-        this.test_result = res
+        this.test_result = str(res)
         assert (res == data), 'help_mod = {0}'.format(data) 
         
 Test-Scenario-3:
