@@ -2,6 +2,7 @@
 
 from install.config import config as cfg
 import install.command as cmd
+from sys import version_info
 
 def run_pre_install(argv):  
     
@@ -18,6 +19,17 @@ def run_pre_install(argv):
             globals()[task](requires)          
     
     return requires 
+
+def version_update(requires):
+    
+    major, minor = version_info[0], version_info[1]
+    
+    if (major == 2 and minor == 6):
+        cfg['modules'].append('importlib')
+        cfg['libs']['setproctitle>=1.1.9']['apt-get'][0] = 'python2.6-dev'
+    elif (major == 3):
+        cfg['libs']['setproctitle>=1.1.9']['apt-get'][0] = 'python3-dev'
+        cfg['libs']['setproctitle>=1.1.9']['yum'][0] = 'python3-devel'
 
 def install_libs_from_repo(requires):       
     

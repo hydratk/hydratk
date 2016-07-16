@@ -40,7 +40,7 @@ Requirements
 ^^^^^^^^^^^^
 
 Several python modules are used.
-These modules will be installed automatically, if not installed yet.
+These modules will be installed automatically, if not installed yet (for Python 2.7).
 
 * psutil
 * pyyaml
@@ -59,6 +59,17 @@ pyzmq
 
 * apt-get: g++, libzmq-dev
 * yum: gcc-c++, zeromq    
+
+  .. note::
+     
+     Installation for Python 2.6 has some differences.
+     Module importlib is automatically installed, it is part of standard distribution since 2.7.
+     Library python2.6-dev is installed instead of python-dev.
+     
+  .. note::
+  
+     Installation for Python 3 has some differences.
+     Library python3-dev or python3-devel is installed instead of python-dev.
     
 Installation
 ^^^^^^^^^^^^

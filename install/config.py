@@ -2,6 +2,7 @@
 
 config = {
   'pre_tasks' : [
+                 'version_update',
                  'install_libs_from_repo'
                 ],
 
