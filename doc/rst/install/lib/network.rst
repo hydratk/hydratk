@@ -45,9 +45,9 @@ These modules will be installed automatically, if not installed yet.
 * cx_Oracle
 * httplib2
 * JPype1
-* jsonlib2
 * lxml
 * MySQL-python
+* mysqlclient
 * paramiko
 * psycopg2
 * pycurl
@@ -59,12 +59,24 @@ These modules will be installed automatically, if not installed yet.
 * python-qpid-proton
 * scapy
 * selenium
+* simplejson
 * stompest
 * suds
 * tftpy
 
 Modules cx_Oracle, lxml, MySQL-python, paramiko, pdycopg2, pycurl, python-ldap, selenium require several 
 libraries which will be installed via Linux package managers, if not installed yet.
+
+  .. note ::
+  
+     Installation for Python3 has some differences.
+     Module httplib2 is not installed from PyPi but from https://github.com/httplib2/httplib2.git@master#egg=httplib2
+     Module mysqlclient is installed instead of MySQL-python.
+     Module pyldap is installed instead of python-ldap.
+     Module scapy-python3 is installed instead of scapy.
+     Module stompest is not installed thus STOMP client is not supported.
+     Module suds-py3 is installed instead of suds.
+     Module tftpy is not installed from PyPi but from https://github.com/ZuljinSBK/tftpy.git@master#egg=tftpy
 
 cx_Oracle
 

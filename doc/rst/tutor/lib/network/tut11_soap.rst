@@ -57,5 +57,5 @@ Examples
                       
      # load WSDL from filesystem, services uses NTLM authorization                      
      from suds.transport.https import WindowsHttpAuthenticated        
-     ntlm = WindowsHttpAuthenticated(username='TO2\\'+config['common']['user'], password=cfg['soap_passw'])
+     ntlm = WindowsHttpAuthenticated(username='aaa', password='bbb')
      client.load_wsdl(path_to_wsdl, location='local', endpoint='soap_url', transport=ntlm)  

@@ -39,7 +39,11 @@ Download the source code from GitHub or Pypi and install it manually.
 Requirements
 ^^^^^^^^^^^^     
      
-The extension requires hydratk, hydratk-lib-network.     
+The extension requires hydratk, hydratk-lib-network. 
+
+.. note::
+ 
+   ASN.1 codec is supported for Python 2.7 only.    
      
 Installation
 ^^^^^^^^^^^^

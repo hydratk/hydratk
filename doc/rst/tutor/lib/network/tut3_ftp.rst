@@ -19,6 +19,10 @@ Supported protocols:
 * SFTP/SFTP: module sftp_client
 * TFTP: module tftp_client
 
+  .. note::
+  
+     FTPS is not supported for version Py2.6.
+
 Methods:
 
 * connect: connect to server

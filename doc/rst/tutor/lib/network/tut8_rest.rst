@@ -19,6 +19,7 @@ Methods:
 * send_request: send request to server
 * get_header: get response header
 * get_body: get response body
+* reset_debug: reset debug level
 
   .. note::
    

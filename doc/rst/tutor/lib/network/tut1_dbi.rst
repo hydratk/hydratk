@@ -27,6 +27,8 @@ Methods:
 * disconnect: disconnect from database
 * exec_query: execute query, prepared statements with variable bindings are supported (use ? character)
 * call_proc: call procedure (has no return param) or function (has return param), supported for Oracle, MySQL
+* commit: commit transaction
+* rollback: rollback transaction
 * close: stop JVM, supported for JDBC
 
   .. note::
@@ -96,7 +98,7 @@ Oracle client is not bundled with HydraTK and must be installed individually.
      result_type = 'int'
      
      # returns result, output param values dictionary
-     res, params = client.call_proc('crm.customer_pck.f_create', param_names, input)values, output_types, 'func', result_type)
+     res, params = client.call_proc('crm.customer_pck.f_create', param_names, input_values, output_types, 'func', result_type)
                       
      # call procedure
      param_names = ['id', 'name', 'status', 'segment', 'birth_no', 'reg_no', 'tax_no', 'err']

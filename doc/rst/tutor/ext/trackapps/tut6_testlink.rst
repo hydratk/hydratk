@@ -147,9 +147,6 @@ API uses HydraTK core functionalities so it must be running.
 Methods
 
 * connect: connect to TestLink, params: url, dev_key, project
-* read: read entities, params: method, params, fields 
-* create: create entity, params: method, params
-* update: update entity, params: method, params
 * read_test_suite: read tests under test suite, params: path, steps, fields
 * create_test_suite: create test suite, params: path, name, details
 * read_test_plsn: read test under test plan, params: plan, plan_id, build_id, fields

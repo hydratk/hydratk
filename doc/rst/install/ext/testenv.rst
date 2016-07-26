@@ -40,6 +40,11 @@ Requirements
 ^^^^^^^^^^^^     
      
 The extension requires modules web.py (automatically installed) and hydratk, hydratk-lib-network, hydratk-ext-yoda. 
+
+  .. note::
+   
+     Installation for Python3 has some differences.
+     Module web.py is not installed from PyPi but from https://github.com/webpy/webpy.git@py3#egg=webpy     
      
 Installation
 ^^^^^^^^^^^^
