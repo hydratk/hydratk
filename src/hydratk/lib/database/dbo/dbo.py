@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-"""Complex dabase interface inspired by PHP PDO
+"""Complex database interface inspired by PHP PDO
 
-.. module:: database.dbo
+.. module:: lib.database.dbo
    :platform: Unix
-   :synopsis: Complex dabase interface inspired by PHP PDO
+   :synopsis: Complex database interface inspired by PHP PDO
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
@@ -47,13 +47,11 @@ class DBO(object):
             self._driver_name = driver_name
             dbo_driver_mod_str = '{0}.driver'.format(dbo_drivers[driver_name])
             dbo_driver_mod = self._import_dbo_driver(dbo_driver_mod_str)
-              
             
         else: raise DBOException('Not existing driver: {0}'.format(driver_name))
                 
         try:
-            self._dbo_driver = dbo_driver_mod.DBODriver(dsn, username, password, options, autoconnect)                        
-        
+            self._dbo_driver = dbo_driver_mod.DBODriver(dsn, username, password, options, autoconnect)                      
         except Exception as e:
             print(e)     
     

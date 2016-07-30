@@ -468,4 +468,234 @@ Test-Scenario-5:
         this.test_result = str(res)
         assert (res == exp), '_options[{0}][{1}] = {2}'.format(group[1], opt, exp)           
         del op._options[group[0]]  
-        del op._options[group[1]]                  
+        del op._options[group[1]]  
+        
+Test-Scenario-6:
+  Id: ts_06
+  Path: hydratk/lib/console/cmdoptparser/01_methods_ut.jedi
+  Name: ts_strip_opts
+  Desc: Test method _strip_opt
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.console.cmdoptparser import CmdOptParser
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_strip_opts
+    Desc: Strip options 
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_no_strip
+      Desc: Options not stripped                          
+      
+      Test: |
+        op = CmdOptParser()
+        opts = {'a': 1, 'b': 2}
+        res = op._strip_opts(opts)
+              
+      Validate: |
+        this.test_result = str(res)
+        assert (res == opts), '_strip_opts = {0}'.format(opts)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_strip
+      Desc: Options stripped
+      
+      Test: |
+        opts2 = {'a': 1, 'b': 2, 'c': False, 'd': None}
+        res = op._strip_opts(opts2)
+              
+      Validate: |
+        this.test_result = str(res)
+        assert (res == opts), '_strip_opts = {0}'.format(opts) 
+        
+Test-Scenario-7:
+  Id: ts_07
+  Path: hydratk/lib/console/cmdoptparser/01_methods_ut.jedi
+  Name: ts_opt_defined
+  Desc: Test method opt_defined
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.console.cmdoptparser import CmdOptParser
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_opt_defined
+    Desc: Is option defined
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_defined
+      Desc: Option defined                          
+      
+      Test: |
+        op = CmdOptParser()              
+        op._set_opts['a'] = 'b'
+        res = op.opt_defined('a')
+        
+      Validate: |
+        this.test_result = res
+        assert (res), 'opt_defined = True'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_notdefined
+      Desc: Option not defined                          
+      
+      Test: |
+        op = CmdOptParser()              
+        del op._set_opts['a']
+        res = op.opt_defined('a')
+        
+      Validate: |
+        this.test_result = res
+        assert (not res), 'opt_defined = False'     
+        
+Test-Scenario-8:
+  Id: ts_08
+  Path: hydratk/lib/console/cmdoptparser/01_methods_ut.jedi
+  Name: ts_get_opt
+  Desc: Test method get_opt
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.console.cmdoptparser import CmdOptParser
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_opt_defined
+    Desc: Is option defined
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_defined
+      Desc: Option defined                          
+      
+      Test: |
+        op = CmdOptParser()              
+        op._set_opts['a'] = True
+        res = op.get_opt('a')
+        
+      Validate: |
+        this.test_result = res
+        assert (res), 'get_opt = True'        
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_not_defined
+      Desc: Option not defined                          
+      
+      Test: |
+        del op._set_opts['a']
+        res = op.get_opt('a')
+        
+      Validate: |
+        this.test_result = res
+        assert (not res), 'get_opt = False'  
+        
+Test-Scenario-9:
+  Id: ts_09
+  Path: hydratk/lib/console/cmdoptparser/01_methods_ut.jedi
+  Name: ts_parse
+  Desc: Test method parse
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.console.cmdoptparser import CmdOptParser, CmdOptParserUndefined
+    import sys
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_parse
+    Desc: Parse options
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_reg_val
+      Desc: Registered option with value
+      
+      Test: |
+        op = CmdOptParser()
+        sys.argv.insert(-1, '-l')
+        sys.argv.insert(-1, 'en')
+        reg, unreg = op.parse()
+      
+      Validate: |       
+        this.test_result = str(reg)
+        assert (reg['language'] == 'en'), 'reg[language] = en' 
+        del sys.argv[-3:-1]
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_reg_no_val
+      Desc: Registered option without value   
+      
+      Test: |
+        op = CmdOptParser()
+        sys.argv.insert(-1, '-f')
+        reg, unreg = op.parse(hide_undef=False)
+      
+      Validate: | 
+        this.test_result = str(reg)
+        assert (reg['force']), 'reg[force] = True' 
+        del sys.argv[-2]
+        res = op._set_opts
+        this.test_result = str(res)
+        assert ('interactive' in res), '_set_opts contains interactive'    
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_not_reg
+      Desc: Not registered option
+      
+      Test: |
+        op = CmdOptParser()
+        sys.argv.insert(-1, '-x')
+        reg, unreg = op.parse()        
+      
+      Validate: | 
+        this.test_result = str(unreg)
+        assert ('-x' in unreg), 'unreg contains -x' 
+        del sys.argv[-2]    
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_hide_undef
+      Desc: Hide undefined options   
+      
+      Test: |
+        op = CmdOptParser()
+        sys.argv.insert(-1, '-f')
+        reg, unreg = op.parse(hide_undef=True)
+      
+      Validate: | 
+        this.test_result = str(reg)
+        assert (reg['force']), 'reg[force] = True' 
+        del sys.argv[-2] 
+        res = op._set_opts
+        this.test_result = str(res)
+        assert ('interactive' not in res), '_set_opts does not contain interactive'                   
+        
+    Test-Condition-5: 
+      Id: tco_05
+      Name: tco_invalid_group
+      Desc: Invalid option group
+      
+      Test: |
+        try:
+            op.parse('xx')
+            ex = False
+        except CmdOptParserUndefined:
+            ex = True
+      
+      Validate: |  
+        this.test_result = ex
+        assert (ex), 'parse raises CmdOptParserUndefined'                      

@@ -174,8 +174,8 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         """          
         
         result = False
-        force_cmd = True if CommandlineTool.get_input_option('-f') or  CommandlineTool.get_input_option('--force') == True else False
-        db_file_param = CommandlineTool.get_input_option('--config-db-file')
+        force_cmd = True if CommandlineTool.get_input_option('force') == True else False
+        db_file_param = CommandlineTool.get_input_option('config-db-file')
         cfg_db_file = self._config['System']['DBConfig']['db_file']
         if db_file_param not in (True,False) or cfg_db_file != '':
             create_db_file = db_file_param if db_file_param not in (True,False) else cfg_db_file
@@ -217,7 +217,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         Core/Service/pid_file  
         
         Args:
-           none            
+           none        
            
         Returns:
            void  
@@ -1294,9 +1294,9 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         if self._opt_profile in commandopt.cmd:                                    
             CommandlineTool.set_possible_commands(commandopt.cmd[self._opt_profile])  
                       
-        '''Define options'''        
-        short_opt = commandopt.short_opt[self._opt_profile] if self._opt_profile in commandopt.short_opt else '' 
-        long_opt  = commandopt.long_opt[self._opt_profile] if self._opt_profile in commandopt.long_opt else []                                          
+        '''Define options'''             
+        short_opt = commandopt.short_opt[self._opt_profile] if self._opt_profile in commandopt.short_opt else [] 
+        long_opt  = commandopt.long_opt[self._opt_profile] if self._opt_profile in commandopt.long_opt else []                                                     
         CommandlineTool.set_possible_options(short_opt, long_opt)        
         
         '''Set help text'''      

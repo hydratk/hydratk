@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """DBO SQlite driver
 
-.. module:: database.dbo.drivers.sqlite.driver
+.. module:: lib.database.dbo.drivers.sqlite.driver
    :platform: Unix
    :synopsis: DBO SQlite driver
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
@@ -45,6 +45,7 @@ class DBODriver(dbodriver.DBODriver):
             self._mode = 'FILE'
         else:
             result = False
+        
         return result
         
     def _parse_dsn(self, dsn): 
@@ -70,6 +71,7 @@ class DBODriver(dbodriver.DBODriver):
                     raise Exception("Error initialize database driver, dsn parse {0} error, database file cannot be an empty string".format(dsn))
             elif self._mode == 'MEMORY':
                 self._dbfile = ':memory:'
+        
         return True
     
     def _apply_driver_options(self, driver_options):
@@ -99,7 +101,7 @@ class DBODriver(dbodriver.DBODriver):
                 
         """ 
                 
-        if os.path.exists(os.path.dirname(self._dbfile)) == False:
+        if (self._mode == 'FILE' and os.path.exists(os.path.dirname(self._dbfile)) == False):
             os.makedirs(os.path.dirname(self._dbfile))       
         self._dbcon = sqlite3.connect(
                                       self._dbfile, 
@@ -252,11 +254,10 @@ class DBODriver(dbodriver.DBODriver):
                 
         """ 
                 
-        result = False
         if table_name is not None and table_name != '':
             query = "SELECT count(*) found FROM sqlite_master where type='table' and tbl_name=?"
-            self._cursor.execute(query, table_name)
-            print(self._cursor.fetchone())
+            recs = self._cursor.execute(query, [table_name]).fetchone()
+            result = True if (recs[0] == 1) else False
         return result
         
     def database_exists(self):
@@ -293,7 +294,8 @@ class DBODriver(dbodriver.DBODriver):
         result = False
         if self._mode == 'FILE':
             if os.path.exists(self._dbfile) and os.path.isfile(self._dbfile):
-                result = os.unlink(self._dbfile)
+                os.unlink(self._dbfile)
+                result = True
         return result
     
     def erase_database(self):
@@ -310,12 +312,12 @@ class DBODriver(dbodriver.DBODriver):
         tables = list(self._cursor.execute("select name from sqlite_master where type is 'table'"))
         query = ''
         for col in tables:
-            query += "drop table if exists {0};".format(col['name'])        
+            query += "drop table if exists {0};".format(col[0])        
         self._cursor.executescript(query)
         self._cursor.execute("VACUUM;")
     
     def result_as_dict(self, state):   
-        """Method enales query result in dictionary form
+        """Method enables query result in dictionary form
         
         Args:   
            state (bool): enable dictionary

@@ -16,9 +16,9 @@ Value - option is used as xxx <value> or xxx if value is/isn't configured
 opt = {
       'htk' : {
             '-c'               :  {
-                                    'd_opt'          : 'config',
-                                    'has_value'      : True,
-                                    'allow_multiple' : False                           
+                                    'd_opt'           : 'config',
+                                    'has_value'       : True,
+                                    'allow_multiple'  : False                           
                                   },
             '--config'         :  {
                                     'd_opt'           : 'config',
@@ -30,12 +30,11 @@ opt = {
                                     'has_value'       : True,
                                     'allow_multiple'  : False                            
                                   }, 
-            '--d'              :  {
+            '-d'               :  {
                                     'd_opt'           : 'debug',
                                     'has_value'       : True,
                                     'allow_multiple'  : False                            
                                   },                             
-
             '--debug'          :  {
                                     'd_opt'           : 'debug',
                                     'has_value'       : True,
@@ -139,7 +138,15 @@ long_opt = {
 
 ''' short options '''
 short_opt = {
-              'htk' : "dcilmtxe"             
+              'htk' : [
+                       'c',
+                       'd',
+                       'e',
+                       'f',
+                       'i',
+                       'l',
+                       'm'
+                      ]             
             }
 
 ''' commands '''

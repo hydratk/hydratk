@@ -406,9 +406,9 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         if type(opt_group).__name__ == 'list':
             for optg in opt_group:
                 if optg not in commandopt.short_opt:
-                    commandopt.short_opt[optg] = ''
+                    commandopt.short_opt[optg] = []
                 if opt not in commandopt.short_opt[optg]:
-                    commandopt.short_opt[optg] += opt
+                    commandopt.short_opt[optg].append(opt)
                     opts = "-{0}".format(opt)
                     if optg not in commandopt.opt:
                         commandopt.opt[optg] = {}
@@ -419,9 +419,9 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                                                 }
         elif type(opt_group).__name__ == 'str':
             if opt_group not in commandopt.short_opt:
-                commandopt.short_opt[opt_group] = ''
+                commandopt.short_opt[opt_group] = []
             if opt not in commandopt.short_opt[opt_group]:
-                commandopt.short_opt[opt_group] += opt
+                commandopt.short_opt[opt_group].append(opt)
                 opts = "-{0}".format(opt)
                 if opt_group not in commandopt.opt:
                     commandopt.opt[opt_group] = {}
@@ -557,7 +557,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 commandopt.long_opt[profile] = []
                 
             if profile not in commandopt.short_opt:
-                commandopt.short_opt[profile] = ''
+                commandopt.short_opt[profile] = []
             
         else:
             raise InputError(0, [], "Option profile have to be non empty string type, got '{0}' '{1}'".format(profile, type(profile).__name__))
@@ -1333,9 +1333,9 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         from os.path import expanduser
         default_install_path = "{0}/hydratk".format(expanduser("~"));
         result               = False
-        force_cmd            = True if CommandlineTool.get_input_option('-f') or  CommandlineTool.get_input_option('--force') == True else False
-        interactive          = True if CommandlineTool.get_input_option('-i') or  CommandlineTool.get_input_option('--interactive') == True else False
-        ext_skel_path        = CommandlineTool.get_input_option('--ext-skel-path')         
+        force_cmd            = True if CommandlineTool.get_input_option('force') == True else False
+        interactive          = True if CommandlineTool.get_input_option('interactive') == True else False
+        ext_skel_path        = CommandlineTool.get_input_option('ext-skel-path')         
         ext_skel_path        = default_install_path if ext_skel_path in (False,'') else ext_skel_path
         '''Default data'''
         ext_name     = template.extension_default_user_data['ext_name']
@@ -1382,7 +1382,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 
                 print('6. Select extension usage and distribution license, currently supported are: BSD'); #TODO put the dynamic listing here
                 read_ext_license = raw_input("[{0}]:".format(template.extension_default_user_data['ext_license']))
-                ext_license = read_ext_license if len(read_ext_license) > 0 and read_ext_license in template.ext_license else template.extension_default_user_data['ext_license']
+                ext_license = read_ext_license if len(read_ext_license) > 0 and read_ext_license in template.extension_license else template.extension_default_user_data['ext_license']
                 print("Extension usage and distribution license set to: %s" % ext_license)
                                 
             except:
@@ -1433,9 +1433,18 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                                                                 )                                                                
                 file_put_contents(ext_module_file,ext_module_file_data)
                 
+                ext_bootstrapper_file = ("{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.bootstrapper'])).format(extension=ext_name)                    
+                self.dmsg('htk_on_debug_info', "Creating extension bootstrapper file %s" % ext_module_file, self.fromhere())
+                ext_bootstrapper_file_data = template.extension_bootstrapper.format(
+                                                                   extension=ext_name,
+                                                                   author_name=author_name,
+                                                                   author_email=author_email
+                                                                )                                                                
+                file_put_contents(ext_bootstrapper_file,ext_bootstrapper_file_data)                
+                
                 ext_translation_en_messages_file = ("{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.translation.en.messages'])).format(extension=ext_name)                    
                 self.dmsg('htk_on_debug_info', "Creating extension translation English messages file %s" % ext_translation_en_messages_file, self.fromhere())
-                ext_translation_en_messages_file_data = template.ext_translation_en_messages.format(
+                ext_translation_en_messages_file_data = template.extension_translation_en_messages.format(
                                                                    ext_ucname=ext_ucname,
                                                                    extension=ext_name,
                                                                    author_name=author_name,
@@ -1445,7 +1454,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 
                 ext_translation_cs_messages_file = ("{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.translation.cs.messages'])).format(extension=ext_name)                    
                 self.dmsg('htk_on_debug_info', "Creating extension translation Czech messages file %s" % ext_translation_cs_messages_file, self.fromhere())
-                ext_translation_cs_messages_file_data = template.ext_translation_cs_messages.format(
+                ext_translation_cs_messages_file_data = template.extension_translation_cs_messages.format(
                                                                    ext_ucname=ext_ucname, 
                                                                    extension=ext_name,
                                                                    author_name=author_name,
@@ -1455,7 +1464,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 
                 ext_translation_en_help_file = ("{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.translation.en.help'])).format(extension=ext_name)                    
                 self.dmsg('htk_on_debug_info', "Creating extension translation English help file %s" % ext_translation_en_help_file, self.fromhere())
-                ext_translation_en_help_file_data = template.ext_translation_en_help.format(
+                ext_translation_en_help_file_data = template.extension_translation_en_help.format(
                                                                    ext_ucname=ext_ucname,
                                                                    extension=ext_name,
                                                                    author_name=author_name,
@@ -1465,7 +1474,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 
                 ext_translation_cs_help_file = ("{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.translation.cs.help'])).format(extension=ext_name)                    
                 self.dmsg('htk_on_debug_info', "Creating extension translation Czech help file %s" % ext_translation_cs_help_file, self.fromhere())
-                ext_translation_cs_help_file_data = template.ext_translation_cs_help.format(
+                ext_translation_cs_help_file_data = template.extension_translation_cs_help.format(
                                                                    ext_ucname=ext_ucname,
                                                                    extension=ext_name,
                                                                    author_name=author_name,
@@ -1475,26 +1484,36 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 
                 ext_setup_py_file = ("{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.setup.py'])).format(extension=ext_name)                    
                 self.dmsg('htk_on_debug_info', "Creating extension setup file %s" % ext_setup_py_file, self.fromhere())
-                ext_setup_py_file_data = template.ext_setup_py.format(
+                ext_setup_py_file_data = template.extension_setup_py.format(
                                                                    extension=ext_name,
                                                                    ext_ucname=ext_ucname,                                                                
                                                                    author_name=author_name,
                                                                    author_email=author_email,
-                                                                   ext_desc=ext_desc                                                                                                                                       
+                                                                   ext_desc=ext_desc,
+                                                                   dir='dir',
+                                                                   file='file'                                                                                                                                  
                                                                 )                                                                
                 file_put_contents(ext_setup_py_file, ext_setup_py_file_data)
                 
                 ext_setup_cfg_file = ("{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.setup.cfg'])).format(extension=ext_name)                    
                 self.dmsg('htk_on_debug_info', "Creating extension additional setup config file %s" % ext_setup_cfg_file, self.fromhere())                                                                        
-                file_put_contents(ext_setup_cfg_file, template.ext_setup_cfg)
+                file_put_contents(ext_setup_cfg_file, template.extension_setup_cfg)
                 
                 ext_license_file = ("{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.license'])).format(extension=ext_name)                    
                 self.dmsg('htk_on_debug_info', "Creating extension license file %s" % ext_license_file, self.fromhere())                                                                        
-                file_put_contents(ext_license_file, template.ext_license[ext_license].format(ext_year=ext_year, author_name=author_name, author_email=author_email))
+                file_put_contents(ext_license_file, template.extension_license[ext_license].format(ext_year=ext_year, author_name=author_name, author_email=author_email))
                 
                 ext_readme_file = ("{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.readme'])).format(extension=ext_name)                    
                 self.dmsg('htk_on_debug_info', "Creating extension readme file %s" % ext_readme_file, self.fromhere())                                                                        
-                file_put_contents(ext_readme_file, template.ext_readme_rst.format(ext_ucname=ext_ucname,ext_desc=ext_desc))
+                file_put_contents(ext_readme_file, template.extension_readme_rst.format(ext_ucname=ext_ucname,ext_desc=ext_desc))
+                
+                ext_requirements_file = ("{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.requirements'])).format(extension=ext_name)                    
+                self.dmsg('htk_on_debug_info', "Creating extension requirements file %s" % ext_requirements_file, self.fromhere())                                                                        
+                file_put_contents(ext_requirements_file, template.extension_requirements)
+                
+                ext_manifest_file = ("{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.manifest'])).format(extension=ext_name)                    
+                self.dmsg('htk_on_debug_info', "Creating extension manifest file %s" % ext_manifest_file, self.fromhere())                                                                        
+                file_put_contents(ext_manifest_file, template.extension_manifest)                
                 
                 result = True
                 
@@ -1530,9 +1549,9 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         from os.path import expanduser
         default_install_path = "{0}/hydratk".format(expanduser("~"));
         result               = False
-        force_cmd            = True if CommandlineTool.get_input_option('-f') or  CommandlineTool.get_input_option('--force') == True else False
-        interactive          = True if CommandlineTool.get_input_option('-i') or  CommandlineTool.get_input_option('--interactive') == True else False
-        lib_skel_path        = CommandlineTool.get_input_option('--lib-skel-path')         
+        force_cmd            = True if CommandlineTool.get_input_option('force') == True else False
+        interactive          = True if CommandlineTool.get_input_option('interactive') == True else False
+        lib_skel_path        = CommandlineTool.get_input_option('lib-skel-path')         
         lib_skel_path        = default_install_path if lib_skel_path in (False,'') else lib_skel_path
         '''Default data'''
         lib_name     = template.lib_default_user_data['lib_name']
@@ -1579,7 +1598,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 
                 print('6. Select lib usage and distribution license, currently supported are: BSD'); #TODO put the dynamic listing here
                 read_lib_license = raw_input("[{0}]:".format(template.lib_default_user_data['lib_license']))
-                lib_license = read_lib_license if len(read_lib_license) > 0 and read_lib_license in template.ext_license else template.lib_default_user_data['lib_license']
+                lib_license = read_lib_license if len(read_lib_license) > 0 and read_lib_license in template.lib_license else template.lib_default_user_data['lib_license']
                 print("Library usage and distribution license set to: %s" % lib_license)
                                 
             except:
@@ -1642,11 +1661,19 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 
                 lib_license_file = ("{0}/{1}".format(lib_skel_path, template.lib_data_files['lib.license'])).format(lib_name=lib_name)                    
                 self.dmsg('htk_on_debug_info', "Creating lib license file %s" % lib_license_file, self.fromhere())                                                                        
-                file_put_contents(lib_license_file, template.ext_license[lib_license].format(ext_year=lib_year, author_name=author_name, author_email=author_email))
+                file_put_contents(lib_license_file, template.lib_license[lib_license].format(ext_year=lib_year, author_name=author_name, author_email=author_email))
                 
                 lib_readme_file = ("{0}/{1}".format(lib_skel_path, template.lib_data_files['lib.readme'])).format(lib_name=lib_name)                    
                 self.dmsg('htk_on_debug_info', "Creating library readme file %s" % lib_readme_file, self.fromhere())                                                                        
                 file_put_contents(lib_readme_file, template.lib_readme_rst.format(lib_ucname=lib_ucname,lib_desc=lib_desc))
+                
+                lib_requirements_file = ("{0}/{1}".format(lib_skel_path, template.lib_data_files['lib.requirements'])).format(lib_name=lib_name)                    
+                self.dmsg('htk_on_debug_info', "Creating library requirements file %s" % lib_requirements_file, self.fromhere())                                                                        
+                file_put_contents(lib_requirements_file, template.lib_requirements)
+                
+                lib_manifest_file = ("{0}/{1}".format(lib_skel_path, template.lib_data_files['lib.manifest'])).format(lib_name=lib_name)                    
+                self.dmsg('htk_on_debug_info', "Creating library manifest file %s" % lib_manifest_file, self.fromhere())                                                                        
+                file_put_contents(lib_manifest_file, template.lib_manifest)                                
                 
                 result = True
                 

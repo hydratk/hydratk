@@ -3,7 +3,8 @@
 config = {
   'pre_tasks' : [
                  'version_update',
-                 'install_libs_from_repo'
+                 'install_libs_from_repo',
+                 'install_pip'
                 ],
 
   'post_tasks' : [
@@ -12,8 +13,6 @@ config = {
                  ],
           
   'modules' : [            
-               'setproctitle>=1.1.9',
-               'pyzmq>=14.7.0',
                'psutil>=3.1.1',
                'pyyaml>=3.11',                              
                'xtermcolor>=1.3'                                                  

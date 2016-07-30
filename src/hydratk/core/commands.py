@@ -30,7 +30,15 @@ long_opts         = [
                      'lib-skel-path',
                      'run-mode'                                      
                     ]
-short_opts        = 'dcilmxte'
+short_opts        = [
+                     'c',
+                     'd',
+                     'e',
+                     'f',
+                     'i',
+                     'l',
+                     'm'
+                    ]
 
 getopt_long_opts  = [
                      'config=',
@@ -44,4 +52,12 @@ getopt_long_opts  = [
                      'lib-skel-path='
                      'run-mode='                    
                     ]
-getopt_short_opts = 'c:d:e:fil:m:'                    
+getopt_short_opts = [
+                     'c',
+                     'd',
+                     'e',
+                     'f',
+                     'i',
+                     'l',
+                     'm'
+                    ]                   

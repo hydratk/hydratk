@@ -1,0 +1,676 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/lib/database/dbo/sqlite/01_methods_ut.jedi
+  Name: ts_init
+  Desc: Test method __init__
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.database.dbo.dbo import DBO
+    from os import path, remove
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_init
+    Desc: Initialize DBO
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_init
+      Desc: Initialize
+      
+      Test: |
+        file = '/var/local/hydratk/test.db3'
+        dsn = 'sqlite:'+file
+        c = DBO(dsn)
+        res = c.__class__.__name__
+      
+      Validate: |
+        this.test_result = res
+        assert (res == 'DBO'), '__init__ = DBO'
+        this.test_result = res = c._dbo_driver.__class__.__name__
+        assert (res == 'DBODriver'), '_dbo_driver = DBODriver'
+        this.test_result = res = (path.exists(file))
+        assert (res), 'file {0} created'.format(file)
+        remove(file)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_no_autoconnect
+      Desc: Autoconnect disabled
+      
+      Test: |
+        c = DBO(dsn, autoconnect=False)
+        res = c.__class__.__name__
+      
+      Validate: |
+        this.test_result = res
+        assert (res == 'DBO'), '__init__ = DBO'
+        this.test_result = res = c._dbo_driver.__class__.__name__
+        assert (res == 'DBODriver'), '_dbo_driver = DBODriver'        
+        this.test_result = res = (path.exists(file))
+        assert (not res), 'file {0} not created'.format(file)
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/lib/database/dbo/sqlite/01_methods_ut.jedi
+  Name: ts_detect_mode
+  Desc: Test method _detect_mode
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.database.dbo.dbo import DBO
+    from os import path, remove
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_detect_mode
+    Desc: Detect mode
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_file
+      Desc: File database
+      
+      Test: |
+        file = '/var/local/hydratk/test.db3'
+        dsn = 'sqlite:'+file
+        c = DBO(dsn)
+        d = c._dbo_driver    
+        res = d._detect_mode(dsn)  
+        
+      Validate: |
+        this.test_result = res
+        assert (res), '_detect_mode = True'
+        this.test_result = res = d._mode
+        assert (res == 'FILE'), '_mode = FILE'
+        remove(file) 
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_memory
+      Desc: Memory database
+      
+      Test: |
+        dsn = 'sqlite::memory:'
+        c = DBO(dsn)
+        d = c._dbo_driver
+        res = d._detect_mode(dsn)  
+        
+      Validate: |
+        this.test_result = res
+        assert (res), '_detect_mode = True'
+        this.test_result = res = d._mode
+        assert (res == 'MEMORY'), '_mode = MEMORY'
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/lib/database/dbo/sqlite/01_methods_ut.jedi
+  Name: ts_parse_dsn
+  Desc: Test method _parse_dsn
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.database.dbo.dbo import DBO
+    from os import path, remove
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_parse_dsn
+    Desc: Parse DSN
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_file
+      Desc: File database    
+    
+      Test: |
+        file = '/var/local/hydratk/test.db3'
+        dsn = 'sqlite:'+file
+        c = DBO(dsn)
+        d = c._dbo_driver   
+        res = d._parse_dsn(dsn)   
+    
+      Validate: |    
+        this.test_result = res
+        assert (res), '_parse_dsn = True' 
+        this.test_result = res = d._dbfile
+        assert (res == file), '_dbfile = {0}'.format(file)
+        remove(file)   
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_memory
+      Desc: Memory database      
+      
+      Test: |
+        dsn = 'sqlite::memory:'
+        c = DBO(dsn)
+        d = c._dbo_driver
+        res = d._parse_dsn(dsn)
+        
+      Validate: |             
+        this.test_result = res 
+        assert (res), '_parse_dsn = True'
+        this.test_result = res = d._dbfile
+        exp = ':memory:'
+        assert (res == exp), '_dbfile = {0}'.format(exp) 
+        
+Test-Scenario-4:
+  Id: ts_04
+  Path: hydratk/lib/database/dbo/sqlite/01_methods_ut.jedi
+  Name: ts_apply_driver_options
+  Desc: Test method _apply_driver_options
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.database.dbo.dbo import DBO
+    from os import path, remove
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_apply_driver_options
+    Desc: Apply options
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_opt
+      Desc: Apply option     
+    
+      Test: |
+        file = '/var/local/hydratk/test.db3'
+        dsn = 'sqlite:'+file
+        c = DBO(dsn)
+        d = c._dbo_driver 
+        opt = {'timeout': 10}
+        d._apply_driver_options(opt)
+        res = d._driver_options['timeout']                 
+        
+      Validate: |
+        this.test_result = res
+        assert (res == opt['timeout']), '_driver_options[timeout] = 10'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_opt
+      Desc: Invalid option
+               
+      Test: |
+        opt = {'xx': 1}
+        d._apply_driver_options(opt)
+        res = d._driver_options
+       
+      Validate: |
+        this.test_result = str(res)
+        assert ('xx' not in res), '_driver_options does contain xx'
+        remove(file)
+        
+Test-Scenario-5:
+  Id: ts_05
+  Path: hydratk/lib/database/dbo/sqlite/01_methods_ut.jedi
+  Name: ts_connect
+  Desc: Test method connect
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.database.dbo.dbo import DBO
+    from os import path, remove
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_connect
+    Desc: Connect to database
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_connect
+      Desc: Connect     
+    
+      Test: |
+        file = '/var/local/hydratk/test.db3'
+        dsn = 'sqlite:'+file
+        c = DBO(dsn, autoconnect=False)
+        d = c._dbo_driver
+        d.connect()
+        res = (d._dbcon, d._cursor)        
+        
+      Validate: |
+        this.test_result = str(res)
+        assert (res != (None, None)), '_dbcon, _cursor != None'
+        
+Test-Scenario-6:
+  Id: ts_06
+  Path: hydratk/lib/database/dbo/sqlite/01_methods_ut.jedi
+  Name: ts_close
+  Desc: Test method close
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.database.dbo.dbo import DBO
+    from hydratk.lib.database.dbo.dbodriver import DBODriverException
+    from os import path, remove
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_close
+    Desc: Disconnect from database
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_close
+      Desc: Disconnect   
+    
+      Test: |
+        file = '/var/local/hydratk/test.db3'
+        dsn = 'sqlite:'+file
+        c = DBO(dsn)
+        d = c._dbo_driver
+        d.close()             
+        
+      Validate: |
+        assert True
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_not_connected
+      Desc: Not connected to database
+      
+      Test: |
+        try:
+            c = DBO(dsn, autoconnect=False)
+            d = c._dbo_driver
+            d.close()
+            ex = False
+        except DBODriverException:
+            ex = True
+      
+      Validate: |
+        this.test_result = ex
+        assert (ex), 'close raises DBODriverException'
+        remove(file)
+        
+Test-Scenario-7:
+  Id: ts_07
+  Path: hydratk/lib/database/dbo/sqlite/01_methods_ut.jedi
+  Name: ts_execute
+  Desc: Test method execute
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.database.dbo.dbo import DBO
+    from hydratk.lib.network.dbi.client import DBClient
+    from os import path, remove
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_execute
+    Desc: Execute query
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_read
+      Desc: Read query 
+    
+      Test: |
+        file = '/var/local/hydratk/test.db3'
+        dsn = 'sqlite:'+file
+        c = DBO(dsn)
+        d = c._dbo_driver  
+        cl = DBClient('SQLITE')
+        cl.connect(file)
+        cl.exec_query('CREATE TABLE test (id VARCHAR)')
+        res = d.execute('SELECT count(*) FROM test').fetchone()      
+        
+      Validate: |
+        this.test_result = str(res)
+        assert (res[0] == 0), 'output = 0'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_write
+      Desc: Write query   
+      
+      Test: |
+        d.execute('INSERT INTO test VALUES (1)')
+        res = d.execute('SELECT * FROM test').fetchone()
+      
+      Validate: |
+        this.test_result = str(res)
+        assert (int(res[0]) == 1), 'output = 1'
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_binding
+      Desc: Query with binding   
+      
+      Test: |
+        res = d.execute('SELECT * FROM test WHERE id = ?', [1]).fetchone()
+      
+      Validate: |
+        this.test_result = str(res)
+        assert (int(res[0]) == 1), 'output = 1'        
+        remove(file)      
+        
+Test-Scenario-8:
+  Id: ts_08
+  Path: hydratk/lib/database/dbo/sqlite/01_methods_ut.jedi
+  Name: ts_commit
+  Desc: Test method commit
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.database.dbo.dbo import DBO
+    from os import path, remove
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_commit
+    Desc: Commit transaction
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_commit
+      Desc: Commit 
+    
+      Test: |
+        file = '/var/local/hydratk/test.db3'
+        dsn = 'sqlite:'+file
+        c = DBO(dsn)
+        d = c._dbo_driver  
+        d.execute('CREATE TABLE test (id VARCHAR)')
+        d.execute('INSERT INTO test VALUES (1)')
+        d.commit() 
+        d.close()
+        d.connect()
+        res = d.execute('SELECT count(*) FROM test').fetchone()
+        
+      Validate: |
+        this.test_result = str(res)
+        assert (res[0] == 1), 'output = 1'
+        remove(file)        
+        
+Test-Scenario-9:
+  Id: ts_09
+  Path: hydratk/lib/database/dbo/sqlite/01_methods_ut.jedi
+  Name: ts_rollback
+  Desc: Test method rollback
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.database.dbo.dbo import DBO
+    from os import path, remove
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_rollback
+    Desc: Rollback transaction
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_rollback
+      Desc: Rollback
+    
+      Test: |
+        file = '/var/local/hydratk/test.db3'
+        dsn = 'sqlite:'+file
+        c = DBO(dsn)
+        d = c._dbo_driver  
+        d.execute('CREATE TABLE test (id VARCHAR)')
+        d.execute('INSERT INTO test VALUES (1)')
+        d.rollback() 
+        d.close()
+        d.connect()
+        res = d.execute('SELECT count(*) FROM test').fetchone()
+        
+      Validate: |
+        this.test_result = str(res)
+        assert (res[0] == 0), 'output = 0'
+        remove(file)  
+        
+Test-Scenario-10:
+  Id: ts_10
+  Path: hydratk/lib/database/dbo/sqlite/01_methods_ut.jedi
+  Name: ts_table_exists
+  Desc: Test method table_exists
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.database.dbo.dbo import DBO
+    from os import path, remove
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_table_exists
+    Desc: Check if table exists
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_exist_table
+      Desc: Existing table
+    
+      Test: |
+        file = '/var/local/hydratk/test.db3'
+        dsn = 'sqlite:'+file
+        c = DBO(dsn)
+        d = c._dbo_driver
+        d.execute('CREATE TABLE test (id VARCHAR)')
+        res = d.table_exists('test')                               
+        
+      Validate: |
+        this.test_result = res
+        assert (res), 'table_exists = True'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_table
+      Desc: Invalid table
+      
+      Test: |
+        res = d.table_exists('xx')
+      
+      Validate: |    
+        this.test_result = res
+        assert (not res), 'table_exists = False'
+        remove(file)   
+        
+Test-Scenario-11:
+  Id: ts_11
+  Path: hydratk/lib/database/dbo/sqlite/01_methods_ut.jedi
+  Name: ts_database_exists
+  Desc: Test method database_exists
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.database.dbo.dbo import DBO
+    from os import path, remove
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_database_exists
+    Desc: Check if database exists
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_empty
+      Desc: Empty database
+    
+      Test: |
+        file = '/var/local/hydratk/test.db3'
+        dsn = 'sqlite:'+file
+        c = DBO(dsn)
+        d = c._dbo_driver   
+        res = d.database_exists()            
+        
+      Validate: |
+        this.test_result = res
+        assert (not res), 'database_exists = False'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_no_empty
+      Desc: Not empty database
+    
+      Test: |
+        d.execute('CREATE TABLE test (id VARCHAR)') 
+        res = d.database_exists()            
+        
+      Validate: |
+        this.test_result = res
+        assert (res), 'database_exists = True'  
+        remove(file)      
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_not_exist
+      Desc: Not existing database
+    
+      Test: |
+        res = d.database_exists()            
+        
+      Validate: |
+        this.test_result = res
+        assert (not res), 'database_exists = False'  
+        
+Test-Scenario-12:
+  Id: ts_12
+  Path: hydratk/lib/database/dbo/sqlite/01_methods_ut.jedi
+  Name: ts_remove_database
+  Desc: Test method remove_database
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.database.dbo.dbo import DBO
+    from os import path
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_remove_database
+    Desc: Remove database
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_remove
+      Desc: Remove
+    
+      Test: |
+        file = '/var/local/hydratk/test.db3'
+        dsn = 'sqlite:'+file
+        c = DBO(dsn)
+        d = c._dbo_driver   
+        res = d.remove_database()            
+        
+      Validate: |
+        this.test_result = res
+        assert (res), 'remove_database = False'
+        this.test_result = res = (path.exists(file))
+        assert (not res), 'file {0} deleted'.format(file)  
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_not_exist
+      Desc: Not existing database
+      
+      Test: |
+        res = d.remove_database()
+      
+      Validate: |             
+        this.test_result = res
+        assert (not res), 'remove_database = False'
+        
+Test-Scenario-13:
+  Id: ts_13
+  Path: hydratk/lib/database/dbo/sqlite/01_methods_ut.jedi
+  Name: ts_erase_database
+  Desc: Test method erase_database
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.database.dbo.dbo import DBO
+    from os import path, remove
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_erase_database
+    Desc: Erase database
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_erase
+      Desc: Erase
+    
+      Test: |
+        file = '/var/local/hydratk/test.db3'
+        dsn = 'sqlite:'+file
+        c = DBO(dsn)
+        d = c._dbo_driver   
+        d.execute('CREATE TABLE test (id VARCHAR)')
+        d.erase_database() 
+        recs = d.execute("select count(*) from sqlite_master where type is 'table'").fetchone()           
+        
+      Validate: |
+        this.test_result = str(recs)
+        assert(recs[0] == 0), 'tables deleted'
+        remove(file)   
+        
+Test-Scenario-14:
+  Id: ts_14
+  Path: hydratk/lib/database/dbo/sqlite/01_methods_ut.jedi
+  Name: ts_result_as_dict
+  Desc: Test method result_as_dict
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.database.dbo.dbo import DBO
+    from os import path, remove
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_result_as_dict
+    Desc: Get result as dictionary
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_as_cursor
+      Desc: Result as cursor
+    
+      Test: |
+        file = '/var/local/hydratk/test.db3'
+        dsn = 'sqlite:'+file
+        c = DBO(dsn)
+        d = c._dbo_driver   
+        d.execute('CREATE TABLE test (id VARCHAR)')
+        d.execute('INSERT INTO test VALUES (1)')
+        d.result_as_dict(False)
+        recs = d.execute('SELECT * FROM test').fetchone()
+        
+      Validate: |
+        this.test_result = str(recs)
+        assert (recs[0] == '1'), 'output[0] = 1'       
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_as_dict
+      Desc: Result as dictionary
+    
+      Test: |
+        d.result_as_dict(True)
+        recs = d.execute('SELECT * FROM test').fetchone()
+        
+      Validate: |
+        this.test_result = str(recs)
+        assert (recs['id'] == '1'), 'output[id] = 1'
+        remove(file)                 

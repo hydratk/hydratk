@@ -237,3 +237,16 @@ data
 
 .. automodule:: hydratk.lib.data.xml
    :member-order: bysource  
+   
+.. _refman_lib_database:
+
+database
+^^^^^^^^
+
+.. _refman_hydra_lib_database_dbo_drivers_pgsql:
+
+* pgsql
+
+.. automodule:: hydratk.lib.database.dbo.drivers.pgsql.driver
+   :member-order: bysource
+   

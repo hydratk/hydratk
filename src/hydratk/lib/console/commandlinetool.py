@@ -29,7 +29,7 @@ class CommandlineTool():
     _cp_string  = ''
     _commands   = []
     _long_opt   = {}
-    _short_opt  = ''
+    _short_opt  = []
     _cmd_text   = {}
     _opt_text   = {}
     _trn        = None
@@ -74,7 +74,7 @@ class CommandlineTool():
         """Options setter method
         
         Args:
-           short_opt (str): Possible short options to use (getopt format)
+           short_opt (list): Possible short options to use (getopt format)
            long_opt (list): Possible long options to use (getopt format)
            
         Returns:

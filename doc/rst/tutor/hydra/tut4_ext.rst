@@ -22,7 +22,6 @@ Skeleton is created in directory ~/hydratk/hydratk-ext-hobbit.
 
   .. code-block:: bash
   
-     /doc - documentation, empty
      /etc - configuration file
        /hydratk     
          /conf.d
@@ -31,6 +30,7 @@ Skeleton is created in directory ~/hydratk/hydratk-ext-hobbit.
        /hydratk
          /extensions
            /hobbit - extension title
+             bootstrapper.py - bootstrapper code
              hobbit.py - extension code
              __init__.py             
              /translation - langtexts for Czech and English language
@@ -46,7 +46,9 @@ Skeleton is created in directory ~/hydratk/hydratk-ext-hobbit.
            __init__.py
          __init__.py
      LICENSE.txt - license file with template text
+     MANIFEST.in - manifest file with template text
      README.rst - readme file with template text
+     requirements.txt - requirements file with template text
      setup.cfg - setup configuration
      setup.py - setup script with template text   
      
@@ -140,8 +142,13 @@ Author and email can be overwritten.
      SERVICES LOSS OF USE, DATA, OR PROFITS OR BUSINESS INTERRUPTION) HOWEVER 
      CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
      OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
-     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.    
+     
+* MANIFEST.in
 
+  .. code-block:: cfg
+  
+     include *.txt     
      
 * README.rst
 
@@ -164,9 +171,15 @@ Extension title and description can be overwritten.
      OS and Python versions support
      ==============================
 
-     | Currently the Linux platform with CPython 2.7, 3.x and PyPy is supported, 
+     | Currently the Linux platform with CPython 2.6, 2.7, 3.x is supported, 
      | but the final version is planned to be crossplatform and targeted also to the other popular systems 
      | including Windows and OSX and possibly other Python versions such as Jython and IronPython 
+     
+* requirements.txt
+
+  .. code-block:: cfg
+  
+     hydratk     
      
 * setup.cfg
 
@@ -192,12 +205,15 @@ Extension title and description, author and email can be overwritten.
 Module ``hydratk`` is automatically configured as required.
 
   .. code-block:: python
-  
+
      # -*- coding: utf-8 -*-
      from setuptools import setup, find_packages
+     from sys import argv, version_info
+     from os import path
+     from subprocess import call
 
      with open("README.rst", "r") as f:
-         readme = f.readlines()
+         readme = f.read()
     
      classifiers = [
          "Development Status :: 3 - Alpha",
@@ -208,40 +224,57 @@ Module ``hydratk`` is automatically configured as required.
          "Operating System :: OS Independent",   
          "License :: OSI Approved :: BSD License",
          "Programming Language :: Python",    
+         "Programming Language :: Python :: 2.6",
          "Programming Language :: Python :: 2.7",
-         "Programming Language :: Python :: 3",
          "Programming Language :: Python :: 3.3",
+         "Programming Language :: Python :: 3.4",
+         "Programming Language :: Python :: 3.5",
          "Programming Language :: Python :: Implementation",
-         "Programming Language :: Python :: Implementation :: CPython",    
-         "Programming Language :: Python :: Implementation :: PyPy",    
+         "Programming Language :: Python :: Implementation :: CPython",  
          "Topic :: Software Development :: Libraries :: Application Frameworks",
          "Topic :: Utilities"
      ]
-         
+
      requires = [
-                'hydratk'           
+                 'hydratk'           
                 ]
          
-     data_files=[
-                 ('/etc/hydratk/conf.d', ['etc/hydratk/conf.d/hydratk-ext-hobbit.conf'])            
-                ]                                
+     files = {
+              'etc/hydratk/conf.d/hydratk-ext-hobbit.conf' : '/etc/hydratk/conf.d'
+             }                           
          
+     entry_points = {
+                'console_scripts': [
+                    'hobbit = hydratk.extensions.hobbit.bootstrapper:run_app'                               
+                     ]
+                    }          
+                        
      setup(
-           name='Hobbit',
-           version='0.1.0a',
+           name='hobbit',
+           version='0.1.0a-dev1',
            description='This extension provides example functionality, how to develop HydraTK extensions',
            long_description=readme,
            author='Bilbo Baggins',
            author_email='bilbo@shire.com',
-           url='http://extensions.hydratk.org/hobbit',
+           url='http://extensions.hydratk.org/Hobbit',
            license='BSD',
            packages=find_packages('src'),
            install_requires=requires,
            package_dir={'' : 'src'},
            classifiers=classifiers,
            zip_safe=False,
-           data_files=data_files
-          )
+           entry_points=entry_points  
+          )        
+     
+     if ('install' in argv or 'bdist_egg' in argv or 'bdist_wheel' in argv):
+    
+         for file, dir in files.items():    
+             if (not path.exists(dir)):
+                 call('mkdir -p dir'.format(dir=dir), shell=True)
+            
+             call('cp file dir'.format(file=file, dir=dir), shell=True) 
+        
+         call('chmod -R a+r /etc/hydratk', shell=True)                 
 
 * hydratk-ext-hobbit.conf
 
@@ -254,6 +287,39 @@ Configuration file, extension is enabled by default.
          package: hydratk.extensions.hobbit
          module: hobbit       
          enabled: 1   
+    
+* bootstrapper.py
+
+Extension title and description, author and email can be overwritten.
+
+  .. code-block:: python  
+  
+     # -*- coding: utf-8 -*-
+     """Providing custom bootstrapper for hobbit standalone app
+
+     .. module:: extensions.hobbit.bootstrapper
+        :platform: Unix
+        :synopsis: Providing custom bootstrapper for hobbit standalone app
+     .. moduleauthor:: Bilbo Baggins <bilbo@shire.com>
+
+     """
+
+     import sys
+
+     PYTHON_MAJOR_VERSION = sys.version_info[0]
+     if PYTHON_MAJOR_VERSION == 2:
+         reload(sys)
+         sys.setdefaultencoding('UTF8')
+    
+     def run_app(): 
+      
+         from hydratk.core.masterhead import MasterHead    
+         mh = MasterHead.get_head()
+         mh.set_cli_cmdopt_profile('hobbit')            
+         mh.run_fn_hook('h_bootstrap')
+         trn = mh.get_translator()  
+         mh.dmsg('htk_on_debug_info', trn.msg('htk_app_exit'), mh.fromhere())                  
+         sys.exit(0)    
           
 * hobbit.py
 
@@ -264,7 +330,7 @@ Extension title and description, author and email can be overwritten.
      # -*- coding: utf-8 -*-
      """This code is a part of Hobbit extension
 
-     .. module:: hydratk.extensions.hobbit.hobbit
+     .. module:: extensions.hobbit.hobbit
         :platform: Unix
         :synopsis: This HydraTK generated extension is providing some cool functionality
      .. moduleauthor:: Bilbo Baggins <bilbo@shire.com>
@@ -300,7 +366,7 @@ Extension title and description, author and email can be overwritten.
      # -*- coding: utf-8 -*-
      """This code is a part of Hobbit extension
 
-     .. module:: hydratk.extensions.hobbit.translation.en.help
+     .. module:: extensions.hobbit.translation.en.help
         :platform: Unix
         :synopsis: English language translation for Hobbit extension help generator
      .. moduleauthor:: Bilbo Baggins <bilbo@shire.com>
@@ -331,7 +397,7 @@ Extension title and description, author and email can be overwritten.
      # -*- coding: utf-8 -*-
      """This code is a part of Hobbit extension
 
-     .. module:: hydratk.extensions.hobbit.translation.en
+     .. module:: extensions.hobbit.translation.en
         :platform: Unix
         :synopsis: English language translation for Hobbit extension
      .. moduleauthor:: Bilbo Baggins <bilbo@shire.com>

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """This code is part of Hydra Toolkit library
 
-.. module:: database.dbodriver
+.. module:: lib.database.dbo.dbodriver
    :platform: Unix
    :synopsis: DBODriver abstract class
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>

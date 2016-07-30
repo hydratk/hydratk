@@ -22,7 +22,6 @@ Skeleton is created in directory ~/hydratk/hydratk-lib-whiteforce.
 
   .. code-block:: bash
   
-     /doc - documentation, empty
      /src - source code
        /hydratk
          /lib
@@ -32,7 +31,9 @@ Skeleton is created in directory ~/hydratk/hydratk-lib-whiteforce.
            __init__.py
          __init__.py
      LICENSE.txt - license file with template text
+     MANIFEST.in - manifest file with template text
      README.rst - readme file with template text
+     requirements.txt - requirements file with template text     
      setup.cfg - setup configuration
      setup.py - setup script with template text
      
@@ -128,6 +129,12 @@ Author and email can be overwritten.
      OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
      OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
      
+* MANIFEST.in
+
+  .. code-block:: cfg
+  
+     include *.txt     
+     
 * README.rst
 
 Library title and description can be overwritten.
@@ -149,9 +156,15 @@ Library title and description can be overwritten.
      OS and Python versions support
      ==============================
 
-     | Currently the Linux platform with CPython 2.7, 3.x and PyPy is supported, 
+     | Currently the Linux platform with CPython 2.6, 2.7, 3.x is supported, 
      | but the final version is planned to be crossplatform and targeted also to the other popular systems 
      | including Windows and OSX and possibly other Python versions such as Jython and IronPython   
+    
+* requirements.txt
+
+  .. code-block:: cfg
+  
+     hydratk    
      
 * setup.cfg
 
@@ -182,7 +195,7 @@ Module ``hydratk`` is automatically configured as required.
      from setuptools import setup, find_packages
 
      with open("README.rst", "r") as f:
-         readme = f.readlines()
+         readme = f.read()
     
      classifiers = [
          "Development Status :: 3 - Alpha",
@@ -193,19 +206,19 @@ Module ``hydratk`` is automatically configured as required.
          "Operating System :: OS Independent",   
          "License :: OSI Approved :: BSD License",
          "Programming Language :: Python",    
+         "Programming Language :: Python :: 2.6",
          "Programming Language :: Python :: 2.7",
-         "Programming Language :: Python :: 3",
          "Programming Language :: Python :: 3.3",
+         "Programming Language :: Python :: 3.4",
+         "Programming Language :: Python :: 3.5",
          "Programming Language :: Python :: Implementation",
-         "Programming Language :: Python :: Implementation :: CPython",    
-         "Programming Language :: Python :: Implementation :: PyPy",    
+         "Programming Language :: Python :: Implementation :: CPython",   
          "Topic :: Software Development :: Libraries :: Application Frameworks",
          "Topic :: Utilities"
      ]
 
-         
      requires = [
-                'hydratk'           
+                 'hydratk'           
                 ]                          
          
      setup(
@@ -221,8 +234,8 @@ Module ``hydratk`` is automatically configured as required.
            install_requires=requires,
            package_dir={'' : 'src'},
            classifiers=classifiers,
-           zip_safe=False,
-          )    
+           zip_safe=False
+          )     
           
 * whiteforce.py
 
@@ -233,7 +246,7 @@ Library title and description, author and email can be overwritten.
      # -*- coding: utf-8 -*-
      """This code is a part of WhiteForce library
 
-     .. module:: hydratk.lib.whiteforce.whiteforce
+     .. module:: lib.whiteforce.whiteforce
         :platform: Unix
         :synopsis: This library provides example functionality, how to develop HydraTK shared libraries
      .. moduleauthor:: Obi-Wan Kenobi <kenobi@jedi.com>

@@ -67,7 +67,7 @@ class Profiler(object):
                 
         from hydratk.core import commandopt
         commandopt.long_opt['htk'].append('profile')
-        commandopt.short_opt['htk'] += 'p'
+        commandopt.short_opt['htk'].append('p')
         commandopt.d_opt['htk'].append('profile')
         commandopt.opt['htk']['-p'] = {
                                         'd_opt'          : 'profile',

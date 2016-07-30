@@ -179,7 +179,7 @@ class CmdOptParser(argparse.ArgumentParser):
         """Method adds new option
         
         Args:   
-           short_opt (str): short options 
+           short_opt (list): short options 
            long_opt (list): long options
            opt_map (dict): option mapping
            
@@ -188,15 +188,12 @@ class CmdOptParser(argparse.ArgumentParser):
                 
         """  
                 
-        if type(short_opt).__name__ == 'str' and len(short_opt) > 0:
-            i = 0
-            cur_opt = ''
-            for c in short_opt:
-                if c != ':':
-                    cur_opt = "-{0}".format(c)
-                    d_option = opt_map[cur_opt] if cur_opt in opt_map else None
-                    has_value = True if short_opt[i+1] == ':' else False
-                    self.add_opt(cur_opt, d_option, has_value)
+        if type(short_opt).__name__ == 'list' and len(short_opt) > 0:
+            for opt in short_opt:
+                cur_opt = "-{0}".format(opt)
+                d_option = opt_map[cur_opt] if cur_opt in opt_map else None
+                has_value = True if opt[-1:] == '=' else False
+                self.add_opt(cur_opt, d_option, has_value)
                 
         if type(long_opt).__name__ == 'list' and len(long_opt) > 0:
             for opt in long_opt:
@@ -228,7 +225,7 @@ class CmdOptParser(argparse.ArgumentParser):
         set_opts, unreg_opts = self.parse_known_args()
         set_opts             = vars(set_opts)        
         self._set_opts       = set_opts if hide_undef == False else self._strip_opts(set_opts)
-        self._unreg_opts     = unreg_opts
+        self._unreg_opts     = unreg_opts[:-1]
                 
         return (self._set_opts, self._unreg_opts)
     

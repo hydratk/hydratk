@@ -3,6 +3,7 @@
 from install.config import config as cfg
 import install.command as cmd
 from sys import version_info
+from os import system
 
 def run_pre_install(argv):  
     
@@ -16,7 +17,7 @@ def run_pre_install(argv):
     
         for task in cfg['pre_tasks']:
             print('\n*** Running task: {0} ***\n'.format(task))
-            globals()[task](requires)          
+            requires = globals()[task](requires)          
     
     return requires 
 
@@ -24,12 +25,16 @@ def version_update(requires):
     
     major, minor = version_info[0], version_info[1]
     
-    if (major == 2 and minor == 6):
-        cfg['modules'].append('importlib')
+    cfg['modules'].insert(0, 'setproctitle>=1.1.9')
+    cfg['modules'].insert(1, 'pyzmq>=14.7.0')
+    
+    if (major == 2 and minor == 6):     
         cfg['libs']['setproctitle>=1.1.9']['apt-get'][0] = 'python2.6-dev'
     elif (major == 3):
         cfg['libs']['setproctitle>=1.1.9']['apt-get'][0] = 'python3-dev'
         cfg['libs']['setproctitle>=1.1.9']['yum'][0] = 'python3-devel'
+        
+    return requires
 
 def install_libs_from_repo(requires):       
     
@@ -44,4 +49,21 @@ def install_libs_from_repo(requires):
             if (pckm in libs[key]):
                 lib_inst += libs[key][pckm]
             for lib in lib_inst:
-                cmd.install_pck(pckm, lib)               
+                cmd.install_pck(pckm, lib)   
+                
+    return requires
+                
+def install_pip(requires):   
+    
+    major, minor = version_info[0], version_info[1]  
+    
+    if (major == 2 and minor == 6):
+        system('pip install importlib') 
+        requires.append('importlib')
+        
+    system('pip install setproctitle>=1.1.9')
+    requires.append('setproctitle>=1.1.9')
+    system('pip install pyzmq>=14.7.0')
+    requires.append('pyzmq>=14.7.0')
+        
+    return requires                           

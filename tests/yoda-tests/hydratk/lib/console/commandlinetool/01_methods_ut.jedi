@@ -315,7 +315,7 @@ Test-Scenario-7:
         title, cp = CommandlineTool._title[3:-4], CommandlineTool._cp_string[3:-4]
         assert (title in res and cp in res), 'create_short_help contains {0}, {1}'.format(title, cp)       
         assert ('options' in res and 'command' in res), 'create_short_help contains options, command'  
-        cmd = argv[0].split(' ')[-1]
+        cmd = argv[0].split('/')[-1]
         assert (cmd in res), 'create_short_help contains {0}'.format(cmd)            
         
 Test-Scenario-8:
@@ -348,7 +348,7 @@ Test-Scenario-8:
         title, cp = CommandlineTool._title[3:-4], CommandlineTool._cp_string[3:-4]
         assert (title in res and cp in res), 'create_help contains {0}, {1}'.format(title, cp)       
         assert ('options' in res and 'command' in res), 'create_help contains options, command'  
-        cmd = argv[0].split(' ')[-1]
+        cmd = argv[0].split('/')[-1]
         assert (cmd in res), 'create_help contains {0}'.format(cmd)    
         
         cmds = CommandlineTool._cmd_text.keys()
@@ -387,3 +387,71 @@ Test-Scenario-9:
       Validate: |                      
         this.test_result = res
         assert (chars not in res), 'parse_shell_text doesn\'t contain {0}'.format(chars)
+        
+Test-Scenario-10:
+  Id: ts_10
+  Path: hydratk/lib/console/commandlinetool/01_methods_ut.jedi
+  Name: ts_get_input_option
+  Desc: Test get_input_option method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.console.commandlinetool import CommandlineTool
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_get_input_option
+    Desc: Get input option
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_exist_opt
+      Desc: Existing option   
+      
+      Test: |
+        res = CommandlineTool.get_input_option('yoda-test-path')
+      
+      Validate: |     
+        this.test_result = res
+        assert (res != ''), 'get_input_option is not empty'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_opt
+      Desc: Invalid option   
+      
+      Test: |
+        res = CommandlineTool.get_input_option('language')
+      
+      Validate: |     
+        this.test_result = res
+        assert (not res), 'get_input_option = False' 
+        
+Test-Scenario-11:
+  Id: ts_11
+  Path: hydratk/lib/console/commandlinetool/01_methods_ut.jedi
+  Name: ts_get_input_options
+  Desc: Test get_input_options method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.lib.console.commandlinetool import CommandlineTool
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_get_input_options
+    Desc: Get input options
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_exist_opt
+      Desc: Existing options
+      
+      Test: |
+        res = CommandlineTool.get_input_options({})
+      
+      Validate: |                  
+        this.test_result = str(res)
+        assert ('yoda-test-path' in res['options']), 'get_input_options contains yoda-test-path'    
