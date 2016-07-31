@@ -48,7 +48,7 @@ These modules will be installed automatically, if not installed yet (for Python 
 * setproctitle
 * xtermcolor
 
-Modules setproctitle, pyzmq require several libraries which will be installed via Linux package managers, if not installed yet.
+Modules setproctitle, psutil, pyzmq require several libraries which will be installed via Linux package managers, if not installed yet.
 
 setprocitle
 
@@ -64,7 +64,7 @@ pyzmq
      
      Installation for Python 2.6 has some differences.
      Module importlib is automatically installed, it is part of standard distribution since 2.7.
-     Library python2.6-dev is installed instead of python-dev.
+     Library python2.6-dev or python2.6-devel is installed instead of python-dev.
      
   .. note::
   

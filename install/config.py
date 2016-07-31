@@ -12,8 +12,7 @@ config = {
                   'set_access_rights'
                  ],
           
-  'modules' : [            
-               'psutil>=3.1.1',
+  'modules' : [                           
                'pyyaml>=3.11',                              
                'xtermcolor>=1.3'                                                  
               ],

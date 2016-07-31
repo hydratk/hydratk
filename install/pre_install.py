@@ -26,13 +26,16 @@ def version_update(requires):
     major, minor = version_info[0], version_info[1]
     
     cfg['modules'].insert(0, 'setproctitle>=1.1.9')
-    cfg['modules'].insert(1, 'pyzmq>=14.7.0')
+    cfg['modules'].insert(1, 'psutil>=3.1.1')
+    cfg['modules'].insert(2, 'pyzmq>=14.7.0')
     
+    module = 'setproctitle>=1.1.9'
     if (major == 2 and minor == 6):     
-        cfg['libs']['setproctitle>=1.1.9']['apt-get'][0] = 'python2.6-dev'
+        cfg['libs'][module]['apt-get'][0] = 'python2.6-dev'
     elif (major == 3):
-        cfg['libs']['setproctitle>=1.1.9']['apt-get'][0] = 'python3-dev'
-        cfg['libs']['setproctitle>=1.1.9']['yum'][0] = 'python3-devel'
+        cfg['libs'][module]['apt-get'][0] = 'python2.6-devel'
+        cfg['libs'][module]['apt-get'][0] = 'python3-dev'
+        cfg['libs'][module]['yum'][0] = 'python3-devel'
         
     return requires
 
@@ -63,6 +66,8 @@ def install_pip(requires):
         
     system('pip install setproctitle>=1.1.9')
     requires.append('setproctitle>=1.1.9')
+    system('pip install psutil>=3.1.1')
+    requires.append('psutil>=3.1.1')
     system('pip install pyzmq>=14.7.0')
     requires.append('pyzmq>=14.7.0')
         
