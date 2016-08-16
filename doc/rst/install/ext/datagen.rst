@@ -8,30 +8,39 @@ You have 2 options how to install DataGen extension.
 Package
 ^^^^^^^
 
-Install it via Python package managers PIP or easy_install
+Install it via Python package managers PIP or easy_install.
+
+Filename after PIP download contains version, adapt sample code.
 
   .. code-block:: bash
   
-     $ sudo pip install hydratk-ext-datagen 
+     $ sudo pip download hydratk-ext-datagen
+     $ sudo pip install hydratk-ext-datagen.tar.gz 
      
   .. code-block:: bash
   
      $ sudo easy_install hydratk-ext-datagen
+     
+  .. note::
+  
+     Use PIP to install package from local file for correct installation.
+     When installed from remote repository, PIP sometimes doesn't call setup.py.       
 
 Source
 ^^^^^^
 
-Download the source code from GitHub or Pypi and install it manually.
+Download the source code from GitHub or PyPi and install it manually.
+Full PyPi URL contains MD5 hash, adapt sample code.
 
   .. code-block:: bash
   
-     $ git clone https://git.hydratk.org/hydratk-ext-datagen.git
+     $ git clone https://github.com/hydratk/hydratk-ext-datagen.git
      $ cd ./hydratk-ext-datagen
      $ sudo python setup.py install
      
   .. code-block:: bash
   
-     $ wget https://python.org/packages/hydratk-ext-datagen-0.1.0.tar.gz -O hydratk-ext-datagen.tar.gz
+     $ wget https://python.org/pypi/hydratk-ext-datagen -O hydratk-ext-datagen.tar.gz
      $ tar -xf hydratk-ext-datagen.tar.gz
      $ cd ./hydratk-ext-datagen
      $ sudo python setup.py install

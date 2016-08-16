@@ -8,30 +8,39 @@ You have 2 options how to install TestEnv extension.
 Package
 ^^^^^^^
 
-Install it via Python package managers PIP or easy_install
+Install it via Python package managers PIP or easy_install.
+
+Filename after PIP download contains version, adapt sample code.
 
   .. code-block:: bash
   
-     $ sudo pip install hydratk-ext-testenv 
+     $ sudo pip download hydratk-ext-testenv
+     $ sudo pip install hydratk-ext-testenv.tar.gz 
      
   .. code-block:: bash
   
      $ sudo easy_install hydratk-ext-testenv
+     
+  .. note::
+  
+     Use PIP to install package from local file for correct installation.
+     When installed from remote repository, PIP sometimes doesn't call setup.py.       
 
 Source
 ^^^^^^
 
-Download the source code from GitHub or Pypi and install it manually.
+Download the source code from GitHub or PyPi and install it manually.
+Full PyPi URL contains MD5 hash, adapt sample code.
 
   .. code-block:: bash
   
-     $ git clone https://git.hydratk.org/hydratk-ext-testenv.git
+     $ git clone https://github.com/hydratk/hydratk-ext-testenv.git
      $ cd ./hydratk-ext-testenv
      $ sudo python setup.py install
      
   .. code-block:: bash
   
-     $ wget https://python.org/packages/hydratk-ext-testenv-0.2.0.tar.gz -O hydratk-ext-testenv.tar.gz
+     $ wget https://python.org/pypi/hydratk-ext-testenv -O hydratk-ext-testenv.tar.gz
      $ tar -xf hydratk-ext-testenv.tar.gz
      $ cd ./hydratk-ext-testenv
      $ sudo python setup.py install

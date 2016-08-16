@@ -62,7 +62,6 @@ def install_pip(requires):
     
     if (major == 2 and minor == 6):
         system('pip install importlib') 
-        requires.append('importlib')
         
     system('pip install setproctitle>=1.1.9')
     requires.append('setproctitle>=1.1.9')

@@ -8,30 +8,38 @@ You have 2 options how to install Network library.
 Package
 ^^^^^^^
 
-Install it via Python package managers PIP or easy_install
+Install it via Python package managers PIP or easy_install.
+Filename after PIP download contains version, adapt sample code.
 
   .. code-block:: bash
   
-     $ sudo pip install hydratk-lib-network 
+     $ sudo pip download hydratk-lib-network
+     $ sudo pip install hydratk-lib-network.tar.gz 
      
   .. code-block:: bash
   
      $ sudo easy_install hydratk-lib-network
+     
+  .. note::
+  
+     Use PIP to install package from local file for correct installation.
+     When installed from remote repository, PIP sometimes doesn't call setup.py.     
 
 Source
 ^^^^^^
 
-Download the source code from GitHub or Pypi and install it manually.
+Download the source code from GitHub or PyPi and install it manually.
+Full PyPi URL contains MD5 hash, adapt sample code.
 
   .. code-block:: bash
   
-     $ git clone https://git.hydratk.org/hydratk-lib-network.git
+     $ git clone https://github.com/hydratk/hydratk-lib-network.git
      $ cd ./hydratk-lib-network
      $ sudo python setup.py install
      
   .. code-block:: bash
   
-     $ wget https://pypi.python.org/packages/hydratk-lib-network-0.1.0.tar.gz -O hydratk-lib-network.tar.gz
+     $ wget https://pypi.python.org/pypihydratk-lib-network -O hydratk-lib-network.tar.gz
      $ tar -xf hydratk-lib-network.tar.gz
      $ cd ./hydratk-lib-network
      $ sudo python setup.py install
