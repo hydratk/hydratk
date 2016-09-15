@@ -22,6 +22,8 @@ Skeleton is created in directory ~/hydratk/hydratk-ext-hobbit.
 
   .. code-block:: bash
   
+     /doc - documentation
+       /hobbit.1 - manual page
      /etc - configuration file
        /hydratk     
          /conf.d
@@ -148,6 +150,8 @@ Author and email can be overwritten.
 
   .. code-block:: cfg
   
+     recursive-include doc *
+     recursive-include etc *
      include *.txt     
      
 * README.rst
@@ -175,6 +179,32 @@ Extension title and description can be overwritten.
      | but the final version is planned to be crossplatform and targeted also to the other popular systems 
      | including Windows and OSX and possibly other Python versions such as Jython and IronPython 
      
+* hobbit.1
+
+  .. code-block:: cfg
+  
+     .TH hobbit 1
+     .SH NAME
+     hobbit \- runs hobbit HydraTK extension
+     .SH SYNOPSIS
+     .B hobbit
+     [\fBoptions\fR]
+     .B command
+     .SH DESCRIPTION
+     \fBHobbit\fR extension is used to. 
+     .SH COMMANDS
+     \fBhobbit-test\fR - starts the Hobbit test command
+       \fIOptions:\fR
+         \fBhobbit-test-option\fR - test option
+     .SH GLOBAL OPTIONS
+     .SH FILES AND DIRECTORIES
+     Configuration file: /etc/hydratk/conf.d/hobbit.conf
+     .SH AUTHOR
+     Bilbo Baggins (bilbo@shire.com)
+     .SH INTERNET RESOURCES
+     .SH LICENSING
+     hydratk-ext-hobbit is distributed under BSD license. See the file "LICENSE.txt" in the source distribution for information.     
+     
 * requirements.txt
 
   .. code-block:: cfg
@@ -183,7 +213,7 @@ Extension title and description can be overwritten.
      
 * setup.cfg
 
-Wizard doesn't change thi file.
+Wizard doesn't change this file.
 
   .. code-block:: cfg
   
@@ -588,4 +618,4 @@ Test start command.
   
      $ htk hobbit-start
      
-     starting in mode: standard                                       
+     starting in mode: standard                                          

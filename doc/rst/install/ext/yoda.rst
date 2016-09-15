@@ -135,6 +135,7 @@ Check installed extensions
      Yoda: Yoda v0.2.0 (c) [2014 - 2016 Petr Czaderna <pc@hydratk.org>]
      
 Type command htk help and detailed info is displayed.
+Type man yoda to display manual page. 
 
   .. code-block:: bash
   

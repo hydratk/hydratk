@@ -20,13 +20,14 @@ Supported engines:
 * MySQL - module mysql_client
 * PostgreSQL - module postgresql_client
 * JDBC - module jdbc_client
+* MSSQL - module mssql_client
 
 Methods:
 
 * connect: connect to database file (SQLite) or database server (Oracle, MySQL, PostgreSQL, JDBC)  
 * disconnect: disconnect from database
 * exec_query: execute query, prepared statements with variable bindings are supported (use ? character)
-* call_proc: call procedure (has no return param) or function (has return param), supported for Oracle, MySQL
+* call_proc: call procedure (has no return param) or function (has return param), supported for Oracle, MySQL, PostgreSQL/MSSQL (procedure only)
 * commit: commit transaction
 * rollback: rollback transaction
 * close: stop JVM, supported for JDBC
@@ -89,6 +90,13 @@ Oracle client is not bundled with HydraTK and must be installed individually.
      
      # connect to database
      client.connect(host='localhost', port=49161, sid='XE', user='crm', passw='crm')   
+     
+     # select records from table
+     # returns bool, list of rows
+     res, rows = client.exec_query('SELECT * FROM CUSTOMER')
+     
+     for row in rows:
+         print row      
      
      # call function
      param_names = ['id', 'name', 'status', 'segment', 'birth_no', 'reg_no', 'tax_no', 'err']
@@ -158,9 +166,101 @@ After installation do following actions:
 MySQL
 ^^^^^
 
-MySQL client is similar to Oracle and no specific examples are shown here.
+  .. code-block:: python
+  
+     # import library
+     import hydratk.lib.network.dbi.client as db
+    
+     # initialize client
+     client = db.DBClient('mysql')  
+     
+     # connect to database
+     client.connect(host='localhost', port=3306, sid='mysql', user='root', passw='root')   
+       
+     # select records from table
+     # returns bool, list of rows
+     res, rows = client.exec_query('SELECT * FROM CUSTOMER')
+     
+     for row in rows:
+         print row         
+            
+     # call procedure
+     param_names = ['id', 'name', 'status', 'segment', 'birth_no', 'reg_no', 'tax_no', 'err']
+     input_values = {'id': id}
+     output_types = {'name': 'string', 'status': 'string', 'segment': 'int',
+                     'birth_no': 'string', 'reg_no': 'string', 'tax_no': 'string', 'err': 'string'}
+                     
+     # returns output param values dictionary                     
+     params = client.call_proc('read_customer', param_names, input_values, output_types, 'proc')
+     
+     # disconnect from database
+     # returns bool
+     client.disconnect() 
 
 PostgreSQL
 ^^^^^^^^^^   
 
-PostgreSQL client is similar to Oracle and no specific examples are shown here.  
+  .. code-block:: python
+  
+     # import library
+     import hydratk.lib.network.dbi.client as db
+    
+     # initialize client
+     client = db.DBClient('postgresql')  
+     
+     # connect to database
+     client.connect(host='localhost', port=5432, sid='postgre', user='root', passw='root')   
+          
+     # select records from table
+     # returns bool, list of rows
+     res, rows = client.exec_query('SELECT * FROM CUSTOMER')
+     
+     for row in rows:
+         print row            
+            
+     # call procedure
+     param_names = ['id', 'name', 'status', 'segment', 'birth_no', 'reg_no', 'tax_no', 'err']
+     input_values = {'id': id}
+     output_types = {'name': 'string', 'status': 'string', 'segment': 'int',
+                     'birth_no': 'string', 'reg_no': 'string', 'tax_no': 'string', 'err': 'string'}
+                     
+     # returns output param values dictionary                     
+     params = client.call_proc('read_customer', param_names, input_values, output_types)
+     
+     # disconnect from database
+     # returns bool
+     client.disconnect()  
+     
+MSSQL
+^^^^^ 
+
+  .. code-block:: python
+  
+     # import library
+     import hydratk.lib.network.dbi.client as db
+    
+     # initialize client
+     client = db.DBClient('mssql')  
+     
+     # connect to database
+     client.connect(host='10.0.0.1', port=1433, sid='test', user='root', passw='root')   
+          
+     # select records from table
+     # returns bool, list of rows
+     res, rows = client.exec_query('SELECT * FROM CUSTOMER')
+     
+     for row in rows:
+         print row            
+            
+     # call procedure
+     param_names = ['id', 'name', 'status', 'segment', 'birth_no', 'reg_no', 'tax_no', 'err']
+     input_values = {'id': id}
+     output_types = {'name': 'string', 'status': 'string', 'segment': 'int',
+                     'birth_no': 'string', 'reg_no': 'string', 'tax_no': 'string', 'err': 'string'}
+                     
+     # returns output param values dictionary                     
+     params = client.call_proc('read_customer', param_names, input_values, output_types)
+     
+     # disconnect from database
+     # returns bool
+     client.disconnect()       

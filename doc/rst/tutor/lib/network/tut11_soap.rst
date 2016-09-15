@@ -47,15 +47,16 @@ Examples
      # returns XML body        
      response = client.send_request('GetCitiesByCountry', body=body)
      
-     # load WSDL from filesystem, service uses basic HTTP authentication
+     # load WSDL from filesystem, service uses authentication Basic, NTLM, certificate
      # WSDL is stored on filesystem, real service endpoint is not specified in WSDL 
-     client.load_wsdl(path_to_wsdl, location='local', user='soap_user', passw='soap_passw', endpoint='soap_mu_url')
+     client.load_wsdl(path_to_wsdl, location='local', user='soap_user', passw='soap_passw', auth='Basic', endpoint='soap_mu_url')
+     client.load_wsdl(path_to_wsdl, location='local', user='soap_user', passw='soap_passw', auth='NTLM', endpoint='soap_mu_url')
+     client.load_wsdl(path_to_wsdl, location='local', cert='/home/lynus/cert.pem', endpoint='soap_mu_url')
+     client.load_wsdl(path_to_wsdl, location='local', cert=('/home/lynus/cert.pem', '/home/lynus/key.pem'), endpoint='soap_mu_url')
      
      # load WSDL from filesystem, service uses authentication via specific HTTP headers
      client.load_wsdl(path_to_wsdl, location='local', endpoint='soap_cm_url', 
                       headers = {'Username' : 'soap_user', 'Password' : 'soap_passw'}) 
                       
-     # load WSDL from filesystem, services uses NTLM authorization                      
-     from suds.transport.https import WindowsHttpAuthenticated        
-     ntlm = WindowsHttpAuthenticated(username='aaa', password='bbb')
-     client.load_wsdl(path_to_wsdl, location='local', endpoint='soap_url', transport=ntlm)  
+     # load WSDL using proxy
+     client.load_wsdl(url, proxies={'http': 'http://10.10.1.10:3128'})                      

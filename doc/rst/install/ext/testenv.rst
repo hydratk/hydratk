@@ -148,6 +148,7 @@ Check installed extensions
      TestEnv: TestEnv v0.2.0 (c) [2015-2016 Petr Rašek <bowman@hydratk.org>]
      
 Type command htk help and detailed info is displayed.
+Type man testenv to display manual page. 
 
   .. code-block:: bash
   

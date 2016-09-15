@@ -2,6 +2,7 @@
 
 from install.config import config as cfg
 import install.command as cmd
+from subprocess import call
 
 def run_post_install(argv):    
     
@@ -23,4 +24,8 @@ def copy_files():
 def set_access_rights():   
     
     for dir, right in cfg['rights'].items():
-        cmd.set_rights(dir, right)                                
+        cmd.set_rights(dir, right)  
+        
+def install_manpage():
+    
+    call('gzip -c doc/htk.1 > /usr/local/share/man/man1/htk.1', shell=True)                                      

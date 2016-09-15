@@ -20,15 +20,16 @@ lib_default_user_data      = {
                              'lib_license'  : 'BSD'                                                          
                              }
 
-lib_dir_struct             = [                             
-                            'hydratk-lib-{lib_name}/src/hydratk/lib/{lib_name}',                         
-                          ]
+lib_dir_struct             = [       
+                              'hydratk-lib-{lib_name}/doc',                      
+                              'hydratk-lib-{lib_name}/src/hydratk/lib/{lib_name}',                         
+                             ]
 
 lib_package_files          = [                            
-                            'hydratk-lib-{lib_name}/src/hydratk/__init__.py',
-                            'hydratk-lib-{lib_name}/src/hydratk/lib/__init__.py',
-                            'hydratk-lib-{lib_name}/src/hydratk/lib/{lib_name}/__init__.py',                            
-                          ]
+                              'hydratk-lib-{lib_name}/src/hydratk/__init__.py',
+                              'hydratk-lib-{lib_name}/src/hydratk/lib/__init__.py',
+                              'hydratk-lib-{lib_name}/src/hydratk/lib/{lib_name}/__init__.py',                            
+                             ]
 
 lib_package_init_content = '''
 from pkgutil import extend_path
@@ -174,7 +175,8 @@ OS and Python versions support
 lib_requirements = '''hydratk
 '''
 
-lib_manifest = '''include *.txt
+lib_manifest = '''recursive-include doc *
+include *.txt
 '''
 
 extension_default_user_data = {
@@ -188,6 +190,7 @@ extension_default_user_data = {
                              }
 
 extension_dir_struct    = [ 
+                            'hydratk-ext-{extension}/doc',
                             'hydratk-ext-{extension}/etc/hydratk/conf.d',
                             'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/translation/en',
                             'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/translation/cs',                         
@@ -208,6 +211,7 @@ __path__ = extend_path(__path__, __name__)
 '''
 
 extension_data_files   =  {
+                            'ext.manpage' : 'hydratk-ext-{extension}/doc/{extension}.1',
                             'ext.config' : 'hydratk-ext-{extension}/etc/hydratk/conf.d/hydratk-ext-{extension}.conf',
                             'ext.module' : 'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/{extension}.py',
                             'ext.bootstrapper' : 'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/bootstrapper.py',
@@ -353,7 +357,8 @@ if ('install' in argv or 'bdist_egg' in argv or 'bdist_wheel' in argv):
             
         call('cp {file} {dir}'.format(file=file, dir=dir), shell=True) 
         
-    call('chmod -R a+r /etc/hydratk', shell=True)       
+    call('chmod -R a+r /etc/hydratk', shell=True)    
+    call('gzip -c doc/{extension}.1 > /usr/local/share/man/man1/{extension}.1', shell=True)       
         
 '''
 
@@ -525,5 +530,30 @@ OS and Python versions support
 extension_requirements = '''hydratk
 '''
 
-extension_manifest = '''include *.txt
+extension_manifest = '''recursive-include doc *
+recursive-include etc *
+include *.txt
+'''
+
+extension_manpage = '''.TH {extension} 1
+.SH NAME
+{extension} \- runs {ext_ucname} HydraTK extension
+.SH SYNOPSIS
+.B {extension}
+[\\fBoptions\\fR]
+.B command
+.SH DESCRIPTION
+\\fB{ext_ucname}\\fR extension is used to. 
+.SH COMMANDS
+\\fB{extension}-test\\fR - starts the {ext_ucname} test command
+  \\fIOptions:\\fR
+    \\fB{extension}-test-option\\fR - test option
+.SH GLOBAL OPTIONS
+.SH FILES AND DIRECTORIES
+Configuration file: /etc/hydratk/conf.d/{extension}.conf
+.SH AUTHOR
+{author_name} ({author_email})
+.SH INTERNET RESOURCES
+.SH LICENSING
+hydratk-ext-{extension} is distributed under BSD license. See the file "LICENSE.txt" in the source distribution for information.    
 '''

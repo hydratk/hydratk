@@ -1,0 +1,69 @@
+.TH HTK 1
+.SH NAME
+htk \- runs HydraTK core
+.SH SYNOPSIS
+.B htk
+[\fBoptions\fR]
+.B command
+.SH DESCRIPTION
+\fBHydraTK\fR is fully extendable object oriented application toolkit.
+
+Main funcionalities are:
+  \fBExtensibility:\fR Develop own extensions/libraries from prepared skeletons.
+  \fBEvents hooks:\fR Intercept system events and react to them, it is also possible to configure own events.
+  \fBCommand line interface:\fR Configure own commands and options.
+  \fBParallel processing:\fR Execute you application in parallel mode.
+  \fBInternalization:\fR Configure application texts for multiple languages.
+  \fBServices:\fR
+  \fBSignals:\fR Intercept POSIX signals and react to them.
+  \fBMessaging:\fR
+  \fBDebugging:\fR Fill your application with unified debug messages, different levels and languages are supported.
+  \fBProfiling:\fR Execute application in profiler mode to discover performance bottlenecks.
+.SH COMMANDS
+\fBcreate-config-db\fR - creates configuration database
+  \fIOptions:\fR
+    \fB--config-db-file\fR - optional, database file path
+
+\fBcreate-ext-skel\fR - creates project skeleton for HydraTK extension development
+  \fIOptions:\fR
+    \fB--ext-skel-path <path>\fR - optional, directory path where HydraTK extension skeleton will be created
+
+\fBcreate-lib-skel\fR - creates project skeleton for HydraTK library development
+  \fIOptions:\fR
+    \fB--lib-skel-path <path>\fR - optional, directory path where HydraTK library skeleton will be created
+
+\fBhelp\fR - prints help
+
+\fBlist-extensions\fR - displays list of loaded extensions
+
+\fBstart\fR - starts the application
+
+\fBstop\fR - stops the application
+.SH GLOBAL OPTIONS
+\fB-c, --config <file>\fR - reads the alternate configuration file
+
+\fB-d, --debug <level>\fR - debug turned on with specified level > 0
+
+\fB-e, --debug-channel <channel number, ..>\fR - debug channel filter turned on
+
+\fB-f, --force\fR - enforces command
+
+\fB-i, --interactive\fR - turns on interactive mode
+
+\fB-l, --language <language>\fR - sets the text output language, the list of available languages is specified in the docs
+
+\fB-m, --run-mode <mode>\fR - sets the running mode, the list of available modes is specified in the docs
+.SH FILES AND DIRECTORIES
+Configuration file: /etc/hydratk/hydratk.conf
+
+Application directory: /var/local/hydratk
+.SH AUTHOR
+Petr Czaderna (pc@hydratk.org), HydraTK Team
+.SH INTERNET RESOURCES
+Main website: https://www.hydratk.org
+
+Documentation: https://www.hydratk.org/docs
+
+Downloads https://pypi.python.org/pypi/hydratk, https://github.com/hydratk/hydratk
+.SH LICENSING
+hydratk is distributed under BSD license. See the file "LICENSE.txt" in the source distribution for information.

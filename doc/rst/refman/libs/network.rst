@@ -19,6 +19,11 @@ dbi
 
 .. automodule:: hydratk.lib.network.dbi.jdbc_client
    :member-order: bysource
+  
+* mssql_client
+
+.. automodule:: hydratk.lib.network.dbi.mssql_client
+   :member-order: bysource    
    
 * mysql_client
 
@@ -125,6 +130,11 @@ jms
 .. automodule:: hydratk.lib.network.jms.jms_client
    :member-order: bysource
    
+* mqtt_client
+
+.. automodule:: hydratk.lib.network.jms.mqtt_client
+   :member-order: bysource   
+   
 * stomp_client
 
 .. automodule:: hydratk.lib.network.jms.stomp_client
@@ -164,11 +174,21 @@ rpc
 
 .. automodule:: hydratk.lib.network.rpc.client
    :member-order: bysource
+   
+* jsonrpc_client
+
+.. automodule:: hydratk.lib.network.rpc.jsonrpc_client
+   :member-order: bysource     
 
 * rmi_client
 
 .. automodule:: hydratk.lib.network.rpc.rmi_client
    :member-order: bysource
+   
+* xmlrpc_client
+
+.. automodule:: hydratk.lib.network.rpc.xmlrpc_client
+   :member-order: bysource   
 
 .. _refman_lib_network_soap:
 
@@ -199,6 +219,11 @@ term
 
 .. automodule:: hydratk.lib.network.term.ssh_client
    :member-order: bysource   
+   
+* telnet_client
+
+.. automodule:: hydratk.lib.network.term.telnet_client
+   :member-order: bysource     
    
 .. _refman_lib_bridge:
 

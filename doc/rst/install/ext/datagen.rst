@@ -136,6 +136,7 @@ Check installed extensions
      Datagen: Datagen v0.1.0 (c) [2016 Petr Rašek <bowman@hydratk.org>] 
      
 Type command htk help and detailed info is displayed.
+Type man datagen to display manual page. 
 
   .. code-block:: bash
   

@@ -15,6 +15,7 @@ proper TermClient object instance. Additional attributes are passed as args, kwa
 Supported protocols:
 
 * SSH: module ssh_client
+* Telnet: module telnet_client
 
 Methods:
 
@@ -35,11 +36,12 @@ SSH
      import hydratk.lib.network.term.client as term
     
      # initialize client
-     client = term.TermClient()
+     client = term.TermClient('SSH')
      
-     # connect to SSH server
+     # connect to SSH server using password, certificate
      # returns bool
-     client.connect(host='lxocrmgf401vm.cz', user='aaa', passw='bbb')   
+     client.connect(host='127.0.0.1', port=22, user='aaa', passw='bbb')
+     client.connect(host='127.0.0.1', port=22, user='aaa', cert='/home/lynus/key.pri')   
      
      # execute commands
      # returns bool, stdout lines or stderr lines
@@ -63,3 +65,28 @@ SSH
      # disconnect from server
      # returns bool
      client.disconnect() 
+     
+Telnet
+^^^^^^
+
+  .. code-block:: python
+  
+     # import library
+     import hydratk.lib.network.term.client as term
+    
+     # initialize client
+     client = term.TermClient('TELNET')
+     
+     # connect to Telnet server
+     # returns bool, lines
+     res, out = client.connect('freechess.org', 23)   
+     
+     # execute command
+     # returns bool, lines
+     res, out = client.exec_command('login')
+     res, out = client.exec_command('password')
+     res, out = client.exec_command('help')
+     
+     # disconnect from server
+     # returns bool
+     client.disconnect()      

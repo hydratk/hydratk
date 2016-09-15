@@ -15,7 +15,9 @@ proper RPCClient object instance. Additional attributes are passed as args, kwar
 
 Supported providers:
 
-* RMI: module rmi_client
+* Java RMI: module rmi_client
+* XML-RPC: module xmlrpc_client
+* JSON-RPC: module jsonrpc_client
 
 Methods:
 
@@ -46,3 +48,43 @@ RMI
      
      # stop JVM
      client.close()      
+     
+XML-RPC
+^^^^^^^
+
+  .. code-block:: python     
+  
+     # import library
+     from hydratk.lib.network.rpc.client import RPCClient
+     
+     # initialize client
+     client = RPCClient('xmlrpc')
+     
+     # initialize proxy
+     client.init_proxy('http://127.0.0.1:8000') 
+     
+     # call remote method
+     client.call_method('callRemote', 'xxx')
+     
+     # stop JVM
+     client.close()   
+     
+JSON-RPC
+^^^^^^^^
+
+  .. code-block:: python     
+  
+     # import library
+     from hydratk.lib.network.rpc.client import RPCClient
+     
+     # initialize client
+     client = RPCClient('jsonrpc')
+     
+     # initialize proxy
+     client.init_proxy('http://127.0.0.1:8000') 
+     
+     # call remote method
+     client.call_method('callRemote', 'xxx')
+     
+     # stop JVM
+     client.close()       

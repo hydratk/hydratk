@@ -1513,7 +1513,17 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 
                 ext_manifest_file = ("{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.manifest'])).format(extension=ext_name)                    
                 self.dmsg('htk_on_debug_info', "Creating extension manifest file %s" % ext_manifest_file, self.fromhere())                                                                        
-                file_put_contents(ext_manifest_file, template.extension_manifest)                
+                file_put_contents(ext_manifest_file, template.extension_manifest)   
+                
+                ext_manpage_file = ("{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.manpage'])).format(extension=ext_name)                       
+                self.dmsg('htk_on_debug_info', "Creating extension manual page %s" % ext_manpage_file, self.fromhere())  
+                ext_manpage_file_data = template.extension_manpage.format(
+                                                                           extension=ext_name,
+                                                                           ext_ucname=ext_ucname,
+                                                                           author_name=author_name,
+                                                                           author_email=author_email
+                                                                         )                                                                       
+                file_put_contents(ext_manpage_file, ext_manpage_file_data)                               
                 
                 result = True
                 

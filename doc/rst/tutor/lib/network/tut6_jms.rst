@@ -18,14 +18,15 @@ Supported protocols:
 * JMS: module jms_client
 * STOMP: module stomp_client
 * AMQP: module amqp_client
+* MQTT: module mqtt_client
 
 Methods:
 
 * connect: connect to JMS provider 
 * disconnect: disconnect from JMS provider 
-* send: send message to queue|topic
-* receive: receive message from queue
-* browse: browse queue
+* send: send message to queue|topic (MQTT supports topic only)
+* receive: receive message from queue (from topic for MQTT)
+* browse: browse queue, not supported for MQTT
 * close: stop JVM, supported for JMS
 
   .. note::
@@ -147,3 +148,30 @@ AMQP
      # disconnect from server
      # returns bool
      client.disconnect()
+     
+MQTT
+^^^^
+
+  .. code-block:: python
+  
+     # import library
+     import hydratk.lib.network.jms.client as jms    
+    
+     # initialize client
+     client = jms.JMSClient('MQTT')
+     
+     # connect to server     
+     # returns bool
+     client.connect('localhost', 1883, 'admin', 'password')
+     
+     # send message (only topic is supported)
+     # returns bool  
+     client.send('HydraTopic', 'xxx')
+     
+     # receive multiple messages
+     # messages are received asynchronously (must be sent to topic during wait timeout) 
+     messages = client.receive('HydraTopic', cnt=5) 
+     
+     # disconnect from server
+     # returns bool
+     client.disconnect()       

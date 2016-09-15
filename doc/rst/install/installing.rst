@@ -231,6 +231,7 @@ Type command htk and simple info is displayed.
      For list of the all available commands and options type /usr/local/bin/htk help
      
 Type command htk help and detailed info is displayed.
+Type man htk to display manual page. 
 
   .. code-block:: bash
   

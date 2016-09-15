@@ -101,8 +101,9 @@ SFTP
      # initialize client 
      client = ftp.FTPClient('sftp')
   
-     # connect to SFTP server
-     client.connect(host='lxocrmgf401vm.cz', user='aaa', passw='bbb')
+     # connect to SFTP server using password, certificate
+     client.connect(host='127.0.0.1', port=22, user='aaa', passw='bbb')
+     client.connect(host='127.0.0.1', port=22, user='aaa', cert='/home/lynus/key.pri')
      
      # change dicrector
      # returns bool

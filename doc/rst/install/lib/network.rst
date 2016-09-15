@@ -51,12 +51,14 @@ Several python modules are used.
 These modules will be installed automatically, if not installed yet.
 
 * cx_Oracle
-* httplib2
 * JPype1
+* jsonrpclib
 * lxml
 * MySQL-python
 * mysqlclient
+* paho-mqtt
 * paramiko
+* pymssql
 * psycopg2
 * pycurl
 * pyexcel
@@ -65,6 +67,8 @@ These modules will be installed automatically, if not installed yet.
 * python-ldap
 * python-ntlm
 * python-qpid-proton
+* requests
+* requests_ntlm
 * scapy
 * selenium
 * simplejson
@@ -72,17 +76,21 @@ These modules will be installed automatically, if not installed yet.
 * suds
 * tftpy
 
-Modules cx_Oracle, lxml, MySQL-python, paramiko, pdycopg2, pycurl, python-ldap, selenium require several 
+Modules cx_Oracle, lxml, MySQL-python, paramiko, pymssql, psycopg2, pycurl, python-ldap, selenium require several 
 libraries which will be installed via Linux package managers, if not installed yet.
+
+  .. note ::
+     
+     Installation for Python2.6 has some differences.
+     Module stompest is installed in version 2.1.6 (newer versions has no 2.6 support)
 
   .. note ::
   
      Installation for Python3 has some differences.
-     Module httplib2 is not installed from PyPi but from https://github.com/httplib2/httplib2.git@master#egg=httplib2
+     Module jsonrpclib-pelix is installed instead of jsonrpclib.
      Module mysqlclient is installed instead of MySQL-python.
      Module pyldap is installed instead of python-ldap.
      Module scapy-python3 is installed instead of scapy.
-     Module stompest is not installed thus STOMP client is not supported.
      Module suds-py3 is installed instead of suds.
      Module tftpy is not installed from PyPi but from https://github.com/ZuljinSBK/tftpy.git@master#egg=tftpy
 
@@ -105,6 +113,11 @@ paramiko
 
 * apt-get: libffi-dev, libssl-dev
 * yum: libffi-devel, openssl-devel
+
+pymssql
+
+* apt-get: freetds-dev
+8 yum: freetds, freetds-devel
 
 psycopg2
 

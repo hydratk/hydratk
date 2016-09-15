@@ -7,7 +7,7 @@ HydraTK is implemented in Python. Before you can install, you must fulfill basic
 
 * Any OS Unix - distributions Debian, Red Hat, etc. with apt-get or yum package manager
 * Python interpreter - versions 2.6.x, 2.7.x, 3.3.x, 3.4.x, 3.5.x
-* Python modules - setuptools, pip, wheel
+* Python modules - setuptools, pip, wheel (actual versions)
 
 .. note::
 

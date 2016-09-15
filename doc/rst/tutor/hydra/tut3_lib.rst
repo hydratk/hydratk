@@ -22,6 +22,7 @@ Skeleton is created in directory ~/hydratk/hydratk-lib-whiteforce.
 
   .. code-block:: bash
   
+     /doc - documentation
      /src - source code
        /hydratk
          /lib
@@ -133,6 +134,7 @@ Author and email can be overwritten.
 
   .. code-block:: cfg
   
+     recursive-include doc *
      include *.txt     
      
 * README.rst
@@ -168,7 +170,7 @@ Library title and description can be overwritten.
      
 * setup.cfg
 
-Wizard doesn't change thi file.
+Wizard doesn't change this file.
 
   .. code-block:: cfg
   
