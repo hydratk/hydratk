@@ -21,8 +21,11 @@ Supported engines:
 * PostgreSQL - module postgresql_client
 * JDBC - module jdbc_client
 * MSSQL - module mssql_client
+* Redis - module nosql.redis_client
+* MongoDB - module nosql.mongodb_client
+* Cassandra - module nosql.cassandra_client
 
-Methods:
+Methods for relational db:
 
 * connect: connect to database file (SQLite) or database server (Oracle, MySQL, PostgreSQL, JDBC)  
 * disconnect: disconnect from database
@@ -263,4 +266,130 @@ MSSQL
      
      # disconnect from database
      # returns bool
-     client.disconnect()       
+     client.disconnect()  
+     
+Redis
+^^^^^
+
+  .. code-block:: python
+  
+     # import library
+     import hydratk.lib.network.dbi.client as db
+     
+     # initialize client
+     client = db.DBClient('redis')
+     
+     # connect to database
+     client.connect(host='127.0.0.1', port=6379, db=0)
+     
+     # set key, returns bool
+     res = client.set(key, value)
+     
+     # get key, returns str
+     res = client.get(key, value)
+     
+     # check if key exists, returns bool
+     res = client.exists(key)
+     
+     # delete key, returns bool
+     res = client.delete(key)
+     
+     # execute command
+     # returns bool, output
+     res, output = client.exec_command('INCR key')    
+     
+MongoDB
+^^^^^^^
+
+  .. code-block:: python
+  
+     # import library
+     import hydratk.lib.network.dbi.client as db
+     
+     # initialize client
+     client = db.DBClient('mongodb')         
+     
+     # connect to database
+     client.connect(host='127.0.0.1', port=27017, db='test')   
+     
+     # insert record to database
+     # returns bool, id
+     doc = {"customer": {"name": "Charlie Bowman", "status": "active", "segment": 2,
+                         "payer": {"name": "Charlie Bowman", "status": "active"},
+                         "services": [{"id": 615, "status": "active"}, {"id": 619, "status": "suspend"}]}}
+     res, id = client.exec_command('insert', collection='test', document=doc)
+     
+     # find record
+     # returns bool, rows
+     res, rows = client.exec_command('find', collection='test', filter={'_id': id})
+     
+     # find records using complex filter
+     filter = {"$or": [{"customer.name": "Charlie Bowman"}, {"customer.name": "Vince Neil"}]}
+     res, rows = client.exec_command('find', collection='test', filter=filter)
+     
+     # aggregate records
+     # returns bool, rows
+     filter = [{"$match": {"customer.payer.status": "active"}},
+               {"$group": {"_id": "$customer.name", "count": {"$sum": 1}}}]
+     res, rows = c.exec_command('aggregate', 'test', filter=filter)     
+     
+     # update multiple records
+     # returns bool, modified count
+     doc, filter = {"$set": {"customer.name": "Vince Neil 2"}}, {"customer.name": "Vince Neil"}
+     res, count = client.exec_command('update', 'test', document=doc, filter=filter, single=False)
+     
+     # replace record
+     # returns bool, modified count
+     doc, filter = {"customer": {"name": "Vince Neil"}}, {"customer.name": "Vince Neil 2"}
+     res, count = client.exec_command('replace', 'test', doc, filter)
+     
+     # delete record
+     # returns bool, deleted count
+     res, count = client.exec_command('delete', 'test', filter={"customer.name": "Vince Neil"})
+     
+     # drop collection
+     # returns bool, None
+     res, out = client.exec_command('drop', collection='test')
+     
+     # disconnect from database
+     # returns bool
+     client.disconnect()        
+     
+Cassandra
+^^^^^^^^^
+
+  .. code-block:: python
+  
+     # import library
+     from hydratk.lib.network.dbi.client import DBClient
+     
+     # initialize client
+     client = DBClient('cassandra')
+     
+     # connect to database
+     # returns bool
+     client.connect(host='127.0.0.1', port=9042, key_space='test')
+     
+     # select records from table
+     # returns bool, list of rows
+     res, rows = client.exec_query('SELECT * FROM LOV_STATUS')
+     
+     for row in rows:
+         print row 
+     
+     # insert record to table
+     client.exec_query('INSERT INTO LOV_STATUS (id, title) VALUES (4, \'pokus\')')
+     
+     # delete record from table
+     client.exec_query('DELETE FROM LOV_STATUS WHERE id = 4;')
+     
+     # insert record using prepared statement with variable binding
+     client.exec_query('INSERT INTO LOV_STATUS (id, title) VALUES (?, ?)', [4, 'pokus 2'])
+     
+     # delete record using prepared statement with variable binding
+     client.exec_query('DELETE FROM LOV_STATUS WHERE id = ?', [4])
+     res, rows = client.exec_query('SELECT title FROM LOV_STATUS')
+     
+     # disconnect from database
+     # returns bool
+     client.disconnect()     

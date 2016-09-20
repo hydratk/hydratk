@@ -7,6 +7,7 @@ Network
 Network library provides clients/API for many network protocols and technologies.
 
 * Database: client for databases: SQLite, Oracle, MySQL, PostgreSQL, JDBC, MSSQL
+                       NoSQL: Redis, MongoDB, Cassandra
 * Email: client for protocols: SMTP, POP, IMAP
 * FTP: client for protocols: FTP/FTP, SFTP, TFTP
 * INET: client for protocols: IP, TCP, UDP

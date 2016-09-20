@@ -29,6 +29,7 @@ sys.path.append("/projects/src/hydratk-ext-yoda/src")
 
 autodoc_default_flags = ['members', 'private-members', 'special-members']
 autodoc_mock_imports = [
+                        'cassandra.cluster', 'cassandra.auth', 'cassandra.protocol',
                         'cx_Oracle', 
                         'jpype', 
                         'jsonrpclib', 'jsonrpclib.jsonrpc', 
@@ -43,6 +44,7 @@ autodoc_mock_imports = [
                         'pymssql',
                         'pytz',
                         'pyx.messaging', 'pyx.system.utils', 
+                        'redis',
                         'requests', 'requests.exceptions', 'requests.auth', 'requests_ntlm',
                         'scapy.all', 'scapy.error', 
                         'selenium', 'selenium.common.exceptions', 'selenium.webdriver.support.ui', 'selenium.webdriver.common.utils', 

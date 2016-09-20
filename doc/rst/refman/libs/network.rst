@@ -43,7 +43,25 @@ dbi
 * sqlite_client
 
 .. automodule:: hydratk.lib.network.dbi.sqlite_client
-   :member-order: bysource          
+   :member-order: bysource   
+   
+nosql
+^^^^^   
+   
+* cassandra_client
+
+.. automodule:: hydratk.lib.network.dbi.nosql.cassandra_client
+   :member-order: bysource       
+   
+* mongodb_client
+
+.. automodule:: hydratk.lib.network.dbi.nosql.mongodb_client
+   :member-order: bysource      
+   
+* redis_client
+
+.. automodule:: hydratk.lib.network.dbi.nosql.redis_client
+   :member-order: bysource            
 
 .. _refman_lib_network_email:
 
