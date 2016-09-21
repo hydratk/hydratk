@@ -11,5 +11,3 @@ This section will guide through HydraTK installation process.
 
    install/requirements
    install/installing
-   install/extensions
-   install/libraries

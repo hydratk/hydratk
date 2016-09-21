@@ -9,7 +9,3 @@ This section provides tutorials for HydraTK extensions.
    :maxdepth: 1
 
    ext/benchmark/benchmark
-   ext/datagen/datagen
-   ext/testenv/testenv
-   ext/trackapps/trackapps
-   ext/yoda/yoda

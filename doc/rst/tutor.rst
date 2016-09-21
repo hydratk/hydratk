@@ -12,4 +12,3 @@ If you want to try HydraTK, some extension or library, you should start with the
 
    tutor/hydratk
    tutor/extensions
-   tutor/libraries

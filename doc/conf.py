@@ -18,41 +18,16 @@ import sphinx_rtd_theme
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #sys.path.insert(0, os.path.abspath('.'))
-sys.path.append("/projects/src/hydratk/src")
-sys.path.append("/projects/src/hydratk-lib-network/src")
-sys.path.append("/projects/src/hydratk-ext-datagen/src")
-sys.path.append("/projects/src/hydratk-ext-testenv/src")
-sys.path.append("/projects/src/hydratk-ext-trackapps/src")
-sys.path.append("/projects/src/hydratk-ext-yoda/src")
+sys.path.append('../src')
 
 # -- General configuration -----------------------------------------------------
 
 autodoc_default_flags = ['members', 'private-members', 'special-members']
 autodoc_mock_imports = [
-                        'cassandra.cluster', 'cassandra.auth', 'cassandra.protocol',
-                        'cx_Oracle', 
-                        'jpype', 
-                        'jsonrpclib', 'jsonrpclib.jsonrpc', 
-                        'ldap', 'ldap.modlist', 
-                        'lxml', 'lxml.etree', 
-                        'MySQLdb',
-                        'paho.mqtt', 'paho.mqtt.client',
-                        'paramiko', 'paramiko.exception', 'paramiko.ssh_exception', 
-                        'proton', 'proton.utils', 'proton.reactor', 
-                        'psycopg2', 'psycopg2.extras', 
-                        'pycurl', 
-                        'pymssql',
-                        'pytz',
-                        'pyx.messaging', 'pyx.system.utils', 
-                        'redis',
-                        'requests', 'requests.exceptions', 'requests.auth', 'requests_ntlm',
-                        'scapy.all', 'scapy.error', 
-                        'selenium', 'selenium.common.exceptions', 'selenium.webdriver.support.ui', 'selenium.webdriver.common.utils', 
-                        'simplejson', 'simplejson.scanner',
-                        'stompest', 'stompest.config', 'stompest.sync', 'stompest.protocol', 'stompest.error', 
-                        'suds', 'suds.cache', 'suds.client', 'suds.transport', 
-                        'tftpy', 
-                        'web'
+                        'setproctitle',                        
+                        'xtermcolor',
+                        'yaml', 
+                        'zmq'
                         ]
 
 # If your documentation needs a minimal Sphinx version, state it here.
