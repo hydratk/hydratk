@@ -60,11 +60,6 @@ cycles
 data
 ^^^^
 
-* randgen
-
-.. automodule:: hydratk.lib.data.randgen
-   :member-order: bysource
-
 .. _refman_hydra_lib_data_share:
 
 * share
