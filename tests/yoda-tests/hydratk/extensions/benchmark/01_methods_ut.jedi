@@ -79,8 +79,7 @@ Test-Scenario-3:
   Version: 0.1
   
   Pre-Req: |
-    from hydratk.core.masterhead import MasterHead
-    import sys
+    from yodalib.hydratk.core.testhead import TestHead
   
   Test-Case-1:
     Id: tc_01
@@ -93,9 +92,10 @@ Test-Scenario-3:
       Desc: Set details
       
       Test : |
-        mh = MasterHead.get_head()
-        ext = mh._ext['BenchMark']  
-        sys.argv.insert(-1, '--details')
+        th = TestHead()
+        ext = th._ext['BenchMark']
+        th.pre_replace()
+        TestHead.options = {'details': True}
         ext._setup_params()
         res = ext._print_details
       
@@ -109,7 +109,7 @@ Test-Scenario-3:
       Desc: Set no details
       
       Test : |
-        del sys.argv[-2]
+        TestHead.options['details'] = False
         ext._setup_params()
         res = ext._print_details
       

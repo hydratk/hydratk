@@ -13,9 +13,12 @@ config = {
                   'install_manpage'
                  ],
           
-  'modules' : [                           
-               'pyyaml>=3.11',                              
-               'xtermcolor>=1.3'                                                  
+  'modules' : [ 
+               'setproctitle>=1.1.9',
+               'pyzmq>=14.7.0',
+               'psutil>=3.1.1',                          
+               'pyyaml>=3.11',                                             
+               'xtermcolor>=1.3'                                              
               ],
           
   'files' : {

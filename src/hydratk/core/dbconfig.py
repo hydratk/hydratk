@@ -66,7 +66,7 @@ class DBConfig():
                 cur.execute(query)
             cfg = self.cfg2db(base_config)            
             cur.execute("begin")
-            for itm in cfg:                
+            for itm in cfg:               
                 cur.execute("insert into config values(?,?,?,?,?)",(itm['grp'], itm['obj'], itm['key'], itm['value'], 1))
             self._conn.commit()
             result = True

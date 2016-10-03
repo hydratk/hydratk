@@ -26,8 +26,9 @@ Test-Scenario-1:
         mh.match_short_option(opt, True, 'force', True, group)        
       
       Validate: |
-        res = this.test_result = cmdopt.short_opt[group]
-        assert (res == opt), 'shortopt[{0}] = {1}'.format(group, opt)
+        res = cmdopt.short_opt[group]
+        this.test_result = str(res)
+        assert (res == [opt]), 'shortopt[{0}] = {1}'.format(group, opt)
         opt_exp = {'d_opt':'force', 'has_value':True, 'allow_multiple':True}
         res = cmdopt.opt[group]['-'+opt]
         this.test_result = str(res)
@@ -43,7 +44,8 @@ Test-Scenario-1:
         mh.match_short_option(opt, False, None, False, group)
       
       Validate: |      
-        res = this.test_result = cmdopt.short_opt[group]
+        res = cmdopt.short_opt[group]
+        this.test_result = str(res)
         assert (opt in res), 'shortopt[{0}] contains {1}'.format(group, opt)  
         opt_exp = {'d_opt':None, 'has_value':False, 'allow_multiple':False}
         res = cmdopt.opt[group]['-'+opt]
@@ -73,8 +75,9 @@ Test-Scenario-1:
         mh.match_short_option(opt, False, None, False, group2)
       
       Validate: |        
-        res = this.test_result = cmdopt.short_opt[group2]
-        assert (res == opt), 'shortopt[{0}] = {1}'.format(group2, opt)
+        res = cmdopt.short_opt[group2]
+        this.test_result = str(res)
+        assert (res == [opt]), 'shortopt[{0}] = {1}'.format(group2, opt)
         res = cmdopt.opt[group2]['-'+opt]
         this.test_result = str(res)
         assert (res == opt_exp), 'opt = {0}'.format(opt_exp)    
@@ -102,14 +105,15 @@ Test-Scenario-1:
         mh.match_short_option(opt, True, 'force', True, group)        
       
       Validate: |
-        res = this.test_result = cmdopt.short_opt[group[0]]
-        assert (res == opt), 'shortopt[{0}] = {1}'.format(group[0], opt)
+        res = cmdopt.short_opt[group[0]]
+        this.test_result = str(res)
+        assert (res == [opt]), 'shortopt[{0}] = {1}'.format(group[0], opt)
         opt_exp = {'d_opt':'force', 'has_value':True, 'allow_multiple':True}
         res = cmdopt.opt[group[0]]['-'+opt]
         this.test_result = str(res)
         assert (res == opt_exp), 'opt = {0}'.format(opt_exp)
         res = this.test_result = cmdopt.short_opt[group[1]]
-        assert (res == opt), 'shortopt[{0}] = {1}'.format(group[1], opt)
+        assert (res == [opt]), 'shortopt[{0}] = {1}'.format(group[1], opt)
         res = cmdopt.opt[group[1]]['-'+opt]
         this.test_result = str(res)
         assert (res == opt_exp), 'opt = {0}'.format(opt_exp)        
@@ -124,7 +128,8 @@ Test-Scenario-1:
         mh.match_short_option(opt, False, None, False, group)
       
       Validate: |        
-        res = this.test_result = cmdopt.short_opt[group[0]]
+        res = cmdopt.short_opt[group[0]]
+        this.test_result = str(res)
         assert (opt in res), 'shortopt[{0}] contains {1}'.format(group[0], opt)        
         opt_exp = {'d_opt':None, 'has_value':False, 'allow_multiple':False}
         res = cmdopt.opt[group[0]]['-'+opt]
@@ -379,8 +384,9 @@ Test-Scenario-3:
         mh.match_cli_option(opt, True, 'force', True, group)        
       
       Validate: |
-        res = this.test_result = cmdopt.short_opt[group]
-        assert (res == opt[0]), 'shortopt[{0}] = {1}'.format(group, opt[0])
+        res = cmdopt.short_opt[group]
+        this.test_result = str(res)
+        assert (res == [opt[0]]), 'shortopt[{0}] = {1}'.format(group, opt[0])
         res = cmdopt.long_opt[group]
         this.test_result = str(res)
         assert (opt[1] in res), 'longopt[{0}] contains {1}'.format(group, opt[1])        
@@ -402,7 +408,8 @@ Test-Scenario-3:
         mh.match_cli_option(opt, False, None, False, group)
       
       Validate: |      
-        res = this.test_result = cmdopt.short_opt[group]
+        res = cmdopt.short_opt[group]
+        this.test_result = str(res)
         assert (opt[0] in res), 'shortopt[{0}] contains {1}'.format(group, opt[0])  
         res = cmdopt.long_opt[group]
         this.test_result = str(res)
@@ -561,7 +568,7 @@ Test-Scenario-5:
       Validate: |
         res = [cmdopt.short_opt[profile], cmdopt.long_opt[profile], cmdopt.opt[profile]]
         this.test_result = str(res)
-        assert (res[0] == ''), 'shortopt contains {0}'.format(profile)   
+        assert (res[0] == []), 'shortopt contains {0}'.format(profile)   
         assert (res[1] == []), 'longopt contains {0}'.format(profile)  
         assert (res[2] == {}), 'opt contains {0}'.format(profile)        
     
@@ -576,7 +583,7 @@ Test-Scenario-5:
       Validate: |
         res = [cmdopt.short_opt[profile], cmdopt.long_opt[profile], cmdopt.opt[profile]]
         this.test_result = str(res)
-        assert (res[0] == ''), 'shortopt contains {0}'.format(profile)   
+        assert (res[0] == []), 'shortopt contains {0}'.format(profile)   
         assert (res[1] == []), 'longopt contains {0}'.format(profile)  
         assert (res[2] == {}), 'opt contains {0}'.format(profile)   
         

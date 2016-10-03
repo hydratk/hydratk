@@ -18,6 +18,6 @@ README for HydraTK
 OS and Python versions support
 ==============================
 
-| Currently the Linux platform with CPython 2.6, 2.7, 3.x is supported, 
+| Currently the Linux platform with CPython 2.6, 2.7, 3.3, 3.4, 3.5, PyPy 2.7 is supported, 
 | but the final version is planned to be crossplatform and targeted also to the other popular systems 
 | including Windows and OSX and possibly other Python versions such as Jython and IronPython

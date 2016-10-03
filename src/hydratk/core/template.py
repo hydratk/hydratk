@@ -83,6 +83,7 @@ classifiers = [
     "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: Implementation",
     "Programming Language :: Python :: Implementation :: CPython", 
+    "Programming Language :: Python :: Implementation :: PyPy",
     "Topic :: Software Development :: Libraries :: Application Frameworks",
     "Topic :: Utilities"
 ]
@@ -167,7 +168,7 @@ README for {lib_ucname}
 OS and Python versions support
 ==============================
 
-| Currently the Linux platform with CPython 2.6, 2.7, 3.x is supported, 
+| Currently the Linux platform with CPython 2.6, 2.7, 3.3, 3.4, 3.5, PyPY 2.7 is supported, 
 | but the final version is planned to be crossplatform and targeted also to the other popular systems 
 | including Windows and OSX and possibly other Python versions such as Jython and IronPython
 '''

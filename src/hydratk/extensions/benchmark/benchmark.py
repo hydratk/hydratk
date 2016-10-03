@@ -60,7 +60,7 @@ class Extension(extension.Extension):
         self._mh.match_cli_command('start-benchmark')        
         hook = [{'command' : 'start-benchmark', 'callback' : self.start_bench_fc }]        
         self._mh.register_command_hook(hook)
-        self._mh.match_long_option('details')
+        self._mh.match_long_option('details', False, 'details')
     
     def _setup_params(self):
         """Method sets parameters
@@ -74,8 +74,8 @@ class Extension(extension.Extension):
            void    
                 
         """  
-                
-        self._print_details = True if CommandlineTool.get_input_option('--details') == True else False
+        
+        self._print_details = True if CommandlineTool.get_input_option('details') == True else False
             
     def start_bench_fc(self):
         """Method handles command start-benchmark
