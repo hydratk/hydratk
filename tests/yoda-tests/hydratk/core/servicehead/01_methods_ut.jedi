@@ -1,0 +1,37 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/core/servicehead/01_methods_ut.jedi
+  Name: ts_srv_async_cb
+  Desc: Test method srv_async_cb
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import init_process, kill_process, init_sender, CB 
+    from time import sleep
+    
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_srv_async_cb
+    Desc: Send service async message
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_send
+      Desc: Send
+      
+      Test: |
+        th = TestHead()
+        proc = init_process('receive_mq')
+        sleep(3)         
+        init_sender(th)
+        sleep(3)               
+        cb = CB('test', {}, {})    
+        res = th.srv_async_cb(cb)
+        
+      Validate: |
+        assert True
+        sleep(3)  
+        proc.terminate()
+        th.clear_cmd()         

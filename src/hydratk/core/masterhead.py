@@ -676,7 +676,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
            void
         
         """
-                
+              
         self._start_app()
     
     def stop_pp_app(self, force_exit=False):
@@ -1009,10 +1009,10 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         event_id = oevent.id()                
         before_event_id = '^{0}'.format(event_id.replace('^', ''))         
         after_event_id = '${0}'.format(event_id.replace('$', ''))     
-              
+             
         # fire event before requested event is processed if enabled          
-        if event_id not in (before_event_id, after_event_id) and event_id in self._event_hooks and oevent.skip_before_hook is False:            
-            hbh_ev = event.Event(before_event_id, oevent)                                     
+        if event_id not in (before_event_id, after_event_id) and event_id in self._event_hooks and oevent.skip_before_hook is False:           
+            hbh_ev = event.Event(before_event_id, oevent)                                  
             hbh_ev.set_data('target_event', oevent)                           
             self.fire_event(hbh_ev)
             if hbh_ev.will_run_default() == False:
@@ -1879,25 +1879,25 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
            error: TypeError
            
         """
-                      
+        
         if fn_id is None or fn_id == '':
             raise TypeError("fn_id: expected nonempty string")        
         res_cb = None
         if result_callback is not None:
-            if callable(result_callback) and type(result_callback).__name__ in ('function','instancemethod'):
+            if callable(result_callback) and type(result_callback).__name__ in ('function','instancemethod','method'):
                 res_cb = {}
                 res_cb['class_inst'] = None
                 res_cb['func']   = result_callback
-                if type(result_callback).__name__ == 'instancemethod':
+                if type(result_callback).__name__ in ('instancemethod','method'):
                     res_cb['class_inst'] = result_callback.im_self
                     res_cb['func']   = result_callback.im_func
             else:
                 raise TypeError('result_callback: expected callable function or instancemethod')
-        if callable(callback) and type(callback).__name__ in ('function','instancemethod'):
+        if callable(callback) and type(callback).__name__ in ('function','instancemethod','method'):
             cb               = {}
             cb['class_inst'] = None
             cb['func']   = callback
-            if type(callback).__name__ == 'instancemethod':                
+            if type(callback).__name__ in ('instancemethod','method'):                
                 cb['class_inst'] = callback.im_self
                 cb['func']   = callback.im_func
             self._async_fn_ex[fn_id] = {

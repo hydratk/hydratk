@@ -12,7 +12,16 @@ class ServiceHead(object):
     """Class ServiceHead
     """
     
-    def srv_async_cb(self, cbo): #CallBack object
+    def srv_async_cb(self, cbo):
+        """Method sends callback message
+        
+        Args:     
+           cbo (obj): callback object
+           
+        Returns:
+           void
+                
+        """         
         
         msg = {
                'type' : "async_fn",

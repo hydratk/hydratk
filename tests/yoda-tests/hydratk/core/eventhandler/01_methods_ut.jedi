@@ -339,4 +339,129 @@ Test-Scenario-8:
       
       Validate: |  
         this.test_result = res
-        assert ('17' in res), '_ec_sig_handler contains {0}'.format(17)                                                         
+        assert ('17' in res), '_ec_sig_handler contains {0}'.format(17)       
+        
+Test-Scenario-9:
+  Id: ts_09
+  Path: hydratk/core/eventhandler/01_methods_ut.jedi
+  Name: ts_ec_check_co_privmsg
+  Desc: Test method _ec_check_co_privmsg
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import init_process, kill_process
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_ec_check_co_privmsg
+    Desc: Check observer private message
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_check
+      Desc: Check message        
+      
+      Test: |
+        th = TestHead()
+        p = init_process('send_pipe', 'PONG')
+        th._thr.append(p)   
+        th._ec_check_co_privmsg(None)      
+      
+      Validate: |
+        assert True
+        kill_process(p)
+        th.clear_cmd()   
+        
+Test-Scenario-10:
+  Id: ts_10
+  Path: hydratk/core/eventhandler/01_methods_ut.jedi
+  Name: ts_ec_check_cw_privmsg
+  Desc: Test method _ec_check_cw_privmsg
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import init_process, kill_process, send_pipe
+    from time import sleep
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_ec_check_cw_privmsg
+    Desc: Check worker private message
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_check
+      Desc: Check message
+      
+      Test: |
+        th = TestHead()
+        p = init_process('recv_pipe', th=th)
+        send_pipe(p.pipe_conn, 'PING')
+        sleep(1)
+      
+      Validate: |        
+        assert True
+        kill_process(p)    
+        th.clear_cmd()     
+        
+Test-Scenario-11:
+  Id: ts_11
+  Path: hydratk/core/eventhandler/01_methods_ut.jedi
+  Name: ts_ec_stop_app
+  Desc: Test method _ec_stop_app
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from multiprocessing import Process
+    from psutil import process_iter
+    from time import sleep
+    from os import path
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_ec_stop_app
+    Desc: Stop application
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_stop
+      Desc: Stop
+      
+      Test: |
+        th = TestHead()
+        th.register_event_hook('htk_on_sigterm', th._ec_stop_app)
+        proc = Process(target=th._start_app)    
+        proc.start()            
+      
+      Validate: |
+        sleep(1)
+        pid = th._config['Core']['Service']['pid_file']        
+        this.test_result = res = path.exists(pid)
+        assert (res), 'PID file created'        
+        pr = []
+        for p in process_iter():
+            if ('hydratk' in p.name()):
+                pr.append(p.name())
+        this.test_result = str(pr)
+        exp = ['hydratk/c_obser', 'hydratk/core:1', 'hydratk/core:2', 'hydratk/core:3', 'hydratk/core:4']            
+        assert (pr == exp), '1 observer and 4 workers created'
+        
+        sleep(5)    
+        proc.terminate()
+        proc.join()
+        this.test_result = res = path.exists(pid)
+        assert (not res), 'PID file deleted'  
+        
+        pr = []
+        for p in process_iter():
+            if ('hydratk' in p.name()):
+                pr.append(p.name())
+        this.test_result = str(pr)   
+        assert (len(pr) == 0), 'processes terminated'
+        th.clear_cmd()                                                                            

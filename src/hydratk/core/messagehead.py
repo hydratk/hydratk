@@ -142,23 +142,22 @@ class MessageHead(object):
             self.run_fn_hook(fn_id, msg)
         else:
             dmsg("Invalid message {0}".format(str(msg)),3)
-        
-            
+                    
     def _send_msg(self, msg):
         """Method sends message
         
         Args:
-           msg (obj): message
+           msg (dict): message
         
         Returns:            
            bool: True
            
         """
-                
+               
         current = multiprocessing.current_process()
         mq      = current.msgq
         msg     = base64.b64encode(pickle.dumps(msg))     
-        try:            
+        try:          
             mq.send(msg) #zmq.NOBLOCK 
         except zmq.ZMQError as exc:
             ex_type, ex, tb = sys.exc_info()
@@ -173,8 +172,8 @@ class MessageHead(object):
         return True
                 
     def _msg_async_fn_ex(self, msg):
-        return True
-        print("Processing async_fn_ext")
+        print("Processing async_fn_ext")        
+        return True        
         
     def _msg_async_ext_fn(self, msg):      
         """Method runs funcionality hook callback from message
@@ -207,8 +206,7 @@ class MessageHead(object):
                 ex_type, ex, tb = sys.exc_info()
                 print(ex_type)
                 print(ex)
-                traceback.print_tb(tb) 
-            
+                traceback.print_tb(tb)             
                         
             ticket_content['completed'] = True
             ticket_content['error_no']  = cb_error_no

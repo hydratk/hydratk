@@ -85,4 +85,670 @@ Test-Scenario-3:
       Validate: |
         this.test_result = res
         exp_action = mh._command
-        assert (res == exp_action), 'get_command_action = {0}'.format(exp_action)        
+        assert (res == exp_action), 'get_command_action = {0}'.format(exp_action)
+        
+Test-Scenario-4:
+  Id: ts_04
+  Path: hydratk/core/masterhead/04_methods_ut.jedi
+  Name: ts_start_pp_app
+  Desc: Test method start_pp_app
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from multiprocessing import Process
+    from psutil import process_iter
+    from time import sleep
+    from os import path
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_start_pp_app
+    Desc: Start application
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_start
+      Desc: Start
+      
+      Test: |
+        th = TestHead()
+        th.register_event_hook('htk_on_sigterm', th._ec_stop_app)
+        proc = Process(target=th.start_pp_app)    
+        proc.start()            
+      
+      Validate: |
+        sleep(1)
+        pid = th._config['Core']['Service']['pid_file']        
+        this.test_result = res = path.exists(pid)
+        assert (res), 'PID file created'        
+        pr = []
+        for p in process_iter():
+            if ('hydratk' in p.name()):
+                pr.append(p.name())
+        this.test_result = str(pr)
+        exp = ['hydratk/c_obser', 'hydratk/core:1', 'hydratk/core:2', 'hydratk/core:3', 'hydratk/core:4']            
+        assert (pr == exp), '1 observer and 4 workers created'
+        
+        sleep(5)    
+        proc.terminate()
+        proc.join()
+        this.test_result = res = path.exists(pid)
+        assert (not res), 'PID file deleted'  
+        
+        pr = []
+        for p in process_iter():
+            if ('hydratk' in p.name()):
+                pr.append(p.name())
+        this.test_result = str(pr)   
+        assert (len(pr) == 0), 'processes terminated'
+        th.clear_cmd()        
+        
+Test-Scenario-5:
+  Id: ts_05
+  Path: hydratk/core/masterhead/04_methods_ut.jedi
+  Name: ts_fire_event
+  Desc: Test method fire_event
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    from hydratk.core.event import Event
+    from yodahelpers.hydratk.core.events import events, reg_ev_hook
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_fire_event
+    Desc: Fire event
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_not_reg
+      Desc: Not registered event
+      
+      Test: |
+        mh = MasterHead.get_head()
+        id = 'test'
+        event = Event(id)
+        res = mh.fire_event(event)
+        
+      Validate: |             
+        this.test_result = res
+        assert (res == 0), 'fire_event = 0'
+        this.test_result = str(events)
+        assert (len(events) == 0), 'no event fired' 
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_single_hook
+      Desc: Event with single hook
+      
+      Test: |
+        reg_ev_hook(mh, id)
+        res = mh.fire_event(event)
+        
+      Validate: |    
+        this.test_result = res
+        assert (res == 1), 'fire_event = 1'  
+        this.test_result = str(events)
+        assert (len(events) == 1), '1 event fired'
+        del events[0]         
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_mult_hook
+      Desc: Event with multiple hooks
+      
+      Test: |
+        reg_ev_hook(mh, id)
+        res = mh.fire_event(event)
+      
+      Validate: |    
+        this.test_result = res
+        assert (res == 2), 'fire_event = 2' 
+        this.test_result = str(events)
+        assert (len(events) == 2), '2 events fired'
+        del events[0]  
+        del events[0]               
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_pre_hook
+      Desc: Event with pre hook
+      
+      Test: |
+        reg_ev_hook(mh, '^'+id)     
+        res = mh.fire_event(event)
+        
+      Validate: |        
+        this.test_result = res
+        assert (res == 2), 'fire_event = 2' 
+        this.test_result = str(events)
+        assert (len(events) == 3), '3 events fired'       
+        del events[0]
+        del events[0]
+        del events[0] 
+        del mh._event_hooks['^'+id]            
+        
+    Test-Condition-5: 
+      Id: tco_05
+      Name: tco_post_hook
+      Desc: Event with post hook
+      
+      Test: |
+        reg_ev_hook(mh, '$'+id)          
+        res = mh.fire_event(event)
+        
+      Validate: |        
+        this.test_result = res
+        assert (res == 2), 'fire_event = 2'
+        this.test_result = str(events)
+        assert (len(events) == 3), '3 events fired'                 
+        del events[0]
+        del events[0]
+        del events[0]      
+        del mh._event_hooks['$'+id]
+        del mh._event_hooks[id]                 
+        
+Test-Scenario-6:
+  Id: ts_06
+  Path: hydratk/core/masterhead/04_methods_ut.jedi
+  Name: ts_init_core_threads
+  Desc: Test method init_core_threads
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from psutil import process_iter
+    from time import sleep
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_init_core_threads
+    Desc: Initialize worker threads
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_init
+      Desc: Initialize
+      
+      Test: |
+        th = TestHead()
+        th._init_message_router()
+        th._core_msg_service_id = 'test'
+        th._msg_router.register_service('test', 1, {'address': '/tmp/hydratk/core.socket'})        
+        th.init_core_threads()       
+      
+      Validate: |         
+        sleep(1)
+        pr = []
+        for p in process_iter():
+            if ('hydratk' in p.name()):
+                pr.append(p.name())
+        this.test_result = str(pr)
+        exp = ['hydratk/core:1', 'hydratk/core:2', 'hydratk/core:3', 'hydratk/core:4']            
+        assert (pr == exp), ' workers created'
+                
+        sleep(5)
+        th.destroy_core_threads() 
+        pr = []
+        for p in process_iter():
+            if ('hydratk' in p.name()):
+                pr.append(p.name())
+        this.test_result = str(pr)   
+        assert (len(pr) == 0), 'processes terminated'
+        th.clear_cmd()        
+        
+Test-Scenario-7:
+  Id: ts_07
+  Path: hydratk/core/masterhead/04_methods_ut.jedi
+  Name: ts_add_core_thread
+  Desc: Test method add_core_thread
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from psutil import process_iter
+    from time import sleep
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_add_core_thread
+    Desc: Add worker thread
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_add
+      Desc: Add
+      
+      Test: |
+        th = TestHead()
+        th._init_message_router()
+        th._core_msg_service_id = 'test2'
+        th._msg_router.register_service('test2', 1, {'address': '/tmp/hydratk/core.socket'})
+        th.init_core_threads()        
+        th.add_core_thread(5)       
+      
+      Validate: |         
+        sleep(1)
+        pr = []
+        for p in process_iter():
+            if ('hydratk' in p.name()):
+                pr.append(p.name())
+        this.test_result = str(pr)
+        exp = ['hydratk/core:1', 'hydratk/core:2', 'hydratk/core:3', 'hydratk/core:4', 'hydratk/core:5']            
+        assert (pr == exp), ' workers created'
+                
+        sleep(5)
+        th.destroy_core_threads() 
+        pr = []
+        for p in process_iter():
+            if ('hydratk' in p.name()):
+                pr.append(p.name())
+        this.test_result = str(pr)   
+        assert (len(pr) == 0), 'processes terminated'
+        th.clear_cmd()      
+        
+Test-Scenario-8:
+  Id: ts_08
+  Path: hydratk/core/masterhead/04_methods_ut.jedi
+  Name: ts_get_thrid
+  Desc: Test method get_thrid
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_get_thrid
+    Desc: Get thread id
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_get
+      Desc: Get
+      
+      Test: |
+        mh = MasterHead.get_head()
+        res = mh.get_thrid()
+                                
+      Validate: |
+        this.test_result = res
+        assert (res == '0'), 'get_thrid = 0'
+        
+Test-Scenario-9:
+  Id: ts_09
+  Path: hydratk/core/masterhead/04_methods_ut.jedi
+  Name: ts_create_lib_skel
+  Desc: Test method create_lib_skel
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    from os import path, system
+    from os.path import expanduser    
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_create_lib_skel
+    Desc: Create library skeleton
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_create
+      Desc: Create
+      
+      Test: |
+        mh = MasterHead.get_head()
+        mh.create_lib_skel()
+        def_path, lib = '{0}/hydratk/'.format(expanduser('~')), 'hydratk-lib-whiteforce'
+        dir = def_path+lib
+        res = path.exists(dir)
+      
+      Validate: | 
+        this.test_result = res
+        assert (res), 'directory {0} created'.format(dir)
+        
+        paths = ['/doc', '/src/hydratk/__init__.py', '/src/hydratk/lib/__init__.py', '/src/hydratk/lib/whiteforce/__init__.py',
+                 '/src/hydratk/lib/whiteforce/whiteforce.py', '/setup.py', '/setup.cfg', '/README.rst', '/LICENSE.txt', 
+                 '/requirements.txt', '/MANIFEST.in']
+        for i in paths:
+            this.test_result = res = path.exists(dir+i)
+            assert (res), '{0} created'.format(i)
+        
+        system('rm -fR {0}'.format(def_path))
+        
+Test-Scenario-10:
+  Id: ts_10
+  Path: hydratk/core/masterhead/04_methods_ut.jedi
+  Name: ts_create_ext_skel
+  Desc: Test method create_ext_skel
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    from os import path, system
+    from os.path import expanduser    
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_create_ext_skel
+    Desc: Create extension skeleton
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_create
+      Desc: Create
+      
+      Test: |
+        mh = MasterHead.get_head()
+        mh.create_ext_skel()
+        def_path, ext = '{0}/hydratk/'.format(expanduser('~')), 'hydratk-ext-hobbit'
+        dir = def_path+ext
+        res = path.exists(dir)
+      
+      Validate: | 
+        this.test_result = res
+        assert (res), 'directory {0} created'.format(dir)
+        
+        paths = ['/doc/hobbit.1', '/etc/hydratk/conf.d/hydratk-ext-hobbit.conf', '/src/hydratk/__init__.py', '/src/hydratk/extensions/__init__.py', 
+                 '/src/hydratk/extensions/hobbit/__init__.py', '/src/hydratk/extensions/hobbit/hobbit.py', '/src/hydratk/extensions/hobbit/bootstrapper.py',
+                 '/src/hydratk/extensions/hobbit/translation/__init__.py', '/src/hydratk/extensions/hobbit/translation/en/__init__.py',
+                 '/src/hydratk/extensions/hobbit/translation/en/help.py', '/src/hydratk/extensions/hobbit/translation/en/messages.py',
+                 '/src/hydratk/extensions/hobbit/translation/cs/__init__.py', '/src/hydratk/extensions/hobbit/translation/cs/help.py', 
+                 '/src/hydratk/extensions/hobbit/translation/cs/messages.py', '/setup.py', '/setup.cfg', '/README.rst', '/LICENSE.txt', 
+                 '/requirements.txt', '/MANIFEST.in']
+        for i in paths:
+            this.test_result = res = path.exists(dir+i)
+            assert (res), '{0} created'.format(i)
+        
+        system('rm -fR {0}'.format(def_path))    
+        
+Test-Scenario-11:
+  Id: ts_11
+  Path: hydratk/core/masterhead/04_methods_ut.jedi
+  Name: ts_get_ext
+  Desc: Test method get_ext
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead 
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_get_ext
+    Desc: Get extension
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_get
+      Desc: Get
+      
+      Test: |
+        mh = MasterHead.get_head()
+        ext = mh.get_ext('Yoda')
+        res = ext.__class__.__name__
+      
+      Validate: |           
+        this.test_result = res
+        exp = 'Extension'
+        assert (res == exp), 'get_ext = {0}'.format(exp)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid
+      Desc: Invalid extensions, raises IndexError
+      
+      Test: |
+        try:
+            mh.get_ext('xxx')
+            ex = False
+        except IndexError:
+            ex = True
+      
+      Validate: |           
+        this.test_result = ex
+        assert (ex), 'get_ext raises IndexError'
+        assert (res == exp), 'get_ext = {0}'.format(exp)
+        
+Test-Scenario-12:
+  Id: ts_12
+  Path: hydratk/core/masterhead/04_methods_ut.jedi
+  Name: ts_register_service
+  Desc: Test method register_service
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import loop
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_register_service
+    Desc: Register service
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_register
+      Desc: Register service       
+      
+      Test: |
+        th = TestHead()
+        srv = 'test'
+        res = th.register_service(srv, 'test', loop)
+      
+      Validate: |
+        this.test_result = res
+        assert (res), 'register_service = True'
+        this.test_result = res = th._app_service[0].service_name
+        assert (res == srv), 'service {0} registered'.format(srv)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_registered
+      Desc: Already registered service, raises SystemError
+      
+      Test: |
+        try:
+            th.register_service(srv, 'test', loop)
+            ex = False
+        except SystemError:
+            ex = True
+      
+      Validate: |    
+        this.test_result = ex
+        assert (ex), 'register_service raises SystemError'
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_missing_desc
+      Desc: Missing description, raises ValueError
+      
+      Test: |
+        try:
+            th.register_service('test2', '', loop)
+            ex = False
+        except ValueError:
+            ex = True
+      
+      Validate: |    
+        this.test_result = ex
+        assert (ex), 'register_service raises ValueError'  
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_invalid_cb
+      Desc: Invalid callback, raises ValueError
+      
+      Test: |
+        try:
+            th.register_service('test2', 'test', 'loop')
+            ex = False
+        except ValueError:
+            ex = True
+      
+      Validate: |    
+        this.test_result = ex
+        assert (ex), 'register_service raises ValueError' 
+        del th._app_service[0]                          
+        th.clear_cmd()
+        
+Test-Scenario-13:
+  Id: ts_13
+  Path: hydratk/core/masterhead/04_methods_ut.jedi
+  Name: ts_service_registered
+  Desc: Test method service_registered
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import loop
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_service_registered
+    Desc: Check if service is registered
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_not_registered
+      Desc: Service not registered       
+      
+      Test: |
+        th = TestHead()
+        srv = 'test'
+        res = th.service_registered(srv)
+      
+      Validate: |
+        this.test_result = res
+        assert (not res), 'service_registered = False'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_registered
+      Desc: Service registered       
+      
+      Test: |
+        th.register_service(srv, 'test', loop)
+        res = th.service_registered(srv)
+      
+      Validate: |
+        this.test_result = res
+        assert (res), 'service_registered = True'
+        del th._app_service[0]
+        th.clear_cmd()
+        
+Test-Scenario-14:
+  Id: ts_14
+  Path: hydratk/core/masterhead/04_methods_ut.jedi
+  Name: ts_start_service
+  Desc: Test method start_service
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import loop
+    from psutil import process_iter
+    from time import sleep   
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_start_service
+    Desc: Start service
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_start
+      Desc: Start       
+      
+      Test: |
+        th = TestHead()
+        srv = 'tst'
+        th.register_service(srv, 'test', loop)
+        res = th.start_service(srv)
+      
+      Validate: |
+        this.test_result = res
+        assert (res), 'start_service = True'
+        sleep(5)
+        
+        pr = []
+        for p in process_iter():
+            if ('hydratk' in p.name()):
+                pr.append(p.name())
+        this.test_result = str(pr)
+        exp = ['hydratk/srv:'+srv]            
+        assert (pr == exp), 'service process created' 
+            
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_started
+      Desc: Already started 
+                  
+      Test: |
+        res = th.start_service(srv)
+      
+      Validate: |                  
+        this.test_result = res
+        assert (not res), 'start_service = False'             
+        th.stop_services()
+        sleep(10)
+        pr = []
+        for p in process_iter():
+            if ('hydratk' in p.name()):
+                pr.append(p.status())
+        this.test_result = str(pr)  
+        exp = ['zombie']       
+        assert (pr == exp), 'service process terminated'         
+        del th._app_service[0]
+        th.clear_cmd()
+        
+Test-Scenario-15:
+  Id: ts_15
+  Path: hydratk/core/masterhead/04_methods_ut.jedi
+  Name: ts_send_msg
+  Desc: Test method _send_msg
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import init_process, kill_process, init_sender 
+    from time import sleep
+    
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_send_msg
+    Desc: Send message
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_send
+      Desc: Send
+      
+      Test: |
+        th = TestHead()
+        proc = init_process('receive_mq')
+        sleep(3)         
+        init_sender(th)
+        sleep(3)               
+        res = th.send_msg({'test': 'test'})
+
+      Validate: |
+        this.test_result = res
+        assert (res), 'send_msg = True'
+        sleep(3)
+        proc.terminate()
+        th.clear_cmd()          

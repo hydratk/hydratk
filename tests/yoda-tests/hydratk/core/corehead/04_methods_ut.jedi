@@ -1,0 +1,770 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/core/corehead/04_methods_ut.jedi
+  Name: ts_init_message_router
+  Desc: Test method _init_message_router
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_init_router
+    Desc: Initialize message router
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_init
+      Desc: Initialize
+      
+      Test: |
+        th = TestHead()
+        th._init_message_router()
+        res = th._msg_router.__class__.__name__
+      
+      Validate: |
+        this.test_result = res
+        exp = 'MessageRouter'
+        assert (res == exp), 'message router = {0}'.format(res)
+        th.clear_cmd()
+
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/core/corehead/04_methods_ut.jedi
+  Name: ts_c_observer
+  Desc: Test method _c_observer
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from multiprocessing import Process
+    from psutil import process_iter
+    from time import sleep
+    from os import path
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_c_observer
+    Desc: Observer process
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_run
+      Desc: Run observer process
+      
+      Test: |
+        th = TestHead()
+        th.register_event_hook('htk_on_sigterm', th._ec_stop_app)
+        th._init_message_router() 
+        proc = Process(target=th._c_observer)    
+        proc.start()            
+      
+      Validate: |
+        sleep(1)
+        pid = th._config['Core']['Service']['pid_file']        
+        this.test_result = res = path.exists(pid)
+        assert (res), 'PID file created'        
+        pr = []
+        for p in process_iter():
+            if ('hydratk' in p.name()):
+                pr.append(p.name())
+        this.test_result = str(pr)
+        exp = ['hydratk/c_obser', 'hydratk/core:1', 'hydratk/core:2', 'hydratk/core:3', 'hydratk/core:4']            
+        assert (pr == exp), '1 observer and 4 workers created'
+        
+        sleep(5)    
+        proc.terminate()
+        proc.join()
+        this.test_result = res = path.exists(pid)
+        assert (not res), 'PID file deleted'  
+        
+        pr = []
+        for p in process_iter():
+            if ('hydratk' in p.name()):
+                pr.append(p.name())
+        this.test_result = str(pr)   
+        assert (len(pr) == 0), 'processes terminated'
+        th.clear_cmd()
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/core/corehead/04_methods_ut.jedi
+  Name: ts_c_worker
+  Desc: Test method _c_worker
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from multiprocessing import Process, Pipe, Value
+    from psutil import process_iter
+    from time import sleep, time
+    from os import system
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_c_worker
+    Desc: Worker process
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_run
+      Desc: Run worker process
+      
+      Test: |
+        th = TestHead()
+        th._init_message_router()                      
+        th._core_msg_service_id = 'test'
+        th._msg_router.register_service('test', 1, {'address': '/tmp/hydratk/core.socket'})
+        parent_conn, child_conn = Pipe()           
+        proc = Process(target=th._c_worker, args=(66, Value('i', 3), Value('i', 0), child_conn, Value('d', time())))          
+        proc.start()         
+      
+      Validate: |
+        sleep(1)
+        pr = []
+        for p in process_iter():
+            if ('hydratk' in p.name()):
+                pr.append(p.name())
+        this.test_result = str(pr)
+        exp = ['hydratk/core:66']    
+        assert (pr == exp), 'worker created'
+                         
+        sleep(5)
+        system('kill -9 {0}'.format(proc.pid))
+        proc.join()          
+        th.clear_cmd()   
+        
+Test-Scenario-4:
+  Id: ts_04
+  Path: hydratk/core/corehead/04_methods_ut.jedi
+  Name: ts_check_cw_activity
+  Desc: Test method _check_cw_activity
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import init_process, kill_process
+    from time import time
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_check_cw_activity
+    Desc: Check worker activity
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_future
+      Desc: Check in future
+      
+      Test: |
+        th = TestHead()
+        p = init_process()
+        th._thr.append(p)  
+        p.next_check_time = time()+10     
+        th._check_cw_activity()
+        res = p.response_alert_level
+      
+      Validate: |         
+        this.test_result = res
+        assert (res == 0), 'alert_level = 0'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_past
+      Desc: Check in past
+      
+      Test: |
+        p.next_check_time = time()-10       
+        th._check_cw_activity()
+        res = p.response_alert_level
+      
+      Validate: |         
+        this.test_result = res
+        assert (res == 1), 'alert_level = 1'        
+        kill_process(p)
+        th.clear_cmd()
+        
+Test-Scenario-5:
+  Id: ts_05
+  Path: hydratk/core/corehead/04_methods_ut.jedi
+  Name: ts_check_co_privmsg
+  Desc: Test method _check_co_privmsg
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import init_process, kill_process
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_check_co_privmsg
+    Desc: Check observer private message
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_check
+      Desc: Check message        
+      
+      Test: |
+        th = TestHead()
+        p = init_process('send_pipe', 'PONG')
+        th._thr.append(p)   
+        th._check_co_privmsg()      
+      
+      Validate: |
+        assert True
+        kill_process(p)
+        th.clear_cmd()
+        
+Test-Scenario-6:
+  Id: ts_06
+  Path: hydratk/core/corehead/04_methods_ut.jedi
+  Name: ts_check_dopoll
+  Desc: Test method _dopoll
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import init_process, kill_process
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_dopoll
+    Desc: Polling
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_no_msg
+      Desc: No message
+      
+      Test: |
+        th = TestHead()
+        p = init_process('loop')
+        res = th._dopoll(p.pipe_conn)
+      
+      Validate: |           
+        this.test_result = res
+        assert (not res), '_dopoll is empty'
+        kill_process(p)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_msg
+      Desc: Get message
+      
+      Test: |
+        p = init_process('send_pipe')
+        res = th._dopoll(p.pipe_conn)
+      
+      Validate: |           
+        this.test_result = res
+        assert (res == 0), '_dopoll is not empty'
+        kill_process(p)      
+        th.clear_cmd()
+        
+Test-Scenario-7:
+  Id: ts_07
+  Path: hydratk/core/corehead/04_methods_ut.jedi
+  Name: ts_check_cw_privmsg
+  Desc: Test method _check_cw_privmsg
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import init_process, kill_process, send_pipe
+    from time import sleep
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_check_cw_privmsg
+    Desc: Check worker private message
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_check
+      Desc: Check message
+      
+      Test: |
+        th = TestHead()
+        p = init_process('recv_pipe', th=th)
+        send_pipe(p.pipe_conn, 'PING')
+        sleep(1)
+      
+      Validate: |        
+        assert True
+        kill_process(p)    
+        th.clear_cmd()
+        
+Test-Scenario-8:
+  Id: ts_08
+  Path: hydratk/core/corehead/04_methods_ut.jedi
+  Name: ts_send_ping
+  Desc: Test method _send_ping
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import init_process, kill_process
+    from time import sleep
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_send_ping
+    Desc: Send PING message
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_send
+      Desc: Send message
+      
+      Test: |
+        th = TestHead()
+        p = init_process('send_pipe', 'PING')
+        sleep(1)
+        res = p.pipe_conn.recv()
+      
+      Validate: |     
+        this.test_result = str(res)
+        assert (res['command'] == 10), 'message command = PING'
+        kill_process(p)   
+        th.clear_cmd()
+        
+Test-Scenario-9:
+  Id: ts_09
+  Path: hydratk/core/corehead/04_methods_ut.jedi
+  Name: ts_response_ping
+  Desc: Test method _response_ping
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import init_process, kill_process
+    from time import sleep
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_response_ping
+    Desc: Send PONG message
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_send
+      Desc: Send message
+      
+      Test: |
+        th = TestHead()
+        p = init_process('send_pipe', 'PONG')
+        sleep(1)
+        res = p.pipe_conn.recv()
+      
+      Validate: |     
+        this.test_result = str(res)
+        assert (res['command'] == 11), 'message command = PONG'
+        kill_process(p)   
+        th.clear_cmd()     
+        
+Test-Scenario-10:
+  Id: ts_10
+  Path: hydratk/core/corehead/04_methods_ut.jedi
+  Name: ts_process_cw_msg
+  Desc: Test method _process_cw_msg
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import init_process, kill_process
+    from time import sleep, time
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_process_cw_msg
+    Desc: Process worker message
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_process
+      Desc: Process message
+      
+      Test: |
+        th = TestHead()
+        p = init_process('loop')
+        p.response_alert_level = 1
+        sleep(1)
+        msg = {'zone': 'Core', 'type': 2, 'command': 11, 'time': time()}
+        th._process_cw_msg(msg, p)
+        res = p.response_alert_level
+      
+      Validate: |     
+        this.test_result = res
+        assert (res == 0), 'alert level = 0'
+        kill_process(p)   
+        th.clear_cmd()    
+        
+Test-Scenario-11:
+  Id: ts_11
+  Path: hydratk/core/corehead/04_methods_ut.jedi
+  Name: ts_process_privmsg
+  Desc: Test method _process_privmsg
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    from yodahelpers.hydratk.core.events import events, reg_ev_hook
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_process_privmsg
+    Desc: Process private message
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_process
+      Desc: Process message   
+      
+      Test: |
+        mh = MasterHead.get_head()
+        evs = 'h_privmsg_recv'
+        reg_ev_hook(mh, evs)
+        mh._process_privmsg({'zone': 'Core', 'type': 2, 'command': 10})
+        
+      Validate: |                   
+        this.test_result = res = events[0]._id
+        assert (res == evs), '_process_privmsg fires {0}'.format(evs)
+        del mh._event_hooks[evs]
+        del events[0]
+        
+Test-Scenario-12:
+  Id: ts_12
+  Path: hydratk/core/corehead/04_methods_ut.jedi
+  Name: ts_trigger_cmsg
+  Desc: Test method _trigger_cmsg
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    from yodahelpers.hydratk.core.events import events, reg_ev_hook
+    from base64 import b64encode
+    from pickle import dumps
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_trigger_cmsg
+    Desc: Trigger message
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_trigger
+      Desc: Trigger message   
+      
+      Test: |
+        mh = MasterHead.get_head()
+        evs = 'htk_on_cmsg_recv'
+        reg_ev_hook(mh, evs)
+        msg = b64encode(dumps({'zone': 'Core', 'type': 2, 'command': 10}))
+        mh._trigger_cmsg(msg)
+        
+      Validate: |                   
+        this.test_result = res = events[0]._id
+        assert (res == evs), '_trigger_cmsg fires {0}'.format(evs)
+        del mh._event_hooks[evs]
+        del events[0]        
+        
+Test-Scenario-13:
+  Id: ts_13
+  Path: hydratk/core/corehead/04_methods_ut.jedi
+  Name: ts_load_extensions
+  Desc: Test method _load_extensions
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_load_extensions
+    Desc: Load extensions
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_load
+      Desc: Load
+      
+      Test: |
+        th = TestHead()
+        exp = sorted(th._ext.keys())
+        th._ext = {}
+        th.clear_cmd()
+        th._load_extensions()
+        res = sorted(th._ext.keys())
+      
+      Validate: |           
+        this.test_result = str(res)
+        assert (res == exp), 'extensions {0} loaded'.format(exp)
+        th.clear_cmd()
+        
+Test-Scenario-14:
+  Id: ts_14
+  Path: hydratk/core/corehead/04_methods_ut.jedi
+  Name: ts_import_global_messages
+  Desc: Test method _import_global_messages
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_import_global_messages
+    Desc: Import messages
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_import
+      Desc: Import
+      
+      Test: |
+        th = TestHead()
+        exp = [th._trn._messages, th._trn._help_mod]
+        th._trn._messages, th._trn._help_mod = {}, {}
+        th._import_global_messages()
+        res = [th._trn._messages, th._trn._help_mod]
+      
+      Validate: |  
+        this.test_result = str(res)
+        assert (res == exp), 'messages and help imported'
+        th.clear_cmd()
+        
+Test-Scenario-15:
+  Id: ts_15
+  Path: hydratk/core/corehead/04_methods_ut.jedi
+  Name: ts_runlevel_extensions
+  Desc: Test method _runlevel_extensions
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_runlevel_extensions
+    Desc: Runlevel extensions
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_run
+      Desc: Run
+      
+      Test: |
+        th = TestHead()
+        th._ext = {}
+        th.clear_cmd()        
+        res = th._runlevel_extensions()
+      
+      Validate: |       
+        this.test_result = res
+        assert (res), '_runlevel_extensions = True'
+        th.clear_cmd()
+        
+Test-Scenario-16:
+  Id: ts_16
+  Path: hydratk/core/corehead/04_methods_ut.jedi
+  Name: ts_runlevel_appl
+  Desc: Test method _runlevel_appl
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_runlevel_appl
+    Desc: Runlevel application
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_run
+      Desc: Run
+      
+      Test: |
+        th = TestHead()       
+        res = th._runlevel_appl()
+      
+      Validate: |       
+        this.test_result = res
+        assert (res), '_runlevel_appl = True'
+        th.clear_cmd() 
+        
+Test-Scenario-17:
+  Id: ts_17
+  Path: hydratk/core/corehead/04_methods_ut.jedi
+  Name: ts_sig_retriever
+  Desc: Test method _sig_retriever
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    from yodahelpers.hydratk.core.events import events, reg_ev_hook
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_sig_retriever
+    Desc: Retrieve signal
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_signal
+      Desc: Known signal   
+      
+      Test: |
+        mh = MasterHead.get_head()
+        evs = ['htk_on_signal', 'htk_on_sigalarm']
+        reg_ev_hook(mh, evs[0])
+        reg_ev_hook(mh, evs[1])
+        mh._sig_retriever(14, None)
+        
+      Validate: |                   
+        res = [events[0]._id, events[1]._id]
+        this.test_result = str(res)
+        assert (res == evs), '_sig_retriever fires {0}'.format(evs)
+        del mh._event_hooks[evs[1]]
+        del events[0]   
+        del events[0]        
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid
+      Desc: Unknown signal   
+      
+      Test: |
+        mh._sig_retriever(66, None)
+        
+      Validate: |                   
+        this.test_result = res = events[0]._id
+        assert (res == evs[0]), '_sig_retriever fires {0}'.format(evs[0])
+        del mh._event_hooks[evs[0]]
+        del events[0]             
+        
+Test-Scenario-18:
+  Id: ts_18
+  Path: hydratk/core/corehead/04_methods_ut.jedi
+  Name: ts_start_app
+  Desc: Test method _start_app
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from multiprocessing import Process
+    from psutil import process_iter
+    from time import sleep
+    from os import path
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_start_app
+    Desc: Start application
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_start
+      Desc: Start
+      
+      Test: |
+        th = TestHead()
+        th.register_event_hook('htk_on_sigterm', th._ec_stop_app)
+        proc = Process(target=th._start_app)    
+        proc.start()            
+      
+      Validate: |
+        sleep(1)
+        pid = th._config['Core']['Service']['pid_file']        
+        this.test_result = res = path.exists(pid)
+        assert (res), 'PID file created'        
+        pr = []
+        for p in process_iter():
+            if ('hydratk' in p.name()):
+                pr.append(p.name())
+        this.test_result = str(pr)
+        exp = ['hydratk/c_obser', 'hydratk/core:1', 'hydratk/core:2', 'hydratk/core:3', 'hydratk/core:4']            
+        assert (pr == exp), '1 observer and 4 workers created'
+        
+        sleep(5)    
+        proc.terminate()
+        proc.join()
+        this.test_result = res = path.exists(pid)
+        assert (not res), 'PID file deleted'  
+        
+        pr = []
+        for p in process_iter():
+            if ('hydratk' in p.name()):
+                pr.append(p.name())
+        this.test_result = str(pr)   
+        assert (len(pr) == 0), 'processes terminated'
+        th.clear_cmd()          
+
+Test-Scenario-19:
+  Id: ts_19
+  Path: hydratk/core/corehead/04_methods_ut.jedi
+  Name: ts_check_core_msg_queue
+  Desc: Test method _check_core_msg_queue
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import init_process, kill_process, init_receiver  
+    from time import sleep
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_check_core_msg_queue
+    Desc: Check message queue
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_not_empty
+      Desc: Queue not empty
+      
+      Test: |
+        th = TestHead()
+        init_receiver()
+        sleep(3)
+        proc = init_process('send_mq', th=th)
+        sleep(3)        
+        res = th._check_core_msg_queue()
+        
+      Validate: |
+        this.test_result = res
+        assert (not res), '_check_core_msg = False'   
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_empty
+      Desc: Queue empty
+      
+      Test: |
+        res = th._check_core_msg_queue()
+      
+      Validate: |  
+        this.test_result = res
+        assert (res), '_check_core_msg = True'       
+        proc.terminate()
+        th.clear_cmd()

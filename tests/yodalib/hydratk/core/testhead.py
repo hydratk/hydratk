@@ -52,7 +52,7 @@ class TestHead(MasterHead):
         self._run_mode         = const.CORE_RUN_MODE_SINGLE_APP
     
         '''Function callbacks'''
-        self._fn_cb            = {}
+        self._fn_callback      = {}
     
         '''Parallel processing'''
         self._fn_cb            = {}
@@ -60,7 +60,7 @@ class TestHead(MasterHead):
         self._async_fn_tickets = {}
         self._cbm              = None  #Callback manager   
         self._async_fn         = {}
-        self._async_fn_ex      = None  
+        self._async_fn_ex      = {}  
         
     def clear_cmd(self):
         

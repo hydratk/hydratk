@@ -1,0 +1,946 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/lib/dynamic/callback/01_methods_ut.jedi
+  Name: ts_synccallbackhandler_cb_run
+  Desc: Test class SynCallBackHandler method cb_run
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from hydratk.lib.dynamic.callback import SyncCallBackHandler, CallBack
+    from yodahelpers.hydratk.core.parallel import dummy_method
+        
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_cb_run
+    Desc: Run callback
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_run
+      Desc: Run
+      
+      Test: |
+        cb = CallBack('test', dummy_method)
+        hd = SyncCallBackHandler()
+        hd.cb_run(cb)  
+      
+      Validate: |
+        assert True
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/lib/dynamic/callback/01_methods_ut.jedi
+  Name: ts_asynccallbackhandler_cb_run
+  Desc: Test class AsynCallBackHandler method cb_run
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from hydratk.lib.dynamic.callback import AsyncCallBackHandler, CallBack
+    from yodahelpers.hydratk.core.parallel import dummy_method
+        
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_cb_run
+    Desc: Run callback
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_run
+      Desc: Run
+      
+      Test: |
+        cb = CallBack('test', dummy_method)
+        hd = AsyncCallBackHandler()
+        hd.cb_run(cb)  
+      
+      Validate: |
+        assert True    
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/lib/dynamic/callback/01_methods_ut.jedi
+  Name: ts_callback_init
+  Desc: Test class CallBack method __init__
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from hydratk.lib.dynamic.callback import CallBack
+    from yodahelpers.hydratk.core.parallel import dummy_method, CB
+        
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_init
+    Desc: Initialize callback
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_str
+      Desc: String callback
+      
+      Test: |
+        fn, meth = 'test', 'dummy_method'
+        cb = CallBack(fn, meth)
+        res = cb.__class__.__name__
+      
+      Validate: |        
+        this.test_result = res
+        assert (res == 'CallBack'), '__init__ = CallBack'
+        this.test_result = res = cb._fn_id
+        assert (res == fn), '_fn_id = {0}'.format(fn)
+        this.test_result = res = cb._fn
+        assert (res == meth), '_fn = {0}'.format(meth)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_func
+      Desc: Function callback
+      
+      Test: |
+        cb = CallBack(fn, dummy_method)
+      
+      Validate: |        
+        this.test_result = res = str(cb._fn)
+        assert (meth in res), '_fn contains {0}'.format(meth)
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_tuple
+      Desc: Tuple callback
+      
+      Test: |
+        meth = 'loop'
+        cb = CallBack(fn, (CB(), meth))
+      
+      Validate: |                
+        this.test_result = res = str(cb._fn)
+        assert (res == meth), '_fn = {0}'.format(meth)    
+        this.test_result = res = str(cb._obj)
+        assert ('CB' in res), '_obj contains {0}'.format('CB')     
+        
+Test-Scenario-4:
+  Id: ts_04
+  Path: hydratk/lib/dynamic/callback/01_methods_ut.jedi
+  Name: ts_callback_props
+  Desc: Test class CallBack properties
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from hydratk.lib.dynamic.callback import CallBack
+    from yodahelpers.hydratk.core.parallel import dummy_method, CB
+        
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_getters
+    Desc: Getter methods
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_args
+      Desc: Getter args    
+      
+      Test: |
+        cb = CallBack('test', (CB(), 'loop'))
+        res = cb.args
+     
+      Validate: |    
+        this.test_result = str(res)
+        exp = cb._args
+        assert (res == exp), 'args = {0}'.format(exp)           
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_kwargs
+      Desc: Getter kwargs    
+      
+      Test: |
+        res = cb.kwargs
+     
+      Validate: |    
+        this.test_result = str(res)
+        exp = cb._kwargs
+        assert (res == exp), 'kwargs = {0}'.format(exp)  
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_fn_id
+      Desc: Getter fn_id    
+      
+      Test: |
+        res = cb.fn_id
+     
+      Validate: |    
+        this.test_result = str(res)
+        exp = cb._fn_id
+        assert (res == exp), 'fn_id = {0}'.format(exp)
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_fn
+      Desc: Getter fn    
+      
+      Test: |
+        res = cb.fn
+     
+      Validate: |    
+        this.test_result = str(res)
+        exp = cb._fn
+        assert (res == exp), 'fn = {0}'.format(exp) 
+        
+    Test-Condition-5: 
+      Id: tco_05
+      Name: tco_obj
+      Desc: Getter obj    
+      
+      Test: |
+        res = cb.obj
+     
+      Validate: |    
+        this.test_result = str(res)
+        exp = cb._obj
+        assert (res == exp), 'obj = {0}'.format(exp)  
+        
+    Test-Condition-6: 
+      Id: tco_06
+      Name: tco_shared
+      Desc: Getter shared    
+      
+      Test: |
+        res = cb.shared
+     
+      Validate: |    
+        this.test_result = str(res)
+        exp = cb._shared
+        assert (res == exp), 'shared = {0}'.format(exp)  
+        
+    Test-Condition-7: 
+      Id: tco_07
+      Name: tco_async
+      Desc: Getter async    
+      
+      Test: |
+        res = cb.async
+     
+      Validate: |    
+        this.test_result = str(res)
+        exp = cb._async
+        assert (res == exp), 'async = {0}'.format(exp) 
+        
+  Test-Case-2:
+    Id: tc_02
+    Name: tc_setters
+    Desc: Setter methods
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_args
+      Desc: Setter args    
+      
+      Test: |
+        cb = CallBack('test', (CB(), 'loop'))
+        obj = 'test'
+        cb.args = obj
+        res = cb.args
+     
+      Validate: |    
+        this.test_result = res      
+        assert (res == obj), 'args = {0}'.format(obj)        
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_kwargs
+      Desc: Setter kwargs    
+      
+      Test: |
+        cb.kwargs = obj
+        res = cb.kwargs
+     
+      Validate: |    
+        this.test_result = res      
+        assert (res == obj), 'kwargs = {0}'.format(obj)   
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_shared
+      Desc: Setter shared    
+      
+      Test: |
+        obj = True
+        cb.shared = obj
+        res = cb.shared
+     
+      Validate: |    
+        this.test_result = res        
+        assert (res == obj), 'shared = {0}'.format(obj)   
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_async
+      Desc: Setter async    
+      
+      Test: |        
+        cb.async = obj
+        res = cb.async
+     
+      Validate: |    
+        this.test_result = res        
+        assert (res == obj), 'async = {0}'.format(obj)  
+        
+Test-Scenario-5:
+  Id: ts_05
+  Path: hydratk/lib/dynamic/callback/01_methods_ut.jedi
+  Name: ts_callback_set_fn
+  Desc: Test class CallBack method set_fn
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from hydratk.lib.dynamic.callback import CallBack
+    from yodahelpers.hydratk.core.parallel import dummy_method
+        
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_set_fn
+    Desc: Set functionality
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_str
+      Desc: String fn
+      
+      Test: |
+        fn, meth = 'test', 'dummy_method'
+        cb = CallBack(fn, meth)
+        cb.set_fn(meth)
+      
+      Validate: |        
+        this.test_result = res = cb._fn
+        assert (res == meth), '_fn = {0}'.format(meth)          
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_func
+      Desc: Function fn
+      
+      Test: |
+        cb.set_fn(meth)
+      
+      Validate: |        
+        this.test_result = res = cb._fn
+        assert (meth in res), '_fn = contains {0}'.format(meth)     
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid
+      Desc: Invalid fn, raises TypeError
+      
+      Test: |
+        try:
+            cb.set_fn(1)
+            ex = False
+        except TypeError:
+            ex = True
+      
+      Validate: |    
+        this.test_result = ex
+        assert (ex), 'set_fn raises TypeError'      
+        
+Test-Scenario-6:
+  Id: ts_06
+  Path: hydratk/lib/dynamic/callback/01_methods_ut.jedi
+  Name: ts_callback_set_obj
+  Desc: Test class CallBack method set_obj
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from hydratk.lib.dynamic.callback import CallBack
+    from yodahelpers.hydratk.core.parallel import CB, dummy_method
+        
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_set_obj
+    Desc: Set obj
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_set
+      Desc: Set
+      
+      Test: |        
+        cb = CallBack('test', 'dummy_method')
+        cb.set_obj(CB())
+      
+      Validate: |        
+        this.test_result = res = str(cb._obj)
+        assert ('CB' in res), '_obj contains {0}'.format('CB') 
+        
+Test-Scenario-7:
+  Id: ts_07
+  Path: hydratk/lib/dynamic/callback/01_methods_ut.jedi
+  Name: ts_callbackprocessor_init
+  Desc: Test class CallBackProcessor method __init__
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from hydratk.lib.dynamic.callback import CallBackProcessor
+        
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_init
+    Desc: Initialize CallBackProcessor
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_init
+      Desc: Initialize
+      
+      Test: |        
+        cbm, cb_dict, cb_proxy = 'test1', 'test2', 'test3'
+        proc = CallBackProcessor(cbm, cb_dict, cb_proxy)
+        res = proc.__class__.__name__
+      
+      Validate: |        
+        this.test_result = res
+        assert (res == 'CallBackProcessor'), '__init__ = CallBackProcessor'
+        res = [proc._cbm, proc._cb_dict, proc._cb_dproxy]
+        this.test_result = str(res)
+        exp = [cbm, cb_dict, cb_proxy]
+        assert (res == exp), '_cbm, _cb_dict, _cb_dproxy = {0}'.format(exp)    
+        
+Test-Scenario-8:
+  Id: ts_08
+  Path: hydratk/lib/dynamic/callback/01_methods_ut.jedi
+  Name: ts_callbackprocessor_getattr
+  Desc: Test class CallBackProcessor method __getattr__
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from hydratk.lib.dynamic.callback import CallBackProcessor, CallBack
+    from yodahelpers.hydratk.core.parallel import dummy_method
+    from multiprocessing import Manager    
+        
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_get_attr
+    Desc: Get attribute
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_dict
+      Desc: Callback in dictionary
+      
+      Test: |        
+        fn = 'test'
+        cb = CallBack(fn, dummy_method)
+        cb_dict = {fn: cb}
+        proc = CallBackProcessor(None, cb_dict, {})  
+        proc.__getattr__(fn)
+        res = proc._current_cb.__class__.__name__
+        
+      Validate: |             
+        this.test_result = res
+        assert (res == 'CallBack'), '_current_cb = CallBack'    
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_proxy
+      Desc: Callback in proxy
+      
+      Test: |        
+        fn = 'test'
+        cb = CallBack(fn, dummy_method)
+        cb_proxy = Manager().dict()
+        cb_proxy[fn] = cb
+        proc = CallBackProcessor(None, {}, cb_proxy)  
+        proc.__getattr__(fn)
+        res = proc._current_cb.__class__.__name__
+        
+      Validate: |             
+        this.test_result = res
+        assert (res == 'CallBack'), '_current_cb = CallBack'
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid
+      Desc: Invalid fn, raises NameError
+      
+      Test: |
+        try:
+            proc.__getattr__('xxx')
+            ex = False
+        except NameError:
+            ex = True
+      
+      Validate: |    
+        this.test_result = ex
+        assert (ex), '__getattr__ raises NameError'                                                                                                          
+        
+Test-Scenario-9:
+  Id: ts_09
+  Path: hydratk/lib/dynamic/callback/01_methods_ut.jedi
+  Name: ts_callbackprocessor_wrap_fn
+  Desc: Test class CallBackProcessor method _wrap_fn
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from hydratk.lib.dynamic.callback import CallBackProcessor, CallBackManager, CallBack
+    from yodahelpers.hydratk.core.parallel import dummy_method
+    from multiprocessing import Manager    
+        
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_get_attr
+    Desc: Get attribute
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_dict
+      Desc: Callback in dictionary
+      
+      Test: |        
+        fn = 'test'
+        cb = CallBack(fn, dummy_method)
+        cb_dict = {fn: cb}
+        cbm = CallBackManager()
+        proc = CallBackProcessor(cbm, cb_dict, {})  
+        proc.__getattr__(fn) 
+        res = proc._wrap_fn()
+        
+      Validate: |
+        this.test_result = res
+        assert (res == None), '_wrap_fn = None'       
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_proxy
+      Desc: Callback in proxy
+      
+      Test: |        
+        cb_proxy = Manager().dict()
+        cb_proxy[fn] = cb        
+        proc = CallBackProcessor(cbm, {}, cb_proxy)  
+        proc.__getattr__(fn) 
+        res = proc._wrap_fn()
+        
+      Validate: |
+        this.test_result = res
+        assert (res == None), '_wrap_fn = None'   
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid
+      Desc: Invalid callback, raises Exception
+      
+      Test: |             
+        try:
+            proc = CallBackProcessor(cbm, {}, cb_proxy)  
+            proc._wrap_fn()
+            ex = False
+        except Exception:
+            ex = True 
+        
+      Validate: |
+        this.test_result = ex
+        assert (ex), '_wrap_fn raises Exception'
+        
+Test-Scenario-10:
+  Id: ts_10
+  Path: hydratk/lib/dynamic/callback/01_methods_ut.jedi
+  Name: ts_callbackmanager_init
+  Desc: Test class CallBackManager method __init__
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from hydratk.lib.dynamic.callback import CallBackManager, CallBack
+    from yodahelpers.hydratk.core.parallel import dummy_method
+    from multiprocessing import Manager    
+        
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_init
+    Desc: Initialize CallBackManager
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_dict
+      Desc: Callback dictionary      
+      
+      Test: |
+        fn = 'test'
+        cb = CallBack(fn, dummy_method)
+        cb_dict = {fn: cb}
+        cbm = CallBackManager(cb_dict=cb_dict)
+        res = cbm.__class__.__name__
+              
+      Validate: |                   
+        this.test_result = res
+        assert (res == 'CallBackManager'), '__init__ = CallBackManager'
+        res = cbm._cb_dict
+        this.test_result = str(res)
+        assert (res == cb_dict), '_cb_dict = {0}'.format(cb_dict)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_proxy
+      Desc: Callback proxy      
+      
+      Test: |
+        cb_proxy = Manager().dict()
+        cb_proxy[fn] = cb
+        cbm = CallBackManager(cb_dproxy=cb_proxy)
+        res = cbm.__class__.__name__
+              
+      Validate: |                   
+        this.test_result = res
+        assert (res == 'CallBackManager'), '__init__ = CallBackManager'
+        res = cbm._cb_dproxy
+        this.test_result = str(res)
+        assert (res == cb_proxy), '_cb_dproxy = {0}'.format(cb_proxy)  
+        
+Test-Scenario-11:
+  Id: ts_11
+  Path: hydratk/lib/dynamic/callback/01_methods_ut.jedi
+  Name: ts_callbackmanager_props
+  Desc: Test class CallBackManager properties
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from hydratk.lib.dynamic.callback import CallBackManager, CallBack
+    from yodahelpers.hydratk.core.parallel import dummy_method
+    from multiprocessing import Manager    
+        
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_getters
+    Desc: Getter methods
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_sync_handler
+      Desc: Getter sync_handler      
+      
+      Test: |
+        fn = 'test'
+        cb = CallBack(fn, dummy_method)
+        cb_dict = {fn: cb}
+        cb_proxy = Manager().dict()
+        cb_proxy[fn] = cb
+        cbm = CallBackManager(cb_dict, cb_proxy)  
+        res = cbm.sync_handler            
+        
+      Validate: |
+        this.test_result = str(res)
+        exp = cbm._sync_handler
+        assert (res == exp), 'sync_handler = {0}'.format(exp)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_async_handler
+      Desc: Getter async_handler      
+      
+      Test: |
+        res = cbm.async_handler            
+        
+      Validate: |
+        this.test_result = str(res)
+        exp = cbm._async_handler
+        assert (res == exp), 'async_handler = {0}'.format(exp)    
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_run
+      Desc: Getter run      
+      
+      Test: |
+        res = cbm.run            
+        
+      Validate: |
+        this.test_result = str(res)
+        exp = cbm._cbm_proc
+        assert (res == exp), 'run = {0}'.format(exp)     
+        
+Test-Scenario-12:
+  Id: ts_12
+  Path: hydratk/lib/dynamic/callback/01_methods_ut.jedi
+  Name: ts_callbackmanager_set
+  Desc: Test class CallBackManager set methods
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from hydratk.lib.dynamic.callback import CallBackManager, CallBack
+    from yodahelpers.hydratk.core.parallel import dummy_method
+    from multiprocessing import Manager    
+        
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_set
+    Desc: Set methods
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_set_sync_handler
+      Desc: Set sync_handler      
+      
+      Test: |
+        fn = 'test'
+        cb = CallBack(fn, dummy_method)
+        cb_dict = {fn: cb}
+        cb_proxy = Manager().dict()
+        cb_proxy[fn] = cb
+        cbm = CallBackManager(cb_dict, cb_proxy)  
+        obj = 'test'
+        cbm.set_sync_handler(obj)
+        res = cbm.sync_handler                                    
+        
+      Validate: |
+        this.test_result = res
+        assert (res == obj), 'sync_handler = {0}'.format(obj)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_set_async_handler
+      Desc: Set async_handler      
+      
+      Test: |
+        cbm.set_async_handler(obj)
+        res = cbm.async_handler                                    
+        
+      Validate: |
+        this.test_result = res
+        assert (res == obj), 'async_handler = {0}'.format(obj)    
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_set_cb_dict
+      Desc: Set cb_dict      
+      
+      Test: |
+        obj = cb_dict
+        cbm.set_cb_dict(obj)
+        res = cbm._cb_dict                                
+        
+      Validate: |
+        this.test_result = str(res)
+        assert (res == obj), '_cb_dict = {0}'.format(obj)          
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_set_cb_dproxy
+      Desc: Set cb_dproxy      
+      
+      Test: |
+        obj = cb_proxy
+        cbm.set_cb_dproxy(obj)
+        res = cbm._cb_dproxy                                
+        
+      Validate: |
+        this.test_result = str(res)
+        assert (res == obj), '_cb_dproxy = {0}'.format(obj)            
+        
+Test-Scenario-13:
+  Id: ts_13
+  Path: hydratk/lib/dynamic/callback/01_methods_ut.jedi
+  Name: ts_callbackmanager_create_cb_dproxy
+  Desc: Test class CallBackManager method create_cb_dproxy
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from hydratk.lib.dynamic.callback import CallBackManager   
+        
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_create_cb_dproxy
+    Desc: Create callback proxy
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_create
+      Desc: Create    
+      
+      Test: |
+        cbm = CallBackManager()  
+        cbm.create_cb_dproxy()
+        res = cbm._cb_dproxy.__class__.__name__        
+        
+      Validate: |
+        this.test_result = res
+        assert (res == 'DictProxy'), '_cb_dproxy = DictProxy'
+        
+Test-Scenario-14:
+  Id: ts_14
+  Path: hydratk/lib/dynamic/callback/01_methods_ut.jedi
+  Name: ts_callbackmanager_get_cb
+  Desc: Test class CallBackManager method get_cb
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from hydratk.lib.dynamic.callback import CallBackManager, CallBack
+    from yodahelpers.hydratk.core.parallel import dummy_method
+    from multiprocessing import Manager    
+        
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_get_cb
+    Desc: Get callback
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_dict
+      Desc: Callback in dictionary      
+      
+      Test: |
+        fn, meth = 'test', dummy_method
+        cb = CallBack(fn, meth)
+        cb_dict = {fn: cb}
+        cbm = CallBackManager(cb_dict)  
+        res = cbm.get_cb(fn).__class__.__name__         
+        
+      Validate: |
+        this.test_result = str(res)
+        assert (res == 'CallBack'), 'get_cb = CallBack'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_proxy
+      Desc: Callback in proxy      
+      
+      Test: |
+        cb_proxy = Manager().dict()
+        cb_proxy[fn] = cb
+        cbm = CallBackManager(cb_dproxy=cb_proxy)  
+        res = cbm.get_cb(fn).__class__.__name__         
+        
+      Validate: |
+        this.test_result = str(res)
+        assert (res == 'CallBack'), 'get_cb = CallBack' 
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid
+      Desc: Invalid callback, raises KeyError
+      
+      Test: |
+        try:
+            cbm.get_cb('xxx')
+            ex = False
+        except KeyError:
+            ex = True
+      
+      Validate: |    
+        this.test_result = ex
+        assert (ex), 'get_cb raises KeyError'   
+        
+Test-Scenario-15:
+  Id: ts_15
+  Path: hydratk/lib/dynamic/callback/01_methods_ut.jedi
+  Name: ts_callbackmanager_reg_cb
+  Desc: Test class CallBackManager method reg_cb
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from hydratk.lib.dynamic.callback import CallBackManager
+    from yodahelpers.hydratk.core.parallel import dummy_method
+    from multiprocessing import Manager    
+        
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_reg_cb
+    Desc: Register callback
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_dict
+      Desc: Callback in dictionary      
+      
+      Test: |
+        fn, meth = 'test', dummy_method
+        cbm = CallBackManager({}, Manager().dict())  
+        cbm.reg_cb(fn, meth)                          
+        res = cbm.get_cb(fn).__class__.__name__
+        
+      Validate: |
+        this.test_result = res
+        assert (res == 'CallBack'), 'get_cb = CallBack'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_proxy
+      Desc: Callback in proxy      
+      
+      Test: |
+        cbm = CallBackManager({}, Manager().dict())  
+        cbm.reg_cb(fn, meth, {'shared': True})                          
+        res = cbm.get_cb(fn).__class__.__name__
+        
+      Validate: |
+        this.test_result = res
+        assert (res == 'CallBack'), 'get_cb = CallBack'   
+        
+Test-Scenario-16:
+  Id: ts_16
+  Path: hydratk/lib/dynamic/callback/01_methods_ut.jedi
+  Name: ts_callbackmanager_update_cb
+  Desc: Test class CallBackManager method update_cb
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from hydratk.lib.dynamic.callback import CallBackManager
+    from yodahelpers.hydratk.core.parallel import dummy_method
+    from multiprocessing import Manager    
+        
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_update_cb
+    Desc: Update callback
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_proxy
+      Desc: Callback in proxy      
+      
+      Test: |
+        fn, meth = 'test', dummy_method
+        cbm = CallBackManager({}, Manager().dict())  
+        cbm.reg_cb(fn, meth)                          
+        cb = cbm.get_cb(fn)
+        cb._shared = True
+        cbm.update_cb(cb)        
+        res = cbm._cb_dproxy.keys()
+        
+      Validate: |
+        this.test_result = str(res)
+        assert (fn in res), 'proxy contains {0}'.format(fn)
+        res = cbm._cb_dict.keys()
+        this.test_result = str(res)
+        assert (fn not in res), 'dict does not contain {0}'.format(fn)           
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_dict
+      Desc: Callback in dictionary      
+      
+      Test: |
+        cb._shared = False
+        cbm.update_cb(cb)        
+        res = cbm._cb_dict.keys()
+        
+      Validate: |
+        this.test_result = str(res)
+        assert (fn in res), 'dict contains {0}'.format(fn)
+        res = cbm._cb_dproxy.keys()
+        this.test_result = str(res)
+        assert (fn not in res), 'proxy does not contain {0}'.format(fn)         

@@ -116,7 +116,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
     _run_mode         = const.CORE_RUN_MODE_SINGLE_APP
     
     '''Function callbacks'''
-    _fn_cb            = {}
+    _fn_callback      = {}
     
     '''Parallel processing'''
     _fn_cb            = {}
@@ -124,7 +124,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
     _async_fn_tickets = {}
     _cbm              = None  #Callback manager   
     _async_fn         = {}
-    _async_fn_ex      = None
+    _async_fn_ex      = {}
     
 
     def _bootstrap(self):
@@ -315,7 +315,6 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                     # continuous thread status check during application run
                     # application will be stopped if process is not active
                     while (current.status > const.CORE_THREAD_ALIVE and self._observer_status >= const.CORE_THREAD_ALIVE):
-                        
                         # check thread activity, event htk_before_cw_activity_check is fired first
                         if (time.time() >= next_cw_activity_check):                                                          
                             ev = event.Event('htk_before_cw_activity_check')    
@@ -342,7 +341,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                         #print("Observer sent message {0}".format(res))   
                         self.dmsg('htk_on_debug_info', self._trn.msg('htk_observer_awake'), self.fromhere(), 5)
                      
-                    # final cleanup                                        
+                    # final cleanup 
                     self.stop_services()        
                     self.destroy_core_threads()
                     self.dmsg('htk_on_debug_info', self._trn.msg('htk_observer_term'), self.fromhere(), 5)
@@ -370,7 +369,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
            status (int): activity status
            action_status (int): action status
            pipe_conn (obj): pipe process connection
-           is_alive_check
+           is_alive_check (float): time interval check 
            
         Returns:
            void      
@@ -513,10 +512,10 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         mq = current.msgq
         q_empty = False
         try:
-            current.action_status.value = const.CORE_THREAD_ACTION_PROCESS_MSG                     
-            msg = mq.recv(zmq.NOBLOCK)           
+            current.action_status.value = const.CORE_THREAD_ACTION_PROCESS_MSG                    
+            msg = mq.recv(zmq.NOBLOCK)          
             self._trigger_cmsg(msg)
-        except zmq.error.Again:                    
+        except zmq.error.Again:                 
             q_empty = True
                 
         except zmq.ZMQError:
@@ -1221,7 +1220,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         """ 
                 
         self._runlevel = const.RUNLEVEL_APPL        
-        if (self.have_command_action()):
+        if (self.have_command_action() and self._msg_router == None):
             self._do_command_action()
         return True #required by fn_hook
     
@@ -1385,7 +1384,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         """
                 
         current = multiprocessing.current_process() 
-        setproctitle.setproctitle('hydra/srv:' + current.service_name) # mark process to be identified in list of processes
+        setproctitle.setproctitle('hydratk/srv:' + current.service_name) # mark process to be identified in list of processes
         self._reg_service_signal_hooks()
         cb(service_status, parent_conn)
         
@@ -1546,7 +1545,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                     r_speed = float(msg['time']) - float(thr.last_ping)
                 except Exception as e:
                     print(e)
-                self.dmsg('htk_on_debug_info', self._trn.msg('htp_cworker_prcess_msg', str(thr.num), str(r_speed)), self.fromhere()) 
+                self.dmsg('htk_on_debug_info', self._trn.msg('htk_cworker_process_msg', str(thr.num), str(r_speed)), self.fromhere()) 
     
     def _trigger_cmsg(self, msg): 
         """Method sends message in event
@@ -1586,8 +1585,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                'zone'    : 'Core'
                }
         current.pipe_conn.send(msg)
-        self._notify_thread(os.getppid())
-        pass
+        self._notify_thread(os.getppid())        
         
     def _process_privmsg(self, msg):
         """Method processes private message
@@ -1609,8 +1607,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         self.fire_event(event.Event('h_privmsg_recv', msg))
         if msg['type'] == message.REQUEST:
             if msg['command'] == message.PING:
-                self._response_ping(msg)
-    
+                self._response_ping(msg)    
                     
     def _remove_pid_file(self, pid_file):
         """Method deletes PID file
@@ -1676,7 +1673,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
            event: htk_on_start
            
         """ 
-                
+             
         self.dmsg('htk_on_debug_info', self._trn.msg('htk_app_start'), self.fromhere())
         cevent = event.Event('htk_on_start')
         self.fire_event(cevent)
@@ -1698,17 +1695,17 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
            event: htk_on_stop
            
         """ 
-                
+           
         self.dmsg('htk_on_debug_info', self._trn.msg('htk_app_stop'), self.fromhere())
         cevent = event.Event('htk_on_stop')        
         self.fire_event(cevent)
-        if cevent.will_run_default():
+        if cevent.will_run_default():            
             self._app_status = const.APP_STATUS_STOP
             self._observer_status = const.CORE_THREAD_EXIT
             current = multiprocessing.current_process()
             current.status = const.CORE_THREAD_EXIT
             if (force_exit):
-                self.dmsg('htk_on_debug_info', self._trn.msg('htk_pid_file_delete'), self.fromhere()) 
+                self.dmsg('htk_on_debug_info', self._trn.msg('htk_pid_file_delete', self._pid_file), self.fromhere()) 
                 self._remove_pid_file(self._pid_file)
                 sys.exit(1)
     

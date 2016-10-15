@@ -211,3 +211,118 @@ Test-Scenario-5:
         this.test_result = str(res)
         exp = ['cmsg_async_fn_ex', 'cmsg_async_fn', 'cmsg_async_ext_fn']
         assert (exp[0] in res and exp[1] in res and exp[2] in res), '_fn_hooks contain {0}'.format(exp) 
+        
+Test-Scenario-6:
+  Id: ts_06
+  Path: hydratk/core/messagehead/01_methods_ut.jedi
+  Name: ts_send_msg
+  Desc: Test method _send_msg
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import init_process, kill_process, init_sender 
+    from time import sleep
+    
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_send_msg
+    Desc: Send message
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_send
+      Desc: Send
+      
+      Test: |
+        th = TestHead()
+        proc = init_process('receive_mq')
+        sleep(3)         
+        init_sender(th)
+        sleep(3)               
+        res = th._send_msg({'test': 'test'})
+
+      Validate: |
+        this.test_result = res
+        assert (res), '_send_msg = True'
+        sleep(3)
+        proc.terminate()
+        th.clear_cmd()      
+        
+Test-Scenario-7:
+  Id: ts_07
+  Path: hydratk/core/messagehead/01_methods_ut.jedi
+  Name: ts_process_cmsg
+  Desc: Test method _process_cmsg
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import create_message
+    
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_process_cmsg
+    Desc: Process message
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_process
+      Desc: Process      
+      
+      Test: |
+        th = TestHead()
+        msg = create_message({'type': 'test'})
+        th._process_cmsg(None, msg)
+      
+      Validate: |
+        assert True
+        th.clear_cmd()
+        
+Test-Scenario-8:
+  Id: ts_08
+  Path: hydratk/core/messagehead/01_methods_ut.jedi
+  Name: ts_msg_async_ext_fn
+  Desc: Test method _msg_async_ext_fn
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import init_process, kill_process, init_sender, loop 
+    from time import sleep
+    
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_msg_async_ext_fn
+    Desc: Execute async hook
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_execute
+      Desc: Execute
+      
+      Test: |
+        th = TestHead()
+        proc = init_process('receive_mq')
+        sleep(3)         
+        init_sender(th)
+        sleep(3)               
+        fn, cb = 'test', loop
+        th.register_async_fn(fn, cb)
+        id = th.async_ext_fn(('BenchMark','loop'), fn) 
+        msg = {'data': {'ticket_id': id, 'callback': {'ext_name':'BenchMark', 'method':'_print_test_info', 'args':{}, 'kwargs':{}}}}       
+        res = th._msg_async_ext_fn(msg)
+        
+      Validate: |
+        this.test_result = res
+        assert (res), '_msg_async_ext_fn = True'
+        res = th.async_ticket_completed(id)
+        this.test_result = res
+        assert (res), 'ticket {0} completed'.format(id) 
+        sleep(3)  
+        del th._async_fn[fn]  
+        proc.terminate()
+        th.clear_cmd()         

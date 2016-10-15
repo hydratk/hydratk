@@ -1,0 +1,501 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/core/masterhead/05_methods_ut.jedi
+  Name: register_async_fn
+  Desc: Test method register_async_fn
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import loop
+    
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_register_async_fn
+    Desc: Register async hook
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_register
+      Desc: Register
+      
+      Test: |
+        th = TestHead()
+        fn = 'test'
+        res = th.register_async_fn(fn, loop)
+      
+      Validate: |
+        this.test_result = res
+        assert (res), 'register_async_fn = True'
+        res = th._async_fn
+        this.test_result = str(res)
+        assert (res[fn] == loop), 'fn {0} registered'.format(fn)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid
+      Desc: Invalid callback, raises TypeError
+      
+      Test: |
+        try:
+            th.register_async_fn('test', 'loop')
+            ex = False
+        except TypeError:
+            ex = True
+      
+      Validate: |    
+        this.test_result = ex
+        assert (ex), 'register_async_fn raises TypeError' 
+        del th._async_fn[fn]
+        th.clear_cmd()
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/core/masterhead/05_methods_ut.jedi
+  Name: reg_fn_cb
+  Desc: Test method reg_fn_cb
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import loop
+    
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_reg_fn_cb
+    Desc: Register function callback
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_register
+      Desc: Register   
+      
+      Test: |
+        th = TestHead()
+        fn = 'test'
+        res = th.reg_fn_cb(fn, loop)
+      
+      Validate: |     
+        this.test_result = res
+        assert (res), 'reg_fn_cb = True'
+        res = th._fn_callback
+        this.test_result = str(res)
+        assert (res[fn] == loop), 'hook {0} registered'.format(fn)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid
+      Desc: Invalid callback, raises TypeError
+      
+      Test: |
+        try:
+            th.reg_fn_cb('test', 'loop')
+            ex = False
+        except TypeError:
+            ex = True
+      
+      Validate: |    
+        this.test_result = ex
+        assert (ex), 'reg_fn_cb raises TypeError' 
+        del th._fn_callback[fn]
+        th.clear_cmd()        
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/core/masterhead/05_methods_ut.jedi
+  Name: register_async_fn_ex
+  Desc: Test method register_async_fn_ex
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import loop, CB
+    from sys import version_info
+    
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_register_async_fn_ex
+    Desc: Register async hook
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_register
+      Desc: Register
+      
+      Test: |
+        th = TestHead()
+        fn, cb = 'test', loop
+        res = th.register_async_fn_ex(fn, cb, cb)
+      
+      Validate: |
+        this.test_result = res
+        assert (res), 'register_async_fn_ex = True'
+        res = th._async_fn_ex
+        this.test_result = str(res)
+        exp = {'callback': {'class_inst': None, 'func': cb},
+               'result_callback': {'class_inst': None, 'func':cb}}
+        assert (res[fn] == exp), 'fn {0} registered'.format(fn)
+        del th._async_fn_ex[fn]
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_class_cb
+      Desc: Callback as class method
+      
+      Test: |
+        cb = CB.loop
+        res = th.register_async_fn_ex(fn, cb, cb)
+      
+      Validate: |
+        this.test_result = res
+        assert (res), 'register_async_fn_ex = True'
+        res = th._async_fn_ex
+        this.test_result = str(res)
+        if (version_info[0] == 2):
+            exp = {'callback': {'class_inst': cb.im_self, 'func': cb.im_func},
+                   'result_callback': {'class_inst': cb.im_self, 'func':cb.im_func}}
+        else:
+            exp = {'callback': {'class_inst': None, 'func': cb},
+                   'result_callback': {'class_inst': None, 'func':cb}}
+        assert (res[fn] == exp), 'fn {0} registered'.format(fn)
+        del th._async_fn_ex[fn]        
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid_cb
+      Desc: Invalid callback, raises TypeError
+      
+      Test: |
+        try:
+            th.register_async_fn_ex(fn, 'loop', cb)
+            ex = False
+        except TypeError:
+            ex = True
+      
+      Validate: |    
+        this.test_result = ex
+        assert (ex), 'register_async_fn_ex raises TypeError' 
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_invalid_cb_res
+      Desc: Invalid result callback, raises TypeError
+      
+      Test: |
+        try:
+            th.register_async_fn_ex(fn, cb, 'loop')
+            ex = False
+        except TypeError:
+            ex = True
+      
+      Validate: |    
+        this.test_result = ex
+        assert (ex), 'register_async_fn_ex raises TypeError'         
+        th.clear_cmd()   
+        
+Test-Scenario-4:
+  Id: ts_04
+  Path: hydratk/core/masterhead/05_methods_ut.jedi
+  Name: ts_async_fn_ex
+  Desc: Test method async_fn_ex
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import init_process, kill_process, init_sender, loop 
+    from time import sleep
+    
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_async_fn_ex
+    Desc: Send async function message
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_send
+      Desc: Send
+      
+      Test: |
+        th = TestHead()
+        proc = init_process('receive_mq')
+        sleep(3)         
+        init_sender(th)
+        sleep(3)               
+        fn, cb = 'test', loop
+        th.register_async_fn_ex(fn, cb, cb)
+        th.async_fn_ex(fn)
+        
+      Validate: |
+        assert True  
+        del th._async_fn_ex[fn] 
+        sleep(3)
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_not_reg
+      Desc: Not registered hook, raises KeyError
+      
+      Test: |
+        try:
+            th.async_fn_ex(fn)
+            ex = False
+        except KeyError:
+            ex = True
+      
+      Validate: |                
+        this.test_result = ex
+        assert (ex), 'async_fn_ex raises KeyError'
+        proc.terminate()
+        th.clear_cmd()          
+        
+Test-Scenario-5:
+  Id: ts_05
+  Path: hydratk/core/masterhead/05_methods_ut.jedi
+  Name: ts_async_ext_fn
+  Desc: Test method async_ext_fn
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import init_process, kill_process, init_sender, loop 
+    from time import sleep
+    
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_async_ext_fn
+    Desc: Send async extension message
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_send
+      Desc: Send
+      
+      Test: |
+        th = TestHead()
+        proc = init_process('receive_mq')
+        sleep(3)         
+        init_sender(th)
+        sleep(3)               
+        fn, cb = 'test', loop
+        th.register_async_fn(fn, cb)
+        res = th.async_ext_fn(('BenchMark','loop'), fn)
+        
+      Validate: |
+        this.test_result = res
+        assert (res != None), 'async_ext_fn is not empty' 
+        sleep(3)  
+        del th._async_fn[fn]     
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid_cb
+      Desc: Not registered callback, raises KeyError
+      
+      Test: |
+        try:
+            th.async_ext_fn(('BenchMark','loop'), fn)
+            ex = False
+        except KeyError:
+            ex = True
+        
+      Validate: |
+        this.test_result = ex
+        assert (ex), 'async_ext_fn raises KeyError'        
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_invalid_ext
+      Desc: Invalid extension, raises KeyError
+      
+      Test: |
+        try:
+            th.async_ext_fn(('xxx','loop'), fn)
+            ex = False
+        except KeyError:
+            ex = True
+        
+      Validate: |
+        this.test_result = ex
+        assert (ex), 'async_ext_fn raises KeyError'             
+        proc.terminate()
+        th.clear_cmd()    
+        
+Test-Scenario-6:
+  Id: ts_06
+  Path: hydratk/core/masterhead/05_methods_ut.jedi
+  Name: ts_get_async_ticket_content
+  Desc: Test method get_async_ticket_content
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import init_process, kill_process, init_sender, loop 
+    from time import sleep
+    
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_get_async_ticket_content
+    Desc: Get ticket content
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_get
+      Desc: Get
+      
+      Test: |
+        th = TestHead()
+        proc = init_process('receive_mq')
+        sleep(3)         
+        init_sender(th)
+        sleep(3)               
+        fn, cb = 'test', loop
+        th.register_async_fn(fn, cb)
+        id = th.async_ext_fn(('BenchMark','loop'), fn)
+        res = th.get_async_ticket_content(id)
+        
+      Validate: |
+        this.test_result = str(res)
+        assert (not res['completed']), 'ticket {0} not completed'.format(id) 
+        sleep(3)  
+        del th._async_fn[fn]  
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid
+      Desc: Invalid ticket, raises KeyError
+      
+      Test: |
+        try:
+            th.get_async_ticket_content('xxx')
+            ex = False
+        except KeyError:
+            ex = True
+        
+      Validate: |
+        this.test_result = ex
+        assert (ex), 'get_async_ticket_content raises KeyError'
+        proc.terminate()
+        th.clear_cmd()             
+        
+Test-Scenario-7:
+  Id: ts_07
+  Path: hydratk/core/masterhead/05_methods_ut.jedi
+  Name: ts_get_async_ticket_content
+  Desc: Test method get_async_ticket_content
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import init_process, kill_process, init_sender, loop 
+    from time import sleep
+    
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_async_ticket_completed
+    Desc: Get ticket status
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_get
+      Desc: Get
+      
+      Test: |
+        th = TestHead()
+        proc = init_process('receive_mq')
+        sleep(3)         
+        init_sender(th)
+        sleep(3)               
+        fn, cb = 'test', loop
+        th.register_async_fn(fn, cb)
+        id = th.async_ext_fn(('BenchMark','loop'), fn)
+        res = th.async_ticket_completed(id)
+        
+      Validate: |
+        this.test_result = str(res)
+        assert (not res), 'ticket {0} not completed'.format(id) 
+        sleep(3)  
+        del th._async_fn[fn]  
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid
+      Desc: Invalid ticket, raises KeyError
+      
+      Test: |
+        try:
+            th.async_ticket_completed('xxx')
+            ex = False
+        except KeyError:
+            ex = True
+        
+      Validate: |
+        this.test_result = ex
+        assert (ex), 'get_async_ticket_content raises KeyError'
+        proc.terminate()
+        th.clear_cmd() 
+        
+Test-Scenario-8:
+  Id: ts_08
+  Path: hydratk/core/masterhead/05_methods_ut.jedi
+  Name: ts_delete_async_ticket
+  Desc: Test method delete_async_ticket
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1   
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from yodahelpers.hydratk.core.parallel import init_process, kill_process, init_sender, loop 
+    from time import sleep
+    
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_delete_async_ticket
+    Desc: Delete ticket
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_delete
+      Desc: Delete
+      
+      Test: |
+        th = TestHead()
+        proc = init_process('receive_mq')
+        sleep(3)         
+        init_sender(th)
+        sleep(3)               
+        fn, cb = 'test', loop
+        th.register_async_fn(fn, cb)
+        id = th.async_ext_fn(('BenchMark','loop'), fn)
+        th.delete_async_ticket(id)
+        res = th._async_fn_tickets
+        
+      Validate: |
+        this.test_result = str(res)
+        assert (id not in 'res'), 'ticket {0} deleted'.format(id) 
+        sleep(3)  
+        del th._async_fn[fn]  
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_invalid
+      Desc: Invalid ticket, raises KeyError
+      
+      Test: |
+        try:
+            th.delete_async_ticket('xxx')
+            ex = False
+        except KeyError:
+            ex = True
+        
+      Validate: |
+        this.test_result = ex
+        assert (ex), 'delete_async_ticket raises KeyError'         
+        proc.terminate()
+        th.clear_cmd                                      

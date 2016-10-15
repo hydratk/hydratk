@@ -167,7 +167,7 @@ class Extension(extension.Extension):
         self._test_results['1Kb data Event througput(10 000 000)'] = duration.microseconds.__float__() / 1000000 
             
     def _factorial_test(self):   
-        """Method tests factorial caluculation
+        """Method tests factorial calculation
         
         Args:  
            none          
