@@ -144,7 +144,6 @@ class CmdOptParser(argparse.ArgumentParser):
         else:
             raise TypeError('Unsupported option type {0}'.format(type(option)))                
         return result
-
         
     def add_opt(self, option, d_option=None, has_value=False, allow_multiple=False, opt_group='default'):
         """Method adds new option
@@ -173,8 +172,7 @@ class CmdOptParser(argparse.ArgumentParser):
             result = True
         
         return result
-    
-                   
+                       
     def add_getopt_opt(self, short_opt, long_opt, opt_map={}):
         """Method adds new option
         

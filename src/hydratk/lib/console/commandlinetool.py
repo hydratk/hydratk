@@ -103,8 +103,7 @@ class CommandlineTool():
         CommandlineTool._cp_string = cp_string
         CommandlineTool._cmd_text = cmd_text
         CommandlineTool._opt_text = opt_text    
-    
-    
+        
     @staticmethod
     def print_short_help():
         """Method prints short help
@@ -163,7 +162,7 @@ class CommandlineTool():
                             result.append(opt + ' - ' + desc['description'])
                 else:                    
                     if (command == desc['commands']):
-                            result.append(opt + ' - ' + desc['description'])
+                        result.append(opt + ' - ' + desc['description'])
                                                                                                  
         return result
     

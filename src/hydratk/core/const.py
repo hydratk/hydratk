@@ -83,4 +83,3 @@ RUNLEVEL_APPL       = 6
 ''' Events '''
 EVENT_HOOK_PRIORITY = 50
             
-

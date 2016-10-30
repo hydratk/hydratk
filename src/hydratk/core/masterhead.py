@@ -19,7 +19,6 @@ import pprint
 import inspect
 import imp
 
-
 import traceback
 import yaml
 import operator
@@ -93,8 +92,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         
         '''Setting up basic functionality hooks'''
         self._reg_self_fn_hooks()
-        
-                                                  
+                                                        
     def exception_handler(self, extype, value, traceback):
         """Exception handler hook
            
@@ -505,7 +503,6 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         short_opt, long_opt = opt
         self.match_short_option(short_opt, value_expected, d_opt, allow_multiple, opt_group)
         self.match_long_option(long_opt, value_expected, d_opt, allow_multiple, opt_group) 
-
             
     def match_cli_command(self, cmd, opt_group='htk'):
         """Method registers command line command check       
@@ -531,8 +528,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             else:                
                 raise ValueError(self._trn.msg('htk_cmd_registered', cmd))
         else:
-            raise ValueError(self._trn.msg('htk_cmd_invalid', cmd))
-                
+            raise ValueError(self._trn.msg('htk_cmd_invalid', cmd))                
     
     def set_cli_cmdopt_profile(self, profile):
         """Method sets new command option profile     
@@ -667,7 +663,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         return True
      
     def start_pp_app(self):
-        """Method starts application
+        """Method starts application in parallel mode
         
         Args:
            none
@@ -680,7 +676,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         self._start_app()
     
     def stop_pp_app(self, force_exit=False):
-        """Method stops application
+        """Method stops application in parallel mode
         
         Args:
            force_exit (bool): force application termination
@@ -919,8 +915,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                         item += 1
                     
         return result
-                    
-            
+                                
     def replace_event_hook(self, event, callback, record):
         """Methods replaces event listener(s) for specified event.
            
@@ -977,8 +972,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                     item += 1
         
         return result
-            
-                    
+                            
     def fire_event(self, oevent):
         """Method is processing specified event callbacks.
            
@@ -1234,8 +1228,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                     self.dmsg('htk_on_debug_info', self._trn.msg('htk_app_service_stop_hard', service_name), self.fromhere()) 
                     os.kill(int(service.pid), signal.SIGKILL)
             else: self.dmsg('htk_on_debug_info', self._trn.msg('htk_app_service_inactive_skip', service.service_name), self.fromhere())
-                
-                    
+                                    
     def init_core_threads(self): 
         """Method initializes threads according to configuration
         
@@ -1596,7 +1589,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 lib_desc = read_lib_desc if len(read_lib_desc) > 0 else template.lib_default_user_data['lib_desc']
                 print("Library description set to: %s" % lib_desc)
                 
-                print('4. Enter the lib author name');
+                print('4. Enter the library author name');
                 read_author_name = raw_input("[{0}]:".format(template.lib_default_user_data['author_name']))
                 author_name = read_author_name if len(read_author_name) > 0 else template.lib_default_user_data['author_name']
                 print("lib author name set to: %s" % author_name)
@@ -1606,7 +1599,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 author_email = read_author_email if len(read_author_email) > 0 else template.lib_default_user_data['author_email']
                 print("Library author email set to: %s" % author_email)
                 
-                print('6. Select lib usage and distribution license, currently supported are: BSD'); #TODO put the dynamic listing here
+                print('6. Select library usage and distribution license, currently supported are: BSD'); #TODO put the dynamic listing here
                 read_lib_license = raw_input("[{0}]:".format(template.lib_default_user_data['lib_license']))
                 lib_license = read_lib_license if len(read_lib_license) > 0 and read_lib_license in template.lib_license else template.lib_default_user_data['lib_license']
                 print("Library usage and distribution license set to: %s" % lib_license)
@@ -1743,7 +1736,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         return self._send_msg(msg)
             
     def async_ext_fn(self, callback, result_callback, *args, **kwargs ):
-        """Method send extension hook in asynchronous way as message
+        """Method sends extension hook in asynchronous way as message
         
         Args:
            callback (tuple): callback

@@ -11,7 +11,6 @@
 import pkgutil
 import pkg_resources
 
-
 class Utils():
     """Class Utils
     """

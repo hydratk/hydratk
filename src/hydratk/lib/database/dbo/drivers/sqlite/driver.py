@@ -88,8 +88,7 @@ class DBODriver(dbodriver.DBODriver):
         for optname, optval in driver_options.items():
             if optname in self._driver_options:
                 self._driver_options[optname] = optval
-            
-        
+                    
     def connect(self):
         """Method connects to database
         

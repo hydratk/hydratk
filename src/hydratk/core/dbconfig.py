@@ -33,7 +33,8 @@ class DBConfig():
         Args:
            db_file (str): database file path           
            
-        """        
+        """  
+              
         self._db_file = db_file
     
     def connect(self):
@@ -45,7 +46,8 @@ class DBConfig():
         Returns:
            void
                 
-        """        
+        """  
+              
         self._conn = cfgdb.connect(self._db_file)
                 
     def writedb(self, base_config):
@@ -58,6 +60,7 @@ class DBConfig():
            bool: result 
                 
         """
+        
         result = False
         global db_struct
         with self._conn:
@@ -81,14 +84,14 @@ class DBConfig():
         Returns:
            dict: cfg 
                 
-        """                
+        """        
+                
         cfg = []    
         for gk, gv in d.items():
             for ok, ov in gv.items():
                 for kk, kv in ov.items():
                     cfg.append({'grp' : gk, 'obj' : ok, 'key' : kk, 'value' : kv})
         return cfg
-
  
     def db2cfg(self, active_only=False):
         """Method converts config database data to base config input format
@@ -99,11 +102,10 @@ class DBConfig():
         Returns:
            list: records 
                 
-        """               
+        """    
+                   
         enabled_filter = "enabled = 1" if active_only == True else "1 = 1" 
         with self._conn:
             cur = self._conn.cursor()
             cur.execute("select * from config where %s" % (enabled_filter))
             return cur.fetchall()
-         
-

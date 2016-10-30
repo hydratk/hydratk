@@ -39,8 +39,7 @@ class My(object):
             if pile_id not in My._piles.items():
                 self._piles[pile_id] = Pile()
             return self._piles[pile_id]
-     
-    
+         
     def drop_pile(self, pile_id):
         """Method drops pile
         

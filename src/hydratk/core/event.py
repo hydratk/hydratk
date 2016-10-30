@@ -22,7 +22,6 @@ class Event(object):
     _skip_before_hook   = False
     _skip_after_hook    = False
 
-
     def __init__(self, event_id, *args, **kwargs):
         """Class constructor
         

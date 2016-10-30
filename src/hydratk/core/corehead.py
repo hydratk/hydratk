@@ -74,7 +74,6 @@ class AsyncCallBackHandler(object):
     
     def cb_completed(self, req_id):
         pass           
-
     
 class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
     """Class CoreHead 
@@ -126,7 +125,6 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
     _async_fn         = {}
     _async_fn_ex      = {}
     
-
     def _bootstrap(self):
         """Method executes specific processing according to runlevel
         
@@ -629,8 +627,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                 self._config[grp][obj] = {}
                   
             self._config[grp][obj][itmk] = itmv # update in memory configuration
-    
-    
+        
     def _process_extension_configs(self):
         """Method searches configuration directory for extension specific configuration files
         
@@ -657,8 +654,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                             ext_config_file = ev.argv(0)
                         if ev.will_run_default():
                             self._append_extension_config_from_file(ext_config_file)
-    
-    
+        
     def _append_extension_config_from_file(self, ext_config_file):
         """Method parses extension configuration file
         
@@ -760,8 +756,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                     self.dmsg('htk_on_debug_info', self._trn.msg('htk_debug_enabled'), self.fromhere())
                 else:
                     self._debug = False 
-              
-               
+                             
             except Exception as exc:
                 self.dmsg('htk_on_warning', self._trn.msg('htk_conf_opt_missing', 'Debug', 'enabled'), self.fromhere())
             try:                         
@@ -782,8 +777,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             self._import_global_messages()                
         except Exception as exc:
             self.dmsg('htk_on_warning', self._trn.msg('htk_conf_opt_missing', 'General', 'language'), self.fromhere())
-            
-        
+                    
         try:
             # get run mode from command option or configuration
             if (not self.check_run_mode()):                
@@ -861,8 +855,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                                 
                     else:
                         self.dmsg('htk_on_debug_info', self._trn.msg('htk_extension_wrong_cfg', ext_name), self.fromhere())
-                                        
-        
+                                                
             except Exception as detail:                        
                 self.dmsg('htk_on_error', self._trn.msg('htk_fail_load_int_ext', ext_name, detail), self.fromhere())
                 #tb = traceback.format_exc()
@@ -1011,8 +1004,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             self.dmsg('htk_on_debug_info', self._trn.msg('htk_load_package_msg_success', import_package, self._language), self.fromhere())                        
         except ImportError as e:
             self.dmsg('htk_on_error', self._trn.msg('htk_load_package_msg_failed', import_package, self._language, str(e)), self.fromhere())  
-        
-        
+                
     def _import_global_messages(self):
         """Method imports global langtexts and command help  
 
@@ -1043,8 +1035,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             self.dmsg('htk_on_debug_info', self._trn.msg('htk_load_global_help_success', self._language), self.fromhere())            
         except ImportError as e:
             self.dmsg('htk_on_error', self._trn.msg('htk_load_global_help_failed', self._language, str(e)), self.fromhere())    
-       
-                
+                   
     def _reg_self_command_hooks(self):  
         """Method registers global commands hooks
 
@@ -1097,8 +1088,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             self._trn.set_language(self._language)
         
         self._import_global_messages()
-                
-        
+                        
         self._reg_self_command_hooks()
         self._reg_self_event_hooks()
         
@@ -1130,8 +1120,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             if os.path.isfile(self._config['System']['DBConfig']['db_file']) and os.path.getsize(self._config['System']['DBConfig']['db_file']) > 256:
                 self._load_db_config()        
         self._apply_config()
-        return True #required by fn_hook
-        
+        return True #required by fn_hook        
     
     def _runlevel_extensions(self):
         """Method executes specific processing for runlevel extensions
@@ -1274,8 +1263,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             pass        
             #possibly notify about unregistered command
         return processed_callbacks
-    
-    
+        
     def _set_default_cli_params(self):
         """Method initializes command line according to configuration
         
@@ -1427,8 +1415,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         signal.signal(signal.SIGPIPE, self._sig_retriever)        
         hook = [{'event' : 'htk_on_signal', 'callback' : self._ec_sig_handler, 'unpack_args' : True}]        
         self.register_event_hook(hook)
-    
-    
+        
     def _reg_self_fn_hooks(self):
         """Method registers functionality hooks
         
@@ -1518,8 +1505,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                     if opt_name == '-h' or opt_name == '--help':
                         CommandlineTool.print_help()
                         break
-                                        
-                        
+                                                                
         else:
             self._command = self._default_command              
         self.fire_event(event.Event('htk_on_cmd_options'))  
@@ -1680,8 +1666,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         if cevent.will_run_default():
             self._init_message_router()                
             self._c_observer()
-    
-            
+                
     def _stop_app(self, force_exit=False):
         """Method stops application
         
@@ -1777,5 +1762,3 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         for ext_name in self._ext:                        
             print("%s: %s" % (ext_name, self._ext[ext_name].get_ext_info())) 
             
-
- 

@@ -72,13 +72,11 @@ class DBODriver(object):
         except Exception as e:
             exc = DBODriverException(str(e))
             exc.parent_exc = e
-            raise exc 
-    
+            raise exc     
         
     @abstractmethod
     def _parse_dsn(self, dsn):
-        """
-        Parses driver specific dsn string
+        """Method parses driver specific dsn string
                 
         Args: 
            dsn (string): driver specific dsn format
@@ -94,6 +92,17 @@ class DBODriver(object):
         pass
     
     def dict_factory(self, cursor, row):
+        """Method transforms database row to dictionary        
+                
+        Args: 
+           cursor (obj): database cursor
+           row (obj): database row
+                              
+        Returns: 
+           dict
+                                
+        """        
+        
         d = {}
         for idx, col in enumerate(cursor.description):
             d[col[0]] = row[idx]

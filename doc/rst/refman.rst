@@ -21,4 +21,4 @@ Extensions
 .. toctree::
    :maxdepth: 1
 
-   refman/exts/benchmark   
+   refman/ext/benchmark   

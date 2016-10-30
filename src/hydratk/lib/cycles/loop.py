@@ -7,8 +7,8 @@
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
-import time
 
+import time
 
 def do_until(call, until_call_result, delay=1, until_max_attempts=10, until_duration=None, until_exact_time=None):
     """Function emulates do..until condition loop
@@ -73,4 +73,3 @@ def do_until(call, until_call_result, delay=1, until_max_attempts=10, until_dura
                 break                     
         if delay is not None:
             time.sleep(delay)
-

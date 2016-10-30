@@ -60,8 +60,7 @@ class FirePot(object):
         """ 
                 
         return FirePot._enabled    
-        
-    
+            
     @staticmethod 
     def log(*args): 
         """Method adds log record
@@ -132,7 +131,7 @@ class FirePot(object):
         """Method gets log headers
         
         Args:   
-           name (str): attribute name
+           none
            
         Returns:
            dict: headers

@@ -3,7 +3,7 @@
 
 .. module:: translator
    :platform: Unix
-   :synopsis: A useful module for application multilanguagee support.
+   :synopsis: A useful module for application multilanguage support.
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
@@ -16,10 +16,8 @@ PYTHON_MAJOR_VERSION = sys.version_info[0]
 if PYTHON_MAJOR_VERSION == 2:   
     from __builtin__ import len
     
-
 if PYTHON_MAJOR_VERSION == 3:    
     from builtins import len
-
 
 class Translator():
     """Class Translator
@@ -29,7 +27,6 @@ class Translator():
     _help_mod    = None    
     _language    = ''
     _messages    = {}
-    _language    = None
     _debug_level = 1
 
     def __init__(self, messages=''):
