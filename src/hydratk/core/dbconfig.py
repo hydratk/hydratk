@@ -8,14 +8,14 @@
 
 """
 
-import unicodedata
 import sqlite3 as cfgdb
 
 """
 This structure contains all necessary commands for creating configuration database structure
 """
 db_struct = {
-             "table config" : "CREATE TABLE config(grp VARCHAR NOT NULL, obj VARCHAR NOT NULL, key VARCHAR NOT NULL, value VARCHAR, enabled INTEGER)"
+             "table config" : """CREATE TABLE config(grp VARCHAR NOT NULL, obj VARCHAR NOT NULL, key VARCHAR NOT NULL, value VARCHAR, enabled INTEGER, 
+                                 lvl4_key VARCHAR, lvl4_value VARCHAR, lvl5_key VARCHAR, lvl5_value VARCHAR)"""
             }
 
 class DBConfig():
@@ -69,11 +69,29 @@ class DBConfig():
                 cur.execute(query)
             cfg = self.cfg2db(base_config)            
             cur.execute("begin")
-            for itm in cfg:               
-                cur.execute("insert into config values(?,?,?,?,?)",(itm['grp'], itm['obj'], itm['key'], itm['value'], 1))
+            for item in cfg:
+                if (item['value'].__class__.__name__ == 'list'):
+                    for v in item['value']:
+                        if (v != None):
+                            cur.execute("insert into config (grp, obj, key, value, enabled, lvl4_key, lvl4_value) values(?,?,?,?,?,?,?)", (item['grp'], item['obj'], item['key'], None, 1, None, v)) 
+                elif (item['value'].__class__.__name__ == 'dict'):
+                    for k, v in item['value'].items():
+                        if (v.__class__.__name__ == 'list'):
+                            for v2 in v:
+                                if (v2 != None):
+                                    cur.execute("insert into config (grp, obj, key, value, enabled, lvl4_key, lvl4_value, lvl5_key, lvl5_value) values(?,?,?,?,?,?,?,?,?)", (item['grp'], item['obj'], item['key'], None, 1, k, None, None, v2)) 
+                        elif (v.__class__.__name__ == 'dict'):
+                            for k2, v2 in v.items():
+                                if (v2 != None):                                   
+                                    cur.execute("insert into config (grp, obj, key, value, enabled, lvl4_key, lvl4_value, lvl5_key, lvl5_value) values(?,?,?,?,?,?,?,?,?)", (item['grp'], item['obj'], item['key'], None, 1, k, None, k2, v2))
+                        else:
+                            if (v != None):
+                                cur.execute("insert into config (grp, obj, key, value, enabled, lvl4_key, lvl4_value) values(?,?,?,?,?,?,?)", (item['grp'], item['obj'], item['key'], None, 1, k, v)) 
+                else:   
+                    cur.execute("insert into config (grp, obj, key, value, enabled) values(?,?,?,?,?)", (item['grp'], item['obj'], item['key'], item['value'], 1))  
             self._conn.commit()
             result = True
-        return result    
+        return result                                                           
 
     def cfg2db(self, d):
         """Method converts base config data to the database input format

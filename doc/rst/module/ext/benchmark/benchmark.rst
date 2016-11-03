@@ -1,7 +1,7 @@
 .. _module_ext_benchmark:
 
-DataGen
-=======
+BenchMark
+=========
 
 This section contains module documentation of BenchMark extension.
 

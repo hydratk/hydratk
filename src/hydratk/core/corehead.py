@@ -615,18 +615,53 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         db = dbconfig.DBConfig(db_file)        
         db.connect()
         cfg = db.db2cfg(active_only = True)
-        for grp, obj, itmk, itmv, _ in cfg:
+        for grp, obj, itmk, itmv, _, l4k, l4v, l5k, l5v in cfg:
             grp = str(grp)
             obj = str(obj)
             itmk = str(itmk)
-            itmv = str(itmv)
-            itmv = int(itmv) if itmv.isdigit() else itmv
+            if (itmv != None):
+                itmv = str(itmv)
+                itmv = int(itmv) if itmv.isdigit() else itmv
+            
             if grp not in self._config:
                 self._config[grp] = {}
             if obj not in self._config[grp]:
                 self._config[grp][obj] = {}
-                  
-            self._config[grp][obj][itmk] = itmv # update in memory configuration
+                
+            # update in memory configuration
+            if (l4k == None and l4v == None):
+                self._config[grp][obj][itmk] = itmv 
+            else:              
+                if (l4k == None): # list on 4th level
+                    l4v = str(l4v)
+                    l4v = int(l4v) if l4v.isdigit() else l4v                    
+                    if (itmk not in self._config[grp][obj]):
+                        self._config[grp][obj][itmk] = []
+                    if (l4v not in self._config[grp][obj][itmk]):
+                        self._config[grp][obj][itmk].append(l4v) 
+                elif (l5k == None and l5v == None): # dict on 4th level
+                    l4k, l4v = str(l4k), str(l4v)
+                    l4v = int(l4v) if l4v.isdigit() else l4v                      
+                    if (itmk not in self._config[grp][obj]):
+                        self._config[grp][obj][itmk] = {}
+                    self._config[grp][obj][itmk][l4k] = l4v
+                elif (l5k == None): # list on 5th level
+                    l4k, l5v = str(l4k), str(l5v)
+                    l5v = int(l5v) if l5v.isdigit() else l5v                       
+                    if (itmk not in self._config[grp][obj]):
+                        self._config[grp][obj][itmk] = {}
+                    if (l4k not in self._config[grp][obj][itmk]):
+                        self._config[grp][obj][itmk][l4k] = []
+                    if (l5v not in self._config[grp][obj][itmk][l4k]):
+                        self._config[grp][obj][itmk][l4k].append(l5v)
+                else: # dict on 5th level
+                    l4k, l5k, l5v = str(l4k), str(l5k), str(l5v)
+                    l5v = int(l5v) if l5v.isdigit() else l5v                       
+                    if (itmk not in self._config[grp][obj]):
+                        self._config[grp][obj][itmk] = {}
+                    if (l4k not in self._config[grp][obj][itmk]):
+                        self._config[grp][obj][itmk][l4k] = {} 
+                    self._config[grp][obj][itmk][l4k][l5k] = l5v                      
         
     def _process_extension_configs(self):
         """Method searches configuration directory for extension specific configuration files
@@ -975,11 +1010,12 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         except ImportError as e:
             self.dmsg('htk_on_error', self._trn.msg('htk_load_ext_msg_failed', self._language, str(e)), self.fromhere())
             
-        # import commands help                                    
+        # import commands help (in standalone mode import given extension only)                                           
         try:            
-            self.dmsg('htk_on_debug_info', self._trn.msg('htk_load_ext_help', self._language, str(help_package)), self.fromhere())            
-            help_msg = importlib.import_module(help_package)
-            self._trn.add_help(help_msg)            
+            if (self._opt_profile == 'htk' or self._opt_profile == ext_path.split('.')[-1]):
+                self.dmsg('htk_on_debug_info', self._trn.msg('htk_load_ext_help', self._language, str(help_package)), self.fromhere())            
+                help_msg = importlib.import_module(help_package)
+                self._trn.add_help(help_msg)            
         except ImportError as e:
             self.dmsg('htk_on_error', self._trn.msg('htk_load_ext_help_failed', self._language, str(e)), self.fromhere())   
             

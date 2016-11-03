@@ -15,15 +15,19 @@ Database has simple structure with one table.
 
 **config**:
 
-=======  ======== ======== ==========
-Column   Datatype Nullable Constraint 
-=======  ======== ======== ==========
-grp      varchar     N     
-obj      varchar     N
-key      varchar     N     
-value    varchar     Y     
-enabled  integer     Y
-=======  ======== ======== ==========
+==========  ======== ======== ==========
+Column      Datatype Nullable Constraint 
+==========  ======== ======== ==========
+grp         varchar     N     
+obj         varchar     N
+key         varchar     N     
+value       varchar     Y     
+enabled     integer     Y
+lvl4_key    varchar     Y
+lvl4_value  varchar     Y
+lvl5_key    varchar     Y
+lvl5_value  varchar     Y
+==========  ======== ======== ==========
 
 **Attributes** :
 
@@ -46,7 +50,7 @@ Method stores dictionary configuration to database table config.
 
 * cfg2db
 
-Method transform dictionary configuration (multiple levels) to form which is directly writable to database.
+Method transforms dictionary configuration (multiple levels) to form which is directly writable to database.
 
 * db2cfg
 
