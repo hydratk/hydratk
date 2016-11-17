@@ -359,7 +359,7 @@ if ('install' in argv or 'bdist_egg' in argv or 'bdist_wheel' in argv):
         call('cp {file} {dir}'.format(file=file, dir=dir), shell=True) 
         
     call('chmod -R a+r /etc/hydratk', shell=True)    
-    call('gzip -c doc/{extension}.1 > /usr/local/share/man/man1/{extension}.1', shell=True)       
+    call('gzip -c doc/{extension}.1 > /usr/share/man/man1/{extension}.1', shell=True)       
         
 '''
 

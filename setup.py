@@ -39,11 +39,11 @@ entry_points = {
      
 setup(
       name='hydratk',
-      version='0.4.0a.dev1',
+      version='0.4.0',
       description='Fully extendable object oriented application toolkit with nice modular architecture',
       long_description=readme,
-      author='Petr Czaderna, HydraTK Team',
-      author_email='team@hydratk.org',
+      author='Petr Czaderna, HydraTK team',
+      author_email='pc@hydratk.org, team@hydratk.org',
       url='http://www.hydratk.org',
       license='BSD',
       packages=find_packages('src'),

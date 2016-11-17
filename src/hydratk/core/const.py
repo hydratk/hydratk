@@ -10,10 +10,10 @@
 
 ''' Application metadata '''
 APP_NAME               = "HydraTK"
-APP_VERSION            = "0.4.0a.dev1"
+APP_VERSION            = "0.4.0"
 APP_REVISION           = ""
 APP_DEVEL_YEAR         = "2009 - 2016"
-APP_AUTHORS            = "Petr Czaderna <pc@hydratk.org>, HydraTK Team"
+APP_AUTHORS            = "Petr Czaderna <pc@hydratk.org>, HydraTK team <team@hydratk.org>"
 CP_STRING              = "(c) "+ APP_DEVEL_YEAR +" "+ APP_AUTHORS
 
 ''' Default configuration '''  

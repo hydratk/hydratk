@@ -28,4 +28,4 @@ def set_access_rights():
         
 def install_manpage():
     
-    call('gzip -c doc/htk.1 > /usr/local/share/man/man1/htk.1', shell=True)                                      
+    call('gzip -c doc/htk.1 > /usr/share/man/man1/htk.1', shell=True)                                      
