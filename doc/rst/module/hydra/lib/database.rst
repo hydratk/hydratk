@@ -13,9 +13,10 @@ Module provides class DBO as general database interface.
 Supported drivers:
 
 * sqlite - implemented in hydratk
+* mssql - implemented in hydratk-lib-network
+* mysql - implemented in hydratk-lib-network
+* oracle - implemented in hydratk-lib-network
 * pgsql - implemented in hydratk-lib-network
-* mysql - planned
-* oracle - planned
 
 **Attributes** :
 

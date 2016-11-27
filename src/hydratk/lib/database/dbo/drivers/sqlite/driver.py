@@ -249,7 +249,7 @@ class DBODriver(dbodriver.DBODriver):
            table_name (str): table
            
         Returns:
-           bool: result (not working now)
+           bool: result
                 
         """ 
                 

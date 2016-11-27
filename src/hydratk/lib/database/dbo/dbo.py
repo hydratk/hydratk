@@ -7,9 +7,12 @@
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
+
 import importlib
+from pkgutil import find_loader
 
 dbo_drivers = {
+               'mssql'  : 'hydratk.lib.database.dbo.drivers.mssql',
                'mysql'  : 'hydratk.lib.database.dbo.drivers.mysql',
                'oracle' : 'hydratk.lib.database.dbo.drivers.oracle',
                'pgsql'  : 'hydratk.lib.database.dbo.drivers.pgsql',
@@ -44,6 +47,8 @@ class DBO(object):
         
         driver_name = self._get_driver_from_dsn(dsn)
         if driver_name in dbo_drivers:
+            if (driver_name != 'sqlite' and find_loader('hydratk.lib.network') == None):
+                raise DBOException('Library hydratk-lib-network not installed')
             self._driver_name = driver_name
             dbo_driver_mod_str = '{0}.driver'.format(dbo_drivers[driver_name])
             dbo_driver_mod = self._import_dbo_driver(dbo_driver_mod_str)
