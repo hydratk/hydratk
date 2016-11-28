@@ -99,13 +99,16 @@ setup(
       long_description=readme,
       author='{author_name}',
       author_email='{author_email}',
-      url='http://library.hydratk.org/{lib_name}',
+      url='http://libraries.hydratk.org/{lib_name}',
       license='BSD',
       packages=find_packages('src'),
       install_requires=requires,
       package_dir={{'' : 'src'}},
       classifiers=classifiers,
-      zip_safe=False
+      zip_safe=False,
+      keywords='hydratk',
+      requires_python='>=2.6,!=3.0.*,!=3.1.*,!=3.2.*',
+      platforms='Linux'
      )        
 '''
 
@@ -347,7 +350,10 @@ setup(
       package_dir={{'' : 'src'}},
       classifiers=classifiers,
       zip_safe=False,
-      entry_points=entry_points  
+      entry_points=entry_points,
+      keywords='hydratk',
+      requires_python='>=2.6,!=3.0.*,!=3.1.*,!=3.2.*',
+      platforms='Linux'  
      )        
      
 if ('install' in argv or 'bdist_egg' in argv or 'bdist_wheel' in argv):

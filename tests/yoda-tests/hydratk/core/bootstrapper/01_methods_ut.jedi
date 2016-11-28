@@ -7,8 +7,7 @@ Test-Scenario-1:
   Version: 0.1
   
   Pre-Req: |
-    from hydratk.core.bootstrapper import _check_dependencies
-    from hydratk.core.dependencies import dep_modules
+    from hydratk.core.bootstrapper import _check_dependencies, dep_modules
   
   Test-Case-1:
     Id: tc_01
@@ -37,7 +36,7 @@ Test-Scenario-1:
       Desc: Missing module, changed dependencies
       
       Test: |             
-        dep_modules['test_mod'] = {'desc': 'test module'}
+        dep_modules['test_mod'] = {'package': 'test module'}
         out = this.test_result = _check_dependencies()
         
       Validate: | 

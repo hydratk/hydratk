@@ -15,7 +15,7 @@ Unit tests available at hydratk/core/bootstrapper/01_methods_ut.jedi
 
 * _check_dependencies
 
-Method checks if all required modules are installed (configured in module dependencies).
+Method checks if all required modules are installed.
 
 * run_app
 

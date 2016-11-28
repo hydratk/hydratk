@@ -236,7 +236,10 @@ Module ``hydratk`` is automatically configured as required.
            install_requires=requires,
            package_dir={'' : 'src'},
            classifiers=classifiers,
-           zip_safe=False
+           zip_safe=False,
+           keywords='hydratk',
+           requires_python='>=2.6,!=3.0.*,!=3.1.*,!=3.2.*',
+           platforms='Linux'
           )     
           
 * whiteforce.py

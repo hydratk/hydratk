@@ -39,7 +39,7 @@ entry_points = {
      
 setup(
       name='hydratk',
-      version='0.5.0a1',
+      version='0.5.0a.dev1',
       description='Fully extendable object oriented application toolkit with nice modular architecture',
       long_description=readme,
       author='Petr Czaderna, HydraTK team',
@@ -50,7 +50,10 @@ setup(
       package_dir={'' : 'src'},
       classifiers=classifiers,
       zip_safe=False,      
-      entry_points=entry_points
+      entry_points=entry_points,
+      keywords='toolkit,utilities,testing,analysis',
+      requires_python='>=2.6,!=3.0.*,!=3.1.*,!=3.2.*',
+      platforms='Linux'
      )
 
 run_post_install(argv)

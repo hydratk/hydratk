@@ -10,38 +10,87 @@
 
 import sys
 from hydratk.lib.system.utils import Utils
-from hydratk.core.dependencies import dep_modules
-
 
 PYTHON_MAJOR_VERSION = sys.version_info[0]
 if PYTHON_MAJOR_VERSION == 2:
     reload(sys)
     sys.setdefaultencoding('UTF8')
     
-def _check_dependencies():
-    """Method checks if all dependent modules can be loaded
+dep_modules = {
+  'importlib'    : {
+                    'package'     : 'importlib'
+                   },
+  'psutil'       : {
+                    'min-version' : '3.1.1',
+                    'package'     : 'psutil'
+                   },
+  'setproctitle' : {
+                    'min-version' : '1.1.9',
+                    'package'     : 'setproctitle'
+                   },
+  'xtermcolor'   : {
+                    'min-version' : '1.3',
+                    'package'     : 'xtermcolor'
+                   },
+  'yaml'         : {
+                    'min-version' : '3.11',
+                    'package'     : 'pyyaml'
+                   },           
+  'zmq'          : {
+                    'min-version' : '14.7.0',
+                    'package'     : 'pyzmq'
+                   }           
+}
+
+lib_dependencies = {
+  'hydratk-lib-network' : 'hydratk.lib.network.dependencies'
+}    
     
-    Modules are configured in hydratk.core.dependencies (including minimum version)
+def _check_dependencies(dep_modules=dep_modules, source='hydratk'):
+    """Method checks if all dependent modules can be loaded
         
     Args:  
-       none          
+       dep_modules (dict): dependent modules 
+       source (str): source hydratk module         
            
     Returns:
        bool: result, False if any module is missing            
                 
-    """       
+    """           
     
     result = True
     for mod, modinfo in dep_modules.items():
-        if Utils.module_loaded(mod):
+        try:
             lmod = __import__(mod)
-            if 'min-version' in modinfo:
-                if not Utils.module_version_ok(modinfo['min-version'], lmod.__version__):
-                    print("Dependency error: module %s found with version: %s, but at least version %s is required" % (mod, lmod.__version__, modinfo['min-version']))
+            if ('min-version' in modinfo):
+                version = lmod.__version__ if (hasattr(lmod, '__version__')) else Utils.module_version(modinfo['package'])
+                if (not Utils.module_version_ok(modinfo['min-version'], version)):
+                    print("Dependency error for %s: module %s found with version: %s, but at least version %s is required, upgrade package %s" % (
+                          source, mod, version, modinfo['min-version'], modinfo['package']))
                     result = False  
-        else:
-            print("Dependency error: missing module %s" % mod)
+        except ImportError:
+            print("Dependency error for %s: missing module %s, install package %s" % (source, mod, modinfo['package']))
             result = False
+    
+    import importlib
+    for lib, mod in lib_dependencies.items():
+        try:
+            dep_modules = importlib.import_module(mod).get_dep_modules()
+            for mod, modinfo in dep_modules.items():
+                try:
+                    lmod = __import__(mod)
+                    if ('min-version' in modinfo):
+                        version = lmod.__version__ if (hasattr(lmod, '__version__')) else Utils.module_version(modinfo['package'])
+                    if (not Utils.module_version_ok(modinfo['min-version'], version)):
+                        print("Dependency error for %s: module %s found with version: %s, but at least version %s is required, upgrade package %s" % (
+                              lib, mod, version, modinfo['min-version'], modinfo['package']))
+                        result = False  
+                except ImportError:
+                    print("Dependency error for %s: missing module %s, install package %s" % (lib, mod, modinfo['package']))
+                    result = False
+        except ImportError:
+            pass
+    
     return result
 
 def run_app():

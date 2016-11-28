@@ -77,5 +77,5 @@ class Utils():
     
         """
                 
-        from distutils.version import StrictVersion
-        return StrictVersion(cur_version) >= StrictVersion(min_version)
+        from distutils.version import LooseVersion
+        return LooseVersion(cur_version) >= LooseVersion(min_version)

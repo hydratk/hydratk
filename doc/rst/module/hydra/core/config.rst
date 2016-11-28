@@ -31,9 +31,3 @@ Configuration of various constants used in application.
 * run modes - list (single application, parallel)
 * thread - list of statuses, time intervals
 * run levels - list of run hierarchy levels
-
-dependencies
-^^^^^^^^^^^^
-
-Set of modules (including minimal version) which must be installed to run hydratk.
-If some dependency is not met bootstrapper stops the application.
