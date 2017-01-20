@@ -1,16 +1,36 @@
 # -*- coding: utf-8 -*-
 
+from sys import version_info
+import install.task as task
+
+run_pre_install = task.run_pre_install
+run_post_install = task.run_post_install
+
+def version_update(cfg):
+    
+    major, minor = version_info[0], version_info[1]
+
+    module = 'setproctitle>=1.1.9'
+    if (major == 2 and minor == 6):     
+        cfg['modules'].insert(0, 'importlib')
+        cfg['libs'][module]['apt-get'][0] = 'python2.6-dev'
+    elif (major == 3):
+        cfg['libs'][module]['apt-get'][0] = 'python2.6-devel'
+        cfg['libs'][module]['apt-get'][0] = 'python3-dev'
+        cfg['libs'][module]['yum'][0] = 'python3-devel'
+
 config = {
   'pre_tasks' : [
-                 'version_update',
-                 'install_libs_from_repo',
-                 'install_pip'
+                 version_update,
+                 task.install_libs,
+                 task.install_modules
                 ],
 
   'post_tasks' : [
-                  'copy_files',
-                  'set_access_rights',
-                  'install_manpage'
+                  task.set_config,
+                  task.copy_files,
+                  task.set_access_rights,
+                  task.set_manpage
                  ],
           
   'modules' : [ 
@@ -22,8 +42,13 @@ config = {
               ],
           
   'files' : {
-             'etc/hydratk/hydratk.conf'               : '/etc/hydratk' ,
-             'var/local/hydratk/dbconfig/__init__.py' : '/var/local/hydratk/dbconfig'        
+             'config'  : {
+                          'etc/hydratk/hydratk.conf' : '/etc/hydratk'
+                         },
+             'data'    : { 
+                          'var/local/hydratk/dbconfig/__init__.py' : '/var/local/hydratk/dbconfig'
+                         },
+             'manpage' : 'doc/htk.1'        
             },
           
   'libs' : {

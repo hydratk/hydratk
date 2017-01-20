@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
+
 from setuptools import setup, find_packages
 from sys import argv
-from install.pre_install import run_pre_install
-from install.post_install import run_post_install
+import install.script as inst
 
 with open("README.rst", "r") as f:
     readme = f.read()
@@ -28,7 +28,7 @@ classifiers = [
     "Topic :: Utilities"
 ]
 
-run_pre_install(argv)
+inst.run_pre_install(argv, inst.config)
 
 entry_points = {
                 'console_scripts': [
@@ -39,7 +39,7 @@ entry_points = {
      
 setup(
       name='hydratk',
-      version='0.5.0a.dev1',
+      version='0.5.0a.dev2',
       description='Fully extendable object oriented application toolkit with nice modular architecture',
       long_description=readme,
       author='Petr Czaderna, HydraTK team',
@@ -56,4 +56,4 @@ setup(
       platforms='Linux'
      )
 
-run_post_install(argv)
+inst.run_post_install(argv, inst.config)
