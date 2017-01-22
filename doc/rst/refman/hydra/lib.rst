@@ -150,6 +150,32 @@ exceptions
 .. automodule:: hydratk.lib.exceptions.inputerror
    :member-order: bysource   
 
+.. _refman_hydra_lib_install:
+
+install
+^^^^^^^
+
+.. _refman_hydra_lib_install_command:
+
+* command
+
+.. automodule:: hydratk.lib.exceptions.command
+   :member-order: bysource 
+   
+.. _refman_hydra_lib_install_task:
+
+* task
+
+.. automodule:: hydratk.lib.exceptions.task
+   :member-order: bysource 
+   
+.. _refman_hydra_lib_install_uninstall:
+
+* uninstall
+
+.. automodule:: hydratk.lib.exceptions.uninstall
+   :member-order: bysource       
+
 .. _refman_hydra_lib_number:
 
 number

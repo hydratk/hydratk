@@ -8,8 +8,7 @@
 
 """
 
-import hydratk.lib.install.command as cmd
-from subprocess import call
+from .command import *
 
 def run_pre_install(argv, cfg):  
     """Method run pre-install tasks
@@ -23,7 +22,7 @@ def run_pre_install(argv, cfg):
     
     """      
 
-    if (cmd.is_install_cmd(argv)):      
+    if (is_install_cmd(argv)):      
      
         print('**************************************') 
         print('*     Running pre-install tasks      *')    
@@ -45,7 +44,7 @@ def run_post_install(argv, cfg):
     
     """        
     
-    if (cmd.is_install_cmd(argv)):              
+    if (is_install_cmd(argv)):              
     
         print('**************************************') 
         print('*     Running post-install tasks     *')    
@@ -66,7 +65,7 @@ def install_libs(cfg):
     
     """          
     
-    pckm = cmd.get_pck_manager()[0]  
+    pckm = get_pck_manager()[0]  
          
     libs, modules = cfg['libs'], cfg['modules'] 
   
@@ -78,7 +77,7 @@ def install_libs(cfg):
             if (pckm in libs[key]):
                 lib_inst += libs[key][pckm]
             for lib in lib_inst:
-                cmd.install_pck(pckm, lib)                   
+                install_pck(pckm, lib)                   
                 
 def install_modules(cfg):
     """Method install python modules
@@ -92,7 +91,7 @@ def install_modules(cfg):
     """        
     
     for module in cfg['modules']:
-        cmd.install_pip(module)  
+        install_pip(module)  
         
 def copy_files(cfg):  
     """Method copies data files
@@ -106,7 +105,7 @@ def copy_files(cfg):
     """      
     
     for file, dir in cfg['files']['data'].items():        
-        cmd.copy_file(file, dir)               
+        copy_file(file, dir)               
 
 def set_access_rights(cfg):  
     """Method sets access rights
@@ -120,7 +119,7 @@ def set_access_rights(cfg):
     """       
     
     for dir, right in cfg['rights'].items():
-        cmd.set_rights(dir, right)  
+        set_rights(dir, right)  
 
 def set_config(cfg):
     """Method sets configuration file
@@ -133,17 +132,19 @@ def set_config(cfg):
     
     """      
      
-    for file, dir in cfg['files']['config'].items(): 
-        with open(file, 'r') as f:
-            f_new = f.read()
-        cfg_file = '/'+file
-        with open(cfg_file, 'r') as f:
-            f_curr = f.read()  
+    for file, dir in cfg['files']['config'].items():
         
-        if (f_curr != f_new):
-            cmd.move_file(cfg_file, cfg_file+'_old')    
+        cfg_file = '/'+file 
+        if (path.exists(cfg_file)):
+            with open(file, 'r') as f:
+                f_new = f.read()        
+            with open(cfg_file, 'r') as f:
+                f_curr = f.read()  
+        
+            if (f_curr != f_new):
+                move_file(cfg_file, cfg_file+'_old')    
                  
-        cmd.copy_file(file, dir) 
+        copy_file(file, dir) 
         
 def set_manpage(cfg):
     """Method sets manual page

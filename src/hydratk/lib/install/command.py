@@ -147,7 +147,25 @@ def move_file(src, dst):
     cmd = 'mv {0} {1}'.format(src, dst) 
     
     if (call(cmd, shell=True) != 0):
-        print('Failed to move {0} to {1}'.format(src, dst))                                                                     
+        print('Failed to move {0} to {1}'.format(src, dst))    
+        
+def remove(src, recursive=True):
+    """Method removes file or directory
+
+    Args:
+       src (str): source path
+       recursive (bool): recursive deletion
+
+    Returns:
+       none
+    
+    """     
+    
+    print('Removing {0}'.format(src)) 
+    cmd = ('rm -fR {0}' if (recursive) else 'rm -f {0}').format(src) 
+    
+    if (call(cmd, shell=True) != 0):
+        print('Failed to remove {0}'.format(src))                                                                              
            
 def set_rights(path, rights, recursive=True):
     """Method sets access rights
@@ -188,4 +206,21 @@ def install_pip(module):
     cmd = 'pip install {0}'.format(module) 
     if (call(cmd, shell=True) != 0):
         print('Failed to install {0}, hydratk installation failed.'.format(module))
-        exit(-1)       
+        exit(-1)  
+        
+def uninstall_pip(module):    
+    """Method uninstalls python module via pip
+
+    Args:
+       module (str): python module
+
+    Returns:
+       none
+    
+    """      
+    
+    print ('Uninstalling module {0}'.format(module))
+    
+    cmd = 'pip uninstall -y {0}'.format(module) 
+    if (call(cmd, shell=True) != 0):
+        print('Failed to uninstall {0}'.format(module))    

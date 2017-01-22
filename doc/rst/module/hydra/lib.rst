@@ -17,6 +17,7 @@ This section contains module documentation of HydraTK library modules.
    lib/debugging
    lib/dynamic
    lib/exceptions
+   lib/install
    lib/number
    lib/string
    lib/system

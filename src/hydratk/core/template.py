@@ -63,6 +63,8 @@ def some_library_function():
 
 lib_setup_py = '''# -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
+from sys import argv, version_info
+import hydratk.lib.install.task as task
 
 with open("README.rst", "r") as f:
     readme = f.read()
@@ -88,9 +90,47 @@ classifiers = [
     "Topic :: Utilities"
 ]
 
-requires = [
-            'hydratk'           
-           ]                          
+def version_update(cfg)
+    pass # Python version specific installation
+
+config = {{
+  'pre_tasks' : [
+                 version_update,
+                 task.install_libs,
+                 task.install_modules
+                ],
+
+  'post_tasks' : [  
+                  task.copy_files
+                 ],
+          
+  'modules' : [   
+               'hydratk',
+               'mod'      
+              ],
+          
+  'files' : {{
+             'data' : {{
+                       'src filepath' : 'dst dirpath'
+                      }} 
+            }},
+            
+  'libs' : {{
+            'mod>=version' : {{
+                              'repo'    : [
+                                           'apt-get or yum'
+                                          ],
+                              'apt-get' : [
+                                           'apt-get only lib'
+                                          ],
+                              'yum'     : [
+                                           'yum only lib'
+                                          ]
+                             }}
+           }}                                       
+}}   
+
+task.run_pre_install(argv, config)                       
          
 setup(
       name='{lib_ucname}',
@@ -102,14 +142,15 @@ setup(
       url='http://libraries.hydratk.org/{lib_name}',
       license='BSD',
       packages=find_packages('src'),
-      install_requires=requires,
       package_dir={{'' : 'src'}},
       classifiers=classifiers,
       zip_safe=False,
       keywords='hydratk',
       requires_python='>=2.6,!=3.0.*,!=3.1.*,!=3.2.*',
       platforms='Linux'
-     )        
+     )   
+     
+task.run_post_install(argv, config)          
 '''
 
 lib_setup_cfg = '''[sdist]
@@ -257,6 +298,9 @@ class Extension(extension.Extension):
     def _check_dependencies(self):
         return True
         
+    def _uninstall(self)
+        return []
+        
     def _do_imports(self):
         pass   
     
@@ -296,8 +340,7 @@ def run_app():
 extension_setup_py = '''# -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
 from sys import argv, version_info
-from os import path
-from subprocess import call
+import hydratk.lib.install.task as task
 
 with open("README.rst", "r") as f:
     readme = f.read()
@@ -318,17 +361,58 @@ classifiers = [
     "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: Implementation",
     "Programming Language :: Python :: Implementation :: CPython",   
+    "Programming Language :: Python :: Implementation :: PyPy",
     "Topic :: Software Development :: Libraries :: Application Frameworks",
     "Topic :: Utilities"
 ]
 
-requires = [
-            'hydratk'           
-           ]
-         
-files = {{
-         'etc/hydratk/conf.d/hydratk-ext-{extension}.conf' : '/etc/hydratk/conf.d'
-        }}                           
+def version_update(cfg)
+    pass # Python version specific installation
+
+config = {{
+  'pre_tasks' : [
+                 version_update,
+                 task.install_libs,
+                 task.install_modules
+                ],
+
+  'post_tasks' : [
+                  task.set_config,  
+                  task.copy_files,
+                  task.set_manpage
+                 ],
+          
+  'modules' : [   
+               'hydratk',
+               'mod'      
+              ],
+          
+  'files' : {{
+             'config'  : {{
+                          'etc/hydratk/conf.d/hydratk-ext-{extension}.conf' : '/etc/hydratk/conf.d'
+                         }},
+             'data'    : {{
+                          'src filepath' : 'dst dirpath'
+                         }},
+             'manpage' : 'doc/{extension}.1'         
+            }},
+            
+  'libs' : {{
+            'mod>=version' : {{
+                              'repo'    : [
+                                           'apt-get or yum'
+                                          ],
+                              'apt-get' : [
+                                           'apt-get only lib'
+                                          ],
+                              'yum'     : [
+                                           'yum only lib'
+                                          ]
+                             }}
+           }}                                       
+}} 
+
+task.run_pre_install(argv, config)                         
          
 entry_points = {{
                 'console_scripts': [
@@ -345,8 +429,7 @@ setup(
       author_email='{author_email}',
       url='http://extensions.hydratk.org/{ext_ucname}',
       license='BSD',
-      packages=find_packages('src'),
-      install_requires=requires,
+      packages=find_packages('src')
       package_dir={{'' : 'src'}},
       classifiers=classifiers,
       zip_safe=False,
@@ -355,18 +438,8 @@ setup(
       requires_python='>=2.6,!=3.0.*,!=3.1.*,!=3.2.*',
       platforms='Linux'  
      )        
-     
-if ('install' in argv or 'bdist_egg' in argv or 'bdist_wheel' in argv):
-    
-    for file, dir in files.items():    
-        if (not path.exists(dir)):
-            call('mkdir -p {dir}'.format(dir=dir), shell=True)
-            
-        call('cp {file} {dir}'.format(file=file, dir=dir), shell=True) 
         
-    call('chmod -R a+r /etc/hydratk', shell=True)    
-    call('gzip -c doc/{extension}.1 > /usr/share/man/man1/{extension}.1', shell=True)       
-        
+task.run_post_install(argv, config)        
 '''
 
 extension_setup_cfg = '''[sdist]
@@ -529,7 +602,7 @@ README for {ext_ucname}
 OS and Python versions support
 ==============================
 
-| Currently the Linux platform with CPython 2.6, 2.7, 3.x is supported, 
+| Currently the Linux platform with CPython 2.6, 2.7, 3.3, 3.4, 3.5, PyPY 2.7 is supported, 
 | but the final version is planned to be crossplatform and targeted also to the other popular systems 
 | including Windows and OSX and possibly other Python versions such as Jython and IronPython
 '''
