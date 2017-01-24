@@ -194,7 +194,11 @@ Test-Scenario-4:
     from hydratk.core.masterhead import MasterHead
     from hydratk.lib.console.commandlinetool import CommandlineTool
     import sys
-    from StringIO import StringIO
+    
+    try:
+        from StringIO import StringIO
+    except ImportError:
+        from io import StringIO
   
   Test-Case-1:
     Id: tc_01
@@ -462,7 +466,7 @@ Test-Scenario-10:
     Test-Condition-2: 
       Id: tco_02
       Name: tco_dis_debug
-      Desc: Diasable debug
+      Desc: Disable debug
       
       Test: |
         mh._config['System']['Debug']['enabled'] = 0

@@ -21,6 +21,7 @@ classifiers = [
     "Programming Language :: Python :: 3.3",
     "Programming Language :: Python :: 3.4",
     "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: Implementation",
     "Programming Language :: Python :: Implementation :: CPython", 
     "Programming Language :: Python :: Implementation :: PyPy",  
@@ -119,7 +120,7 @@ entry_points = {
      
 setup(
       name='hydratk',
-      version='0.5.0a.dev2',
+      version='0.5.0a.dev3',
       description='Fully extendable object oriented application toolkit with nice modular architecture',
       long_description=readme,
       author='Petr Czaderna, HydraTK team',

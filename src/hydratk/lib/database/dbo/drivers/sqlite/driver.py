@@ -313,7 +313,7 @@ class DBODriver(dbodriver.DBODriver):
         for col in tables:
             query += "drop table if exists {0};".format(col[0])        
         self._cursor.executescript(query)
-        self._cursor.execute("VACUUM;")
+        self.commit()
     
     def result_as_dict(self, state):   
         """Method enables query result in dictionary form

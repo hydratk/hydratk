@@ -164,12 +164,12 @@ Test-Scenario-4:
       
       Validate: |        
         res = this.test_result = len(db_cfg)
-        exp_len = len(db.cfg2db(file_cfg))
+        exp_len = len(db.cfg2db(file_cfg))-1
         assert (res == exp_len), 'db2cfg = {0} records'.format(exp_len)   
         
     Test-Condition-2: 
       Id: tco_02
-      Name: tco_active_rec
+      Name: tco_all_rec
       Desc: Convert all records   
       
       Test: |                   
