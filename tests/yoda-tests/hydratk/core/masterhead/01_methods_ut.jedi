@@ -366,13 +366,15 @@ Test-Scenario-6:
       Test: |
         sys.argv[-2] = '3'
         res = mh.check_run_mode()
-        del sys.argv[-3:-1]
       
       Validate: |                                   
         this.test_result = res
         assert (res), 'check_run_mode = True' 
         res = this.test_result = mh._run_mode
         assert (res == const.CORE_RUN_MODE_PP_DAEMON), '_run_mode = 3' 
+        sys.argv[-2] = '1'
+        res = mh.check_run_mode()
+        del sys.argv[-3:-1] 
         
 Test-Scenario-7:
   Id: ts_07
