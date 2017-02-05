@@ -12,6 +12,8 @@ python:
 sudo: required  
   
 install:
+  - "sudo pip install --upgrade pip"
+  - "sudo pip install --upgrade setuptools"
   - "sudo -H python setup.py install"
   - "sudo git clone -b develop https://github.com/hydratk/hydratk-ext-yoda.git"
   - "cd hydratk-ext-yoda"
@@ -23,4 +25,4 @@ install:
   - "sudo cp tests/travis.yoda /var/local/hydratk/yoda/yoda-tests"
   
 script:
-  - "yoda -tp travis.yoda run"        
+  - "sudo yoda -tp travis.yoda run"        
