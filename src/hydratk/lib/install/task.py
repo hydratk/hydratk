@@ -91,7 +91,21 @@ def install_modules(cfg):
     """        
     
     for module in cfg['modules']:
-        install_pip(module)  
+        install_pip(module) 
+        
+def create_dirs(cfg): 
+    """Method creates directories
+
+    Args:
+       cfg (dict): configuration
+
+    Returns:
+       none
+    
+    """   
+    
+    for dir in cfg['dirs']:
+        create_dir(dir) 
         
 def copy_files(cfg):  
     """Method copies data files

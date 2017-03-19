@@ -1,6 +1,7 @@
 language: python
 
 python:
+<<<<<<< HEAD
   - "2.6"
   - "2.7"
   - "3.3"
@@ -26,3 +27,9 @@ install:
   
 script:
   - "sudo yoda -tp travis.yoda run"        
+=======
+  - "2.7"
+  
+install:
+  - "python setup.py install"
+>>>>>>> refs/remotes/github/develop

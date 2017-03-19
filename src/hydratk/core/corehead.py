@@ -1245,7 +1245,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         """ 
                 
         self._runlevel = const.RUNLEVEL_APPL        
-        if (self.have_command_action()):  #and self._msg_router == None
+        if (self.have_command_action() and self._msg_router == None):
             self._do_command_action()
         return True #required by fn_hook
     

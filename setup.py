@@ -51,7 +51,7 @@ config = {
 
   'post_tasks' : [
                   task.set_config,
-                  task.copy_files,
+                  task.create_dirs,
                   task.set_access_rights,
                   task.set_manpage
                  ],
@@ -64,12 +64,13 @@ config = {
                'xtermcolor>=1.3'                                              
               ],
           
+  'dirs' : [
+            '/var/local/hydratk/dbconfig'
+           ],        
+          
   'files' : {
              'config'  : {
                           'etc/hydratk/hydratk.conf' : '/etc/hydratk'
-                         },
-             'data'    : { 
-                          'var/local/hydratk/dbconfig/__init__.py' : '/var/local/hydratk/dbconfig'
                          },
              'manpage' : 'doc/htk.1'        
             },

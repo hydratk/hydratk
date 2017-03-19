@@ -203,7 +203,7 @@ def install_pip(module):
     
     print ('Installing module {0}'.format(module))
     
-    cmd = 'pip install --upgrade {0}'.format(module) 
+    cmd = 'pip install --upgrade --upgrade-strategy only-if-needed {0}'.format(module) 
     if (call(cmd, shell=True) != 0):
         print('Failed to install {0}, hydratk installation failed.'.format(module))
         exit(-1)  
