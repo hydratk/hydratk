@@ -33,18 +33,19 @@ def rmkdir(path):
             raise ex;
     return result
 
-def file_get_contents(filename):
+def file_get_contents(filename, mode='r'):
     """Methods reads file content
 
     Args:
        filename (str): filename including path
+       mode (str): file mode
 
     Returns:
        str: content
     
     """
         
-    with open(filename) as f:
+    with open(filename, mode) as f:
         return f.read()
 
 def file_put_contents(filename, data): 
