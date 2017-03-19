@@ -1,4 +1,4 @@
-hydratk/core/bootstrapper
+hydratk/core/bootstrapper/01_methods_ut.jedi:ts_01
 hydratk/core/corehead
 hydratk/core/dbconfig
 hydratk/core/debugger

@@ -9,7 +9,7 @@
 """
 
 from subprocess import call, Popen, PIPE
-from os import path
+from os import path, environ
 from sys import exit
 
 def is_install_cmd(argv):
@@ -203,7 +203,8 @@ def install_pip(module):
     
     print ('Installing module {0}'.format(module))
     
-    cmd = 'pip install --upgrade --upgrade-strategy only-if-needed {0}'.format(module) 
+    pip_path = 'pip' if ('pip' not in environ) else '$pip'
+    cmd = '{0} install --upgrade --upgrade-strategy only-if-needed {1}'.format(pip_path, module) 
     if (call(cmd, shell=True) != 0):
         print('Failed to install {0}, hydratk installation failed.'.format(module))
         exit(-1)  
