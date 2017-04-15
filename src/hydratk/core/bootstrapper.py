@@ -43,7 +43,8 @@ dep_modules = {
 }
 
 lib_dependencies = {
-  'hydratk-lib-network' : 'hydratk.lib.network.dependencies'
+  'hydratk-lib-network' : 'hydratk.lib.network.dependencies',
+  'hydratk-lib-numeric' : 'hydratk.lib.numeric.dependencies'
 }    
     
 def _check_dependencies(dep_modules=dep_modules, source='hydratk'):
