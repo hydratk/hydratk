@@ -44,10 +44,6 @@ class Extension(extension.Extension):
         self._ext_author = 'Petr Czaderna <pc@hydratk.org>, HydraTK team <team@hydratk.org>'
         self._ext_year = '2013 - 2017' 
         
-    def _uninstall(self):
-        
-        return [] 
-        
     def _register_actions(self):
         """Method registers actions
         

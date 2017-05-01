@@ -39,7 +39,7 @@ dep_modules = {
   'zmq'          : {
                     'min-version' : '14.7.0',
                     'package'     : 'pyzmq'
-                   }           
+                   }          
 }
 
 lib_dependencies = {
@@ -70,13 +70,14 @@ def _check_dependencies(dep_modules=dep_modules, source='hydratk'):
                           source, mod, version, modinfo['min-version'], modinfo['package']))
                     result = False  
         except ImportError:
-            print("Dependency error for %s: missing module %s, install package %s" % (source, mod, modinfo['package']))
-            result = False
+            if ('optional' not in modinfo or modinfo['optional'] == False):
+                print("Dependency error for %s: missing module %s, install package %s" % (source, mod, modinfo['package']))
+                result = False
     
     import importlib
     for lib, mod in lib_dependencies.items():
         try:
-            dep_modules = importlib.import_module(mod).get_dep_modules()
+            dep_modules = importlib.import_module(mod).get_dependencies()
             for mod, modinfo in dep_modules.items():
                 try:
                     lmod = __import__(mod)
@@ -87,8 +88,9 @@ def _check_dependencies(dep_modules=dep_modules, source='hydratk'):
                               lib, mod, version, modinfo['min-version'], modinfo['package']))
                         result = False  
                 except ImportError:
-                    print("Dependency error for %s: missing module %s, install package %s" % (lib, mod, modinfo['package']))
-                    result = False
+                    if ('optional' not in modinfo or modinfo['optional'] == False):
+                        print("Dependency error for %s: missing module %s, install package %s" % (lib, mod, modinfo['package']))
+                        result = False
         except ImportError:
             pass
     

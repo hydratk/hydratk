@@ -29,13 +29,13 @@ classifiers = [
     "Topic :: Utilities"
 ]
 
-def version_update(cfg):
+def version_update(cfg, *args):
     
     major, minor = version_info[0], version_info[1]
 
-    module = 'setproctitle>=1.1.9'
+    module = 'setproctitle'
     if (major == 2 and minor == 6):     
-        cfg['modules'].insert(0, 'importlib')
+        cfg['modules'].insert(0, {'module': 'importlib'})
         cfg['libs'][module]['apt-get'][0] = 'python2.6-dev'
     elif (major == 3):
         cfg['libs'][module]['apt-get'][0] = 'python2.6-devel'
@@ -57,11 +57,11 @@ config = {
                  ],
           
   'modules' : [ 
-               'setproctitle>=1.1.9',
-               'pyzmq>=14.7.0',
-               'psutil>=3.1.1',                          
-               'pyyaml>=3.11',                                             
-               'xtermcolor>=1.3'                                              
+               {'module': 'setproctitle', 'version': '>=1.1.9'},
+               {'module': 'pyzmq',        'version': '>=14.7.0'},
+               {'module': 'psutil',       'version': '>=3.1.1'},                          
+               {'module': 'pyyaml',       'version': '>=3.11'},                                             
+               {'module': 'xtermcolor',   'version': '>=1.3'}                                             
               ],
           
   'dirs' : [
@@ -76,31 +76,31 @@ config = {
             },
           
   'libs' : {
-            'pyzmq>=14.7.0'       : {                        
-                                     'apt-get' : [
-                                                  'g++', 
-                                                  'libzmq-dev'
-                                                 ],
-                                     'yum'     : [
-                                                  'gcc-c++', 
-                                                  'zeromq'
-                                                 ]
-                                    },                       
-            'setproctitle>=1.1.9' : {
-                                     'repo'    : [
-                                                  'gcc', 
-                                                  'wget', 
-                                                  'bzip2', 
-                                                  'tar'
-                                                 ],
-                                     'apt-get' : [
-                                                  'python-dev'
-                                                 ],
-                                     'yum'     : [
-                                                  'redhat-rpm-config', 
-                                                  'python-devel'
-                                                 ]
-                                    }                    
+            'pyzmq'        : {                        
+                              'apt-get' : [
+                                           'g++', 
+                                           'libzmq-dev'
+                                          ],
+                              'yum'     : [
+                                           'gcc-c++', 
+                                           'zeromq'
+                                          ]
+                             },                       
+            'setproctitle' : {
+                              'repo'    : [
+                                           'gcc', 
+                                           'wget', 
+                                           'bzip2', 
+                                           'tar'
+                                          ],
+                              'apt-get' : [
+                                           'python-dev'
+                                          ],
+                              'yum'     : [
+                                           'redhat-rpm-config', 
+                                           'python-devel'
+                                          ]
+                             }                  
            },
           
   'rights' : {

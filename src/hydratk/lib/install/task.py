@@ -9,6 +9,7 @@
 """
 
 from .command import *
+from os import path
 
 def run_pre_install(argv, cfg):  
     """Method run pre-install tasks
@@ -28,10 +29,12 @@ def run_pre_install(argv, cfg):
         print('*     Running pre-install tasks      *')    
         print('**************************************')
     
+        profiles = get_profiles(argv)
+    
         for task in cfg['pre_tasks']:
             print('\n*** Running task: {0} ***\n'.format(task.__name__))
-            task(cfg) 
-            
+            task(cfg, profiles)
+
 def run_post_install(argv, cfg): 
     """Method run post-install tasks
 
@@ -50,50 +53,72 @@ def run_post_install(argv, cfg):
         print('*     Running post-install tasks     *')    
         print('**************************************')
     
+        profiles = get_profiles(argv)
+    
         for task in cfg['post_tasks']:
             print('\n*** Running task: {0} ***\n'.format(task.__name__))
-            task(cfg)    
+            task(cfg, profiles)    
             
-def install_libs(cfg):  
+def install_libs(cfg, profiles, *args):  
     """Method installs system libraries
 
     Args:
        cfg (dict): configuration
+       profiles (list): module profiles
 
     Returns:
        none
     
     """          
     
-    pckm = get_pck_manager()[0]  
-         
+    pckm = get_pck_manager()[0]           
     libs, modules = cfg['libs'], cfg['modules'] 
-  
-    for key in libs.keys():
-        if (key in modules):
-            lib_inst = []
-            if ('repo' in libs[key]):
-                lib_inst += libs[key]['repo']
-            if (pckm in libs[key]):
-                lib_inst += libs[key][pckm]
-            for lib in lib_inst:
-                install_pck(pckm, lib)                   
+    lib_inst = []
+    
+    for mod in modules:
+        module = mod['module']
+        if (module in libs):
+            
+            do_install = True
+            if ('profile' in mod):
+                if ('full' not in profiles and mod['profile'] not in profiles+['basic']):
+                    do_install = False            
+            
+            if (do_install):                
+                if ('repo' in libs[module]):
+                    lib_inst += libs[module]['repo']
+                if (pckm in libs[module]):
+                    lib_inst += libs[module][pckm]
                 
-def install_modules(cfg):
+    for lib in lib_inst:
+        install_pck(pckm, lib)                   
+                
+def install_modules(cfg, profiles, *args):
     """Method install python modules
 
     Args:
        cfg (dict): configuration
+       profiles (list): module profiles
 
     Returns:
        none
     
     """        
     
-    for module in cfg['modules']:
-        install_pip(module) 
+    for mod in cfg['modules']:
+        module = mod['module']
+        if ('version' in mod):
+            module += mod['version']
+            
+        do_install = True
+        if ('profile' in mod):
+            if ('full' not in profiles and mod['profile'] not in profiles+['basic']):
+                do_install = False
         
-def create_dirs(cfg): 
+        if (do_install):
+            install_pip(module) 
+        
+def create_dirs(cfg, *args): 
     """Method creates directories
 
     Args:
@@ -107,7 +132,7 @@ def create_dirs(cfg):
     for dir in cfg['dirs']:
         create_dir(dir) 
         
-def copy_files(cfg):  
+def copy_files(cfg, *args):  
     """Method copies data files
 
     Args:
@@ -121,7 +146,7 @@ def copy_files(cfg):
     for file, dir in cfg['files']['data'].items():        
         copy_file(file, dir)               
 
-def set_access_rights(cfg):  
+def set_access_rights(cfg, *args):  
     """Method sets access rights
 
     Args:
@@ -135,7 +160,7 @@ def set_access_rights(cfg):
     for dir, right in cfg['rights'].items():
         set_rights(dir, right)  
 
-def set_config(cfg):
+def set_config(cfg, *args):
     """Method sets configuration file
 
     Args:
@@ -160,7 +185,7 @@ def set_config(cfg):
                  
         copy_file(file, dir) 
         
-def set_manpage(cfg):
+def set_manpage(cfg, *args):
     """Method sets manual page
 
     Args:
@@ -172,4 +197,24 @@ def set_manpage(cfg):
     """  
         
     manpage = cfg['files']['manpage']
-    call('gzip -c {0} > {1}'.format(manpage, '/usr/share/man/man1/'+manpage.split('/')[-1]), shell=True)                              
+    call('gzip -c {0} > {1}'.format(manpage, '/usr/share/man/man1/'+manpage.split('/')[-1]), shell=True)     
+    
+def get_profiles(argv):      
+    """Method gets module profiles 
+
+    Args:
+       argv (list): input arguments
+
+    Returns:
+       list: profiles
+    
+    """                                
+    
+    profiles = ['full']
+    for arg in argv:
+        if ('--profile' in arg):
+            profiles = arg.split('=')[1].split(',')
+            argv.remove(arg)
+            break
+        
+    return profiles
