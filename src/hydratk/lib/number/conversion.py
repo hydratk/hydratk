@@ -8,19 +8,20 @@
 
 """
 
+
 def int2bool(intvar):
     """Method converts number to bool
-        
+
     Args:   
        intvar (int): number
 
     Returns: 
        bool: result
-                
-    """ 
-            
+
+    """
+
     result = False
-    intvar = int(intvar)    
+    intvar = int(intvar)
     if intvar > 0:
         result = True
-    return result    
+    return result

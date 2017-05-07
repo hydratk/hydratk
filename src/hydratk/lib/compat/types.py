@@ -16,10 +16,10 @@ if PYTHON_MAJOR_VERSION == 2:
     str = str
     unicode = unicode
     bytes = str
-    basestring = basestring    
-    
-if PYTHON_MAJOR_VERSION == 3:    
+    basestring = basestring
+
+if PYTHON_MAJOR_VERSION == 3:
     str = str
     unicode = str
     bytes = bytes
-    basestring = (str,bytes)   
+    basestring = (str, bytes)

@@ -15,8 +15,7 @@ PYTHON_MAJOR_VERSION = sys.version_info[0]
 if PYTHON_MAJOR_VERSION == 2:
     reload(sys)
     sys.setdefaultencoding('UTF8')
-    
 
-               
+
 if __name__ == '__main__':
     bootstrapper.run_app()

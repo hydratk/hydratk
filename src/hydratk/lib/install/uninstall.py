@@ -14,15 +14,16 @@ from hydratk.core.bootstrapper import dep_modules
 from sys import exit, argv
 
 files = [
-         '/usr/share/man/man1/htk.1',
-         '/etc/hydratk',
-         '/var/local/hydratk'
-        ]
+    '/usr/share/man/man1/htk.1',
+    '/etc/hydratk',
+    '/var/local/hydratk'
+]
 
 libs = {
-  'network' : 'hydratk.lib.network.dependencies',
-  'numeric' : 'hydratk.lib.numeric.dependencies'
+    'network': 'hydratk.lib.network.dependencies',
+    'numeric': 'hydratk.lib.numeric.dependencies'
 }
+
 
 def run_uninstall():
     """Method runs installation script
@@ -32,16 +33,17 @@ def run_uninstall():
 
     Returns:
        none
-    
-    """              
-    
+
+    """
+
     cnt = len(argv)
     uninst_pymod = True if (cnt > 1 and argv[1] == '-y') else False
-    htkmod = argv[cnt-1] if (cnt > 2 or (cnt == 2 and argv[1] != '-y')) else 'all'
-    
+    htkmod = argv[
+        cnt - 1] if (cnt > 2 or (cnt == 2 and argv[1] != '-y')) else 'all'
+
     mh = MasterHead.get_head()
     mh.run_fn_hook('h_bootstrap')
-        
+
     for title, ext in mh._ext.items():
         if (htkmod in ['all', ext._ext_id] and ext._ext_id not in ['benchmark']):
             if (hasattr(ext, '_uninstall')):
@@ -50,7 +52,7 @@ def run_uninstall():
                 ext_files, ext_mods = [], {}
             ext_mods = _get_dependencies(ext_mods) if (uninst_pymod) else {}
             uninstall_ext(ext._ext_id, ext_files, ext_mods)
-    
+
     import importlib
     for title, mod in libs.items():
         if (htkmod in ['all', title]):
@@ -59,25 +61,27 @@ def run_uninstall():
                 if (hasattr(lib, '_uninstall')):
                     lib_files, lib_mods = lib._uninstall()
                 else:
-                    lib_files, lib_mods = [], {}              
-                lib_mods = _get_dependencies(lib_mods) if (uninst_pymod) else {}
+                    lib_files, lib_mods = [], {}
+                lib_mods = _get_dependencies(
+                    lib_mods) if (uninst_pymod) else {}
                 uninstall_lib(title, lib_files, lib_mods)
             except ImportError:
                 pass
-    
+
     if (htkmod == 'all'):
         cmd.uninstall_pip('hydratk')
-        
+
         for f in files:
-            cmd.remove(f)   
-        
-        if (uninst_pymod): 
+            cmd.remove(f)
+
+        if (uninst_pymod):
             for mod in _get_dependencies(dep_modules):
                 if (mod != 'importlib'):
-                    cmd.uninstall_pip(mod)         
+                    cmd.uninstall_pip(mod)
 
     exit(0)
-    
+
+
 def uninstall_ext(ext_id, files, mods):
     """Method uninstalls extension
 
@@ -88,19 +92,20 @@ def uninstall_ext(ext_id, files, mods):
 
     Returns:
        none
-    
-    """      
-    
-    cmd.uninstall_pip('hydratk-ext-'+ext_id)
-    
+
+    """
+
+    cmd.uninstall_pip('hydratk-ext-' + ext_id)
+
     for f in files:
-        cmd.remove(f)  
-        
+        cmd.remove(f)
+
     for mod in mods:
         if ('hydratk' not in mod):
-            cmd.uninstall_pip(mod)           
-        
-def uninstall_lib(lib_id, files, mods):   
+            cmd.uninstall_pip(mod)
+
+
+def uninstall_lib(lib_id, files, mods):
     """Method uninstalls library
 
     Args:
@@ -110,19 +115,20 @@ def uninstall_lib(lib_id, files, mods):
 
     Returns:
        none
-    
-    """  
-    
-    cmd.uninstall_pip('hydratk-lib-'+lib_id)  
-    
+
+    """
+
+    cmd.uninstall_pip('hydratk-lib-' + lib_id)
+
     for f in files:
-        cmd.remove(f)  
-        
+        cmd.remove(f)
+
     for mod in mods:
         if ('hydratk' not in mod):
-            cmd.uninstall_pip(mod)  
-            
-def _get_dependencies(dependencies):        
+            cmd.uninstall_pip(mod)
+
+
+def _get_dependencies(dependencies):
     """Method gets dependent modules
 
     Args:
@@ -130,11 +136,11 @@ def _get_dependencies(dependencies):
 
     Returns:
        list
-    
-    """ 
-    
+
+    """
+
     mods = []
-    for key, val in dependencies.items():        
-        mods.append(val['package']) 
-        
-    return mods                  
+    for key, val in dependencies.items():
+        mods.append(val['package'])
+
+    return mods

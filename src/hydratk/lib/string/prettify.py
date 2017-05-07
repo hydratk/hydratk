@@ -8,17 +8,18 @@
 
 """
 
+
 def xml_prettify(xml_str):
     """Method reformats xml to use indentation
-    
+
     Args:
        xml_str (str): raw xml  
-               
+
     Returns:            
        str: indented xml  
-    
+
     """
-        
+
     from xml.dom.minidom import parseString
     reparsed = parseString(xml_str)
-    return '\n'.join([line for line in reparsed.toprettyxml(indent=' '*2).split('\n') if line.strip()])
+    return '\n'.join([line for line in reparsed.toprettyxml(indent=' ' * 2).split('\n') if line.strip()])

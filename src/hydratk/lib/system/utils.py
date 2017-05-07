@@ -11,10 +11,11 @@
 import pkgutil
 import pkg_resources
 
+
 class Utils():
     """Class Utils
     """
-    
+
     @staticmethod
     def module_version(module):
         """Methods gets module version
@@ -24,11 +25,11 @@ class Utils():
 
         Returns:
            str: version
-    
+
         """
-            
+
         return pkg_resources.get_distribution(module).version
-        
+
     @staticmethod
     def module_loaded(module):
         """Methods checks if module is already loaded
@@ -38,18 +39,19 @@ class Utils():
 
         Returns:
            bool: resukt
-    
+
         """
-                
+
         result = False
-        for _, modname, _ in pkgutil.iter_modules(): #unused importer and ispkg
+        # unused importer and ispkg
+        for _, modname, _ in pkgutil.iter_modules():
             if modname == module:
                 result = True
-                break                 
+                break
         return result
-    
+
     @staticmethod
-    def module_exists(module_name): 
+    def module_exists(module_name):
         """Methods checks if module exists
 
         Args:
@@ -57,9 +59,9 @@ class Utils():
 
         Returns:
            bool: result
-    
+
         """
-                       
+
         if globals().get(module_name, False):
             return True
         return False
@@ -74,8 +76,8 @@ class Utils():
 
         Returns:
            bool: result
-    
+
         """
-                
+
         from distutils.version import LooseVersion
         return LooseVersion(cur_version) >= LooseVersion(min_version)

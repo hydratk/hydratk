@@ -15,65 +15,68 @@ PYTHON_MAJOR_VERSION = sys.version_info[0]
 if PYTHON_MAJOR_VERSION == 2:
     reload(sys)
     sys.setdefaultencoding('UTF8')
-    
+
 dep_modules = {
-  'importlib'    : {
-                    'package'     : 'importlib'
-                   },
-  'psutil'       : {
-                    'min-version' : '3.1.1',
-                    'package'     : 'psutil'
-                   },
-  'setproctitle' : {
-                    'min-version' : '1.1.9',
-                    'package'     : 'setproctitle'
-                   },
-  'xtermcolor'   : {
-                    'min-version' : '1.3',
-                    'package'     : 'xtermcolor'
-                   },
-  'yaml'         : {
-                    'min-version' : '3.11',
-                    'package'     : 'pyyaml'
-                   },           
-  'zmq'          : {
-                    'min-version' : '14.7.0',
-                    'package'     : 'pyzmq'
-                   }          
+    'importlib': {
+        'package': 'importlib'
+    },
+    'psutil': {
+        'min-version': '3.1.1',
+        'package': 'psutil'
+    },
+    'setproctitle': {
+        'min-version': '1.1.9',
+        'package': 'setproctitle'
+    },
+    'xtermcolor': {
+        'min-version': '1.3',
+        'package': 'xtermcolor'
+    },
+    'yaml': {
+        'min-version': '3.11',
+        'package': 'pyyaml'
+    },
+    'zmq': {
+        'min-version': '14.7.0',
+        'package': 'pyzmq'
+    }
 }
 
 lib_dependencies = {
-  'hydratk-lib-network' : 'hydratk.lib.network.dependencies',
-  'hydratk-lib-numeric' : 'hydratk.lib.numeric.dependencies'
-}    
-    
+    'hydratk-lib-network': 'hydratk.lib.network.dependencies',
+    'hydratk-lib-numeric': 'hydratk.lib.numeric.dependencies'
+}
+
+
 def _check_dependencies(dep_modules=dep_modules, source='hydratk'):
     """Method checks if all dependent modules can be loaded
-        
+
     Args:  
        dep_modules (dict): dependent modules 
        source (str): source hydratk module         
-           
+
     Returns:
        bool: result, False if any module is missing            
-                
-    """           
-    
+
+    """
+
     result = True
     for mod, modinfo in dep_modules.items():
         try:
             lmod = __import__(mod)
             if ('min-version' in modinfo):
-                version = lmod.__version__ if (hasattr(lmod, '__version__')) else Utils.module_version(modinfo['package'])
+                version = lmod.__version__ if (
+                    hasattr(lmod, '__version__')) else Utils.module_version(modinfo['package'])
                 if (not Utils.module_version_ok(modinfo['min-version'], version)):
                     print("Dependency error for %s: module %s found with version: %s, but at least version %s is required, upgrade package %s" % (
                           source, mod, version, modinfo['min-version'], modinfo['package']))
-                    result = False  
+                    result = False
         except ImportError:
             if ('optional' not in modinfo or modinfo['optional'] == False):
-                print("Dependency error for %s: missing module %s, install package %s" % (source, mod, modinfo['package']))
+                print("Dependency error for %s: missing module %s, install package %s" % (
+                    source, mod, modinfo['package']))
                 result = False
-    
+
     import importlib
     for lib, mod in lib_dependencies.items():
         try:
@@ -82,57 +85,61 @@ def _check_dependencies(dep_modules=dep_modules, source='hydratk'):
                 try:
                     lmod = __import__(mod)
                     if ('min-version' in modinfo):
-                        version = lmod.__version__ if (hasattr(lmod, '__version__')) else Utils.module_version(modinfo['package'])
+                        version = lmod.__version__ if (
+                            hasattr(lmod, '__version__')) else Utils.module_version(modinfo['package'])
                     if (not Utils.module_version_ok(modinfo['min-version'], version)):
                         print("Dependency error for %s: module %s found with version: %s, but at least version %s is required, upgrade package %s" % (
                               lib, mod, version, modinfo['min-version'], modinfo['package']))
-                        result = False  
+                        result = False
                 except ImportError:
                     if ('optional' not in modinfo or modinfo['optional'] == False):
-                        print("Dependency error for %s: missing module %s, install package %s" % (lib, mod, modinfo['package']))
+                        print("Dependency error for %s: missing module %s, install package %s" % (
+                            lib, mod, modinfo['package']))
                         result = False
         except ImportError:
             pass
-    
+
     return result
+
 
 def run_app():
     """Method runs HydraTK application
-    
+
     Method is executed from htk command (automatically installed)
-        
+
     Args: 
        none           
-           
+
     Returns:   
        void     
-                
+
     """
-        
-    if (_check_dependencies()):        
+
+    if (_check_dependencies()):
         from hydratk.core.masterhead import MasterHead
-        
-        mh = MasterHead.get_head()            
-        mh.run_fn_hook('h_bootstrap') # run level specific processing
-        trn = mh.get_translator()  
-        mh.dmsg('htk_on_debug_info', trn.msg('htk_app_exit'), mh.fromhere())       
-           
+
+        mh = MasterHead.get_head()
+        mh.run_fn_hook('h_bootstrap')  # run level specific processing
+        trn = mh.get_translator()
+        mh.dmsg('htk_on_debug_info', trn.msg('htk_app_exit'), mh.fromhere())
+
     sys.exit(0)
+
 
 def run_app_prof():
     """Method runs HydraTK application in profiling mode
-    
+
     Method is executed from htkprof command (automatically installed)
     C profiler lsprof is used
-        
+
     Args:    
        none
-    
+
     Returns:
        void             
-                
-    """    
-    
+
+    """
+
     from hydratk.core.profiler import Profiler
     pr = Profiler()
     pr.start()

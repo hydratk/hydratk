@@ -12,6 +12,7 @@ from subprocess import call, Popen, PIPE
 from os import path, environ
 from sys import exit
 
+
 def is_install_cmd(argv):
     """Method checks if installation is requested
 
@@ -20,18 +21,19 @@ def is_install_cmd(argv):
 
     Returns:
        bool: result
-    
-    """    
 
-    res = False    
+    """
+
+    res = False
     if ('install' in argv or 'bdist_egg' in argv or 'bdist_wheel' in argv):
         res = True
 
     return res
 
-def get_pck_manager():  
+
+def get_pck_manager():
     """Method returns system package manager
-    
+
     Supported: apt-get, yum
 
     Args:
@@ -39,19 +41,20 @@ def get_pck_manager():
 
     Returns:
        list: list of string
-    
-    """      
-    
-    pck_managers = ['apt-get', 'yum']
-    
-    pckm = []
-    for pck in pck_managers:     
-        if (is_installed(pck)):
-            pckm.append(pck) 
-    
-    return pckm  
 
-def is_installed(app): 
+    """
+
+    pck_managers = ['apt-get', 'yum']
+
+    pckm = []
+    for pck in pck_managers:
+        if (is_installed(pck)):
+            pckm.append(pck)
+
+    return pckm
+
+
+def is_installed(app):
     """Method checks if system application is installed
 
     Args:
@@ -59,17 +62,18 @@ def is_installed(app):
 
     Returns:
        bool: result
-    
-    """        
-    
+
+    """
+
     cmd = ['which', app]
     proc = Popen(cmd, stdout=PIPE)
-    out = proc.communicate() 
+    out = proc.communicate()
 
     result = True if (len(out[0]) > 0) else False
-    return result   
+    return result
 
-def install_pck(pckm, pck): 
+
+def install_pck(pckm, pck):
     """Method installs system package from repository
 
     Args:
@@ -78,20 +82,22 @@ def install_pck(pckm, pck):
 
     Returns:
        none
-    
-    """         
-    
+
+    """
+
     print('Installing package {0}'.format(pck))
-    
+
     if (pckm == 'apt-get'):
         cmd = 'apt-get -y install {0}'.format(pck)
     elif (pckm == 'yum'):
         cmd = 'yum -y install {0}'.format(pck)
-        
+
     if (call(cmd, shell=True) != 0):
-        print('Failed to install package {0}, hydratk installation failed.'.format(pck)) 
+        print(
+            'Failed to install package {0}, hydratk installation failed.'.format(pck))
         exit(-1)
-        
+
+
 def create_dir(dst):
     """Method creates directory
 
@@ -100,17 +106,18 @@ def create_dir(dst):
 
     Returns:
        none
-    
-    """      
-    
+
+    """
+
     if (not path.exists(dst)):
-        
+
         print('Creating directory {0}'.format(dst))
         cmd = 'mkdir -p {0}'.format(dst)
-        
+
         if (call(cmd, shell=True) != 0):
-            print('Failed to create directory {0}'.format(dst))     
-        
+            print('Failed to create directory {0}'.format(dst))
+
+
 def copy_file(src, dst):
     """Method copies file
 
@@ -120,17 +127,18 @@ def copy_file(src, dst):
 
     Returns:
        none
-    
-    """      
-    
-    create_dir(dst)   
-          
+
+    """
+
+    create_dir(dst)
+
     print ('Copying file {0} to {1}'.format(src, dst))
-    cmd = 'cp {0} {1}'.format(src, dst) 
-    
+    cmd = 'cp {0} {1}'.format(src, dst)
+
     if (call(cmd, shell=True) != 0):
-        print('Failed to copy {0} to {1}'.format(src, dst)) 
-        
+        print('Failed to copy {0} to {1}'.format(src, dst))
+
+
 def move_file(src, dst):
     """Method moves file
 
@@ -140,15 +148,16 @@ def move_file(src, dst):
 
     Returns:
        none
-    
-    """     
-    
-    print('Moving file {0} to {1}'.format(src, dst)) 
-    cmd = 'mv {0} {1}'.format(src, dst) 
-    
+
+    """
+
+    print('Moving file {0} to {1}'.format(src, dst))
+    cmd = 'mv {0} {1}'.format(src, dst)
+
     if (call(cmd, shell=True) != 0):
-        print('Failed to move {0} to {1}'.format(src, dst))    
-        
+        print('Failed to move {0} to {1}'.format(src, dst))
+
+
 def remove(src, recursive=True):
     """Method removes file or directory
 
@@ -158,15 +167,16 @@ def remove(src, recursive=True):
 
     Returns:
        none
-    
-    """     
-    
-    print('Removing {0}'.format(src)) 
-    cmd = ('rm -fR {0}' if (recursive) else 'rm -f {0}').format(src) 
-    
+
+    """
+
+    print('Removing {0}'.format(src))
+    cmd = ('rm -fR {0}' if (recursive) else 'rm -f {0}').format(src)
+
     if (call(cmd, shell=True) != 0):
-        print('Failed to remove {0}'.format(src))                                                                              
-           
+        print('Failed to remove {0}'.format(src))
+
+
 def set_rights(path, rights, recursive=True):
     """Method sets access rights
 
@@ -177,19 +187,20 @@ def set_rights(path, rights, recursive=True):
 
     Returns:
        none
-    
-    """         
-    
+
+    """
+
     print('Setting rights {0} for {1}'.format(rights, path))
-    
+
     if (recursive):
         cmd = 'chmod -R {0} {1}'.format(rights, path)
     else:
         cmd = 'chmod {0} {1}'.format(rights, path)
-        
+
     if (call(cmd, shell=True) != 0):
-        print('Failed to set rights for {0}'.format(path))  
-        
+        print('Failed to set rights for {0}'.format(path))
+
+
 def install_pip(module):
     """Method installs python module via pip
 
@@ -198,18 +209,21 @@ def install_pip(module):
 
     Returns:
        none
-    
-    """      
-    
+
+    """
+
     print ('Installing module {0}'.format(module))
-    
+
     pip_path = 'pip' if ('pip' not in environ) else '$pip'
-    cmd = '{0} install --upgrade --upgrade-strategy only-if-needed {1}'.format(pip_path, module) 
+    cmd = '{0} install --upgrade --upgrade-strategy only-if-needed {1}'.format(
+        pip_path, module)
     if (call(cmd, shell=True) != 0):
-        print('Failed to install {0}, hydratk installation failed.'.format(module))
-        exit(-1)  
-        
-def uninstall_pip(module):    
+        print(
+            'Failed to install {0}, hydratk installation failed.'.format(module))
+        exit(-1)
+
+
+def uninstall_pip(module):
     """Method uninstalls python module via pip
 
     Args:
@@ -217,11 +231,11 @@ def uninstall_pip(module):
 
     Returns:
        none
-    
-    """      
-    
+
+    """
+
     print ('Uninstalling module {0}'.format(module))
-    
-    cmd = 'pip uninstall -y {0}'.format(module) 
+
+    cmd = 'pip uninstall -y {0}'.format(module)
     if (call(cmd, shell=True) != 0):
-        print('Failed to uninstall {0}'.format(module))    
+        print('Failed to uninstall {0}'.format(module))

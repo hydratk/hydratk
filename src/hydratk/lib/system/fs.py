@@ -10,6 +10,7 @@
 
 import os
 
+
 def rmkdir(path):
     """Method creates directory
 
@@ -18,20 +19,21 @@ def rmkdir(path):
 
     Returns:
        bool: result
-       
+
     Raises:
        exeception: Exception
-    
+
     """
-        
-    result = False;
+
+    result = False
     if path != '' and not os.path.exists(path):
         try:
             os.makedirs(path)
             return True
         except Exception as ex:
-            raise ex;
+            raise ex
     return result
+
 
 def file_get_contents(filename, mode='r'):
     """Methods reads file content
@@ -42,13 +44,14 @@ def file_get_contents(filename, mode='r'):
 
     Returns:
        str: content
-    
+
     """
-        
+
     with open(filename, mode) as f:
         return f.read()
 
-def file_put_contents(filename, data): 
+
+def file_put_contents(filename, data):
     """Methods writes content to file
 
     Args:
@@ -57,9 +60,9 @@ def file_put_contents(filename, data):
 
     Returns:
        void
-    
+
     """
-           
+
     f = open(filename, 'w')
     f.write(data)
     f.close()

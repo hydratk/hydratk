@@ -11,7 +11,8 @@
 import time
 import math
 
-def microtime(get_as_float=False) :
+
+def microtime(get_as_float=False):
     """Methods returns current time including microseconds
 
     Args:
@@ -20,9 +21,9 @@ def microtime(get_as_float=False) :
     Returns:
        float: if get_as_flost
        str: if not get_as_float
-    
+
     """
-        
+
     if get_as_float:
         return time.time()
     else:

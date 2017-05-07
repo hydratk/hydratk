@@ -8,22 +8,23 @@
 
 """
 
+
 class InputError(Exception):
     """Class InputError
     """
 
     def __init__(self, error_num, args, msg):
         """Class constructor
-        
+
         Called when object is initialized
-        
+
         Args:   
            error_num (int): number
            args (list): arguments
            msg (str): message
-                
-        """ 
-        
+
+        """
+
         self.error_num = error_num
-        self.args      = args        
-        self.message   = msg
+        self.args = args
+        self.message = msg

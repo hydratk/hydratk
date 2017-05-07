@@ -8,8 +8,10 @@
 
 """
 
+
 class Profiler():
-    _profiling = False    
+    _profiling = False
+
     def __init__(self):
         '''
         Constructor

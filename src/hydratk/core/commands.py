@@ -8,56 +8,56 @@
 
 """
 
-commands          = [
-                    'create-config-db',
-                    'create-ext-skel',
-                    'create-lib-skel', 
-                    'start',
-                    'stop',
-                    'help',
-                    'list-extensions' 
-                    ]
-                    
-long_opts         = [
-                     'debug',
-                     'config',
-                     'config-db-file',
-                     'debug-channel',
-                     'ext-skel-path',                     
-                     'force',
-                     'interactive',
-                     'language',
-                     'lib-skel-path',
-                     'run-mode'                                      
-                    ]
-short_opts        = [
-                     'c',
-                     'd',
-                     'e',
-                     'f',
-                     'i',
-                     'l',
-                     'm'
-                    ]
+commands = [
+    'create-config-db',
+    'create-ext-skel',
+    'create-lib-skel',
+    'start',
+    'stop',
+    'help',
+    'list-extensions'
+]
 
-getopt_long_opts  = [
-                     'config=',
-                     'config-db-file=',
-                     'ext-skel-path=',
-                     'debug=',
-                     'debug-channel=',
-                     'force',
-                     'interactive',
-                     'language=',
-                     'lib-skel-path='
-                     'run-mode='                    
-                    ]
+long_opts = [
+    'debug',
+    'config',
+    'config-db-file',
+    'debug-channel',
+    'ext-skel-path',
+    'force',
+    'interactive',
+    'language',
+    'lib-skel-path',
+    'run-mode'
+]
+short_opts = [
+    'c',
+    'd',
+    'e',
+    'f',
+    'i',
+    'l',
+    'm'
+]
+
+getopt_long_opts = [
+    'config=',
+    'config-db-file=',
+    'ext-skel-path=',
+    'debug=',
+    'debug-channel=',
+    'force',
+    'interactive',
+    'language=',
+    'lib-skel-path='
+    'run-mode='
+]
 getopt_short_opts = [
-                     'c',
-                     'd',
-                     'e',
-                     'f',
-                     'i',
-                     'l',
-                     'm'
-                    ]                   
+    'c',
+    'd',
+    'e',
+    'f',
+    'i',
+    'l',
+    'm'
+]

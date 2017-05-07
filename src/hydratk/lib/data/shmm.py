@@ -11,13 +11,10 @@
 try:
     import cPickle as pickle
 except ImportError:
-    import pickle  
+    import pickle
 
-def get_ctype_char_array(int_keys, lock = True):
-    from multiprocessing  import Array
+
+def get_ctype_char_array(int_keys, lock=True):
+    from multiprocessing import Array
     from ctypes import c_char_p
-    return Array(c_char_p, int_keys, lock = lock)
-
-
-    
-    
+    return Array(c_char_p, int_keys, lock=lock)

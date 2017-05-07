@@ -13,8 +13,9 @@ from hydratk.core import const
 
 _mh = MasterHead.get_head()
 
-stdout_flush  = True
+stdout_flush = True
 emulate_print = True
+
 
 def cprint(data):
     """Methods sends data as debug message
@@ -24,7 +25,7 @@ def cprint(data):
 
     Returns:
        void
-    
+
     """
-        
-    _mh.dmsg('htk_on_cprint',data)    
+
+    _mh.dmsg('htk_on_cprint', data)

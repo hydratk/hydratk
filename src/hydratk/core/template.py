@@ -10,41 +10,41 @@
 
 from datetime import datetime
 
-lib_default_user_data      = {
-                             'lib_name'     : 'whiteforce',  
-                             'lib_ucname'   : 'WhiteForce',
-                             'author_name'  : 'Obi-Wan Kenobi',
-                             'author_email' : 'kenobi@jedi.com',
-                             'lib_year'     : datetime.now().year,
-                             'lib_desc'     : 'This library provides example functionality, how to develop HydraTK shared libraries',
-                             'lib_license'  : 'BSD'                                                          
-                             }
+lib_default_user_data = {
+    'lib_name': 'whiteforce',
+    'lib_ucname': 'WhiteForce',
+    'author_name': 'Obi-Wan Kenobi',
+    'author_email': 'kenobi@jedi.com',
+    'lib_year': datetime.now().year,
+    'lib_desc': 'This library provides example functionality, how to develop HydraTK shared libraries',
+    'lib_license': 'BSD'
+}
 
-lib_dir_struct             = [       
-                              'hydratk-lib-{lib_name}/doc',                      
-                              'hydratk-lib-{lib_name}/src/hydratk/lib/{lib_name}',                         
-                             ]
+lib_dir_struct = [
+    'hydratk-lib-{lib_name}/doc',
+    'hydratk-lib-{lib_name}/src/hydratk/lib/{lib_name}',
+]
 
-lib_package_files          = [                            
-                              'hydratk-lib-{lib_name}/src/hydratk/__init__.py',
-                              'hydratk-lib-{lib_name}/src/hydratk/lib/__init__.py',
-                              'hydratk-lib-{lib_name}/src/hydratk/lib/{lib_name}/__init__.py',                            
-                             ]
+lib_package_files = [
+    'hydratk-lib-{lib_name}/src/hydratk/__init__.py',
+    'hydratk-lib-{lib_name}/src/hydratk/lib/__init__.py',
+    'hydratk-lib-{lib_name}/src/hydratk/lib/{lib_name}/__init__.py',
+]
 
 lib_package_init_content = '''
 from pkgutil import extend_path
 __path__ = extend_path(__path__, __name__)
 '''
 
-lib_data_files   =  {                            
-                            'lib.module'       : 'hydratk-lib-{lib_name}/src/hydratk/lib/{lib_name}/{lib_name}.py',                            
-                            'lib.setup.py'     : 'hydratk-lib-{lib_name}/setup.py',
-                            'lib.setup.cfg'    : 'hydratk-lib-{lib_name}/setup.cfg',
-                            'lib.readme'       : 'hydratk-lib-{lib_name}/README.rst',
-                            'lib.license'      : 'hydratk-lib-{lib_name}/LICENSE.txt',
-                            'lib.requirements' : 'hydratk-lib-{lib_name}/requirements.txt',
-                            'lib.manifest'     : 'hydratk-lib-{lib_name}/MANIFEST.in',
-                          }
+lib_data_files = {
+    'lib.module': 'hydratk-lib-{lib_name}/src/hydratk/lib/{lib_name}/{lib_name}.py',
+    'lib.setup.py': 'hydratk-lib-{lib_name}/setup.py',
+    'lib.setup.cfg': 'hydratk-lib-{lib_name}/setup.cfg',
+    'lib.readme': 'hydratk-lib-{lib_name}/README.rst',
+    'lib.license': 'hydratk-lib-{lib_name}/LICENSE.txt',
+    'lib.requirements': 'hydratk-lib-{lib_name}/requirements.txt',
+    'lib.manifest': 'hydratk-lib-{lib_name}/MANIFEST.in',
+}
 
 library = '''# -*- coding: utf-8 -*-
 """This code is a part of {lib_ucname} extension
@@ -169,7 +169,7 @@ description-file = README.rst
 '''
 
 lib_license = {
-                   'BSD': '''Copyright (c) {ext_year}, {author_name} ({author_email})
+    'BSD': '''Copyright (c) {ext_year}, {author_name} ({author_email})
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, 
@@ -226,53 +226,53 @@ include *.txt
 '''
 
 extension_default_user_data = {
-                             'ext_name'     : 'hobbit',  
-                             'ext_ucname'   : 'Hobbit',
-                             'author_name'  : 'Bilbo Baggins',
-                             'author_email' : 'bilbo@shire.com',
-                             'ext_year'     : datetime.now().year,
-                             'ext_desc'     : 'This extension provides example functionality, how to develop HydraTK extensions',
-                             'ext_license'  : 'BSD'                                                          
-                             }
+    'ext_name': 'hobbit',
+    'ext_ucname': 'Hobbit',
+    'author_name': 'Bilbo Baggins',
+    'author_email': 'bilbo@shire.com',
+    'ext_year': datetime.now().year,
+    'ext_desc': 'This extension provides example functionality, how to develop HydraTK extensions',
+    'ext_license': 'BSD'
+}
 
-extension_dir_struct    = [ 
-                            'hydratk-ext-{extension}/doc',
-                            'hydratk-ext-{extension}/etc/hydratk/conf.d',
-                            'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/translation/en',
-                            'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/translation/cs',                         
-                          ]
+extension_dir_struct = [
+    'hydratk-ext-{extension}/doc',
+    'hydratk-ext-{extension}/etc/hydratk/conf.d',
+    'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/translation/en',
+    'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/translation/cs',
+]
 
-extension_package_files = [                            
-                            'hydratk-ext-{extension}/src/hydratk/__init__.py',
-                            'hydratk-ext-{extension}/src/hydratk/extensions/__init__.py',
-                            'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/__init__.py',
-                            'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/translation/__init__.py',
-                            'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/translation/en/__init__.py',
-                            'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/translation/cs/__init__.py',
-                          ]
+extension_package_files = [
+    'hydratk-ext-{extension}/src/hydratk/__init__.py',
+    'hydratk-ext-{extension}/src/hydratk/extensions/__init__.py',
+    'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/__init__.py',
+    'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/translation/__init__.py',
+    'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/translation/en/__init__.py',
+    'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/translation/cs/__init__.py',
+]
 
 extension_package_init_content = '''
 from pkgutil import extend_path
 __path__ = extend_path(__path__, __name__)
 '''
 
-extension_data_files   =  {
-                            'ext.manpage' : 'hydratk-ext-{extension}/doc/{extension}.1',
-                            'ext.config' : 'hydratk-ext-{extension}/etc/hydratk/conf.d/hydratk-ext-{extension}.conf',
-                            'ext.module' : 'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/{extension}.py',
-                            'ext.bootstrapper' : 'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/bootstrapper.py',
-                            'ext.translation.en.messages' : 'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/translation/en/messages.py',
-                            'ext.translation.en.help'     : 'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/translation/en/help.py',
-                            'ext.translation.cs.messages' : 'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/translation/cs/messages.py',
-                            'ext.translation.cs.help'     : 'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/translation/cs/help.py',
-                            'ext.setup.py'     : 'hydratk-ext-{extension}/setup.py',
-                            'ext.setup.cfg'    : 'hydratk-ext-{extension}/setup.cfg',
-                            'ext.readme'       : 'hydratk-ext-{extension}/README.rst',
-                            'ext.license'      : 'hydratk-ext-{extension}/LICENSE.txt',
-                            'ext.requirements' : 'hydratk-ext-{extension}/requirements.txt',
-                            'ext.manifest'     : 'hydratk-ext-{extension}/MANIFEST.in',
-                          }
- 
+extension_data_files = {
+    'ext.manpage': 'hydratk-ext-{extension}/doc/{extension}.1',
+    'ext.config': 'hydratk-ext-{extension}/etc/hydratk/conf.d/hydratk-ext-{extension}.conf',
+    'ext.module': 'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/{extension}.py',
+    'ext.bootstrapper': 'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/bootstrapper.py',
+    'ext.translation.en.messages': 'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/translation/en/messages.py',
+    'ext.translation.en.help': 'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/translation/en/help.py',
+    'ext.translation.cs.messages': 'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/translation/cs/messages.py',
+    'ext.translation.cs.help': 'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/translation/cs/help.py',
+    'ext.setup.py': 'hydratk-ext-{extension}/setup.py',
+    'ext.setup.cfg': 'hydratk-ext-{extension}/setup.cfg',
+    'ext.readme': 'hydratk-ext-{extension}/README.rst',
+    'ext.license': 'hydratk-ext-{extension}/LICENSE.txt',
+    'ext.requirements': 'hydratk-ext-{extension}/requirements.txt',
+    'ext.manifest': 'hydratk-ext-{extension}/MANIFEST.in',
+}
+
 
 extension = '''# -*- coding: utf-8 -*-
 """This code is a part of {ext_ucname} extension
@@ -484,7 +484,7 @@ language = {{
 msg = {{
     '{extension}_hello' : 'Hello from {ext_ucname} extension',         
 }}
-''' 
+'''
 
 extension_translation_cs_messages = '''# -*- coding: utf-8 -*-
 """This code is a part of {ext_ucname} extension
@@ -556,10 +556,10 @@ help_cmd = {{
 help_opt = {{
    '{extension}-test-option' : {{ '{{h}}--{extension}-test-option <option>{{e}}' : {{ 'description' : 'testovazí možnost', 'commands' : ('{extension}-test')}}}},   
 }}
-''' 
+'''
 
 extension_license = {
-                   'BSD': '''Copyright (c) {ext_year}, {author_name} ({author_email})
+    'BSD': '''Copyright (c) {ext_year}, {author_name} ({author_email})
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, 

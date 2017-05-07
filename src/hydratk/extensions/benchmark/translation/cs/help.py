@@ -9,16 +9,16 @@
 
 """
 language = {
-  'name' : 'Čeština',
-  'ISO-639-1' : 'cs'
-} 
+    'name': 'Čeština',
+    'ISO-639-1': 'cs'
+}
 
 ''' Benchmark Commands '''
 help_cmd = {
-    'start-benchmark' : 'Spustí benchmark'
+    'start-benchmark': 'Spustí benchmark'
 }
 
 ''' Benchmark Options '''
-help_opt = { 
-    'details' : { '{h}--details{e}' : { 'description' : 'zobrazi podrobnejsi informace o testech', 'commands' : ('start-benchmark')}}
+help_opt = {
+    'details': {'{h}--details{e}': {'description': 'zobrazi podrobnejsi informace o testech', 'commands': ('start-benchmark')}}
 }
