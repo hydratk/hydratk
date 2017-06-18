@@ -9,11 +9,21 @@
 """
 
 from .command import *
+import os
 from os import path
+import hydratk.lib.system.config as syscfg
+from hydratk.lib.system.io import rprint
+from hydratk.lib.console.shellexec import shell_exec
+
+try:
+    os_info = syscfg.get_supported_os()
+except Exception as exc:
+    print(str(exc))
+    exit(1)
 
 
 def run_pre_install(argv, cfg):
-    """Method run pre-install tasks
+    """Function run pre-install tasks
 
     Args:
        argv (list): command arguments
@@ -33,12 +43,12 @@ def run_pre_install(argv, cfg):
         profiles = get_profiles(argv)
 
         for task in cfg['pre_tasks']:
-            print('\n*** Running task: {0} ***\n'.format(task.__name__))
+            print('*** Running task: {0} ***'.format(task.__name__))
             task(cfg, profiles)
 
 
 def run_post_install(argv, cfg):
-    """Method run post-install tasks
+    """Function run post-install tasks
 
     Args:
        argv (list): command arguments
@@ -62,8 +72,35 @@ def run_post_install(argv, cfg):
             task(cfg, profiles)
 
 
+def check_libs(pkcm, lib_inst, lib_check): 
+    """Function installed library dependencies
+
+    Args:
+       argv (list): command arguments
+       cfg (dict): configuration
+
+    Returns:
+       list : missing libraries
+
+    """       
+    missing_libs = []
+    for lib in lib_inst:
+        rprint('Checking {0}'.format(lib))
+        if lib in lib_check and 'cmd' in lib_check[lib]:                        
+            if shell_exec(lib_check[lib]['cmd']) > 0:
+                rprint("...FAILED\n")
+                print("   {0}".format(lib_check[lib]['errmsg']))
+                missing_libs.append(lib)
+            else:
+                rprint("...OK\n")                
+        else:
+            raise SystemError('Missing check information for install library {0}'.format(lib))
+            
+    return missing_libs
+    
+
 def install_libs(cfg, profiles, *args):
-    """Method installs system libraries
+    """Function installs system libraries
 
     Args:
        cfg (dict): configuration
@@ -77,7 +114,8 @@ def install_libs(cfg, profiles, *args):
     pckm = get_pck_manager()[0]
     libs, modules = cfg['libs'], cfg['modules']
     lib_inst = []
-
+    lib_check = {}
+            
     for mod in modules:
         module = mod['module']
         if (module in libs):
@@ -86,14 +124,21 @@ def install_libs(cfg, profiles, *args):
             if ('profile' in mod):
                 if ('full' not in profiles and mod['profile'] not in profiles + ['basic']):
                     do_install = False
-
-            if (do_install):
-                if ('repo' in libs[module]):
-                    lib_inst += libs[module]['repo']
-                if (pckm in libs[module]):
-                    lib_inst += libs[module][pckm]
-
-    for lib in lib_inst:
+                    
+            if do_install:
+                if (pckm in libs[module][os_info['compat']]):
+                    #Be sure that list of installable libraries is unique
+                    lib_inst = list(set(lib_inst).union(set(libs[module][os_info['compat']][pckm])))                                       
+                    lib_check.update(libs[module][os_info['compat']]['check'])
+                    
+    #Check required libraries
+    missing_libs = check_libs(pckm, lib_inst, lib_check)
+    uid = os.getuid()
+    if uid != 0 and len(missing_libs) > 0:
+        print("\nRequired libraries are not present: {0}\nYou can install them yourself to make them visible to the installer\nor rerun the setup with root priviledges to install them with available package manager ({1})\n".format(",".join(missing_libs), pckm))    
+        exit(1)
+              
+    for lib in missing_libs:
         install_pck(pckm, lib)
 
 

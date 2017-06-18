@@ -11,6 +11,8 @@
 from subprocess import call, Popen, PIPE
 from os import path, environ
 from sys import exit
+from hydratk.lib.system.utils import Utils
+from hydratk.lib.console.shellexec import shell_exec
 
 
 def is_install_cmd(argv):
@@ -211,16 +213,33 @@ def install_pip(module):
        none
 
     """
-
-    print ('Installing module {0}'.format(module))
-
+    modtok = module.split('>=')
+    module_name = modtok[0]
+    module_version = modtok[1]
     pip_path = 'pip' if ('pip' not in environ) else '$pip'
-    cmd = '{0} install --upgrade --upgrade-strategy only-if-needed {1}'.format(
-        pip_path, module)
-    if (call(cmd, shell=True) != 0):
-        print(
-            'Failed to install {0}, hydratk installation failed.'.format(module))
-        exit(-1)
+    
+    if Utils.module_exists(module_name):
+        if Utils.module_version_ok(module_version, Utils.module_version(module_name)):
+            print('Module {0} already installed with version {1}'.format(module_name,Utils.module_version(module_name)))
+        else:
+            print ('Upgrading module {0} to version {1}'.format(module_name,module_version))            
+            cmd = '{0} install --upgrade "{1}"'.format(pip_path, module)
+            result, _, err = shell_exec(cmd, True)
+            if result != 0:
+                print('Failed to install {0}, hydratk installation failed.'.format(module))
+                print(err)
+                exit(-1)
+            
+    else:
+        print ('Installing module {0}'.format(module))
+        cmd = '{0} install "{1}"'.format(pip_path, module)
+        print(cmd)
+        result, _, err = shell_exec(cmd, True)
+        if result != 0:
+            print('Failed to install {0}, hydratk installation failed.'.format(module))            
+            print(err)
+            exit(-1)
+    
 
 
 def uninstall_pip(module):

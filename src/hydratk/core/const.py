@@ -8,6 +8,9 @@
 
 """
 
+from hydratk.lib.system import config
+
+
 ''' Application metadata '''
 APP_NAME = "HydraTK"
 APP_VERSION = "0.5.0"
@@ -17,8 +20,8 @@ APP_AUTHORS = "Petr Czaderna <pc@hydratk.org>, HydraTK team <team@hydratk.org>"
 CP_STRING = "(c) " + APP_DEVEL_YEAR + " " + APP_AUTHORS
 
 ''' Default configuration '''
-CONFIG_FILE = "/etc/hydratk/hydratk.conf"
-EXT_CONFIG_DIR = "/etc/hydratk/conf.d"
+CONFIG_FILE = "{0}/hydratk/hydratk.conf".format(config.HTK_ETC_DIR)
+EXT_CONFIG_DIR = "{0}/hydratk/conf.d".format(config.HTK_ETC_DIR)
 NUM_CORE_THREADS = 4
 DEFAULT_LANGUAGE = "en"
 DEBUG_LEVEL = 1

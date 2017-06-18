@@ -1,8 +1,22 @@
 # -*- coding: utf-8 -*-
 
-from setuptools import setup, find_packages
+import sys
+
+#Prevent distutils setup functions calls
+from setuptools import setup as st_setup
+from setuptools import find_packages as st_find_packages
+
 from sys import argv, version_info
-import src.hydratk.lib.install.task as task
+
+sys.path.append('src')
+import hydratk.lib.install.task as task
+import hydratk.lib.system.config as syscfg
+
+try:
+    os_info = syscfg.get_supported_os()
+except Exception as exc:
+    print(str(exc))
+    exit(1)
 
 with open("README.rst", "r") as f:
     readme = f.read()
@@ -33,19 +47,20 @@ classifiers = [
 def version_update(cfg, *args):
 
     major, minor = version_info[0], version_info[1]
-
+    os_name = os_info['compat']
+    
     module = 'setproctitle'
     if (major == 2 and minor == 6):
         cfg['modules'].insert(0, {'module': 'importlib'})
-        cfg['libs'][module]['apt-get'][0] = 'python2.6-dev'
-    elif (major == 3):
-        cfg['libs'][module]['apt-get'][0] = 'python2.6-devel'
-        cfg['libs'][module]['apt-get'][0] = 'python3-dev'
-        cfg['libs'][module]['yum'][0] = 'python3-devel'
+        cfg['libs'][module][os_name]['apt-get'][0] = 'python2.6-dev'
+        cfg['libs'][module][os_name]['yum'][0]     = 'python2.6-devel'
+    elif (major == 3):        
+        cfg['libs'][module][os_name]['apt-get'][0] = 'python3-dev'
+        cfg['libs'][module][os_name]['yum'][0] = 'python3-devel'
 
 config = {
     'pre_tasks': [
-        version_update,
+        version_update,        
         task.install_libs,
         task.install_modules
     ],
@@ -66,47 +81,143 @@ config = {
     ],
 
     'dirs': [
-        '/var/local/hydratk/dbconfig'
+        '{0}/hydratk/dbconfig'.format(syscfg.HTK_VAR_DIR)
     ],
 
     'files': {
         'config': {
-            'etc/hydratk/hydratk.conf': '/etc/hydratk'
+            'etc/hydratk/hydratk.conf': '{0}/hydratk'.format(syscfg.HTK_ETC_DIR)
         },
         'manpage': 'doc/htk.1'
     },
 
     'libs': {
         'pyzmq': {
-            'apt-get': [
-                'g++',
-                'libzmq-dev'
-            ],
-            'yum': [
-                'gcc-c++',
-                'zeromq'
-            ]
+            'debian': {      
+                'apt-get': [                    
+                    'g++',
+                    'libzmq-dev'
+                ],
+                'check' : {
+                    'g++' : {
+                          'cmd' : 'which g++',
+                          'errmsg' : 'Required g++ compiler not found in path'
+                    },                   
+                    'libzmq-dev' : {
+                          'cmd' : '/sbin/ldconfig -p | grep libzmq || locate libzmq',
+                          'errmsg' : 'Unable to locate shared library libzmq'
+                    }                           
+                }           
+            },
+            'redhat': {                 
+                'yum': [
+                    'gcc-c++',
+                    'zeromq'
+                ],
+                'check' : {
+                    'gcc-c++' : {
+                          'cmd' : 'which g++',
+                          'errmsg' : 'Required g++ compiler not found in path'
+                    },
+                    'zeromq' : {
+                          'cmd' : '/sbin/ldconfig -p | grep libzmq || locate libzmq',
+                          'errmsg' : 'Unable to locate shared library libzmq'
+                    }                                                 
+                }        
+            }                                                                        
         },
-        'setproctitle': {
-            'repo': [
-                'gcc',
-                'wget',
-                'bzip2',
-                'tar'
-            ],
-            'apt-get': [
-                'python-dev'
-            ],
-            'yum': [
-                'redhat-rpm-config',
-                'python-devel'
-            ]
+        'setproctitle': {                         
+            #All Debian compatibles distros             
+            'debian': {              
+                'apt-get': [
+                    'python-dev',
+                    'gcc',
+                    'wget',
+                    'bzip2',
+                    'tar'
+                ],
+                'check' : {
+                    'gcc' : { 
+                              'cmd' : 'which gcc',
+                               'errmsg' : 'Required gcc compiler not found in path'                                       
+                    }, 
+                    'wget' : { 
+                              'cmd' : 'which wget',
+                               'errmsg' : 'Required wget downloader not found in path'                                       
+                    }, 
+                    'bzip2' : { 
+                              'cmd' : 'which bzip2',
+                               'errmsg' : 'Required bzip2 compressor not found in path'                                       
+                    }, 
+                    'tar' : { 
+                              'cmd' : 'which tar',
+                               'errmsg' : 'Required tar compressor not found in path'                                       
+                    },                                                                                                   
+                    'python-dev' : { 
+                              'cmd' : '/sbin/ldconfig -p | grep libpython2.7.so || locate libpython2.7.so',
+                               'errmsg' : 'Unable to locate shared library libpython2.7.so'                                        
+                    },  
+                    'python2.6-dev' : {
+                              'cmd' : '/sbin/ldconfig -p | grep libpython2.6.so || locate libpython2.6.so',
+                              'errmsg' : 'Unable to locate shared library libpython2.6.so' 
+                    },
+                    'python3-dev' : {
+                              'cmd' : '/sbin/ldconfig -p | grep libpython3.so || locate libpython3.so',
+                              'errmsg' : 'Unable to locate shared library libpython3.so' 
+                    },                            
+                 }           
+            },
+            #All Redhat compatibles distros             
+            'redhat': {                        
+                'yum': [
+                    'redhat-rpm-config',
+                    'python-devel',
+                    'gcc',
+                    'wget',
+                    'bzip2',
+                    'tar'
+                ],
+                'check' : {
+                    'gcc' : { 
+                              'cmd' : 'which gcc',
+                               'errmsg' : 'Required gcc compiler not found in path'                                        
+                    },
+                    'wget' : { 
+                              'cmd' : 'which wget',
+                               'errmsg' : 'Required wget downloader not found in path'                                        
+                    },
+                    'bzip2' : { 
+                              'cmd' : 'which bzip2',
+                               'errmsg' : 'Required bzip2 compressor not found in path'                                        
+                    },
+                    'tar' : { 
+                              'cmd' : 'which tar',
+                               'errmsg' : 'Required tar compressor not found in path'                                       
+                    },                                                                                                          
+                    'redhat-rpm-config' : { 
+                              'cmd' : 'locate redhat-rpm-config',
+                               'errmsg' : 'Required redhat-rpm-config not found'                                        
+                    },                       
+                    'python-devel' : { 
+                              'cmd' : '/sbin/ldconfig -p | grep libpython2.7.so || locate libpython2.7.so',
+                               'errmsg' : 'Unable to locate shared library libpython2.7.so'                                        
+                    },  
+                    'python2.6-devel' : {
+                              'cmd' : '/sbin/ldconfig -p | grep libpython2.6.so || locate libpython2.6.so',
+                              'errmsg' : 'Unable to locate shared library libpython2.6.so' 
+                    },
+                    'python3-devel' : {
+                              'cmd' : '/sbin/ldconfig -p | grep libpython3.so || locate libpython3.so',
+                              'errmsg' : 'Unable to locate shared library libpython3.so' 
+                    },                                                             
+                }           
+            }                                              
         }
     },
 
     'rights': {
-        '/etc/hydratk': 'a+r',
-        '/var/local/hydratk': 'a+rwx'
+        '{0}/hydratk'.format(syscfg.HTK_ETC_DIR) : 'a+r',
+        '{0}/hydratk'.format(syscfg.HTK_VAR_DIR) : 'a+rwx'
     }
 }
 
@@ -120,16 +231,16 @@ entry_points = {
     ]
 }
 
-setup(
+st_setup(
     name='hydratk',
-    version='0.5.0a.dev3',
+    version='0.5.0a0.dev4',
     description='Fully extendable object oriented application toolkit with nice modular architecture',
     long_description=readme,
     author='Petr Czaderna, HydraTK team',
     author_email='pc@hydratk.org, team@hydratk.org',
     url='http://www.hydratk.org',
     license='BSD',
-    packages=find_packages('src'),
+    packages=st_find_packages('src'),
     package_dir={'': 'src'},
     classifiers=classifiers,
     zip_safe=False,

@@ -9,10 +9,11 @@
 """
 
 from hydratk.core import const
+from hydratk.core import event
 
 
 def dmsg(msg, level=1, channel=const.DEBUG_CHANNEL):
-    """Method writes debug message
+    """Function writes debug message
 
     Args:   
        msg (str): message
@@ -37,3 +38,19 @@ def dmsg(msg, level=1, channel=const.DEBUG_CHANNEL):
                 msg = _mh._trn.msg(msg_key)
 
         _mh.dmsg('htk_on_debug_info', msg, _mh.fromhere(2), level, channel)
+
+
+def wmsg(msg):
+    """Function writes warning message
+
+    Args:   
+       msg (str): message
+
+    Returns:
+       void
+
+    """
+
+    from hydratk.core.masterhead import MasterHead
+    _mh = MasterHead.get_head()
+    _mh.fire_event(event.Event('htk_on_warning', msg, _mh.fromhere(2)))

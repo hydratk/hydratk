@@ -8,10 +8,7 @@
 
 """
 import sys
-from hydratk.core.masterhead import MasterHead
-from hydratk.core import const
 
-_mh = MasterHead.get_head()
 
 stdout_flush = True
 emulate_print = True
@@ -27,5 +24,22 @@ def cprint(data):
        void
 
     """
+    from hydratk.core.masterhead import MasterHead  
 
+    _mh = MasterHead.get_head()
     _mh.dmsg('htk_on_cprint', data)
+
+
+def rprint(*args):
+    """Methods writes raw data to the stdio
+
+    Args:
+       *args (str): data
+
+    Returns:
+       void
+
+    """
+    
+    sys.stdout.write(*args)
+    sys.stdout.flush()
