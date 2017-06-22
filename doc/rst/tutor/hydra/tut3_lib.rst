@@ -158,7 +158,7 @@ Library title and description can be overwritten.
      OS and Python versions support
      ==============================
 
-     | Currently the Linux platform with CPython 2.6, 2.7, 3.x is supported, 
+     | Currently the Linux platform with CPython 2.6, 2.7, 3.3, 3.4, 3.5, 3.6, PyPy 2.7 is supported, 
      | but the final version is planned to be crossplatform and targeted also to the other popular systems 
      | including Windows and OSX and possibly other Python versions such as Jython and IronPython   
     
@@ -166,7 +166,8 @@ Library title and description can be overwritten.
 
   .. code-block:: cfg
   
-     hydratk    
+     hydratk>=0.4.0
+     mod  
      
 * setup.cfg
 
@@ -194,7 +195,17 @@ Module ``hydratk`` is automatically configured as required.
   .. code-block:: python
   
      # -*- coding: utf-8 -*-
-     from setuptools import setup, find_packages
+     from setuptools import st_setup
+     from setuptools import find_packages as st_find_packages
+     from sys import argv, version_info
+     import hydratk.lib.install.task as task
+     import hydratk.lib.system.config as syscfg
+
+     try:
+         os_info = syscfg.get_supported_os()
+     except Exception as exc:
+         print(str(exc))
+         exit(1)
 
      with open("README.rst", "r") as f:
          readme = f.read()
@@ -213,34 +224,89 @@ Module ``hydratk`` is automatically configured as required.
          "Programming Language :: Python :: 3.3",
          "Programming Language :: Python :: 3.4",
          "Programming Language :: Python :: 3.5",
+         "Programming Language :: Python :: 3.6",
          "Programming Language :: Python :: Implementation",
-         "Programming Language :: Python :: Implementation :: CPython",   
+         "Programming Language :: Python :: Implementation :: CPython", 
+         "Programming Language :: Python :: Implementation :: PyPy",
          "Topic :: Software Development :: Libraries :: Application Frameworks",
          "Topic :: Utilities"
      ]
 
-     requires = [
-                 'hydratk'           
-                ]                          
+     def version_update(cfg)
+         pass # Python version specific installation
+
+     config = {
+         'pre_tasks' : [
+              version_update,
+              task.install_libs,
+              task.install_modules
+         ],
+
+         'post_tasks' : [  
+             task.create_dirs,
+             task.copy_files
+         ],
+          
+         'modules' : [   
+             {'module': 'hydratk', 'version': '>=0.4.0'},
+             {'mod': 'mod name', 'version': 'mod version'}
+         ],
+
+         'dirs': [
+             'dst dirname'
+         ],
+          
+         'files' : {
+             'data' : {
+                 'src filename' : 'dst dirname'
+             }
+         },
+            
+         'libs' : {
+             'mod' : {
+                 'debian': {
+                     'apt-get': [
+                         'lib'
+                     ],
+                     'check': {
+                         'cmd': 'command to check library installation',
+                         'errmsg': 'error message'
+                     }
+                 },
+                 'redhat': {
+                     'yum': [
+                         'lib'
+                     ],
+                     'check': {
+                         'cmd': 'command to check library installation',
+                         'errmsg': 'error message'
+                     }
+                 }
+             }
+        }
+     }   
+
+     task.run_pre_install(argv, config)                       
          
-     setup(
+     st_setup(
            name='WhiteForce',
            version='0.1.0a-dev1',
            description='This library provides example functionality, how to develop HydraTK shared libraries',
            long_description=readme,
            author='Obi-Wan Kenobi',
            author_email='kenobi@jedi.com',
-           url='http://library.hydratk.org/whiteforce',
+           url='http://libraries.hydratk.org/whiteforce',
            license='BSD',
-           packages=find_packages('src'),
-           install_requires=requires,
+           packages=st_find_packages('src'),
            package_dir={'' : 'src'},
            classifiers=classifiers,
            zip_safe=False,
            keywords='hydratk',
            requires_python='>=2.6,!=3.0.*,!=3.1.*,!=3.2.*',
            platforms='Linux'
-          )     
+          )   
+     
+     task.run_post_install(argv, config)    
           
 * whiteforce.py
 

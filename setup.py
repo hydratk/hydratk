@@ -47,16 +47,15 @@ classifiers = [
 def version_update(cfg, *args):
 
     major, minor = version_info[0], version_info[1]
-    os_name = os_info['compat']
     
     module = 'setproctitle'
     if (major == 2 and minor == 6):
-        cfg['modules'].insert(0, {'module': 'importlib'})
-        cfg['libs'][module][os_name]['apt-get'][0] = 'python2.6-dev'
-        cfg['libs'][module][os_name]['yum'][0]     = 'python2.6-devel'
+        cfg['modules'].insert(0, {'module': 'importlib', 'version': '>=1.0.4'})
+        cfg['libs'][module]['debian']['apt-get'][0] = 'python2.6-dev'
+        cfg['libs'][module]['redhat']['yum'][1] = 'python2.6-devel'
     elif (major == 3):        
-        cfg['libs'][module][os_name]['apt-get'][0] = 'python3-dev'
-        cfg['libs'][module][os_name]['yum'][0] = 'python3-devel'
+        cfg['libs'][module]['debian']['apt-get'][0] = 'python3-dev'
+        cfg['libs'][module]['redhat']['yum'][1] = 'python3-devel'
 
 config = {
     'pre_tasks': [
@@ -100,12 +99,12 @@ config = {
                 ],
                 'check' : {
                     'g++' : {
-                          'cmd' : 'which g++',
-                          'errmsg' : 'Required g++ compiler not found in path'
+                        'cmd' : 'which g++',
+                        'errmsg' : 'Required g++ compiler not found in path'
                     },                   
                     'libzmq-dev' : {
-                          'cmd' : '/sbin/ldconfig -p | grep libzmq || locate libzmq',
-                          'errmsg' : 'Unable to locate shared library libzmq'
+                        'cmd' : '/sbin/ldconfig -p | grep libzmq || locate libzmq',
+                        'errmsg' : 'Unable to locate shared library libzmq'
                     }                           
                 }           
             },
@@ -116,12 +115,12 @@ config = {
                 ],
                 'check' : {
                     'gcc-c++' : {
-                          'cmd' : 'which g++',
-                          'errmsg' : 'Required g++ compiler not found in path'
+                        'cmd' : 'which g++',
+                        'errmsg' : 'Required g++ compiler not found in path'
                     },
                     'zeromq' : {
-                          'cmd' : '/sbin/ldconfig -p | grep libzmq || locate libzmq',
-                          'errmsg' : 'Unable to locate shared library libzmq'
+                        'cmd' : '/sbin/ldconfig -p | grep libzmq || locate libzmq',
+                        'errmsg' : 'Unable to locate shared library libzmq'
                     }                                                 
                 }        
             }                                                                        
@@ -138,32 +137,32 @@ config = {
                 ],
                 'check' : {
                     'gcc' : { 
-                              'cmd' : 'which gcc',
-                               'errmsg' : 'Required gcc compiler not found in path'                                       
+                        'cmd' : 'which gcc',
+                        'errmsg' : 'Required gcc compiler not found in path'
                     }, 
                     'wget' : { 
-                              'cmd' : 'which wget',
-                               'errmsg' : 'Required wget downloader not found in path'                                       
+                        'cmd' : 'which wget',
+                        'errmsg' : 'Required wget downloader not found in path'
                     }, 
                     'bzip2' : { 
-                              'cmd' : 'which bzip2',
-                               'errmsg' : 'Required bzip2 compressor not found in path'                                       
+                        'cmd' : 'which bzip2',
+                        'errmsg' : 'Required bzip2 compressor not found in path'
                     }, 
                     'tar' : { 
-                              'cmd' : 'which tar',
-                               'errmsg' : 'Required tar compressor not found in path'                                       
+                        'cmd' : 'which tar',
+                        'errmsg' : 'Required tar compressor not found in path'
                     },                                                                                                   
                     'python-dev' : { 
-                              'cmd' : '/sbin/ldconfig -p | grep libpython2.7.so || locate libpython2.7.so',
-                               'errmsg' : 'Unable to locate shared library libpython2.7.so'                                        
+                        'cmd' : 'dpkg --get-selections | grep python-dev',
+                        'errmsg' : 'Unable to locate package python-dev'
                     },  
                     'python2.6-dev' : {
-                              'cmd' : '/sbin/ldconfig -p | grep libpython2.6.so || locate libpython2.6.so',
-                              'errmsg' : 'Unable to locate shared library libpython2.6.so' 
+                        'cmd' : 'dpkg --get-selections | grep python2.6-dev',
+                        'errmsg' : 'Unable to locate package python2.6-dev'
                     },
                     'python3-dev' : {
-                              'cmd' : '/sbin/ldconfig -p | grep libpython3.so || locate libpython3.so',
-                              'errmsg' : 'Unable to locate shared library libpython3.so' 
+                        'cmd' : 'dpkg --get-selections | grep python3-dev',
+                        'errmsg' : 'Unable to locate package python3-dev'
                     },                            
                  }           
             },
@@ -179,37 +178,37 @@ config = {
                 ],
                 'check' : {
                     'gcc' : { 
-                              'cmd' : 'which gcc',
-                               'errmsg' : 'Required gcc compiler not found in path'                                        
+                        'cmd' : 'which gcc',
+                        'errmsg' : 'Required gcc compiler not found in path'
                     },
                     'wget' : { 
-                              'cmd' : 'which wget',
-                               'errmsg' : 'Required wget downloader not found in path'                                        
+                        'cmd' : 'which wget',
+                        'errmsg' : 'Required wget downloader not found in path'
                     },
                     'bzip2' : { 
-                              'cmd' : 'which bzip2',
-                               'errmsg' : 'Required bzip2 compressor not found in path'                                        
+                        'cmd' : 'which bzip2',
+                        'errmsg' : 'Required bzip2 compressor not found in path'
                     },
                     'tar' : { 
-                              'cmd' : 'which tar',
-                               'errmsg' : 'Required tar compressor not found in path'                                       
+                        'cmd' : 'which tar',
+                        'errmsg' : 'Required tar compressor not found in path'
                     },                                                                                                          
                     'redhat-rpm-config' : { 
-                              'cmd' : 'locate redhat-rpm-config',
-                               'errmsg' : 'Required redhat-rpm-config not found'                                        
+                        'cmd' : 'yum list installed | grep redhat-rpm-config',
+                        'errmsg' : 'Unable to locate package redhat-rpm-config not found'
                     },                       
                     'python-devel' : { 
-                              'cmd' : '/sbin/ldconfig -p | grep libpython2.7.so || locate libpython2.7.so',
-                               'errmsg' : 'Unable to locate shared library libpython2.7.so'                                        
+                        'cmd' : 'yum -q list installed python-devel',
+                        'errmsg' : 'Unable to locate package python-devel'
                     },  
                     'python2.6-devel' : {
-                              'cmd' : '/sbin/ldconfig -p | grep libpython2.6.so || locate libpython2.6.so',
-                              'errmsg' : 'Unable to locate shared library libpython2.6.so' 
+                        'cmd' : 'yum -q list installed python2.6-devel',
+                        'errmsg' : 'Unable to locate package python2.6-devel'
                     },
                     'python3-devel' : {
-                              'cmd' : '/sbin/ldconfig -p | grep libpython3.so || locate libpython3.so',
-                              'errmsg' : 'Unable to locate shared library libpython3.so' 
-                    },                                                             
+                        'cmd' : 'yum l-q ist installed python3-devel',
+                        'errmsg' : 'Unable to locate package python3-devel'
+                    }
                 }           
             }                                              
         }
@@ -233,7 +232,7 @@ entry_points = {
 
 st_setup(
     name='hydratk',
-    version='0.5.0a0.dev4',
+    version='0.5.0rc1',
     description='Fully extendable object oriented application toolkit with nice modular architecture',
     long_description=readme,
     author='Petr Czaderna, HydraTK team',

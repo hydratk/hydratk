@@ -62,9 +62,17 @@ def some_library_function():
 '''
 
 lib_setup_py = '''# -*- coding: utf-8 -*-
-from setuptools import setup, find_packages
+from setuptools import st_setup
+from setuptools import find_packages as st_find_packages
 from sys import argv, version_info
 import hydratk.lib.install.task as task
+import hydratk.lib.system.config as syscfg
+
+try:
+    os_info = syscfg.get_supported_os()
+except Exception as exc:
+    print(str(exc))
+    exit(1)
 
 with open("README.rst", "r") as f:
     readme = f.read()
@@ -96,44 +104,58 @@ def version_update(cfg)
 
 config = {{
   'pre_tasks' : [
-                 version_update,
-                 task.install_libs,
-                 task.install_modules
-                ],
+      version_update,
+      task.install_libs,
+      task.install_modules
+  ],
 
   'post_tasks' : [  
-                  task.copy_files
-                 ],
+      task.create_dirs,
+      task.copy_files
+  ],
           
   'modules' : [   
-               'hydratk',
-               'mod'      
-              ],
+      {{'module': 'hydratk', 'version': '>=0.4.0'}},
+      {{'mod': 'mod name', 'version': 'mod version'}}
+  ],
+
+  'dirs': [
+      'dst dirname'
+  ],
           
   'files' : {{
-             'data' : {{
-                       'src filepath' : 'dst dirpath'
-                      }} 
-            }},
+      'data' : {{
+          'src filename' : 'dst dirname'
+      }}
+  }},
             
   'libs' : {{
-            'mod>=version' : {{
-                              'repo'    : [
-                                           'apt-get or yum'
-                                          ],
-                              'apt-get' : [
-                                           'apt-get only lib'
-                                          ],
-                              'yum'     : [
-                                           'yum only lib'
-                                          ]
-                             }}
-           }}                                       
+      'mod' : {{
+          'debian': {{
+              'apt-get': [
+                  'lib'
+              ],
+              'check': {{
+                  'cmd': 'command to check library installation',
+                  'errmsg': 'error message'
+              }}
+          }},
+          'redhat': {{
+              'yum': [
+                  'lib'
+              ],
+              'check': {{
+                  'cmd': 'command to check library installation',
+                  'errmsg': 'error message'
+              }}
+          }}
+      }}
+  }}
 }}   
 
 task.run_pre_install(argv, config)                       
          
-setup(
+st_setup(
       name='{lib_ucname}',
       version='0.1.0a-dev1',
       description='{lib_desc}',
@@ -142,7 +164,7 @@ setup(
       author_email='{author_email}',
       url='http://libraries.hydratk.org/{lib_name}',
       license='BSD',
-      packages=find_packages('src'),
+      packages=st_find_packages('src'),
       package_dir={{'' : 'src'}},
       classifiers=classifiers,
       zip_safe=False,
@@ -218,7 +240,8 @@ OS and Python versions support
 | including Windows and OSX and possibly other Python versions such as Jython and IronPython
 '''
 
-lib_requirements = '''hydratk
+lib_requirements = '''hydratk>=0.4.0
+mod
 '''
 
 lib_manifest = '''recursive-include doc *
@@ -339,9 +362,16 @@ def run_app():
 '''
 
 extension_setup_py = '''# -*- coding: utf-8 -*-
-from setuptools import setup, find_packages
+from setuptools import st_setup, st_find_packages
 from sys import argv, version_info
 import hydratk.lib.install.task as task
+import hydratk.lib.system.config as syscfg
+
+try:
+    os_info = syscfg.get_supported_os()
+except Exception as exc:
+    print(str(exc))
+    exit(1)
 
 with open("README.rst", "r") as f:
     readme = f.read()
@@ -373,45 +403,59 @@ def version_update(cfg)
 
 config = {{
   'pre_tasks' : [
-                 version_update,
-                 task.install_libs,
-                 task.install_modules
-                ],
+      version_update,
+      task.install_libs,
+      task.install_modules
+  ],
 
   'post_tasks' : [
-                  task.set_config,  
-                  task.copy_files,
-                  task.set_manpage
-                 ],
+      task.set_config,
+      task.create_dirs
+      task.copy_files,
+      task.set_manpage
+  ],
           
   'modules' : [   
-               'hydratk',
-               'mod'      
-              ],
+      {{'module': 'hydratk', 'version': '>=0.4.0'}},
+      {{'module': 'mod name', 'version': 'mod version'}}
+  ],
+
+  'dirs': [
+      'dst dirname'
+  ],
           
   'files' : {{
-             'config'  : {{
-                          'etc/hydratk/conf.d/hydratk-ext-{extension}.conf' : '/etc/hydratk/conf.d'
-                         }},
-             'data'    : {{
-                          'src filepath' : 'dst dirpath'
-                         }},
-             'manpage' : 'doc/{extension}.1'         
-            }},
+      'config' : {{
+          'etc/hydratk/conf.d/hydratk-ext-{extension}.conf' : '/etc/hydratk/conf.d'
+       }},
+       'data' : {{
+           'src filepath' : 'dst dirpath'
+       }},
+       'manpage' : 'doc/{extension}.1'
+   }},
             
   'libs' : {{
-            'mod>=version' : {{
-                              'repo'    : [
-                                           'apt-get or yum'
-                                          ],
-                              'apt-get' : [
-                                           'apt-get only lib'
-                                          ],
-                              'yum'     : [
-                                           'yum only lib'
-                                          ]
-                             }}
-           }}                                       
+      'mod' : {{
+          'debian': {{
+              'apt-get': [
+                  'lib'
+              ],
+              'check': {{
+                  'cmd': 'command to check library installation',
+                  'errmsg': 'error message'
+              }}
+          }},
+          'redhat': {{
+              'yum': [
+                  'lib'
+              ],
+              'check': {{
+                  'cmd': 'command to check library installation',
+                  'errmsg': 'error message'
+              }}
+          }}
+      }}
+  }}
 }} 
 
 task.run_pre_install(argv, config)                         
@@ -422,7 +466,7 @@ entry_points = {{
                 ]
                }}          
                         
-setup(
+st_setup(
       name='{extension}',
       version='0.1.0a-dev1',
       description='{ext_desc}',
@@ -431,7 +475,7 @@ setup(
       author_email='{author_email}',
       url='http://extensions.hydratk.org/{ext_ucname}',
       license='BSD',
-      packages=find_packages('src')
+      packages=st_find_packages('src')
       package_dir={{'' : 'src'}},
       classifiers=classifiers,
       zip_safe=False,
@@ -609,7 +653,8 @@ OS and Python versions support
 | including Windows and OSX and possibly other Python versions such as Jython and IronPython
 '''
 
-extension_requirements = '''hydratk
+extension_requirements = '''hydratk>=0.4.0
+mod
 '''
 
 extension_manifest = '''recursive-include doc *

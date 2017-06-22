@@ -61,7 +61,7 @@ def is_virtualized():
 
     
 def get_supported_os():
-    """Function return supported os string
+    """Function returns supported os string
 
     Returns:
        str : os string
@@ -84,14 +84,14 @@ def get_supported_os():
         os_result['version'] = distinfo[1] 
         os_result['status'] = distinfo[2]
         
-        #Debian bases distros
+        # Debian based distros
         if os_result['name'].lower() in (
-                                          'debian','ubuntu', 'edubuntu','kubuntu',
+                                          'debian', 'ubuntu', 'edubuntu', 'kubuntu', 'linuxmint',
                                           'ubuntu gnome', 'ubuntu mate', 'ubuntu budgie',
                                           'lubuntu', 'xubuntu', 'ubuntu server', 'ubuntu studio',                                          
                                         ):
             os_result['compat'] = 'debian'
-            
+        # Red Hat based distros
         elif os_result['name'].lower() in (
                                            'red hat linux','centos','fedora',
                                            ):

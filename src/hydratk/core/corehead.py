@@ -22,6 +22,7 @@ import time
 import zmq
 import threading
 from os import makedirs
+import hydratk.lib.system.config as syscfg
 
 PYTHON_MAJOR_VERSION = sys.version_info[0]
 
@@ -179,7 +180,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         force_cmd = True if CommandlineTool.get_input_option(
             'force') == True else False
         db_file_param = CommandlineTool.get_input_option('config-db-file')
-        cfg_db_file = self._config['System']['DBConfig']['db_file']
+        cfg_db_file = self._config['System']['DBConfig']['db_file'].format(var_dir=syscfg.HTK_VAR_DIR)
         if db_file_param not in (True, False) or cfg_db_file != '':
             create_db_file = db_file_param if db_file_param not in (
                 True, False) else cfg_db_file
@@ -668,7 +669,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
 
         """
 
-        db_file = self._config['System']['DBConfig']['db_file']
+        db_file = self._config['System']['DBConfig']['db_file'].format(var_dir=syscfg.HTK_VAR_DIR)
         db = dbconfig.DBConfig(db_file)
         db.connect()
         cfg = db.db2cfg(active_only=True)
@@ -1268,7 +1269,8 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         self._load_base_config()
         self._process_extension_configs()
         if self._config['System']['DBConfig']['enabled'] == 1:
-            if os.path.isfile(self._config['System']['DBConfig']['db_file']) and os.path.getsize(self._config['System']['DBConfig']['db_file']) > 256:
+            db_file = self._config['System']['DBConfig']['db_file'].format(var_dir=syscfg.HTK_VAR_DIR)
+            if (os.path.isfile(db_file) and os.path.getsize(db_file) > 256):
                 self._load_db_config()
         self._apply_config()
         return True  # required by fn_hook

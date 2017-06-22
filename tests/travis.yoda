@@ -1,5 +1,7 @@
 hydratk/core/bootstrapper/01_methods_ut.jedi:ts_01
-hydratk/core/corehead
+hydratk/core/corehead/01_methods_ut.jedi
+hydratk/core/corehead/02_methods_ut.jedi
+hydratk/core/corehead/03_methods_ut.jedi
 hydratk/core/dbconfig
 hydratk/core/debugger
 hydratk/core/event

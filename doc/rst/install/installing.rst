@@ -97,26 +97,38 @@ See installation example for Linux based on Debian distribution, Python 2.7.
      **************************************
      *     Running pre-install tasks      *
      **************************************
-
-     *** Running task: version_update ***
-
-
-     *** Running task: install_libs_from_repo ***
-
-     Installing package g++
-     Installing package libzmq-dev
-     Installing package gcc
-     Installing package wget
-     Installing package bzip2
-     Installing package tar
      
-     *** Running task: install_pip ***
-
+     *** Running task: version_update ***
+     
+     *** Running task: install_libs ***
+     Checking gcc...FAILED
+        Required gcc compiler not found in path
+     Checking tar...OK
+     Checking g++...FAILED
+        Required g++ compiler not found in path
+     Checking wget...OK
+     Checking bzip2...OK
+     Checking python-dev...FAILED
+        Unable to locate package python-dev
+     Checking libzmq-dev...FAILED
+        Unable to locate shared library libzmq
+     Installing package gcc
+     Installing package g++
+     Installing package python-dev
+     Installing package libzmq-dev
+     
+     *** Running task: install_modules ***
      Installing module setproctitle>=1.1.9
+     pip install "setproctitle>=1.1.9"
      Installing module pyzmq>=14.7.0
+     pip install "pyzmq>=14.7.0"
      Installing module psutil>=3.1.1
+     pip install "psutil>=3.1.1"
      Installing module pyyaml>=3.11
+     pip install "pyyaml>=3.11"
      Installing module xtermcolor>=1.3
+     pip install "xtermcolor>=1.3"
+     
      running install
      running bdist_egg
      running egg_info
@@ -136,50 +148,45 @@ See installation example for Linux based on Debian distribution, Python 2.7.
      creating build/lib.linux-x86_64-2.7
      creating build/lib.linux-x86_64-2.7/hydratk
      ...
-     
-     creating build/bdist.linux-x86_64/egg/EGG-INFO
-     copying src/hydratk.egg-info/PKG-INFO -> build/bdist.linux-x86_64/egg/EGG-INFO
-     copying src/hydratk.egg-info/SOURCES.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
-     copying src/hydratk.egg-info/dependency_links.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
-     copying src/hydratk.egg-info/entry_points.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
-     copying src/hydratk.egg-info/not-zip-safe -> build/bdist.linux-x86_64/egg/EGG-INFO
-     copying src/hydratk.egg-info/top_level.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
      creating dist
-     creating 'dist/hydratk-0.4.0-py2.7.egg' and adding 'build/bdist.linux-x86_64/egg' to it
+     creating 'dist/hydratk-0.5.0rc1-py2.7.egg' and adding 'build/bdist.linux-x86_64/egg' to it
      removing 'build/bdist.linux-x86_64/egg' (and everything under it)
-     Processing hydratk-0.4.0-py2.7.egg
-     creating /usr/local/lib/python2.7/dist-packages/hydratk-0.4.0-py2.7.egg
-     Extracting hydratk-0.4.0-py2.7.egg to /usr/local/lib/python2.7/dist-packages
-     Adding hydratk 0.4.0 to easy-install.pth file
+     Processing hydratk-0.5.0rc1-py2.7.egg
+     creating /usr/local/lib/python2.7/dist-packages/hydratk-0.5.0rc1-py2.7.egg
+     Extracting hydratk-0.5.0rc1-py2.7.egg to /usr/local/lib/python2.7/dist-packages
+     Adding hydratk 0.5.0rc1 to easy-install.pth file
      Installing htkprof script to /usr/local/bin
      Installing htk script to /usr/local/bin
-     
-     Installed /usr/local/lib/python2.7/dist-packages/hydratk-0.4.0-py2.7.egg
-     Processing dependencies for hydratk==0.4.0
-     Finished processing dependencies for hydratk==0.4.0
+     Installing htkuninstall script to /usr/local/bin  
+     Installed /usr/local/lib/python2.7/dist-packages/hydratk-0.5.0rc1-py2.7.egg
+     Processing dependencies for hydratk==0.5.0rc1
+     Finished processing dependencies for hydratk==0.5.0rc1
      
      **************************************
      *     Running post-install tasks     *
      **************************************
 
-     *** Running task: copy_files ***
+     *** Running task: set_config ***
 
      Creating directory /etc/hydratk
      Copying file etc/hydratk/hydratk.conf to /etc/hydratk
+
+     *** Running task: create_dirs ***
+
      Creating directory /var/local/hydratk/dbconfig
-     Copying file var/local/hydratk/dbconfig/__init__.py to /var/local/hydratk/dbconfig
 
      *** Running task: set_access_rights ***
 
      Setting rights a+rwx for /var/local/hydratk
      Setting rights a+r for /etc/hydratk
 
-     *** Running task: install_manpage ***
+     *** Running task: set_manpage ***        
+
      
 Application installs following (paths depend on your OS configuration)
 
-* htk command in /usr/local/bin/htk
-* modules in /usr/local/lib/python2.7/dist-packages/hydratk-0.4.0-py2.7egg
+* commands htk, htkprof, htkuninstall in /usr/local/bin
+* modules in /usr/local/lib/python2.7/dist-packages/hydratk-0.5.0-py2.7egg
 * configuration file in /etc/hydratk/hydratk.conf
 * application folder in /var/local/hydratk        
 
@@ -194,7 +201,7 @@ Check hydratk module is installed.
   
      $ pip list | grep hydratk
      
-     hydratk (0.4.0)
+     hydratk (0.5.0)
 
 Type command htk and simple info is displayed.
 
@@ -202,8 +209,8 @@ Type command htk and simple info is displayed.
   
      $ htk
   
-     HydraTK v0.4.0
-     (c) 2009 - 2016 Petr Czaderna <pc@hydratk.org>, HydraTK team <team@hydratk.org>
+     HydraTK v0.5.0
+     (c) 2009 - 2017 Petr Czaderna <pc@hydratk.org>, HydraTK team <team@hydratk.org>
      Usage: htk [options] command
      For list of the all available commands and options type htk help
 
@@ -215,8 +222,8 @@ Type man htk to display manual page.
   
      $ htk help
      
-     HydraTK v0.4.0
-     (c) 2009 - 2016 Petr Czaderna <pc@hydratk.org>, HydraTK team <team@hydratk.org>
+     HydraTK v0.5.0
+     (c) 2009 - 2017 Petr Czaderna <pc@hydratk.org>, HydraTK team <team@hydratk.org>
      Usage: htk [options] command
 
      Commands:

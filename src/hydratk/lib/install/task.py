@@ -10,7 +10,6 @@
 
 from .command import *
 import os
-from os import path
 import hydratk.lib.system.config as syscfg
 from hydratk.lib.system.io import rprint
 from hydratk.lib.console.shellexec import shell_exec
@@ -68,12 +67,12 @@ def run_post_install(argv, cfg):
         profiles = get_profiles(argv)
 
         for task in cfg['post_tasks']:
-            print('\n*** Running task: {0} ***\n'.format(task.__name__))
+            print('*** Running task: {0} ***'.format(task.__name__))
             task(cfg, profiles)
 
 
 def check_libs(pkcm, lib_inst, lib_check): 
-    """Function installed library dependencies
+    """Function checks installed library dependencies
 
     Args:
        argv (list): command arguments
@@ -155,9 +154,7 @@ def install_modules(cfg, profiles, *args):
     """
 
     for mod in cfg['modules']:
-        module = mod['module']
-        if ('version' in mod):
-            module += mod['version']
+        module = mod['module'] + mod['version'] if ('version' in mod) else mod['module']
 
         do_install = True
         if ('profile' in mod):
@@ -227,7 +224,7 @@ def set_config(cfg, *args):
     for file, dir in cfg['files']['config'].items():
 
         cfg_file = '/' + file
-        if (path.exists(cfg_file)):
+        if (os.path.exists(cfg_file)):
             with open(file, 'r') as f:
                 f_new = f.read()
             with open(cfg_file, 'r') as f:

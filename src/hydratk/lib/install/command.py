@@ -93,12 +93,12 @@ def install_pck(pckm, pck):
         cmd = 'apt-get -y install {0}'.format(pck)
     elif (pckm == 'yum'):
         cmd = 'yum -y install {0}'.format(pck)
-
-    if (call(cmd, shell=True) != 0):
-        print(
-            'Failed to install package {0}, hydratk installation failed.'.format(pck))
+        
+    result, _, err = shell_exec(cmd, True)
+    if (result != 0):
+        print('Failed to install package {0}, hydratk installation failed.'.format(pck))
+        print(err)
         exit(-1)
-
 
 def create_dir(dst):
     """Method creates directory
@@ -115,10 +115,10 @@ def create_dir(dst):
 
         print('Creating directory {0}'.format(dst))
         cmd = 'mkdir -p {0}'.format(dst)
-
-        if (call(cmd, shell=True) != 0):
+        result, _, err = shell_exec(cmd, True)
+        if (result != 0):
             print('Failed to create directory {0}'.format(dst))
-
+            print(err)
 
 def copy_file(src, dst):
     """Method copies file
@@ -136,10 +136,10 @@ def copy_file(src, dst):
 
     print ('Copying file {0} to {1}'.format(src, dst))
     cmd = 'cp {0} {1}'.format(src, dst)
-
-    if (call(cmd, shell=True) != 0):
+    result, _, err = shell_exec(cmd, True)
+    if (result != 0):
         print('Failed to copy {0} to {1}'.format(src, dst))
-
+        print(err)
 
 def move_file(src, dst):
     """Method moves file
@@ -155,10 +155,10 @@ def move_file(src, dst):
 
     print('Moving file {0} to {1}'.format(src, dst))
     cmd = 'mv {0} {1}'.format(src, dst)
-
-    if (call(cmd, shell=True) != 0):
+    result, _, err = shell_exec(cmd, True)
+    if (result != 0):
         print('Failed to move {0} to {1}'.format(src, dst))
-
+        print(err)
 
 def remove(src, recursive=True):
     """Method removes file or directory
@@ -174,10 +174,10 @@ def remove(src, recursive=True):
 
     print('Removing {0}'.format(src))
     cmd = ('rm -fR {0}' if (recursive) else 'rm -f {0}').format(src)
-
-    if (call(cmd, shell=True) != 0):
+    result, _, err = shell_exec(cmd, True)
+    if (result != 0):
         print('Failed to remove {0}'.format(src))
-
+        print(err)
 
 def set_rights(path, rights, recursive=True):
     """Method sets access rights
@@ -199,9 +199,10 @@ def set_rights(path, rights, recursive=True):
     else:
         cmd = 'chmod {0} {1}'.format(rights, path)
 
-    if (call(cmd, shell=True) != 0):
+    result, _, err = shell_exec(cmd, True)
+    if (result != 0):
         print('Failed to set rights for {0}'.format(path))
-
+        print(err)
 
 def install_pip(module):
     """Method installs python module via pip
@@ -213,12 +214,12 @@ def install_pip(module):
        none
 
     """
-    modtok = module.split('>=')
+    modtok = module.split('>=') if ('>=' in module) else module.split('==')
     module_name = modtok[0]
-    module_version = modtok[1]
+    module_version = modtok[1] if (len(modtok) > 1) else None
     pip_path = 'pip' if ('pip' not in environ) else '$pip'
     
-    if Utils.module_exists(module_name):
+    if (module_version != None and Utils.module_exists(module_name)):
         if Utils.module_version_ok(module_version, Utils.module_version(module_name)):
             print('Module {0} already installed with version {1}'.format(module_name,Utils.module_version(module_name)))
         else:
@@ -256,5 +257,7 @@ def uninstall_pip(module):
     print ('Uninstalling module {0}'.format(module))
 
     cmd = 'pip uninstall -y {0}'.format(module)
-    if (call(cmd, shell=True) != 0):
+    result, _, err = shell_exec(cmd, True)
+    if (result != 0):
         print('Failed to uninstall {0}'.format(module))
+        print(err)

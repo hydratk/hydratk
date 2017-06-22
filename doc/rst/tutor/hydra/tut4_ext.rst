@@ -175,7 +175,7 @@ Extension title and description can be overwritten.
      OS and Python versions support
      ==============================
 
-     | Currently the Linux platform with CPython 2.6, 2.7, 3.x is supported, 
+     | Currently the Linux platform with CPython 2.6, 2.7, 3.3, 3.4, 3.5, 3.6, PyPy 2.7 is supported, 
      | but the final version is planned to be crossplatform and targeted also to the other popular systems 
      | including Windows and OSX and possibly other Python versions such as Jython and IronPython 
      
@@ -209,7 +209,8 @@ Extension title and description can be overwritten.
 
   .. code-block:: cfg
   
-     hydratk     
+     hydratk>=0.4.0
+     mod     
      
 * setup.cfg
 
@@ -237,10 +238,16 @@ Module ``hydratk`` is automatically configured as required.
   .. code-block:: python
 
      # -*- coding: utf-8 -*-
-     from setuptools import setup, find_packages
+     from setuptools import st_setup, st_find_packages
      from sys import argv, version_info
-     from os import path
-     from subprocess import call
+     import hydratk.lib.install.task as task
+     import hydratk.lib.system.config as syscfg
+
+     try:
+         os_info = syscfg.get_supported_os()
+     except Exception as exc:
+         print(str(exc))
+         exit(1)
 
      with open("README.rst", "r") as f:
          readme = f.read()
@@ -259,27 +266,83 @@ Module ``hydratk`` is automatically configured as required.
          "Programming Language :: Python :: 3.3",
          "Programming Language :: Python :: 3.4",
          "Programming Language :: Python :: 3.5",
+         "Programming Language :: Python :: 3.6",
          "Programming Language :: Python :: Implementation",
-         "Programming Language :: Python :: Implementation :: CPython",  
+         "Programming Language :: Python :: Implementation :: CPython",   
+         "Programming Language :: Python :: Implementation :: PyPy",
          "Topic :: Software Development :: Libraries :: Application Frameworks",
          "Topic :: Utilities"
      ]
 
-     requires = [
-                 'hydratk'           
-                ]
-         
-     files = {
-              'etc/hydratk/conf.d/hydratk-ext-hobbit.conf' : '/etc/hydratk/conf.d'
-             }                           
+     def version_update(cfg)
+         pass # Python version specific installation
+
+     config = {
+         'pre_tasks' : [
+             version_update,
+             task.install_libs,
+             task.install_modules
+         ],
+
+         'post_tasks' : [
+             task.set_config,
+             task.create_dirs
+             task.copy_files,
+             task.set_manpage
+         ],
+          
+          'modules' : [   
+              {'module': 'hydratk', 'version': '>=0.4.0'},
+              {'module': 'mod name', 'version': 'mod version'}
+          ],
+
+          'dirs': [
+              'dst dirname'
+          ],
+          
+          'files' : {
+              'config' : {
+                  'etc/hydratk/conf.d/hydratk-ext-hobbit.conf' : '/etc/hydratk/conf.d'
+              },
+              'data' : {
+                  'src filepath' : 'dst dirpath'
+              },
+              'manpage' : 'doc/hobbit.1'
+          },
+            
+          'libs' : {
+              'mod' : {
+                  'debian': {
+                      'apt-get': [
+                          'lib'
+                      ],
+                      'check': {
+                          'cmd': 'command to check library installation',
+                          'errmsg': 'error message'
+                      }
+                  },
+                  'redhat': {
+                      'yum': [
+                          'lib'
+                      ],
+                      'check': {
+                          'cmd': 'command to check library installation',
+                          'errmsg': 'error message'
+                      }
+                  }
+              }
+          }
+     } 
+
+     task.run_pre_install(argv, config)                         
          
      entry_points = {
-                'console_scripts': [
-                    'hobbit = hydratk.extensions.hobbit.bootstrapper:run_app'                               
+                     'console_scripts': [
+                         'hobbit = hydratk.extensions.hobbit.bootstrapper:run_app'                               
                      ]
                     }          
                         
-     setup(
+     st_setup(
            name='hobbit',
            version='0.1.0a-dev1',
            description='This extension provides example functionality, how to develop HydraTK extensions',
@@ -288,8 +351,7 @@ Module ``hydratk`` is automatically configured as required.
            author_email='bilbo@shire.com',
            url='http://extensions.hydratk.org/Hobbit',
            license='BSD',
-           packages=find_packages('src'),
-           install_requires=requires,
+           packages=st_find_packages('src')
            package_dir={'' : 'src'},
            classifiers=classifiers,
            zip_safe=False,
@@ -298,16 +360,8 @@ Module ``hydratk`` is automatically configured as required.
            requires_python='>=2.6,!=3.0.*,!=3.1.*,!=3.2.*',
            platforms='Linux'  
           )        
-     
-     if ('install' in argv or 'bdist_egg' in argv or 'bdist_wheel' in argv):
-    
-         for file, dir in files.items():    
-             if (not path.exists(dir)):
-                 call('mkdir -p dir'.format(dir=dir), shell=True)
-            
-             call('cp file dir'.format(file=file, dir=dir), shell=True) 
         
-         call('chmod -R a+r /etc/hydratk', shell=True)                 
+     task.run_post_install(argv, config)      
 
 * hydratk-ext-hobbit.conf
 

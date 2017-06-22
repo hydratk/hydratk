@@ -43,6 +43,13 @@ console
 .. automodule:: hydratk.lib.console.commandlinetool
    :member-order: bysource 
    
+.. _refman_hydra_lib_console_shellexec:
+
+* shellexec
+
+.. automodule:: hydratk.lib.console.shellexec
+   :member-order: bysource    
+   
 .. _refman_hydra_lib_cycles:   
    
 cycles
@@ -217,6 +224,13 @@ system
 * auth
 
 .. automodule:: hydratk.lib.system.auth
+   :member-order: bysource
+
+.. _refman_hydra_lib_system_config:
+
+* config
+
+.. automodule:: hydratk.lib.system.config
    :member-order: bysource
 
 .. _refman_hydra_lib_system_fs:
