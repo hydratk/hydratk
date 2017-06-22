@@ -179,7 +179,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 raise e
         return MasterHead._instance
 
-    def get_config(self):
+    def get_config(self, var_filter=None, str_eval=True):
         """Method return current loaded configuration  
 
         Args:
