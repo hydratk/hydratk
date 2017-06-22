@@ -36,6 +36,7 @@ help_opt = {
     'debug-channel': {'{h}-e, --debug-channel <channel number, ..>{e}': 'debug channel filter turned on'},
     'config': {'{h}-c, --config <file>{e}': 'reads the alternate configuration file'},
     'force': {'{h}-f, --force{e}': 'enforces command'},
+    'home': {'{h}-h, --home{e}': 'sets htk_root_dir to the current user home directory'},
     'interactive': {'{h}-i, --interactive{e}': 'turns on interactive mode'},
     'language': {'{h}-l, --language <language>{e}': 'sets the text output language, the list of available languages is specified in the docs'},
     'run-mode': {'{h}-m, --run-mode <mode>{e}': 'sets the running mode, the list of available modes is specified in the docs'},

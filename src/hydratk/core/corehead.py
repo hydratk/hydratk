@@ -47,6 +47,7 @@ from hydratk.lib.console.commandlinetool import CommandlineTool
 from hydratk.lib.exceptions.inputerror import InputError
 import hydratk.core.dbconfig as dbconfig
 from hydratk.lib.translation import translator
+from hydratk.lib.system import config as syscfg
 
 
 class AsyncCallBackHandler(object):
@@ -886,9 +887,11 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             self.dmsg('htk_on_warning', self._trn.msg(
                 'htk_conf_opt_missing', 'General', 'language'), self.fromhere())
 
+        self.dmsg('htk_on_debug_info', self._trn.msg('htk_root_dir_set',
+                                                syscfg.HTK_ROOT_DIR), self.fromhere())
         try:
             # get run mode from command option or configuration
-            if (not self.check_run_mode()):
+            if not self.check_run_mode():
                 run_mode = self._config['Core']['Options']['run_mode']
                 self._run_mode = run_mode if run_mode in const.core_run_mode_enum_desc else const.DEFAULT_RUN_MODE
             self.dmsg('htk_on_debug_info', self._trn.msg(
@@ -1239,10 +1242,11 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         self._reg_self_command_hooks()
         self._reg_self_event_hooks()
 
-        if (len(sys.argv) > 1 and sys.argv[1] != 'help'):
+        if (len(sys.argv) > 1 and sys.argv[1] != 'help'):                                    
+            '''Checking config param'''
             self.check_config()
 
-            '''Checking run mode'''
+            '''Checking run mode param'''
             self.check_run_mode()
 
         return True

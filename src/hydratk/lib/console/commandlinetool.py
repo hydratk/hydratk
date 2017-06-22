@@ -206,7 +206,7 @@ class CommandlineTool():
 
         result = {}
         try:
-            CommandlineTool._parser = cmdoptparser.CmdOptParser()
+            CommandlineTool._parser = cmdoptparser.CmdOptParser(add_help=False) #supress built-in argparse -h/--help option
             for option, opt_set in opt_dict.items():
                 d_option = opt_set['d_opt'] if opt_set[
                     'd_opt'] is not None else option

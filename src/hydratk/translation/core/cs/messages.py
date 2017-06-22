@@ -46,6 +46,7 @@ msg = {
     'htk_lang_set': ["Jazyk nastaven na '{0}'"],
     'htk_invalid_lang_set': ["Jazyk '{0}' není podporován"],
     'htk_run_mode_set': ["Režím spuštění nastaven na '{0} ({1})'"],
+    'htk_root_dir_set' : ["HTK_ROOT_DIR nastaven na '{0}'"],
     'htk_invalid_run_mode_set': ["Režim spuštění '{0}' není podporován"],
     'htk_invalid_debug_level_set': ["Úroveň režimu ladění programu '{0}' není podporována"],
     'htk_debug_level_set': ["Úroveň režimu ladění programu nastavena na {0}"],

@@ -9,6 +9,7 @@
 """
 
 import sys
+import os
 from hydratk.lib.system.utils import Utils
 
 PYTHON_MAJOR_VERSION = sys.version_info[0]
@@ -102,6 +103,31 @@ def _check_dependencies(dep_modules=dep_modules, source='hydratk'):
     return result
 
 
+def check_home_param():
+    """Method checks for home parameter presence --home or -h to replace htk_root_dir location
+    
+    Args:
+       none
+    
+    Returns:            
+       bool: htk_root_changed 
+    
+    """
+    
+    htk_root_changed = False
+    i = 0        
+    for o in sys.argv:
+        if o == 'help':
+            break
+        if o == '-h' or o == '--home':
+            if sys.argv.index(o) < (len(sys.argv) - 1):
+                from os.path import expanduser
+                os.environ['htk_root_dir'] = expanduser("~")
+                print("UPDATED OS ENVIRON WITH {0}".format(os.environ['htk_root_dir']))                    
+                htk_root_changed = True
+        i = i + 1
+    return htk_root_changed
+
 def run_app():
     """Method runs HydraTK application
 
@@ -116,9 +142,10 @@ def run_app():
     """
 
     if (_check_dependencies()):
+        check_home_param() #check for -h, --home switch
+        
         from hydratk.core.masterhead import MasterHead
-
-        mh = MasterHead.get_head()
+        mh = MasterHead.get_head()        
         mh.run_fn_hook('h_bootstrap')  # run level specific processing
         trn = mh.get_translator()
         mh.dmsg('htk_on_debug_info', trn.msg('htk_app_exit'), mh.fromhere())

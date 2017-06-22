@@ -40,7 +40,6 @@ from hydratk.core.corehead import CoreHead
 from hydratk.core.servicehead import ServiceHead
 
 from hydratk.core import const
-from hydratk.core import commands
 from hydratk.core import commandopt
 from hydratk.core import event
 from hydratk.core import events
@@ -236,7 +235,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                         'htk_opt_ignore', 'run_mode', mode), self.fromhere())
             i = i + 1
         return run_mode_changed
-
+    
     def check_language(self):
         """Method checks for language change input parameters (-l, --language) from command line and validates if it's supported 
 

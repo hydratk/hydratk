@@ -45,6 +45,7 @@ msg = {
     'htk_debug_enabled': ["Starting application in debug mode"],
     'htk_lang_set': ["Language set to '{0}'"],
     'htk_run_mode_set': ["Run mode set to '{0} ({1})'"],
+    'htk_root_dir_set' : ["HTK_ROOT_DIR set to '{0}'"],
     'htk_invalid_run_mode_set': ["Run mode '{0}' is not supported"],
     'htk_invalid_lang_set': ["Language '{0}' is not supported"],
     'htk_invalid_debug_level_set': ["Debug level '{0}' is not supported"],

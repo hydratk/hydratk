@@ -25,6 +25,7 @@ long_opts = [
     'debug-channel',
     'ext-skel-path',
     'force',
+    'home',
     'interactive',
     'language',
     'lib-skel-path',
@@ -35,6 +36,7 @@ short_opts = [
     'd',
     'e',
     'f',
+    'h'
     'i',
     'l',
     'm'
@@ -47,6 +49,7 @@ getopt_long_opts = [
     'debug=',
     'debug-channel=',
     'force',
+    'home',
     'interactive',
     'language=',
     'lib-skel-path='
@@ -57,6 +60,7 @@ getopt_short_opts = [
     'd',
     'e',
     'f',
+    'h',
     'i',
     'l',
     'm'

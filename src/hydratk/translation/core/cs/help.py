@@ -34,6 +34,7 @@ help_opt = {
     'debug-channel': {'{h}-e, --debug-channel <číslo kanálu, ..>{e}': 'zapnutí filtru pro režim ladění'},
     'config': {'{h}-c, --config <soubor>{e}': 'načte alternativní konfigurační soubor'},
     'force': {'{h}-f, --force{e}': 'zvyšuje důraz na provedení příkazu'},
+    'home': {'{h}-h, --home{e}': 'nastaví htk_root_dir na domovský adresář aktuálního uživatele'},
     'interactive': {'{h}-i, --interactive{e}': 'zapne interaktivní režim'},
     'language': {'{h}-l, --language <jazyk>{e}': 'nastaví standardní jazyk, seznam dostupných jazyků je uveden v dokumentaci'},
     'run-mode': {'{h}-m, --run-mode <mode>{e}': 'nastaví režim spuštění, seznam dostupných režimů je uveden v dokumentaci'},

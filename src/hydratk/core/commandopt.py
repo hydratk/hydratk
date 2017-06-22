@@ -65,6 +65,16 @@ opt = {
             'has_value': False,
             'allow_multiple': False
         },
+        '-h ':  {
+            'd_opt': 'home',
+            'has_value': False,
+            'allow_multiple': False
+        },
+        '--home':  {
+            'd_opt': 'home',
+            'has_value': False,
+            'allow_multiple': False
+        },            
         '-i':  {
             'd_opt': 'interactive',
             'has_value': False,
@@ -113,6 +123,7 @@ d_opt = {
         'debug-channel',
         'ext-skel-path',
         'force',
+        'home',
         'interactive',
         'language',
         'lib-skel-path',
@@ -129,6 +140,7 @@ long_opt = {
         'debug-channel',
         'ext-skel-path',
         'force',
+        'home',
         'interactive',
         'language',
         'lib-skel-path',
@@ -143,6 +155,7 @@ short_opt = {
         'd',
         'e',
         'f',
+        'h',
         'i',
         'l',
         'm'
