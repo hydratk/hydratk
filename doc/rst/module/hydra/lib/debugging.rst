@@ -15,6 +15,10 @@ Unit tests available at hydratk/lib/debugging/simpledebug/01_methods_ut.jedi
 
 Method prints debug message. The text is automatically translated and filled with dynamical parameters.
 
+* wmsg 
+
+Method writes warning message.
+
 firepot
 ^^^^^^^
 

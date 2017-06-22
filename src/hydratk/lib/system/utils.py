@@ -10,6 +10,7 @@
 
 import pkgutil
 import pkg_resources
+from pip._vendor.pkg_resources import DistributionNotFound
 
 
 class Utils():
@@ -62,9 +63,11 @@ class Utils():
 
         """
 
-        if globals().get(module_name, False):
+        try:
+            pkg_resources.get_distribution(module_name)
             return True
-        return False
+        except pkg_resources.DistributionNotFound:
+            return False
 
     @staticmethod
     def module_version_ok(min_version, cur_version):

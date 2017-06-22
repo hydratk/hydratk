@@ -140,3 +140,12 @@ Method prepares in help in long form (output for command help). list of commands
 * parse_shell_text
 
 Method formats text to be printed. Special characters {h}, {u}, {e} are replaced by console highlighting.
+
+shellexec
+^^^^^^^^^
+
+**Methods** :
+
+* shell_exec
+
+Method executes shell command and returns output.

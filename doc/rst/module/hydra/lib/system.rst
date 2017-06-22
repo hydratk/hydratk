@@ -15,6 +15,23 @@ Unit tests available at hydratk/lib/system/auth/01_methods_ut.jedi
 
 Method checks authentication credentials. By default it checks against /etc/passwd or /etc/shadow if exists.
 
+config
+^^^^^^
+
+Module provides methods for configuration defaults.
+
+* update_htk_vars
+
+Method updates HTK config variables.
+
+* is_virtualized
+
+Method determines if there's virtualized Python environment.
+
+* get_supported_os
+
+Method returns supported os string.
+
 fs
 ^^
 
@@ -41,6 +58,10 @@ Module provides methods for controlled input output.
 * cprint
 
 Method prints debug message.
+
+* rprint
+
+Methods writes raw data to the stdio.
 
 mtime
 ^^^^^

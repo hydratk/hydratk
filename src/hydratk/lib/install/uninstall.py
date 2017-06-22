@@ -9,14 +9,15 @@
 """
 
 import hydratk.lib.install.command as cmd
+import hydratk.lib.system.config as syscfg
 from hydratk.core.masterhead import MasterHead
 from hydratk.core.bootstrapper import dep_modules
 from sys import exit, argv
 
 files = [
     '/usr/share/man/man1/htk.1',
-    '/etc/hydratk',
-    '/var/local/hydratk'
+    '{0}/hydratk'.format(syscfg.HTK_ETC_DIR),
+    '{0}/hydratk'.format(syscfg.HTK_VAR_DIR)
 ]
 
 libs = {

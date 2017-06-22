@@ -1,7 +1,7 @@
 .. _module_hydra_lib_install:
 
 install
-======
+=======
 
 This sections contains module documentation of install modules.
 
@@ -67,6 +67,10 @@ Method runs pre-install tasks from configuration.
 
 Method runs post-install tasks from configuration.
 
+* check_libs
+
+Method checks installed library dependencies
+
 * install_libs
 
 Method installs system libraries from configuration.
@@ -90,6 +94,10 @@ Methods sets configuration file. It backups current configuration (file _old) if
 * set_manpage
 
 Method sets manual page.
+
+* get_profiles
+
+Method gets module profiles.
 
 uninstall
 ^^^^^^^^^
