@@ -57,6 +57,7 @@ You see all available commands and options. Some of them will be shown in exampl
         -d, --debug <level> - debug turned on with specified level > 0
         -e, --debug-channel <channel number, ..> - debug channel filter turned on
         -f, --force - enforces command
+        -h, --home - sets htk_root_dir to the current user home directory
         -i, --interactive - turns on interactive mode
         -l, --language <language> - sets the text output language, the list of available languages is specified in the docs
         -m, --run-mode <mode> - sets the running mode, the list of available languages is specified in the docs   
