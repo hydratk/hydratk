@@ -32,8 +32,7 @@ def update_htk_vars():
     
 
     if 'HTK_ROOT_DIR' in os.environ or 'htk_root_dir' in os.environ:               
-        tmp_dir = os.environ['HTK_ROOT_DIR'] if 'HTK_ROOT_DIR' in os.environ else os.environ['htk_root_dir']
-        print("Found HTK_ROOT_DIR {0}".format(tmp_dir)) 
+        tmp_dir = os.environ['HTK_ROOT_DIR'] if 'HTK_ROOT_DIR' in os.environ else os.environ['htk_root_dir']        
         if os.path.exists(tmp_dir):
             HTK_ROOT_DIR = tmp_dir    
             HTK_ETC_DIR  = "{0}/etc".format(HTK_ROOT_DIR)

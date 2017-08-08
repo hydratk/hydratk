@@ -63,7 +63,12 @@ class PropertyHead(object):
         """config property getter"""
 
         return self._config
-
+    
+    @property
+    def config_mp(self):
+        """Config macro processor instance"""
+        return self._config_mp
+    
     @property
     def debug(self):
         """debug property getter"""

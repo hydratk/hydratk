@@ -23,6 +23,7 @@ import zmq
 import threading
 from os import makedirs
 import hydratk.lib.system.config as syscfg
+from hydratk.lib.parser import smp
 
 PYTHON_MAJOR_VERSION = sys.version_info[0]
 
@@ -49,6 +50,7 @@ from hydratk.lib.exceptions.inputerror import InputError
 import hydratk.core.dbconfig as dbconfig
 from hydratk.lib.translation import translator
 from hydratk.lib.system import config as syscfg
+from hydratk.core import confighooks
 
 
 class AsyncCallBackHandler(object):
@@ -88,6 +90,8 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
 
     _runlevel = const.RUNLEVEL_SHUTDOWN
     _config = None
+    _config_macros = {}
+    _config_mp = None
     _language = const.DEFAULT_LANGUAGE
     _config_file = const.CONFIG_FILE
     _ext_confd = const.EXT_CONFIG_DIR
@@ -800,6 +804,44 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                         # update in memory configuration
                         self._config[gk][ok][kk] = kv
 
+    def config_var_default_hook(self, strvar):
+        result = ''
+        if strvar != '':
+            #detect macros
+            if strvar in self._config_macros:
+                result = self._config_macros[strvar]() if callable(strvar) else self._config_macros[strvar] 
+            #check config
+            pass
+        
+        return result
+    
+    def config_var_default_processor(self, match):
+        """Method is processing config variable definition from macro processor
+
+        Args:        
+           match (obj): regexp object   
+
+        Returns:
+           mixed: parsed variable content  
+        
+        Raises:
+           KeyError: for unavailable config variable keys
+        """
+        
+        vgroup   = match.group(1)
+        vsection = match.group(2)
+        vvar     = match.group(3)
+        if vgroup in self._config:
+            if vsection in self._config[vgroup]:
+                if vvar in self._config[vgroup][vsection]:
+                    return self._config_mp.parse(self._config[vgroup][vsection][vvar])
+                else:
+                    raise KeyError("Config: {0}.{1} doesn't contain variable {2}".format(vgroup, vsection, vvar))
+            else:
+                raise KeyError("Config group: {0} doesn't contain section {1}".format(vgroup, vsection))
+        else:
+            raise KeyError("Config doesn't contain group {0}".format(vgroup))
+         
     def _load_base_config(self):
         """Method loads base configuration from file
 
@@ -819,6 +861,10 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                     self._config = yaml.load(f)
                 self.dmsg('htk_on_debug_info', self._trn.msg(
                     'htk_base_cfg_loaded', self._config_file), self.fromhere())
+                self._config_mp = smp.MacroParser()
+                self._config_mp.add_regexp([{'regexp' : confighooks.config_var_regexp['config_var_struct'], 'processor' : self.config_var_default_processor}])
+                self._config_mp.set_default_var_hook(self.config_var_default_hook) 
+                                    
             except Exception as detail:
                 print('except here')
                 self.errmsg(detail)
@@ -827,8 +873,8 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                 sys.exit(1)
         else:
             self.dmsg('htk_on_error', self._trn.msg(
-                'htk_loading_base_cfg', self._config_file), self.fromhere())
-
+                'htk_loading_base_cfg', self._config_file), self.fromhere())    
+    
     def _apply_config(self):
         """Method initializes several configurable options
 
@@ -1346,7 +1392,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
 
             self._init_message_router()
             self._c_observer()
-
+         
         return True  # required by fn_hook
 
     def _runlevel_appl(self):

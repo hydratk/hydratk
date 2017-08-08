@@ -199,7 +199,51 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """
 
         return self._config
+    
+    def get_config_var(self, cfg_var, bind_vars = None, str_eval = True):
+        """Method returns config varible  
 
+        Args:
+           cfg_var (str) : config variable in format Group.Section.varname, eg.: System.Language.id
+           bind_vars (dict) : dictionary with bindable variables: $(var), which can be additionaly used while evaluating string value
+           str_eval (bool) : evaluate string value, default is True
+
+        Returns:            
+           str: evaluated or raw string value
+
+        Example:
+
+        .. code-block:: python
+
+              from hydratk.core.masterhead import MasterHead        
+
+              mh = MasterHead.get_head()
+              langue = mh.get_config_var('System.Language.id')         
+        """
+        if cfg_var not in ('', None) and type(cfg_var).__name__ == 'str':
+            vtok = cfg_var.split('.')
+            vgroup   = vtok[0]
+            vsection = vtok[1]
+            vvar     = vtok[2]
+            if vgroup in self._config:                
+                if vsection in self._config[vgroup]:
+                    if vvar in self._config[vgroup][vsection]:
+                        return self._config_mp.parse(self._config[vgroup][vsection][vvar])
+                    else:
+                        raise KeyError("Config: {0}.{1} doesn't contain variable {2}".format(vgroup, vsection, vvar))
+                else:
+                    raise KeyError("Config group: {0} doesn't contain section {1}".format(vgroup, vsection))
+            else:
+                raise KeyError("Config doesn't contain group {0}".format(vgroup))
+        else:
+            raise InputError("Invalid config variable {0}".format(cfg_var))
+        
+        if type(bind_vars).__name__ == 'dict':
+            self._config_mp.add_var_hook(bind_vars)
+                    
+        if str_eval:
+            return self._config_mp.parse(cfg_var)
+    
     def check_run_mode(self):
         """Method checks for run_mode input parameter (-m, --run-mode) from command line and validates if it's supported 
 
