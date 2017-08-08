@@ -166,21 +166,21 @@ install
 
 * command
 
-.. automodule:: hydratk.lib.exceptions.command
+.. automodule:: hydratk.lib.install.command
    :member-order: bysource 
    
 .. _refman_hydra_lib_install_task:
 
 * task
 
-.. automodule:: hydratk.lib.exceptions.task
+.. automodule:: hydratk.lib.install.task
    :member-order: bysource 
    
 .. _refman_hydra_lib_install_uninstall:
 
 * uninstall
 
-.. automodule:: hydratk.lib.exceptions.uninstall
+.. automodule:: hydratk.lib.install.uninstall
    :member-order: bysource       
 
 .. _refman_hydra_lib_number:
