@@ -103,6 +103,7 @@ Test-Scenario-3:
   
   Pre-Req: |
     from hydratk.core.masterhead import MasterHead
+    from sys import prefix
   
   Test-Case-1:
     Id: tc_01
@@ -116,7 +117,7 @@ Test-Scenario-3:
       
       Test: |
         mh = MasterHead.get_head()
-        file = '/var/local/hydratk/yoda/helpers/yodahelpers/hydratk/core/extensions.py'
+        file = prefix+'/var/local/hydratk/yoda/helpers/yodahelpers/hydratk/core/extensions.py'
         res = mh._load_module_from_file(file).__name__
       
       Validate: |      
@@ -129,7 +130,7 @@ Test-Scenario-3:
       Desc: Load none-extension
       
       Test: |
-        file = '/var/local/hydratk/yoda/helpers/yodahelpers/hydratk/core/events.py'
+        file = prefix+'/var/local/hydratk/yoda/helpers/yodahelpers/hydratk/core/events.py'
         res = mh._load_module_from_file(file)
       
       Validate: |      
