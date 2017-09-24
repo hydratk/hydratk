@@ -71,32 +71,51 @@ def get_supported_os():
        'compat' : '',          
        'name' : '',
        'version' : '',
-       'status' : ''          
+       'status' : '',
+       'pckm' : ''
     }
     c_os = platform.system()
-    if c_os not in ('Linux'): 
+    if (c_os not in ('Linux', 'FreeBSD')):
         raise SystemError('Unsupported operating system platform {0}'.format(c_os))
     
-    if c_os == 'Linux':
-        distinfo = platform.linux_distribution()
+    if (c_os == 'Linux'):
+        distinfo = platform.linux_distribution(supported_dists=platform._supported_dists + ('arch', 'mageia',), full_distribution_name=0)
         os_result['name'] = distinfo[0]
         os_result['version'] = distinfo[1] 
         os_result['status'] = distinfo[2]
         
         # Debian based distros
-        if os_result['name'].lower() in (
-                                          'debian', 'ubuntu', 'edubuntu', 'kubuntu', 'linuxmint',
-                                          'ubuntu gnome', 'ubuntu mate', 'ubuntu budgie',
-                                          'lubuntu', 'xubuntu', 'ubuntu server', 'ubuntu studio',                                          
-                                        ):
+        if (os_result['name'].lower() in ('debian', 'ubuntu', 'linuxmint')):
             os_result['compat'] = 'debian'
+            os_result['pckm'] = 'apt-get'
         # Red Hat based distros
-        elif os_result['name'].lower() in (
-                                           'red hat linux','centos','fedora',
-                                           ):
-            os_result['compat'] = 'redhat'           
+        elif (os_result['name'].lower() in ('redhat', 'centos', 'mandrake', 'mandriva', 'rocks', 'yellowdog')):
+            os_result['compat'] = 'redhat'
+            os_result['pckm'] = 'yum'
+        # Fedora based distros
+        elif (os_result['name'].lower() in ('fedora')):
+            os_result['compat'] = 'fedora'
+            os_result['pckm'] = 'dnf'
+        # SuSe based distros
+        elif (os_result['name'].lower() in ('suse')):
+            os_result['compat'] = 'suse'
+            os_result['pckm'] = 'zypper'
+        # Slackware based distros
+        elif (os_result['name'].lower() in ('slackware')):
+            os_result['compat'] = 'slackware'
+        # Gentoo based distros
+        elif (os_result['name'].lower() in ('gentoo')):
+            os_result['compat'] = 'gentoo'
+            os_result['pckm'] = 'emerge'
+        # Arch based distros
+        elif (os_result['name'].lower() in ('arch')):
+            os_result['compat'] = 'arch'
+            os_result['pckm'] = 'pacman'
         else:
             raise SystemError('Unsupported Linux distribution {0}'.format(os_result['name']))
+    elif (c_os == 'FreeBSD'):
+        os_result['compat'] = 'freebsd'
+        os_result['pckm'] = 'pkg'
         
     return os_result
 

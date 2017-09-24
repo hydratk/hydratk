@@ -71,7 +71,7 @@ def run_post_install(argv, cfg):
             task(cfg, profiles)
 
 
-def check_libs(pkcm, lib_inst, lib_check): 
+def check_libs(lib_inst, lib_check):
     """Function checks installed library dependencies
 
     Args:
@@ -110,7 +110,10 @@ def install_libs(cfg, profiles, *args):
 
     """
 
-    pckm = get_pck_manager()[0]
+    pckm = os_info['pckm']
+    if (not is_installed(pckm)):
+        raise SystemError('Missing default package manager {0} for {1} distribution'.format(pckm, os['name']))
+
     libs, modules = cfg['libs'], cfg['modules']
     lib_inst = []
     lib_check = {}
@@ -125,13 +128,13 @@ def install_libs(cfg, profiles, *args):
                     do_install = False
                     
             if do_install:
-                if (pckm in libs[module][os_info['compat']]):
+                if (os_info['compat'] in libs[module] and pckm in libs[module][os_info['compat']]):
                     #Be sure that list of installable libraries is unique
                     lib_inst = list(set(lib_inst).union(set(libs[module][os_info['compat']][pckm])))                                       
                     lib_check.update(libs[module][os_info['compat']]['check'])
                     
     #Check required libraries
-    missing_libs = check_libs(pckm, lib_inst, lib_check)
+    missing_libs = check_libs(lib_inst, lib_check)
     uid = os.getuid()
     if uid != 0 and len(missing_libs) > 0:
         print("\nRequired libraries are not present: {0}\nYou can install them yourself to make them visible to the installer\nor rerun the setup with root priviledges to install them with available package manager ({1})\n".format(",".join(missing_libs), pckm))    

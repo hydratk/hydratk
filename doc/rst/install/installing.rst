@@ -63,13 +63,21 @@ Modules setproctitle, psutil, pyzmq require several libraries which will be inst
 
 setprocitle
 
-* apt-get: gcc, wget, tar, bzip2, python-dev
-* yum: gcc, wget, tar, bzip2, redhat-rpm-config, python-devel       
+* Debian apt-get: python-dev, gcc, wget, bzip2, tart
+* Red Hat yum: redhat-rpm-config, python-devel, gcc, wget, bzip2, tar
+* Fedora dnf: redhat-rpm-config, python-devel, gcc, wget, bzip2, tar
+* SuSe zypper: python-devel, gcc, wget, bzip2, tar
+* Gentoo emerge: gcc, wget, bzip2, tar
+* Arch pacman: gcc, wget, bzip2, tar       
     
 pyzmq
 
-* apt-get: g++, libzmq-dev
-* yum: gcc-c++, zeromq    
+* Debian apt-get: g++, libzmq-dev
+* Red Hat yum: epel-release, gcc-c++, zeromq
+* Fedora dnf: gcc-c++, zeromq
+* SuSe zypper: gcc-c++, zeromq-devel
+* Gentoo emerge: g++
+* Arch pacman: g++    
 
   .. note::
      

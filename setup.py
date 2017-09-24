@@ -53,9 +53,13 @@ def version_update(cfg, *args):
         cfg['modules'].insert(0, {'module': 'importlib', 'version': '>=1.0.4'})
         cfg['libs'][module]['debian']['apt-get'][0] = 'python2.6-dev'
         cfg['libs'][module]['redhat']['yum'][1] = 'python2.6-devel'
+        cfg['libs'][module]['fedora']['dnf'][1] = 'python2.6-devel'
+        cfg['libs'][module]['suse']['zypper'][0] = 'python2.6-devel'
     elif (major == 3):        
         cfg['libs'][module]['debian']['apt-get'][0] = 'python3-dev'
         cfg['libs'][module]['redhat']['yum'][1] = 'python3-devel'
+        cfg['libs'][module]['fedora']['dnf'][1] = 'python3-devel'
+        cfg['libs'][module]['suse']['zypper'][0] = 'python3-devel'
 
 config = {
     'pre_tasks': [
@@ -110,6 +114,27 @@ config = {
             },
             'redhat': {                 
                 'yum': [
+                    'epel-release',
+                    'gcc-c++',
+                    'zeromq'
+                ],
+                'check' : {
+                    'epel-release' : {
+                        'cmd' : 'yum list installed | grep epel-release',
+                        'errmsg' : 'Unable to locate package epel-release not found'
+                    },
+                    'gcc-c++' : {
+                        'cmd' : 'which g++',
+                        'errmsg' : 'Required g++ compiler not found in path'
+                    },
+                    'zeromq' : {
+                        'cmd' : '/sbin/ldconfig -p | grep libzmq || locate libzmq',
+                        'errmsg' : 'Unable to locate shared library libzmq'
+                    }                                                 
+                }        
+            },
+            'fedora': {
+                'dnf': [
                     'gcc-c++',
                     'zeromq'
                 ],
@@ -121,12 +146,49 @@ config = {
                     'zeromq' : {
                         'cmd' : '/sbin/ldconfig -p | grep libzmq || locate libzmq',
                         'errmsg' : 'Unable to locate shared library libzmq'
-                    }                                                 
-                }        
-            }                                                                        
+                    }
+                }
+            },
+            'suse': {
+                'zypper': [
+                    'gcc-c++',
+                    'zeromq-devel'
+                ],
+                'check' : {
+                    'gcc-c++' : {
+                        'cmd' : 'which g++',
+                        'errmsg' : 'Required g++ compiler not found in path'
+                    },
+                    'zeromq-devel' : {
+                        'cmd' : '/sbin/ldconfig -p | grep libzmq || locate libzmq',
+                        'errmsg' : 'Unable to locate shared library libzmq'
+                    }
+                }
+            },
+            'gentoo': {
+                'emerge': [
+                    'g++'
+                ],
+                'check' : {
+                    'g++' : {
+                        'cmd' : 'which g++',
+                        'errmsg' : 'Required g++ compiler not found in path'
+                    }
+                }
+            },
+            'arch': {
+                'pacman': [
+                    'g++'
+                ],
+                'check' : {
+                    'g++' : {
+                        'cmd' : 'which g++',
+                        'errmsg' : 'Required g++ compiler not found in path'
+                    }
+                }
+            }
         },
-        'setproctitle': {                         
-            #All Debian compatibles distros             
+        'setproctitle': {
             'debian': {              
                 'apt-get': [
                     'python-dev',
@@ -163,10 +225,9 @@ config = {
                     'python3-dev' : {
                         'cmd' : 'dpkg --get-selections | grep python3-dev',
                         'errmsg' : 'Unable to locate package python3-dev'
-                    },                            
+                    }
                  }           
             },
-            #All Redhat compatibles distros             
             'redhat': {                        
                 'yum': [
                     'redhat-rpm-config',
@@ -196,21 +257,156 @@ config = {
                     'redhat-rpm-config' : { 
                         'cmd' : 'yum list installed | grep redhat-rpm-config',
                         'errmsg' : 'Unable to locate package redhat-rpm-config not found'
-                    },                       
+                    },
                     'python-devel' : { 
-                        'cmd' : 'yum -q list installed python-devel',
+                        'cmd' : 'yum list installed | grep python-devel',
                         'errmsg' : 'Unable to locate package python-devel'
                     },  
                     'python2.6-devel' : {
-                        'cmd' : 'yum -q list installed python2.6-devel',
+                        'cmd' : 'yum list installed | grep python2.6-devel',
                         'errmsg' : 'Unable to locate package python2.6-devel'
                     },
                     'python3-devel' : {
-                        'cmd' : 'yum l-q ist installed python3-devel',
+                        'cmd' : 'yum list installed | grep python3-devel',
                         'errmsg' : 'Unable to locate package python3-devel'
                     }
                 }           
-            }                                              
+            },
+            'fedora': {
+                'dnf': [
+                    'redhat-rpm-config',
+                    'python-devel',
+                    'gcc',
+                    'wget',
+                    'bzip2',
+                    'tar'
+                ],
+                'check' : {
+                    'gcc' : {
+                        'cmd' : 'which gcc',
+                        'errmsg' : 'Required gcc compiler not found in path'
+                    },
+                    'wget' : {
+                        'cmd' : 'which wget',
+                        'errmsg' : 'Required wget downloader not found in path'
+                    },
+                    'bzip2' : {
+                        'cmd' : 'which bzip2',
+                        'errmsg' : 'Required bzip2 compressor not found in path'
+                    },
+                    'tar' : {
+                        'cmd' : 'which tar',
+                        'errmsg' : 'Required tar compressor not found in path'
+                    },
+                    'redhat-rpm-config' : {
+                        'cmd' : 'dnf list installed | grep redhat-rpm-config',
+                        'errmsg' : 'Unable to locate package redhat-rpm-config not found'
+                    },
+                    'python-devel' : {
+                        'cmd' : 'dnf list installed | grep python-devel',
+                        'errmsg' : 'Unable to locate package python-devel'
+                    },
+                    'python2.6-devel' : {
+                        'cmd' : 'dnf list installed | grep python2.6-devel',
+                        'errmsg' : 'Unable to locate package python2.6-devel'
+                    },
+                    'python3-devel' : {
+                        'cmd' : 'dnf list installed | grep python3-devel',
+                        'errmsg' : 'Unable to locate package python3-devel'
+                    }
+                }
+            },
+            'suse': {
+                'zypper': [
+                    'python-devel',
+                    'gcc',
+                    'wget',
+                    'bzip2',
+                    'tar'
+                ],
+                'check' : {
+                    'gcc' : {
+                        'cmd' : 'which gcc',
+                        'errmsg' : 'Required gcc compiler not found in path'
+                    },
+                    'wget' : {
+                        'cmd' : 'which wget',
+                        'errmsg' : 'Required wget downloader not found in path'
+                    },
+                    'bzip2' : {
+                        'cmd' : 'which bzip2',
+                        'errmsg' : 'Required bzip2 compressor not found in path'
+                    },
+                    'tar' : {
+                        'cmd' : 'which tar',
+                        'errmsg' : 'Required tar compressor not found in path'
+                    },
+                    'python-devel' : {
+                        'cmd' : 'rpm -qa | grep python-devel',
+                        'errmsg' : 'Unable to locate package python-devel'
+                    },
+                    'python2.6-devel' : {
+                        'cmd' : 'rpm -qa | grep python2.6-devel',
+                        'errmsg' : 'Unable to locate package python2.6-devel'
+                    },
+                    'python3-devel' : {
+                        'cmd' : 'rpm -qa | grep python3-devel',
+                        'errmsg' : 'Unable to locate package python3-devel'
+                    }
+                }
+            },
+            'gentoo': {
+                'emerge': [
+                    'gcc',
+                    'wget',
+                    'bzip2',
+                    'tar'
+                ],
+                'check' : {
+                    'gcc' : {
+                        'cmd' : 'which gcc',
+                        'errmsg' : 'Required gcc compiler not found in path'
+                    },
+                    'wget' : {
+                        'cmd' : 'which wget',
+                        'errmsg' : 'Required wget downloader not found in path'
+                    },
+                    'bzip2' : {
+                        'cmd' : 'which bzip2',
+                        'errmsg' : 'Required bzip2 compressor not found in path'
+                    },
+                    'tar' : {
+                        'cmd' : 'which tar',
+                        'errmsg' : 'Required tar compressor not found in path'
+                    }
+                 }
+            },
+            'arch': {
+                'pacman': [
+                    'gcc',
+                    'wget',
+                    'bzip2',
+                    'tar'
+                ],
+                'check' : {
+                    'gcc' : {
+                        'cmd' : 'which gcc',
+                        'errmsg' : 'Required gcc compiler not found in path'
+                    },
+                    'wget' : {
+                        'cmd' : 'which wget',
+                        'errmsg' : 'Required wget downloader not found in path'
+                    },
+                    'bzip2' : {
+                        'cmd' : 'which bzip2',
+                        'errmsg' : 'Required bzip2 compressor not found in path'
+                    },
+                    'tar' : {
+                        'cmd' : 'which tar',
+                        'errmsg' : 'Required tar compressor not found in path'
+                    }
+                 }
+            }
         }
     },
 
@@ -246,7 +442,7 @@ st_setup(
     entry_points=entry_points,
     keywords='toolkit,utilities,testing,analysis',
     requires_python='>=2.6,!=3.0.*,!=3.1.*,!=3.2.*',
-    platforms='Linux'
+    platforms='Linux,FreeBSD'
 )
 
 task.run_post_install(argv, config)

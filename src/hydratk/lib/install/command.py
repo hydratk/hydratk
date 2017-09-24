@@ -34,9 +34,7 @@ def is_install_cmd(argv):
 
 
 def get_pck_manager():
-    """Method returns system package manager
-
-    Supported: apt-get, yum
+    """Method returns system package managera
 
     Args:
        none
@@ -46,7 +44,7 @@ def get_pck_manager():
 
     """
 
-    pck_managers = ['apt-get', 'yum']
+    pck_managers = ['apt-get', 'yum', 'dnf', 'zypper', 'emerge', 'pacman', 'pkg']
 
     pckm = []
     for pck in pck_managers:
@@ -93,6 +91,16 @@ def install_pck(pckm, pck):
         cmd = 'apt-get -y install {0}'.format(pck)
     elif (pckm == 'yum'):
         cmd = 'yum -y install {0}'.format(pck)
+    elif (pckm == 'dnf'):
+        cmd = 'dnf -y install {0}'.format(pck)
+    elif (pckm == 'zypper'):
+        cmd = 'zypper install -y {0}'.format(pck)
+    elif (pckm == 'emerge'):
+        cmd = 'emerge {0}'.format(pck)
+    elif (pckm == 'pacman'):
+        cmd = 'pacman -S --noconfirm {0}'.format(pck)
+    elif (pckm == 'pkg'):
+        cmd = 'pkg install -y {0}'.format(pck)
         
     result, _, err = shell_exec(cmd, True)
     if (result != 0):
