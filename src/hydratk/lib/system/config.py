@@ -97,7 +97,13 @@ def get_supported_os():
             os_result['compat'] = 'redhat'           
         else:
             raise SystemError('Unsupported Linux distribution {0}'.format(os_result['name']))
-        
+    if c_os == 'Windows':
+        distinfo = platform.win32_ver()
+        os_result['name']    = distinfo[0]
+        os_result['version'] = distinfo[1] 
+        os_result['status']  = distinfo[2]
+        os_result['compat']  = 'windows'
+            
     return os_result
 
               

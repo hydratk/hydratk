@@ -47,16 +47,20 @@ classifiers = [
 def version_update(cfg, *args):
 
     major, minor = version_info[0], version_info[1]
-    
-    module = 'setproctitle'
-    if (major == 2 and minor == 6):
-        cfg['modules'].insert(0, {'module': 'importlib', 'version': '>=1.0.4'})
-        cfg['libs'][module]['debian']['apt-get'][0] = 'python2.6-dev'
-        cfg['libs'][module]['redhat']['yum'][1] = 'python2.6-devel'
-    elif (major == 3):        
-        cfg['libs'][module]['debian']['apt-get'][0] = 'python3-dev'
-        cfg['libs'][module]['redhat']['yum'][1] = 'python3-devel'
+    if os_info['compat'] != 'windows':
+        module = 'setproctitle'
+        if (major == 2 and minor == 6):
+            cfg['modules'].insert(0, {'module': 'importlib', 'version': '>=1.0.4'})
+            cfg['libs'][module]['debian']['apt-get'][0] = 'python2.6-dev'
+            cfg['libs'][module]['redhat']['yum'][1] = 'python2.6-devel'
+        elif (major == 3):        
+            cfg['libs'][module]['debian']['apt-get'][0] = 'python3-dev'
+            cfg['libs'][module]['redhat']['yum'][1] = 'python3-devel'
 
+""" 
+    DEFAULT CONFIG
+    Exceptions aka MS Windows dependencies defined bellow
+"""
 config = {
     'pre_tasks': [
         version_update,        
@@ -71,8 +75,7 @@ config = {
         task.set_manpage
     ],
 
-    'modules': [
-        {'module': 'setproctitle', 'version': '>=1.1.9'},
+    'modules': [        
         {'module': 'pyzmq',        'version': '>=14.7.0'},
         {'module': 'psutil',       'version': '>=3.1.1'},
         {'module': 'pyyaml',       'version': '>=3.11'},
@@ -219,20 +222,123 @@ config = {
         '{0}/hydratk'.format(syscfg.HTK_VAR_DIR) : 'a+rwx'
     }
 }
+if os_info['compat'] != 'windows':
+    config['modules'].extend(
+            [
+              {'module': 'setproctitle', 'version': '>=1.1.9'}
+            ]
+    )
+    config['libs'].update(
+      { 
+        'setproctitle': {                         
+            #All Debian compatibles distros             
+            'debian': {              
+                'apt-get': [
+                    'python-dev',
+                    'gcc',
+                    'wget',
+                    'bzip2',
+                    'tar'
+                ],
+                'check' : {
+                    'gcc' : { 
+                        'cmd' : 'which gcc',
+                        'errmsg' : 'Required gcc compiler not found in path'
+                    }, 
+                    'wget' : { 
+                        'cmd' : 'which wget',
+                        'errmsg' : 'Required wget downloader not found in path'
+                    }, 
+                    'bzip2' : { 
+                        'cmd' : 'which bzip2',
+                        'errmsg' : 'Required bzip2 compressor not found in path'
+                    }, 
+                    'tar' : { 
+                        'cmd' : 'which tar',
+                        'errmsg' : 'Required tar compressor not found in path'
+                    },                                                                                                   
+                    'python-dev' : { 
+                        'cmd' : 'dpkg --get-selections | grep python-dev',
+                        'errmsg' : 'Unable to locate package python-dev'
+                    },  
+                    'python2.6-dev' : {
+                        'cmd' : 'dpkg --get-selections | grep python2.6-dev',
+                        'errmsg' : 'Unable to locate package python2.6-dev'
+                    },
+                    'python3-dev' : {
+                        'cmd' : 'dpkg --get-selections | grep python3-dev',
+                        'errmsg' : 'Unable to locate package python3-dev'
+                    },                            
+                 }           
+            },
+            #All Redhat compatibles distros             
+            'redhat': {                        
+                'yum': [
+                    'redhat-rpm-config',
+                    'python-devel',
+                    'gcc',
+                    'wget',
+                    'bzip2',
+                    'tar'
+                ],
+                'check' : {
+                    'gcc' : { 
+                        'cmd' : 'which gcc',
+                        'errmsg' : 'Required gcc compiler not found in path'
+                    },
+                    'wget' : { 
+                        'cmd' : 'which wget',
+                        'errmsg' : 'Required wget downloader not found in path'
+                    },
+                    'bzip2' : { 
+                        'cmd' : 'which bzip2',
+                        'errmsg' : 'Required bzip2 compressor not found in path'
+                    },
+                    'tar' : { 
+                        'cmd' : 'which tar',
+                        'errmsg' : 'Required tar compressor not found in path'
+                    },                                                                                                          
+                    'redhat-rpm-config' : { 
+                        'cmd' : 'yum list installed | grep redhat-rpm-config',
+                        'errmsg' : 'Unable to locate package redhat-rpm-config not found'
+                    },                       
+                    'python-devel' : { 
+                        'cmd' : 'yum -q list installed python-devel',
+                        'errmsg' : 'Unable to locate package python-devel'
+                    },  
+                    'python2.6-devel' : {
+                        'cmd' : 'yum -q list installed python2.6-devel',
+                        'errmsg' : 'Unable to locate package python2.6-devel'
+                    },
+                    'python3-devel' : {
+                        'cmd' : 'yum l-q ist installed python3-devel',
+                        'errmsg' : 'Unable to locate package python3-devel'
+                    }
+                }           
+            }
+        }
+      }               
+    )
+    config['post_tasks'].extend(
+       [
+        'task.set_access_rights',
+        'task.set_manpage'
+       ]
+    )
+    
 
 task.run_pre_install(argv, config)
 
 entry_points = {
     'console_scripts': [
-        'htk = hydratk.core.bootstrapper:run_app',
-        'htkprof = hydratk.core.bootstrapper:run_app_prof',
+        'htk = hydratk.core.bootstrapper:run_app',        
         'htkuninstall = hydratk.lib.install.uninstall:run_uninstall'
     ]
 }
 
 st_setup(
     name='hydratk',
-    version='0.5.0',
+    version='0.6.0dev1',
     description='Fully extendable object oriented application toolkit with nice modular architecture',
     long_description=readme,
     author='Petr Czaderna, HydraTK team',
@@ -246,7 +352,7 @@ st_setup(
     entry_points=entry_points,
     keywords='toolkit,utilities,testing,analysis',
     requires_python='>=2.6,!=3.0.*,!=3.1.*,!=3.2.*',
-    platforms='Linux'
+    platforms='Linux,Windows'
 )
 
 task.run_post_install(argv, config)

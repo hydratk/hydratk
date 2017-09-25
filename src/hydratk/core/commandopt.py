@@ -109,8 +109,27 @@ opt = {
             'd_opt': 'run-mode',
             'has_value': True,
             'allow_multiple': False
-        }
-
+        },
+        '-p':  {
+            'd_opt': 'profiler',
+            'has_value': True,
+            'allow_multiple': False
+        },
+        '--profiler':  {
+            'd_opt': 'profiler',
+            'has_value': False,
+            'allow_multiple': False
+        },            
+        '--pstats-sort-by':  {
+            'd_opt': 'pstats-sort-by',
+            'has_value': True,
+            'allow_multiple': False
+        },
+        '--pstats-strip-dirs':  {
+            'd_opt': 'pstats-strip-dirs',
+            'has_value': True,
+            'allow_multiple': False
+        }                                              
     }
 }
 
@@ -127,7 +146,9 @@ d_opt = {
         'interactive',
         'language',
         'lib-skel-path',
-        'run-mode'
+        'run-mode',
+        'profiler',
+        'pstats-sort-by'
     ]
 }
 
@@ -144,7 +165,9 @@ long_opt = {
         'interactive',
         'language',
         'lib-skel-path',
-        'run-mode'
+        'run-mode',
+        'profiler',
+        'pstats-sort-by'
     ]
 }
 
@@ -158,7 +181,8 @@ short_opt = {
         'h',
         'i',
         'l',
-        'm'
+        'm',
+        'p'
     ]
 }
 

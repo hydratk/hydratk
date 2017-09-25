@@ -9,8 +9,10 @@
 """
 
 
-class Profiler():
+class Profiler(object):
     _profiling = False
+    _pr = None
+    _output_file = None
 
     def __init__(self):
         '''

@@ -10,6 +10,7 @@
 
 import sys
 import os
+import platform
 from hydratk.lib.system.utils import Utils
 
 PYTHON_MAJOR_VERSION = sys.version_info[0]
@@ -20,15 +21,11 @@ if PYTHON_MAJOR_VERSION == 2:
 dep_modules = {
     'importlib': {
         'package': 'importlib'
-    },
+    },    
     'psutil': {
-        'min-version': '3.1.1',
-        'package': 'psutil'
-    },
-    'setproctitle': {
-        'min-version': '1.1.9',
-        'package': 'setproctitle'
-    },
+            'min-version': '3.1.1',
+            'package': 'psutil'
+        },   
     'xtermcolor': {
         'min-version': '1.3',
         'package': 'xtermcolor'
@@ -42,7 +39,16 @@ dep_modules = {
         'package': 'pyzmq'
     }
 }
-
+if platform.system() != "Windows":
+    dep_modules.update(
+      {
+        'setproctitle': {
+            'min-version': '1.1.9',
+            'package': 'setproctitle'
+        }
+      }
+    )
+    
 lib_dependencies = {
     'hydratk-lib-network': 'hydratk.lib.network.dependencies',
     'hydratk-lib-numeric': 'hydratk.lib.numeric.dependencies'
@@ -128,6 +134,26 @@ def check_home_param():
         i = i + 1
     return htk_root_changed
 
+def check_profiler_param():
+    """Method checks for profiler parameter presence --profiler or -p to start in profiling mode
+    
+    Args:
+       none
+    
+    Returns:            
+       bool: True if parameter present otherwise False
+    
+    """
+    
+    result = False
+    i = 0        
+    for o in sys.argv:            
+        if o == '-p' or o == '--profiler':
+            if sys.argv.index(o) < (len(sys.argv) - 1):                
+                result = True
+        i = i + 1
+    return result
+    
 def run_app():
     """Method runs HydraTK application
 
@@ -140,35 +166,28 @@ def run_app():
        void     
 
     """
-
-    if (_check_dependencies()):
-        check_home_param() #check for -h, --home switch
+    exit_code = 0
+    try:
+        profiler_mode = check_profiler_param() #check for -p, --profiler switch
+        if profiler_mode:
+            from hydratk.core.profiler import Profiler
+            pr = Profiler()
+            pr.start()
+             
+        if (_check_dependencies()):
+            check_home_param() #check for -h, --home switch
+            
+            from hydratk.core.masterhead import MasterHead
+            mh = MasterHead.get_head()        
+            mh.run_fn_hook('h_bootstrap')  # run level specific processing
+            trn = mh.get_translator()
+            mh.dmsg('htk_on_debug_info', trn.msg('htk_app_exit'), mh.fromhere())
         
-        from hydratk.core.masterhead import MasterHead
-        mh = MasterHead.get_head()        
-        mh.run_fn_hook('h_bootstrap')  # run level specific processing
-        trn = mh.get_translator()
-        mh.dmsg('htk_on_debug_info', trn.msg('htk_app_exit'), mh.fromhere())
-
-    sys.exit(0)
-
-
-def run_app_prof():
-    """Method runs HydraTK application in profiling mode
-
-    Method is executed from htkprof command (automatically installed)
-    C profiler lsprof is used
-
-    Args:    
-       none
-
-    Returns:
-       void             
-
-    """
-
-    from hydratk.core.profiler import Profiler
-    pr = Profiler()
-    pr.start()
-    run_app()
-    pr.finish()
+        if profiler_mode:
+            pr.finish()
+            pr.create_profiler_stats() 
+            
+    except Exception:
+        exit_code = 1
+    
+    sys.exit(exit_code)

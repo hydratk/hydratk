@@ -1187,16 +1187,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
 
         """
 
-        return self._command
-
-    '''
-    def get_opt_alias_str(self, opt):             
-        result = ''
-        for a, o in commands.command_opt_alias.items():            
-            if (opt == o):
-                result = result + a + ','
-        return result
-    '''
+        return self._command 
 
     def service_registered(self, service_name):
         """Method checks if service is registered
