@@ -230,7 +230,8 @@ class CmdOptParser(argparse.ArgumentParser):
             raise CmdOptParserUndefined(
                 'Undefined group {0}'.format(opt_group))
         for opt_name, opt_args in self._options[opt_group].items():
-            self.add_argument(opt_name, **opt_args)
+            if (opt_name not in ['-h', '-v']):  # conflict with ArgumentParser
+                self.add_argument(opt_name, **opt_args)
 
         set_opts, unreg_opts = self.parse_known_args()
         set_opts = vars(set_opts)

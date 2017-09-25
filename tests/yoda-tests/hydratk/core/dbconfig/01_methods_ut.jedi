@@ -58,6 +58,7 @@ Test-Scenario-2:
     from sqlite3 import connect
     from yaml import load
     from os import remove
+    from sys import prefix
   
   Test-Case-1:
     Id: tc_01
@@ -74,7 +75,7 @@ Test-Scenario-2:
         db = DBConfig(db_file)
         db.connect()
         
-        with open('/etc/hydratk/hydratk.conf', 'r') as f:
+        with open(prefix+'/etc/hydratk/hydratk.conf', 'r') as f:
             cfg = load(f.read())
         
         res = db.writedb(cfg)
@@ -99,6 +100,7 @@ Test-Scenario-3:
   Pre-Req: |
     from hydratk.core.dbconfig import DBConfig
     from yaml import load
+    from sys import prefix
   
   Test-Case-1:
     Id: tc_01
@@ -111,7 +113,7 @@ Test-Scenario-3:
       Desc: Convert to db format
       
       Test: |
-        with open('/etc/hydratk/hydratk.conf', 'r') as f:
+        with open(prefix+'/etc/hydratk/hydratk.conf', 'r') as f:
             file_cfg = load(f.read())
             
         cfg = []
@@ -141,6 +143,7 @@ Test-Scenario-4:
     from yaml import load
     from sqlite3 import connect
     from os import remove
+    from sys import prefix
   
   Test-Case-1:
     Id: tc_01
@@ -153,7 +156,7 @@ Test-Scenario-4:
       Desc: Convert to cfg format   
       
       Test: |
-        with open('/etc/hydratk/hydratk.conf', 'r') as f:
+        with open(prefix+'/etc/hydratk/hydratk.conf', 'r') as f:
             file_cfg = load(f.read())
         
         db_file = 'test.db3'    

@@ -170,7 +170,7 @@ st_setup(
       zip_safe=False,
       keywords='hydratk',
       requires_python='>=2.6,!=3.0.*,!=3.1.*,!=3.2.*',
-      platforms='Linux'
+      platforms='Linux,FreeBSD'
      )   
      
 task.run_post_install(argv, config)          
@@ -237,7 +237,7 @@ OS and Python versions support
 
 | Currently the Linux platform with CPython 2.6, 2.7, 3.3, 3.4, 3.5, 3.6, PyPy 2.7 is supported, 
 | but the final version is planned to be crossplatform and targeted also to the other popular systems 
-| including Windows and OSX and possibly other Python versions such as Jython and IronPython
+| including Windows and MacOS and possibly other Python versions such as Jython and IronPython
 '''
 
 lib_requirements = '''hydratk>=0.4.0
@@ -482,7 +482,7 @@ st_setup(
       entry_points=entry_points,
       keywords='hydratk',
       requires_python='>=2.6,!=3.0.*,!=3.1.*,!=3.2.*',
-      platforms='Linux'  
+      platforms='Linux,FreeBSD'
      )        
         
 task.run_post_install(argv, config)        
@@ -650,7 +650,7 @@ OS and Python versions support
 
 | Currently the Linux platform with CPython 2.6, 2.7, 3.3, 3.4, 3.5, 3.6, PyPy 2.7 is supported, 
 | but the final version is planned to be crossplatform and targeted also to the other popular systems 
-| including Windows and OSX and possibly other Python versions such as Jython and IronPython
+| including Windows and MacOS and possibly other Python versions such as Jython and IronPython
 '''
 
 extension_requirements = '''hydratk>=0.4.0

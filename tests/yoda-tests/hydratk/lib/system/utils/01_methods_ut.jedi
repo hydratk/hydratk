@@ -105,7 +105,7 @@ Test-Scenario-3:
       Desc: Existing module   
       
       Test: |
-        res = Utils.module_exists('Utils')
+        res = Utils.module_exists('xtermcolor')
       Validate: |     
         this.test_result = res
         assert (res), 'module_exists = True'

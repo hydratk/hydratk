@@ -9,6 +9,7 @@ Test-Scenario-1:
   Pre-Req: |
     from hydratk.core.masterhead import MasterHead
     import hydratk.core.const as const
+    from sys import prefix
   
   Test-Case-1:
     Id: tc_01
@@ -69,7 +70,7 @@ Test-Scenario-2:
       Desc: Create database from config param
       
       Test: |
-        file = '/var/local/hydratk/dbconfig/dbconfig.db3'
+        file = prefix+'/var/local/hydratk/dbconfig/dbconfig.db3'
         system('rm -f {0}'.format(file))
         system('htk create-config-db')
         res = path.exists(file)
@@ -84,7 +85,7 @@ Test-Scenario-2:
       Desc: Rewrite database by -f
       
       Test: |
-        file = '/var/local/hydratk/dbconfig/dbconfig.db3'
+        file = prefix+'/var/local/hydratk/dbconfig/dbconfig.db3'
         now = time()
         system('htk -f create-config-db')
         res = path.exists(file)
@@ -101,7 +102,7 @@ Test-Scenario-2:
       Desc: Rewrite database by --force
       
       Test: |
-        file = '/var/local/hydratk/dbconfig/dbconfig.db3'
+        file = prefix+'/var/local/hydratk/dbconfig/dbconfig.db3'
         now = time()
         system('htk --force create-config-db')
         res = path.exists(file)
@@ -119,7 +120,7 @@ Test-Scenario-2:
       Desc: Create database with useless force
       
       Test: |
-        file = '/var/local/hydratk/dbconfig/dbconfig.db3'
+        file = prefix+'/var/local/hydratk/dbconfig/dbconfig.db3'
         system('htk --force create-config-db')
         res = path.exists(file)
       
@@ -139,7 +140,7 @@ Test-Scenario-2:
       Desc: Database is not forced to rewrite   
       
       Test: |
-        file = '/var/local/hydratk/dbconfig/dbconfig.db3'
+        file = prefix+'/var/local/hydratk/dbconfig/dbconfig.db3'
         system('htk create-config-db')
         now = time()        
         system('htk create-config-db')
@@ -269,6 +270,7 @@ Test-Scenario-5:
   Pre-Req: |
     from hydratk.core.masterhead import MasterHead
     from os import system
+    from sys import prefix
   
   Test-Case-1:
     Id: tc_01
@@ -291,7 +293,7 @@ Test-Scenario-5:
       Validate: |                  
         this.test_result = str(res)
         assert (res == exp), '_config[Libraries] = {0}'.format(exp)     
-        system('rm -f {0}'.format('/var/local/hydratk/dbconfig/dbconfig.db3'))
+        system('rm -f {0}'.format(prefix+'/var/local/hydratk/dbconfig/dbconfig.db3'))
         
 Test-Scenario-6:
   Id: ts_06
@@ -341,6 +343,7 @@ Test-Scenario-7:
   
   Pre-Req: |
     from hydratk.core.masterhead import MasterHead
+    from sys import prefix
   
   Test-Case-1:
     Id: tc_01
@@ -355,7 +358,7 @@ Test-Scenario-7:
       Test: |
         mh = MasterHead.get_head()
         mh._config['Extensions']['Yoda']['enabled'] = 0
-        mh._append_extension_config_from_file('/etc/hydratk/conf.d/hydratk-ext-yoda.conf')
+        mh._append_extension_config_from_file(prefix+'/etc/hydratk/conf.d/hydratk-ext-yoda.conf')
         res = mh._config['Extensions']['Yoda']['enabled']
       
       Validate: |           
@@ -373,6 +376,7 @@ Test-Scenario-8:
   Pre-Req: |
     from hydratk.core.masterhead import MasterHead
     from yaml import load
+    from sys import prefix
   
   Test-Case-1:
     Id: tc_01
@@ -388,7 +392,7 @@ Test-Scenario-8:
         mh = MasterHead.get_head()
         mh._config['Extensions']['Yoda']['enabled'] = 0
         
-        with open('/etc/hydratk/conf.d/hydratk-ext-yoda.conf', 'r') as f:
+        with open(prefix+'/etc/hydratk/conf.d/hydratk-ext-yoda.conf', 'r') as f:
             cfg = load(f.read())
         
         mh._merge_base_config(cfg)
