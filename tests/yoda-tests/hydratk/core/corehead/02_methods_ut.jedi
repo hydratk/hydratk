@@ -24,7 +24,7 @@ Test-Scenario-1:
         mh = MasterHead.get_head()
         ext = 'BenchMark'
         del mh._ext[ext]
-        del cmdopt.cmd['htk'][cmdopt.cmd['htk'].index('start-benchmark')]
+        del cmdopt.cmd['htk'][cmdopt.cmd['htk'].index('benchmark')]
         mh._config['Extensions'][ext]['enabled'] = 0
         mh._load_extension(ext, mh._config['Extensions'][ext])
         res = (ext not in mh._ext)
