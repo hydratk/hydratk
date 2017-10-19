@@ -20,6 +20,13 @@ Main funcionalities are:
   \fBDebugging:\fR Fill your application with unified debug messages, different levels and languages are supported.
   \fBProfiling:\fR Execute application in profiler mode to discover performance bottlenecks.
 .SH COMMANDS
+\fBbenchmark\fR - Run benchmark
+  \fIOptions:\fR
+    \fB[--bench-cycles <num>]\fR - count of measurement cycles, default 20
+    \fB[--bench-gc]\fR - enable garbage collector, default False
+    \fB[--bench-groups <title>]\fR - test groups, grp1,grp2,... , default all
+    \fB[--bench-out <file>]\fR - output filename, default not generated
+
 \fBcreate-config-db\fR - creates configuration database
   \fIOptions:\fR
     \fB--config-db-file\fR - optional, database file path

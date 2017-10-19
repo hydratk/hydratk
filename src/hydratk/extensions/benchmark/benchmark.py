@@ -8,316 +8,302 @@
 
 """
 
-from hydratk.core import extension
-from hydratk.core import event
-from hydratk.core.masterhead import PYTHON_MAJOR_VERSION
-from hydratk.lib.console.commandlinetool import CommandlineTool
-from hydratk.lib.console.commandlinetool import rprint
-from hydratk.lib.compat import utils
-import datetime as dt
-import pprint
-import sys
-import random
+"""
+Events:
+-------
+benchmark_start
+benchmark_finish
 
+"""
+
+from hydratk.core import extension
+from hydratk.lib.console.commandlinetool import CommandlineTool
+from hydratk.core import event
+from importlib import import_module
+from timeit import Timer
+from csv import reader
+from StringIO import StringIO
+from itertools import count
+from math import sqrt
+
+try:
+    from itertools import izip_longest
+except ImportError:
+    from itertools import zip_longest as izip_longest
 
 class Extension(extension.Extension):
-    """Class Extensions
+    """Class Extension
     """
 
-    _test_results = {}
-    _print_details = False
-    _check_cycles = 10
+    _groups = None
+    _cycles = None
+    _outfile = None
+    _enable_gc = None
+    _result = {}
+
+    _test_groups = {
+                    'disk'    : 'hydratk.extensions.benchmark.tests.disk',
+                    'event'   : 'hydratk.extensions.benchmark.tests.event',
+                    'math'    : 'hydratk.extensions.benchmark.tests.math',
+                    'memory'  : 'hydratk.extensions.benchmark.tests.memory',
+                    'network' : 'hydratk.extensions.benchmark.tests.network'
+                   }
 
     def _init_extension(self):
         """Method initializes extension
 
-        Args:      
-           none      
+        Args:
+           none
 
         Returns:
-           void    
+           void
 
         """
 
         self._ext_id = 'benchmark'
         self._ext_name = 'BenchMark'
-        self._ext_version = '0.1.0'
+        self._ext_version = '0.2.0'
         self._ext_author = 'Petr Czaderna <pc@hydratk.org>, HydraTK team <team@hydratk.org>'
         self._ext_year = '2013 - 2017'
 
     def _register_actions(self):
         """Method registers actions
 
-        Callback for command start-benchmark
-
-        Args:     
-           none       
+        Args:
+           none
 
         Returns:
-           void    
+           void
 
         """
 
-        self._mh.match_cli_command('start-benchmark')
+        self._mh.match_cli_command('benchmark')
+
         hook = [
-            {'command': 'start-benchmark', 'callback': self.start_bench_fc}]
+            {'command': 'benchmark', 'callback': self.run_benchmark}
+        ]
         self._mh.register_command_hook(hook)
-        self._mh.match_long_option('details', False, 'details')
 
-    def _setup_params(self):
-        """Method sets parameters
+        self._mh.match_long_option('bench-groups', True, 'bench-groups')
+        self._mh.match_long_option('bench-cycles', True, 'bench-cycles')
+        self._mh.match_long_option('bench-out', True, 'bench-out')
+        self._mh.match_long_option('bench-gc', False, 'bench-gc')
 
-        Command option --details
+    def run_benchmark(self):
+        """Method handles command benchmark
 
-        Args:   
-           none         
+        Args:
+           none
 
         Returns:
-           void    
+           void
 
         """
 
-        self._print_details = True if CommandlineTool.get_input_option(
-            'details') == True else False
+        groups = CommandlineTool.get_input_option('bench-groups')
+        cycles = CommandlineTool.get_input_option('bench-cycles')
+        outfile = CommandlineTool.get_input_option('bench-out')
+        enable_gc = CommandlineTool.get_input_option('bench-gc')
 
-    def start_bench_fc(self):
-        """Method handles command start-benchmark
+        self._cfg = self._mh.cfg['Extensions']['BenchMark']
+        if (not groups):
+            self._groups = self._test_groups.keys() if (self._cfg['groups'] == 'all') else self._cfg['groups'].split(',')
+        else:
+            self._groups = groups.split(',')
+        self._cycles = self._cfg['cycles'] if (not cycles) else int(cycles)
+        self._outfile = self._cfg['outfile'] if (not outfile) else outfile
+        self._enable_gc = self._cfg['enable_gc'] if (not enable_gc) else True
+        
+        self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('benchmark_start'), self._mh.fromhere())
+        ev = event.Event('benchmark_start')
+        self._mh.fire_event(ev)
 
-        Args:  
-           none          
+        self.run_test_groups()
 
-        Returns:
-           void    
+        self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('benchmark_finish'), self._mh.fromhere())
+        ev = event.Event('benchmark_finish')
+        self._mh.fire_event(ev)
+        
+    def run_test_groups(self):
+        """Method runs requested test groups
 
-        """
-
-        self._mh.dmsg(
-            'htk_on_debug_info', 'received start benchmark command', self._mh.fromhere())
-        self._setup_params()
-        self._run_basic_tests()
-        if (self._print_details):
-            self._print_test_info()
-
-    def _run_basic_tests(self):
-        """Method runs basic tests
-
-        Args: 
-           none           
-
-        Returns:
-           void    
-
-        """
-
-        self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg(
-            'benchmark_basic_test_run'), self._mh.fromhere())
-        rprint(self._mh._trn.msg('benchmark_single_cpu_calculations'))
-        self._factorial_test()
-        rprint('.')
-        self._fib_test()
-        rprint('.')
-        self._calc_flops_test()
-        rprint(".")
-        self._event_thru_test()
-        rprint(".\n")
-
-    def _print_test_info(self):
-        """Method prints test results
-
-        Args: 
-           none           
+        Args:
+           none
 
         Returns:
-           void    
+           void
 
         """
-
-        for test_name, test_value in self._test_results.items():
-            print(test_name + ": " + test_value.__str__())
-
-    def event_test_cb1(self, oevent):
-
-        x = oevent.get_data('random')
-        return True
-
-    def _event_thru_test(self):
-        """Method tests event throughput
-
-        Args:  
-           none          
-
-        Returns:
-           void    
-
-        Raises:
-           event: benchmark_test_event1
-
-        """
-
-        t_start = dt.datetime.now()
-        hook = {}
-        hook[0] = {'event': 'benchmark_test_event1',
-                   'callback': self.event_test_cb1, 'unpack_args': True}
-        self._mh.register_event_hook(hook)
-
-        '''figure out the xrange compatiblity'''
-        rangefc = xrange if PYTHON_MAJOR_VERSION == 2 else range
-
-        for i in rangefc(10000000):
-            oevent = event.Event('benchmark_test_event1')
-            num = random.randint(0, 9)
-            oevent.set_data('random', ('%s' % str(num)) * 1024)
-            self._mh.fire_event(oevent)
-        t_end = dt.datetime.now()
-        duration = (t_end - t_start)
-        self._test_results[
-            '1Kb data Event througput(10 000 000)'] = duration.microseconds.__float__() / 1000000
-
-    def _factorial_test(self):
-        """Method tests factorial calculation
-
-        Args:  
-           none          
-
-        Returns:
-           void    
-
-        """
-
-        n = 10000
-        a = 1
-        delta_list = []
-        low = None
-        high = None
-        while(a <= self._check_cycles):
-            base = 1
-            t_start = dt.datetime.now()
-            for i in range(n, 0, -1):
-                base = base * i
-            t_end = dt.datetime.now()
-            duration = (t_end - t_start)
-            delta_list.append(duration)
-            if high == None and low == None:
-                high = duration
-                low = duration
+        
+        result = {}
+        for group in self._groups:
+            if (group in self._test_groups):
+                result[group] = self.run_test_group(group)
             else:
-                if duration > high:
-                    high = duration
-                elif duration < low:
-                    low = duration
+                self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('benchmark_unknown_group', group), self._mh.fromhere())
 
-            a = a + 1
-        avg = sum(delta_list, dt.timedelta()) / len(delta_list)
-        savg = (avg.seconds.__float__() +
-                (avg.microseconds.__float__() / 1000000)).__str__()
-        shigh = (high.seconds.__float__() +
-                 (high.microseconds.__float__() / 1000000)).__str__()
-        slow = (low.seconds.__float__() +
-                (low.microseconds.__float__() / 1000000)).__str__()
-        sduration = self._mh._trn.msg(
-            'benchmark_factorial_results', savg, shigh, slow)
-        self._test_results['Factorial(' + n.__str__() + ')'] = sduration
+        self.gen_report(result)
+            
+    def run_test_group(self, group):
+        """Method runs requested test group
 
-    def __fibcalc(self, n):
-        """Method calculates Fibonacci number
-
-        Args:         
-           n (int): nth number   
+        Args:
+           group (str): test group
 
         Returns:
-           int: number    
+           dict: result
+
+        """
+        
+        self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('benchmark_group_start', group), self._mh.fromhere())
+
+        mod = self._test_groups[group]
+        lmod = import_module(mod)
+
+        result = {}
+        for test in lmod.tests:
+            result[test] = self.run_test(mod, test)
+
+        self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('benchmark_group_finish', group), self._mh.fromhere())
+
+        return result
+
+    def run_test(self, mod, test):
+        """Method runs requested test
+
+        Args:
+           mod (str): test group module
+           test (str): test method
+
+        Returns:
+           list: result
 
         """
 
-        a, b = 1, 1
-        for i in range(n - 1):
-            a, b = b, a + b
-        return a
+        self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('benchmark_test_start', test), self._mh.fromhere())
 
-    def _fib_test(self):
-        """Method tests Fibonacci calculation
+        setup = 'from {0} import {1}'.format(mod, test)
+        if (self._enable_gc):
+            setup += '; gc.enable()'
+        timer = Timer(test + '()', setup=setup)
 
-        Args: 
-           none           
+        result = []
+        for i in range(self._cycles):
+            r = timer.timeit(1)
+            result.append(round(r * 1000, 3))
+
+        self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('benchmark_test_finish', test), self._mh.fromhere())
+
+        return result
+
+    def gen_report(self, result):
+        """Method prepares report
+
+        Args:
+           result (dict): test results
 
         Returns:
-           void    
+           void
 
         """
 
-        delta_list = []
-        low = None
-        high = None
-        n = 10000
-        c = 1
-        while(c <= self._check_cycles):
-            t_start = dt.datetime.now()
-            result = self.__fibcalc(n)
-            t_end = dt.datetime.now()
-            duration = (t_end - t_start)
-            delta_list.append(duration)
-            if high == None and low == None:
-                high = duration
-                low = duration
-            else:
-                if duration > high:
-                    high = duration
-                elif duration < low:
-                    low = duration
-            c = c + 1
-        avg = sum(delta_list, dt.timedelta()) / len(delta_list)
-        savg = (avg.seconds.__float__() +
-                (avg.microseconds.__float__() / 1000000)).__str__()
-        shigh = (high.seconds.__float__() +
-                 (high.microseconds.__float__() / 1000000)).__str__()
-        slow = (low.seconds.__float__() +
-                (low.microseconds.__float__() / 1000000)).__str__()
-        sduration = self._mh._trn.msg(
-            'benchmark_fibonacci_results', savg, shigh, slow)
-        self._test_results['Fibonacci(' + n.__str__() + ')'] = sduration
+        data = 'Group,Test,Mean,Median,Min,Max,Variance,Std deviation,1st quartile,3rd quartile\n'
+        raw_data = []
 
-    def _calc_flops_test(self):
-        """Method tests arithmetic operations with floating point
+        for group, tests in sorted(result.items()):
+            for test, values in sorted(tests.items()):
+                data += '{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}\n'.format(group, test, *self.calc_stats(values))
+                raw_data.append(values)
 
-        Args: 
-           none           
+        if (self._outfile != None):
+            try:
+
+                data_rows = data.splitlines()
+                report = '{0},{1}\n'.format(data_rows[0], ','.join(['Value'] * self._cycles))
+
+                for i in range(len(raw_data)):
+                    report += '{0},{1}\n'.format(data_rows[i + 1], ','.join(map(str, raw_data[i])))
+
+                with open(self._outfile, 'w') as f:
+                    f.write(report)
+
+            except Exception as ex:
+                self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
+
+        self.print_report(data)
+
+    def calc_stats(self, values):
+        """Method calculates statistic parameters
+
+        Args:
+           values (list): test executions in ms
 
         Returns:
-           void    
+           tuple: mean, median, min, max, var, stddev, quartile1, quartile3
 
         """
 
-        delta_list = []
-        low = None
-        high = None
-        float_increment = 0.0000000000019346  # random
-        c = 1
-        while(c <= self._check_cycles):
-            t_start = dt.datetime.now()
-            start = 57.240000  # random
-            floating_point = start
-            for i in utils.range(1000000000):
-                floating_point += float_increment
+        values = sorted(values)
+        cnt = len(values)
+        
+        mean = sum(values) / cnt
+        vmin = round(min(values), 3)
+        vmax = round(max(values), 3)
+        
+        diff = []
+        for val in values:
+            diff.append((val - mean) ** 2)
+        var = round(sum(diff) / cnt, 3)
+        stddev = round(sqrt(var), 3)
+        
+        if (cnt % 2 == 1):
+            idx = int(cnt / 2)
+            median = values[idx]
+            half1, half2 = values[:idx], values[idx + 1:]
+            idx = int(idx / 2)
+            quartile1 = (half1[idx] + half1[idx + 1]) / 2
+            quartile3 = (half2[idx] + half2[idx + 1]) / 2
+        else:    
+            idx = int(cnt / 2) 
+            median = (values[idx] + values[idx + 1]) / 2
+            half1, half2 = values[:idx], values[idx:]
+            idx = int(idx / 2)
+            quartile1 = (half1[idx] + half1[idx + 1]) / 2
+            quartile3 = (half2[idx] + half2[idx + 1]) / 2
 
-            t_end = dt.datetime.now()
-            duration = (t_end - t_start)
-            delta_list.append(duration)
-            if high == None and low == None:
-                high = duration
-                low = duration
-            else:
-                if duration > high:
-                    high = duration
-                elif duration < low:
-                    low = duration
-            c = c + 1
-        avg = sum(delta_list, dt.timedelta()) / len(delta_list)
-        savg = (avg.seconds.__float__() +
-                (avg.microseconds.__float__() / 1000000)).__str__()
-        shigh = (high.seconds.__float__() +
-                 (high.microseconds.__float__() / 1000000)).__str__()
-        slow = (low.seconds.__float__() +
-                (low.microseconds.__float__() / 1000000)).__str__()
-        sduration = self._mh._trn.msg(
-            'benchmark_flops_results', savg, shigh, slow)
-        self._test_results['1 GFLOP'] = sduration
+        return round(mean, 3), round(median, 3), vmin, vmax, var, stddev, round(quartile1, 3), round(quartile3, 3)
+
+    def print_report(self, data):
+        """Method prints report in table form
+
+        Args:
+           data (str): test results in CSV form
+
+        Returns:
+           void
+
+        """
+
+        max_widths = []
+        max_indent = 0
+        for line in reader(StringIO(data)):
+            widths = [len(s.strip()) + 2 for s in line]
+            max_widths = list(map(max, izip_longest(max_widths, widths, fillvalue=0)))
+            indent = len(line[0]) - len(line[0].lstrip())
+            max_indent = max(max_indent, indent)
+
+        result = StringIO()
+        for line in reader(StringIO(data)):
+            result.write(' ' * max_indent)
+
+            last_column = len(line) - 1
+            for value, max_width, column in zip(line, max_widths, count()):
+                value = value.strip()
+                result.write('' + value)
+                if (column != last_column):
+                    result.write(' ')
+                    result.write(' ' * (max_width - len(value)))
+
+            result.write('\n')
+
+        print(result.getvalue())

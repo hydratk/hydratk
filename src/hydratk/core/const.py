@@ -13,7 +13,7 @@ from hydratk.lib.system import config
 
 ''' Application metadata '''
 APP_NAME = "HydraTK"
-APP_VERSION = "0.5.0"
+APP_VERSION = "0.6.0"
 APP_REVISION = ""
 APP_DEVEL_YEAR = "2009 - 2017"
 APP_AUTHORS = "Petr Czaderna <pc@hydratk.org>, HydraTK team <team@hydratk.org>"

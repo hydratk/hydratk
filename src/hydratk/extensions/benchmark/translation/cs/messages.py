@@ -15,10 +15,11 @@ language = {
 
 
 msg = {
-    'benchmark_test_msg': ['benchmark test uspesny!'],
-    'benchmark_basic_test_run': ['Spoustim zakladni testy ...'],
-    'benchmark_factorial_results': ['10 cyklu, prumer: {0} nejvyssi: {1} nejnizsi: {2} (sekund)'],
-    'benchmark_fibonacci_results': ['10 cyklu, prumer: {0} nejvyssi: {1} nejnizsi: {2} (sekund)'],
-    'benchmark_flops_results': ['1G operaci, 10 cyklu, prumer: {0} nejvyssi: {1} nejnizsi: {2} (sekund)'],
-    'benchmark_single_cpu_calculations': ['Testuji vypocetni vykon cpu (jedno jadro)']
+    'benchmark_start': ["Benchmark spuštěn"],
+    'benchmark_finish': ["Benchmark dokončen"],
+    'benchmark_unknown_group': ["Přeskakuji neznámou testovací skupinu: {0}"],
+    'benchmark_group_start': ["Spouštím testovací skupinu: {0}"],
+    'benchmark_group_finish': ["Testovací skupina: {0} dokončena"],
+    'benchmark_test_start': ["Spouštím test: {0}"],
+    'benchmark_test_finish': ["Test: {0} dokončen"]
 }

@@ -15,10 +15,13 @@ language = {
 
 ''' Benchmark Commands '''
 help_cmd = {
-    'start-benchmark': 'Spustí benchmark'
+    'benchmark': 'Spustí benchmark'
 }
 
 ''' Benchmark Options '''
 help_opt = {
-    'details': {'{h}--details{e}': {'description': 'zobrazi podrobnejsi informace o testech', 'commands': ('start-benchmark')}}
+    'bench-groups': {'{h}[--bench-groups <title>]{e}': {'description': 'skupiny testů grp1,grp2,... , default all', 'commands': ('benchmark')}},
+    'bench-cycles': {'{h}[--bench-cycles <num>]{e}': {'description': 'počet cyklů měření, default 20', 'commands': ('benchmark')}},
+    'bench-out': {'{h}[--bench-out <file>]{e}': {'description': 'název výstupního souboru, default negenerován', 'commands': ('benchmark')}},
+    'bench-gc': {'{h}[--bench-gc]{e}': {'description': 'zapnout garbage collector, default False', 'commands': ('benchmark')}}
 }

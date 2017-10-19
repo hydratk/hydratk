@@ -58,7 +58,7 @@ def is_installed(app):
     """Method checks if system application is installed
 
     Args:
-       app: (str): application
+       app (str): application
 
     Returns:
        bool: result
@@ -78,7 +78,7 @@ def install_pck(pckm, pck):
 
     Args:
        pckm (str): package manager
-       pck: (str): package
+       pck (str): package
 
     Returns:
        none
