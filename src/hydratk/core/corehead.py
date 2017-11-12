@@ -10,6 +10,7 @@
 
 import os
 import sys
+import platform
 import signal
 import yaml
 import multiprocessing
@@ -17,12 +18,12 @@ import importlib
 import imp
 import traceback
 import pprint
-import setproctitle
 import time
 import zmq
 import threading
 from os import makedirs
 import hydratk.lib.system.config as syscfg
+
 from hydratk.lib.parser import smp
 
 PYTHON_MAJOR_VERSION = sys.version_info[0]
@@ -52,7 +53,10 @@ from hydratk.lib.translation import translator
 from hydratk.lib.system import config as syscfg
 from hydratk.core import confighooks
 
-
+if platform.system() != "Windows":
+    import setproctitle
+    
+    
 class AsyncCallBackHandler(object):
     """Class AsyncCallBackHandler        
     """
@@ -1497,11 +1501,12 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             else:
                 self.dmsg('htk_on_warning', self._trn.msg(
                     'htk_help_cmd_def_missing', cmd, self._language), self.fromhere())
-        opt_text = {}
+        opt_text = {}        
         for opt in commandopt.long_opt[self._opt_profile]:
             if opt in self._trn.help_mod.help_opt:
                 opt_text.update(self._trn.help_mod.help_opt[opt])
             else:
+                print("missing {0} in {1}".format(opt, self._opt_profile))
                 self.dmsg('htk_on_warning', self._trn.msg(
                     'htk_option_def_missing', opt, self._language), self.fromhere())
 

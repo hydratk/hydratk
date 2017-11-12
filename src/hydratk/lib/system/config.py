@@ -13,6 +13,7 @@ import os
 HTK_ROOT_DIR = '/'
 HTK_ETC_DIR  = '/etc'
 HTK_VAR_DIR  = '/var/local'
+HTK_USR_DIR  = '/usr'
 
 def update_htk_vars():
     """Function updates HTK config variables
@@ -24,11 +25,13 @@ def update_htk_vars():
     global HTK_ROOT_DIR
     global HTK_ETC_DIR
     global HTK_VAR_DIR
+    global HTK_USR_DIR
         
     if is_virtualized():        
         HTK_ROOT_DIR = sys.prefix
         HTK_ETC_DIR  = "{0}/etc".format(HTK_ROOT_DIR)
         HTK_VAR_DIR  = "{0}/var/local".format(HTK_ROOT_DIR)
+        HTK_USR_DIR  = "{0}/usr".format(HTK_ROOT_DIR)
     
 
     if 'HTK_ROOT_DIR' in os.environ or 'htk_root_dir' in os.environ:               
@@ -36,7 +39,8 @@ def update_htk_vars():
         if os.path.exists(tmp_dir):
             HTK_ROOT_DIR = tmp_dir    
             HTK_ETC_DIR  = "{0}/etc".format(HTK_ROOT_DIR)
-            HTK_VAR_DIR  = "{0}/var/local".format(HTK_ROOT_DIR)            
+            HTK_VAR_DIR  = "{0}/var/local".format(HTK_ROOT_DIR)
+            HTK_USR_DIR  = "{0}/usr".format(HTK_ROOT_DIR)            
                 
     if 'HTK_ETC_DIR' in os.environ or 'htk_etc_dir' in os.environ:
         tmp_dir = os.environ['HTK_ETC_DIR'] if 'HTK_ETC_DIR' in os.environ else os.environ['htk_etc_dir']
@@ -46,7 +50,12 @@ def update_htk_vars():
     if 'HTK_VAR_DIR' in os.environ or 'htk_var_dir' in os.environ:
         tmp_dir = os.environ['HTK_VAR_DIR'] if 'HTK_VAR_DIR' in os.environ else os.environ['htk_var_dir']
         if os.path.exists(tmp_dir):
-            HTK_ETC_DIR = tmp_dir            
+            HTK_ETC_DIR = tmp_dir
+    
+    if 'HTK_USR_DIR' in os.environ or 'htk_usr_dir' in os.environ:
+        tmp_dir = os.environ['HTK_USR_DIR'] if 'HTK_USR_DIR' in os.environ else os.environ['htk_usr_dir']
+        if os.path.exists(tmp_dir):
+            HTK_USR_DIR = tmp_dir            
    
 
 def is_virtualized():
@@ -74,48 +83,50 @@ def get_supported_os():
        'status' : '',
        'pckm' : ''
     }
+    supported_systems = ('Linux', 'FreeBSD','Windows')
     c_os = platform.system()
-    if (c_os not in ('Linux', 'FreeBSD')):
+    if c_os not in supported_systems:
         raise SystemError('Unsupported operating system platform {0}'.format(c_os))
     
-    if (c_os == 'Linux'):
+    if c_os == 'Linux':
         distinfo = platform.linux_distribution(supported_dists=platform._supported_dists + ('arch', 'mageia',), full_distribution_name=0)
         os_result['name'] = distinfo[0]
         os_result['version'] = distinfo[1] 
         os_result['status'] = distinfo[2]
         
         # Debian based distros
-        if (os_result['name'].lower() in ('debian', 'ubuntu', 'linuxmint')):
+        if os_result['name'].lower() in ('debian', 'ubuntu', 'linuxmint'):
             os_result['compat'] = 'debian'
             os_result['pckm'] = 'apt-get'
         # Red Hat based distros
-        elif (os_result['name'].lower() in ('redhat', 'centos', 'mandrake', 'mandriva', 'rocks', 'yellowdog')):
+        elif os_result['name'].lower() in ('redhat', 'centos', 'mandrake', 'mandriva', 'rocks', 'yellowdog'):
             os_result['compat'] = 'redhat'
             os_result['pckm'] = 'yum'
         # Fedora based distros
-        elif (os_result['name'].lower() in ('fedora')):
+        elif os_result['name'].lower() in ('fedora'):
             os_result['compat'] = 'fedora'
             os_result['pckm'] = 'dnf'
         # SuSe based distros
-        elif (os_result['name'].lower() in ('suse')):
+        elif os_result['name'].lower() in ('suse'):
             os_result['compat'] = 'suse'
             os_result['pckm'] = 'zypper'
         # Slackware based distros
-        elif (os_result['name'].lower() in ('slackware')):
+        elif os_result['name'].lower() in ('slackware'):
             os_result['compat'] = 'slackware'
         # Gentoo based distros
-        elif (os_result['name'].lower() in ('gentoo')):
+        elif os_result['name'].lower() in ('gentoo'):
             os_result['compat'] = 'gentoo'
             os_result['pckm'] = 'emerge'
         # Arch based distros
-        elif (os_result['name'].lower() in ('arch')):
+        elif os_result['name'].lower() in ('arch'):
             os_result['compat'] = 'arch'
             os_result['pckm'] = 'pacman'
         else:
             raise SystemError('Unsupported Linux distribution {0}'.format(os_result['name']))
-    elif (c_os == 'FreeBSD'):
+    elif c_os == 'FreeBSD':
         os_result['compat'] = 'freebsd'
         os_result['pckm'] = 'pkg'
+        
     if c_os == 'Windows':
         distinfo = platform.win32_ver()
         os_result['name']    = distinfo[0]
@@ -124,6 +135,5 @@ def get_supported_os():
         os_result['compat']  = 'windows'
             
     return os_result
-
               
 update_htk_vars()

@@ -144,15 +144,17 @@ def check_profiler_param():
        bool: True if parameter present otherwise False
     
     """
-    
-    result = False
+    import re    
     i = 0        
-    for o in sys.argv:            
-        if o == '-p' or o == '--profiler':
-            if sys.argv.index(o) < (len(sys.argv) - 1):                
-                result = True
+    for o in sys.argv:                    
+        if o in ('-p','--profiler'):            
+            return (True, sys.argv[i + 1])
+        else:            
+            m = re.match(r"--profiler\=(.*)", o)
+            if m:                
+                return (True, m.group(1).strip())
         i = i + 1
-    return result
+    return (False,None)
     
 def run_app():
     """Method runs HydraTK application
@@ -168,26 +170,31 @@ def run_app():
     """
     exit_code = 0
     try:
-        profiler_mode = check_profiler_param() #check for -p, --profiler switch
-        if profiler_mode:
+        profiler_mode, profiler_stats_file = check_profiler_param() #check for -p, --profiler switch              
+        if profiler_mode:                        
             from hydratk.core.profiler import Profiler
             pr = Profiler()
             pr.start()
              
-        if (_check_dependencies()):
+        if (_check_dependencies()):            
             check_home_param() #check for -h, --home switch
             
             from hydratk.core.masterhead import MasterHead
-            mh = MasterHead.get_head()        
+            mh = MasterHead.get_head()                    
             mh.run_fn_hook('h_bootstrap')  # run level specific processing
             trn = mh.get_translator()
             mh.dmsg('htk_on_debug_info', trn.msg('htk_app_exit'), mh.fromhere())
         
         if profiler_mode:
             pr.finish()
-            pr.create_profiler_stats() 
+            pr.create_profiler_stats(profiler_stats_file) 
             
-    except Exception:
+    except Exception as e:
+        import traceback
+        ex_type, ex, tb = sys.exc_info()
+        print("Exception type: {0}".format(ex_type))
+        print("Message: {0}".format(ex))
+        traceback.print_tb(tb)
         exit_code = 1
     
     sys.exit(exit_code)

@@ -40,7 +40,9 @@ help_opt = {
     'interactive': {'{h}-i, --interactive{e}': 'turns on interactive mode'},
     'language': {'{h}-l, --language <language>{e}': 'sets the text output language, the list of available languages is specified in the docs'},
     'run-mode': {'{h}-m, --run-mode <mode>{e}': 'sets the running mode, the list of available modes is specified in the docs'},
-    'profile': {'{h}-p, --profile <file>{e}': 'enables cProfiler and outputs the measuring to the specified file'},
+    'profiler': {'{h}-p, --profiler <file>{e}': 'enables cProfiler and outputs the measuring to the specified file'},
+    'pstats-sort-by': {'{h}--pstats-sort-by <key1,key2...>{e}': 'specifies sort-by key for profiler statistics output'},
+    'pstats-strip-dirs': {'{h}--pstats-strip-dirs{e}': 'strips long directories out of the profiler statistics output'},
     'config-db-file': {'{h}--config-db-file <file>{e}':  {'description': 'optional, database file path', 'commands': ('create-config-db')}},
     'ext-skel-path': {'{h}--ext-skel-path <path>{e}': {'description': 'optional, directory path where HydraTK extension skeleton will be created', 'commands': ('create-ext-skel')}},
     'lib-skel-path': {'{h}--lib-skel-path <path>{e}': {'description': 'optional, directory path where HydraTK library skeleton will be created', 'commands': ('create-lib-skel')}}

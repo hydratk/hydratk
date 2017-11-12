@@ -15,7 +15,7 @@ from hydratk.core.bootstrapper import dep_modules
 from sys import exit, argv
 
 files = [
-    '/usr/share/man/man1/htk.1',
+    '{0}/share/man/man1/htk.1'.format(syscfg.HTK_USR_DIR),
     '{0}/hydratk'.format(syscfg.HTK_ETC_DIR),
     '{0}/hydratk'.format(syscfg.HTK_VAR_DIR)
 ]

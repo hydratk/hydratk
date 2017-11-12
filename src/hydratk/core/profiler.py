@@ -13,7 +13,22 @@ import sys
 import os
 from hydratk.lib.profiling.profiler import Profiler as HTKProfiler
 
-
+sort_by_keys = [
+           'calls',      #call count
+           'cumulative', #cumulative time
+           'cumtime',    #cumulative time
+           'file',       #file name
+           'filename',   #file name
+           'module',     #file name
+           'ncalls',     #call count
+           'pcalls',     #primitive call count 
+           'line',       #line number
+           'name',       #function name
+           'nfl',        #name/file/line
+           'stdname',    #standard name
+           'time',       #internal time
+           'tottime'     #internal time      
+           ]
 class Profiler(HTKProfiler,object):
     """Class Profiler
     """
@@ -43,15 +58,17 @@ class Profiler(HTKProfiler,object):
         
         """
         
-        result = False
+        import re    
         i = 0        
-        for o in sys.argv:            
-            if o == '-p' or o == '--profile':
-                if sys.argv.index(o) < (len(sys.argv) - 1):
-                    self._output_file = sys.argv[i + 1]
-                    result = True
+        for o in sys.argv:                    
+            if o in ('-p','--profiler'):            
+                return (True, sys.argv[i + 1])
+            else:            
+                m = re.match(r"--profiler\=(.*)", o)
+                if m:                
+                    return (True, m.group(1).strip())
             i = i + 1
-        return result
+        return (False,None)
     
     def start(self):
         """Method starts profiler
@@ -87,38 +104,33 @@ class Profiler(HTKProfiler,object):
            void
 
         """
+        pass
 
-        from hydratk.core import commandopt
-        commandopt.long_opt['htk'].append('profile')
-        commandopt.short_opt['htk'].append('p')
-        commandopt.d_opt['htk'].append('profile')
-        commandopt.opt['htk']['-p'] = {
-            'd_opt': 'profile',
-            'has_value': True,
-            'allow_multiple': False
-        }
-        commandopt.opt['htk']['--profile'] = {
-            'd_opt': 'profile',
-            'has_value': True,
-            'allow_multiple': False
-        }
-
-    def create_profiler_stats(self):       
+    def create_profiler_stats(self, stats_file=None):               
         import StringIO
         import pstats
         from hydratk.core.masterhead import MasterHead
         from hydratk.lib.system.fs import file_put_contents
+        from hydratk.lib.console.commandlinetool import CommandlineTool
+        
+        if stats_file not in (None,''):
+            self._output_file = stats_file
         mh = MasterHead.get_head()
+        sortby = CommandlineTool.get_input_option('pstats-sort-by')
+        strip_dirs = CommandlineTool.get_input_option('pstats-strip-dirs')        
         s = StringIO.StringIO()
-        sortby = 'cumulative'
-        ps = pstats.Stats(self._pr, stream=s).sort_stats(sortby)        
-        if self.check_profile_param():
-            mh.dmsg('htk_on_debug_info', "Writing profiler stats output to {0}".format(self._output_file), mh.fromhere())
-            ps.dump_stats(self._output_file)
-            ps.print_stats()
-            file_put_contents(self._output_file+'.log', s.getvalue())
+        if sortby == False:
+            sortby = 'cumulative'
         else:
-            mh.dmsg('htk_on_debug_info', "Writing profiler stats outpout to screen", mh.fromhere())
+            sortby = sortby.split(',')
+        mh.dmsg('htk_on_debug_info', "Sorting stats using column(s): {0}".format(','.join(sortby)), mh.fromhere())
+        if type(sortby).__name__ == 'str':
+            ps = pstats.Stats(self._pr, stream=s).sort_stats(sortby)
+        elif type(sortby).__name__ == 'list':
+            ps = pstats.Stats(self._pr, stream=s).sort_stats(*sortby)                                           
+        mh.dmsg('htk_on_debug_info', "Writing profiler stats output to {0}".format(self._output_file), mh.fromhere())
+        ps.dump_stats(self._output_file)
+        if strip_dirs:
             ps.strip_dirs()
-            ps.print_stats()
-            print s.getvalue()           
+        ps.print_stats()        
+        file_put_contents(self._output_file+'.log', s.getvalue())                   

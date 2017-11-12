@@ -61,12 +61,13 @@ class PropertyHead(object):
     @property
     def cfg(self):
         """config property getter"""
-
+        
         return self._config
     
     @property
     def config_mp(self):
         """Config macro processor instance"""
+        
         return self._config_mp
     
     @property
@@ -86,7 +87,13 @@ class PropertyHead(object):
         """extensions config property getter"""
 
         return self._config['Extensions']
-
+    
+    @property
+    def extensions(self):
+        """extensions list property getter"""
+        
+        return self._ext
+        
     @property
     def lang(self):
         """language property getter, setter"""
@@ -121,3 +128,9 @@ class PropertyHead(object):
             const.CORE_RUN_MODE_PP_DAEMON
         ):
             self._run_mode = mode
+
+    @property
+    def trn(self):
+        """Translator instance getter"""
+        return self._trn
+    

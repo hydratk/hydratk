@@ -74,9 +74,7 @@ config = {
 
     'post_tasks': [
         task.set_config,
-        task.create_dirs,
-        task.set_access_rights,
-        task.set_manpage
+        task.create_dirs
     ],
 
     'modules': [        
@@ -92,7 +90,7 @@ config = {
 
     'files': {
         'config': {
-            'etc/hydratk/hydratk.conf': '{0}/hydratk'.format(syscfg.HTK_ETC_DIR)
+            'etc/hydratk/hydratk.conf': '{0}/etc/hydratk'.format(syscfg.HTK_ROOT_DIR)
         },
         'manpage': 'doc/htk.1'
     },
@@ -427,12 +425,12 @@ if os_info['compat'] != 'windows':
                  }
             }
         }
-     }        
+      }        
     )
     config['post_tasks'].extend(
        [
-        'task.set_access_rights',
-        'task.set_manpage'
+        task.set_access_rights,
+        task.set_manpage
        ]
     )
     

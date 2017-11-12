@@ -117,7 +117,7 @@ opt = {
         },
         '--profiler':  {
             'd_opt': 'profiler',
-            'has_value': False,
+            'has_value': True,
             'allow_multiple': False
         },            
         '--pstats-sort-by':  {
@@ -127,7 +127,7 @@ opt = {
         },
         '--pstats-strip-dirs':  {
             'd_opt': 'pstats-strip-dirs',
-            'has_value': True,
+            'has_value': False,
             'allow_multiple': False
         }                                              
     }
@@ -148,7 +148,8 @@ d_opt = {
         'lib-skel-path',
         'run-mode',
         'profiler',
-        'pstats-sort-by'
+        'pstats-sort-by',
+        'pstats-strip-dirs'
     ]
 }
 
@@ -167,7 +168,8 @@ long_opt = {
         'lib-skel-path',
         'run-mode',
         'profiler',
-        'pstats-sort-by'
+        'pstats-sort-by',
+        'pstats-strip-dirs'
     ]
 }
 

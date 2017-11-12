@@ -66,7 +66,7 @@ def run_post_install(argv, cfg):
 
         profiles = get_profiles(argv)
 
-        for task in cfg['post_tasks']:
+        for task in cfg['post_tasks']:            
             print('*** Running task: {0} ***'.format(task.__name__))
             task(cfg, profiles)
 
@@ -224,9 +224,8 @@ def set_config(cfg, *args):
 
     """
 
-    for file, dir in cfg['files']['config'].items():
-
-        cfg_file = '/' + file
+    for cfile, cdir in cfg['files']['config'].items():               
+        cfg_file = "{0}/{1}".format(cdir,cfile)        
         if (os.path.exists(cfg_file)):
             with open(file, 'r') as f:
                 f_new = f.read()
@@ -236,7 +235,7 @@ def set_config(cfg, *args):
             if (f_curr != f_new):
                 move_file(cfg_file, cfg_file + '_old')
 
-        copy_file(file, dir)
+        copy_file(cfile, cdir)
 
 
 def set_manpage(cfg, *args):
@@ -249,10 +248,11 @@ def set_manpage(cfg, *args):
        none
 
     """
-
+    manpage_dir = '{0}/share/man/man1/'.format(syscfg.HTK_USR_DIR)
+    create_dir(manpage_dir)
     manpage = cfg['files']['manpage']
     call('gzip -c {0} > {1}'.format(manpage,
-                                    '/usr/share/man/man1/' + manpage.split('/')[-1]), shell=True)
+                                    manpage_dir + manpage.split('/')[-1]), shell=True)
 
 
 def get_profiles(argv):
