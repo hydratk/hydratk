@@ -66,7 +66,7 @@ class MessageRouter():
            error: InputError
 
         """
-
+        print("****Registering id {0}".format(id))
         if id != '' and id not in self._service_list.keys():
             service = {}
             if (transport_type in (SERVICE_TRANSPORT_TYPE_ZMQ_IPC, SERVICE_TRANSPORT_TYPE_ZMQ_TCP)):
@@ -80,7 +80,7 @@ class MessageRouter():
 
         else:
             raise InputError(
-                ERROR_SERVICE_ID_EXISTS, (id,), self._trn.msg('htk_mrouter_sid_exists', id))
+                ERROR_SERVICE_ID_EXISTS, id , self._trn.msg('htk_mrouter_sid_exists', id))
 
         return True
 

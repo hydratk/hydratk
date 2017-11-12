@@ -223,7 +223,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
     def _get_asyn_req_ticket(self):
         pass
 
-    def _c_observer(self):
+    def _c_observer(self, init_by_start = False):
         """Method creates observer process and watches it during its lifecycle
 
         When it is not active, application is stopped
@@ -304,8 +304,8 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                         sender.bind("ipc:///tmp/hydratk/core.socket")
                         current.msgq = sender
 
-                        self.dmsg('htk_on_debug_info', self._trn.msg(
-                            'htk_core_msgq_init_ok', self._msg_router.get_service_address(self._core_msg_service_id)), self.fromhere())
+                        #self.dmsg('htk_on_debug_info', self._trn.msg(
+                        #    'htk_core_msgq_init_ok', self._msg_router.get_service_address(self._core_msg_service_id)), self.fromhere())
                     except zmq.ZMQBindError as desc:
                         ex_type, ex, tb = sys.exc_info()
                         print(ex_type)
@@ -341,9 +341,11 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                     # initialize worker threads
                     self.init_core_threads()
                     self._reg_self_signal_hooks()
-
-                    # inlining RUNLEVEL_APPL
-                    self.run_fn_hook('h_runlevel_appl')
+                    
+                    #check if initiated by start command, to prevent loop cycle
+                    if init_by_start == False:                        
+                        # inlining RUNLEVEL_APPL
+                        self.run_fn_hook('h_runlevel_appl')
 
                     next_cw_activity_check = time.time(
                     ) + const.CORE_THREAD_ACTIVITY_CHECK_TIME
@@ -1245,7 +1247,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
            void
 
         """
-
+        
         hooks = [
             {'command': 'start', 'callback': self._start_app},
             {'command': 'stop', 'callback': self._stop_app_command},
@@ -1898,7 +1900,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         self.fire_event(cevent)
         if cevent.will_run_default():
             self._init_message_router()
-            self._c_observer()
+            self._c_observer(True)
 
     def _stop_app(self, force_exit=False):
         """Method stops application
