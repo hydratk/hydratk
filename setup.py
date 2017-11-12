@@ -426,7 +426,7 @@ if os_info['compat'] != 'windows':
         }
       }        
     )
-<<<<<<< HEAD
+
     config['post_tasks'].extend(
        [
         task.set_access_rights,
@@ -434,9 +434,6 @@ if os_info['compat'] != 'windows':
        ]
     )
     
-=======
->>>>>>> refs/remotes/origin/develop
-
 task.run_pre_install(argv, config)
 
 entry_points = {
