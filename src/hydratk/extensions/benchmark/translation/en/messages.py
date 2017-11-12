@@ -15,10 +15,11 @@ language = {
 }
 
 msg = {
-    'benchmark_test_msg': ['benchmark test successfull'],
-    'benchmark_basic_test_run': ['Running basic tests ...'],
-    'benchmark_factorial_results': ['10 cycles, average: {0} highest: {1} lowest: {2} (seconds)'],
-    'benchmark_fibonacci_results': ['10 cycles, average: {0} highest: {1} lowest: {2} (seconds)'],
-    'benchmark_flops_results': ['1G operations, 10 cycles, average: {0} highest: {1} lowest: {2} (seconds)'],
-    'benchmark_single_cpu_calculations': ['Testing cpu calculations performance (single core)']
+    'benchmark_start': ["Benchmark started"],
+    'benchmark_finish': ["Benchmark finished"],
+    'benchmark_unknown_group': ["Skipping unknown test group: {0}"],
+    'benchmark_group_start': ["Starting test group: {0}"],
+    'benchmark_group_finish': ["Test group: {0} finished"],
+    'benchmark_test_start': ["Starting test: {0}"],
+    'benchmark_test_finish': ["Test: {0} finished"]
 }

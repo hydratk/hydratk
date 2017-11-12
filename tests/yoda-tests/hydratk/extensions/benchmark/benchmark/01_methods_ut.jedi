@@ -1,0 +1,279 @@
+Test-Scenario-1:
+  Id: ts_01
+  Path: hydratk/extensions/benchmark/01_methods_ut.jedi
+  Name: ts_init_extension
+  Desc: Test _init_extension method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_init
+    Desc: Initialize extension
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_init
+      Desc: Initialize extension
+      
+      Test: |
+        mh = MasterHead.get_head()
+        ext = mh._ext['BenchMark']
+        ext._ext_id = ext._ext_name = None
+        ext._init_extension()
+        res = [ext._ext_id, ext._ext_name]
+      
+      Validate: |
+        this.test_result = str(res)
+        exp = ['benchmark', 'BenchMark']
+        assert (res == exp), '_ext_id, _ext_name = {0}'.format(exp)
+        
+Test-Scenario-2:
+  Id: ts_02
+  Path: hydratk/extensions/benchmark/01_methods_ut.jedi
+  Name: ts_register_actions
+  Desc: Test _register_actions method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    import yodalib.hydratk.core.commandopt as commandopt  
+    
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_register
+    Desc: Register  
+  
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_register
+      Desc: Register 
+      
+      Test: |
+        th = TestHead()     
+        ext = th._ext['BenchMark']  
+        th.clear_cmd()
+        ext._register_actions()
+        res = th._cmd_hooks
+        
+      Validate: |         
+        this.test_result = str(res)
+        exp = ['benchmark']
+        assert (sorted(res.keys()) == exp), '_cmd_hooks = {0}'.format(exp)
+        res = commandopt.long_opt['htk']
+        this.test_result = str(res)
+        exp = ['bench-cycles', 'bench-gc', 'bench-groups', 'bench-out']
+        assert (sorted(res) == exp), 'long_opt = {0}'.format(exp)
+        th.clear_cmd()
+        
+Test-Scenario-3:
+  Id: ts_03
+  Path: hydratk/extensions/benchmark/01_methods_ut.jedi
+  Name: ts_run_test
+  Desc: Test run_test method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+    from importlib import import_module
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_run_test
+    Desc: Run test
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_default
+      Desc: Default configuration
+      
+      Test: |
+        mh = MasterHead.get_head()
+        ext = mh._ext['BenchMark']
+        ext._cycles, ext._enable_gc = 20, False
+        test, mod = 'fibonacci', 'hydratk.extensions.benchmark.tests.math'
+        import_module(mod)
+        result = ext.run_test(mod, test)
+        
+      Validate: |  
+        this.test_result = str(result)     
+        assert (len(result) == ext._cycles), 'len = {0}'.format(len(result))
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_gc
+      Desc: Garbage collector
+      
+      Test: |
+        ext._cycles, ext._enable_gc = 10, True
+        result = ext.run_test(mod, test)
+      
+      Validate: |
+        this.test_result = str(result)     
+        assert (len(result) == ext._cycles), 'len = {0}'.format(len(result))     
+        
+Test-Scenario-4:
+  Id: ts_04
+  Path: hydratk/extensions/benchmark/01_methods_ut.jedi
+  Name: ts_run_test_group
+  Desc: Test run_test_group method
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from hydratk.core.masterhead import MasterHead
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_run_test_group
+    Desc: Run test group
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_disk
+      Desc: Group disk
+      
+      Test: |
+        mh = MasterHead.get_head()
+        ext = mh._ext['BenchMark']
+        ext._cycles, ext._enable_gc = 2, False
+        from hydratk.extensions.benchmark.tests.disk import tests
+        result = ext.run_test_group('disk')
+        
+      Validate: |  
+        this.test_result = str(result)     
+        assert (len(result) == len(tests)), 'len = {0}'.format(len(result))
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_event
+      Desc: Group event
+      
+      Test: |
+        from hydratk.extensions.benchmark.tests.event import tests
+        result = ext.run_test_group('event')
+        
+      Validate: |  
+        this.test_result = str(result)     
+        assert (len(result) == len(tests)), 'len = {0}'.format(len(result))
+        
+    Test-Condition-3: 
+      Id: tco_03
+      Name: tco_math
+      Desc: Group math
+      
+      Test: |
+        from hydratk.extensions.benchmark.tests.math import tests
+        result = ext.run_test_group('math')
+        
+      Validate: |  
+        this.test_result = str(result)     
+        assert (len(result) == len(tests)), 'len = {0}'.format(len(result))   
+        
+    Test-Condition-4: 
+      Id: tco_04
+      Name: tco_memory
+      Desc: Group memory
+      
+      Test: |
+        from hydratk.extensions.benchmark.tests.memory import tests
+        result = ext.run_test_group('memory')
+        
+      Validate: |  
+        this.test_result = str(result)     
+        assert (len(result) == len(tests)), 'len = {0}'.format(len(result))   
+        
+    Test-Condition-5: 
+      Id: tco_05
+      Name: tco_network
+      Desc: Group event
+      
+      Test: |
+        from hydratk.extensions.benchmark.tests.network import tests
+        result = ext.run_test_group('network')
+        
+      Validate: |  
+        this.test_result = str(result)     
+        assert (len(result) == len(tests)), 'len = {0}'.format(len(result))
+        
+Test-Scenario-5:
+  Id: ts_05
+  Path: hydratk/extensions/benchmark/01_methods_ut.jedi
+  Name: ts_run_benchmark
+  Desc: Test run_benchmark
+  Author: Petr Rasek <bowman@hydratk.org>
+  Version: 0.1
+  
+  Pre-Req: |
+    from yodalib.hydratk.core.testhead import TestHead
+    from os import path, remove
+    import sys
+    
+    try:
+        from StringIO import StringIO
+    except ImportError:
+        from io import StringIO     
+  
+  Test-Case-1:
+    Id: tc_01
+    Name: tc_run_benchmark
+    Desc: Run test group
+    
+    Test-Condition-1: 
+      Id: tco_01
+      Name: tco_default
+      Desc: Default configuration   
+      
+      Test: |
+        th = TestHead()
+        ext = th._ext['BenchMark']
+        th.pre_replace()
+        old = sys.stdout
+        sys.stdout = res = StringIO()        
+        ext.run_benchmark()
+        res = res.getvalue()
+        sys.stdout = old
+        
+      Validate: |
+        this.test_result = res
+        assert (ext._cycles == ext._cfg['cycles']), '_cycles = {0}'.format(ext._cycles)
+        assert (sorted(ext._groups) == sorted(ext._test_groups.keys())), '_groups = {0}'.format(ext._groups) 
+        assert (ext._enable_gc == ext._cfg['enable_gc']), '_enable_gc = {0}'.format(ext._enable_gc) 
+        assert (ext._outfile == ext._cfg['outfile']), '_outfile = {0}'.format(ext._outfile)          
+        assert ('math' in res), 'report not generated'
+        
+    Test-Condition-2: 
+      Id: tco_02
+      Name: tco_options
+      Desc: Command options
+      
+      Test: |  
+        TestHead.options = {'bench-cycles': 10, 'bench-groups': 'math,event', 'bench-gc': True, 'bench-out': 'out.txt'}
+        old = sys.stdout
+        sys.stdout = res = StringIO()         
+        ext.run_benchmark()
+        res = res.getvalue()
+        sys.stdout = old
+                
+      Validate: |
+        this.test_result = res
+        assert (ext._cycles == TestHead.options['bench-cycles']), '_cycles = {0}'.format(ext._cycles)
+        assert (ext._groups == TestHead.options['bench-groups'].split(',')), '_groups = {0}'.format(ext._groups) 
+        assert (ext._enable_gc == TestHead.options['bench-gc']), '_enable_gc = {0}'.format(ext._enable_gc) 
+        assert (ext._outfile == TestHead.options['bench-out']), '_outfile = {0}'.format(ext._outfile) 
+        assert ('math' in res and 'disk' not in res), 'incorrect test groups'
+        
+        fname = TestHead.options['bench-out']
+        assert (path.exists(fname)), 'file not generated'        
+        with open(fname, 'r') as f:
+            content = f.read()
+        remove(fname) 
+        
+        assert ('math,factorial' in content and 'event,throughput' in content), 'missing tests'
+        assert ('Value,Value,Value,Value,Value,Value,Value,Value,Value,Value' in content), 'missing time values'
+        assert ('Group,Test,Mean,Median,Min,Max,Variance,Std deviation,1st quartile,3rd quartile' in content), 'missing headers'

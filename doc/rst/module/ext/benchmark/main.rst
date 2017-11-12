@@ -14,9 +14,12 @@ Unit tests available at hydratk/extensions/benchmark/benchmark/01_methods_ut.jed
 
 **Attributes** :
 
-* _test_results - details of individual tests
-* _print_details - bool, print to console
-* _check_cycles - count of test cycles (default 10)
+* _groups - test group to execute, default all
+* _cycles - test cycles, default 20
+* _outfile - output filename, dafault not generated
+* _enable_gc - enable garbage collector, default False
+* _result - test execution results
+* _test_groups - test groups modules mapping
 
 **Methods** :
 
@@ -28,43 +31,39 @@ Method sets extension metadata (id, name, version, author, year).
 
 Method registers action hooks.
 
-commands - start-benchmark
-long options - details
+commands - benchmark
+long options - bench-groups, bench-cycles, bench-out, bench-gc
 
-* _setup_params
+* run_benchmark
 
-Method sets _print_details according to option details. 
+Method handles command benchmark. It parses command options bench-groups, bench-cycles, bench-out, bench-gc.
+Default values are taken from configuration parameters groups (all), cycles (20), outfile (None), enable_gc (False).
+It fires event benchmark_start, calls method run_test_groups and fires event benchmark_finish. 
 
-* start_bench_fc
+* run_test_groups
 
-Method handles command start-benchmark. It runs tests and prints results if allowed.
+Method executes requested test groups and prints report.
 
-* _run_basic_tests
+* run_test_group
 
-Method runs all tests.
+Method executes tests in given test group. Tests are stored in separate module which is imported.
+It returns test group results as dictionary.
 
-* _print_test_info
+* run_test
 
-Method prints test results.
+Method executes given test. It uses class Timer from module timeit. Test code is imported in setup script.
+Test is executed several times according to option cycles. Garbage collector is enabled/disabled according to option enable_gc.
+It returns test results as list (execution times in milliseconds).
 
-* _event_thru_test
+* gen_report
 
-Method tests event performance, it fires 1e7 benchmark_test_event1 events with 1Kb message. It measures average processing time. 
+Method generates report in CSV format and stores it to file according to option outfile.
 
-* _factorial_test
+* calc_stats
 
-Method tests factorial calculation, it calculates factorial of 10000 (recursive algorithm) in 10 cycles. It measures average, 
-maximum and minimum processing time.
+Method calculates statistic parameters from execution times.
+Mean, median, minimum, maximum, variance, standard deviation, 1st quartile, 3rd quartile.
 
-* __fibcalc
+* print_report
 
-Auxiliary method which calculates n-th Fibonnaci number (effective non-recursive algorithm).
-
-* _fib_test
-
-Method tests Fibonacci numbers calculation, it calculates 10000th number in 10 cycles. It measures average, maximum and minimum processing time.
-
-* _calc_flops_test
-
-Method tests performance of floating point arithmetics, it performs 1e9 (GFLOP) sum operations in 10 cycles. It measures average, 
-maximum and minimum processing time.
+Method prints report as formatted table (sorted by group, test). Statistic parameters are displayed only (not execution times).

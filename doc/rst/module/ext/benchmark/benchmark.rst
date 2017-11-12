@@ -9,3 +9,4 @@ This section contains module documentation of BenchMark extension.
    :maxdepth: 1
    
    main
+   tests

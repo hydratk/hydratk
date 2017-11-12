@@ -47,5 +47,4 @@ If you are interested, please read `development <www.hydratk.org/development>`_ 
    rst/install
    rst/tutor
    rst/module
-   rst/progguide
    rst/refman

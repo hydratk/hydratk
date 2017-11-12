@@ -204,8 +204,7 @@ if os_info['compat'] != 'windows':
     )
     config['libs'].update(
       { 
-        'setproctitle': {                         
-            #All Debian compatibles distros             
+        'setproctitle': {
             'debian': {              
                 'apt-get': [
                     'python-dev',
@@ -427,6 +426,7 @@ if os_info['compat'] != 'windows':
         }
       }        
     )
+<<<<<<< HEAD
     config['post_tasks'].extend(
        [
         task.set_access_rights,
@@ -434,6 +434,8 @@ if os_info['compat'] != 'windows':
        ]
     )
     
+=======
+>>>>>>> refs/remotes/origin/develop
 
 task.run_pre_install(argv, config)
 
