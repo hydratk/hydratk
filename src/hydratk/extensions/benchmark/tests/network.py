@@ -29,7 +29,7 @@ def request_single(size=1024 ** 2):
     c = socket()
     c.connect(('127.0.0.1', 22))
 
-    c.sendall('0' * size)
+    c.sendall(('0' * size).encode('utf-8'))
 
     c.close()
 
@@ -48,5 +48,5 @@ def request_mult(n=100, size=1024):
     for i in range(n):
         c = socket()
         c.connect(('127.0.0.1', 22))
-        c.sendall('0' * size)
+        c.sendall(('0' * size).encode('utf-8'))
         c.close()

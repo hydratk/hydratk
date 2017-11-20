@@ -22,14 +22,15 @@ from hydratk.core import event
 from importlib import import_module
 from timeit import Timer
 from csv import reader
-from StringIO import StringIO
 from itertools import count
 from math import sqrt
 
 try:
     from itertools import izip_longest
+    from StringIO import StringIO
 except ImportError:
     from itertools import zip_longest as izip_longest
+    from io import StringIO
 
 class Extension(extension.Extension):
     """Class Extension
