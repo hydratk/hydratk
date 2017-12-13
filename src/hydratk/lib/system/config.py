@@ -13,6 +13,7 @@ import os
 HTK_ROOT_DIR = '/'
 HTK_ETC_DIR  = '/etc'
 HTK_VAR_DIR  = '/var/local'
+HTK_LOG_DIR  = "{0}/hydratk/logs".format(HTK_VAR_DIR)
 HTK_USR_DIR  = '/usr'
 
 def update_htk_vars():
@@ -25,12 +26,14 @@ def update_htk_vars():
     global HTK_ROOT_DIR
     global HTK_ETC_DIR
     global HTK_VAR_DIR
+    global HTK_LOG_DIR
     global HTK_USR_DIR
         
     if is_virtualized():        
         HTK_ROOT_DIR = sys.prefix
         HTK_ETC_DIR  = "{0}/etc".format(HTK_ROOT_DIR)
         HTK_VAR_DIR  = "{0}/var/local".format(HTK_ROOT_DIR)
+        HTK_LOG_DIR  = "{0}/hydratk/logs".format(HTK_VAR_DIR)
         HTK_USR_DIR  = "{0}/usr".format(HTK_ROOT_DIR)
     
 
@@ -40,6 +43,7 @@ def update_htk_vars():
             HTK_ROOT_DIR = tmp_dir    
             HTK_ETC_DIR  = "{0}/etc".format(HTK_ROOT_DIR)
             HTK_VAR_DIR  = "{0}/var/local".format(HTK_ROOT_DIR)
+            HTK_LOG_DIR  = "{0}/hydratk/logs".format(HTK_VAR_DIR)
             HTK_USR_DIR  = "{0}/usr".format(HTK_ROOT_DIR)            
                 
     if 'HTK_ETC_DIR' in os.environ or 'htk_etc_dir' in os.environ:
@@ -55,7 +59,12 @@ def update_htk_vars():
     if 'HTK_USR_DIR' in os.environ or 'htk_usr_dir' in os.environ:
         tmp_dir = os.environ['HTK_USR_DIR'] if 'HTK_USR_DIR' in os.environ else os.environ['htk_usr_dir']
         if os.path.exists(tmp_dir):
-            HTK_USR_DIR = tmp_dir            
+            HTK_USR_DIR = tmp_dir 
+            
+    if 'HTK_LOG_DIR' in os.environ or 'htk_log_dir' in os.environ:
+        tmp_dir = os.environ['HTK_LOG_DIR'] if 'HTK_LOG_DIR' in os.environ else os.environ['htk_log_dir']
+        if os.path.exists(tmp_dir):
+            HTK_LOG_DIR = tmp_dir                         
    
 
 def is_virtualized():

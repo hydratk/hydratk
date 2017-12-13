@@ -405,7 +405,7 @@ Extension title and description, author and email can be overwritten.
          mh.set_cli_cmdopt_profile('hobbit')            
          mh.run_fn_hook('h_bootstrap')
          trn = mh.get_translator()  
-         mh.dmsg('htk_on_debug_info', trn.msg('htk_app_exit'), mh.fromhere())                  
+         mh.demsg('htk_on_debug_info', trn.msg('htk_app_exit'), mh.fromhere())                  
          sys.exit(0)    
           
 * hobbit.py
@@ -622,11 +622,11 @@ Start and stop methods use the langtexts as debug messages.
   
      def start(self):
 
-        self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('hobbit_start', mode), self._mh.fromhere())
+        self._mh.demsg('htk_on_debug_info', self._mh._trn.msg('hobbit_start', mode), self._mh.fromhere())
 
      def stop(self):
  
-        self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('hobbit_stop'), self._mh.fromhere())
+        self._mh.demsg('htk_on_debug_info', self._mh._trn.msg('hobbit_stop'), self._mh.fromhere())
   
 Test both commands in debug mode.
 

@@ -65,8 +65,7 @@ class MessageRouter():
         Raises:
            error: InputError
 
-        """
-        print("****Registering id {0}".format(id))
+        """        
         if id != '' and id not in self._service_list.keys():
             service = {}
             if (transport_type in (SERVICE_TRANSPORT_TYPE_ZMQ_IPC, SERVICE_TRANSPORT_TYPE_ZMQ_TCP)):

@@ -91,7 +91,7 @@ Test-Scenario-2:
         event = Event(id, *args, **kwargs)
       
       Validate: |   
-        res = this.test_result = event.id()
+        res = this.test_result = event.id
         exp = id
         assert (res == exp), 'id = {0}'.format(exp)  
         

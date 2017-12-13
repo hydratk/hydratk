@@ -26,7 +26,7 @@ Test-Scenario-1:
         hlp.events = []
         ev_id = 'test'
         hlp.reg_ev_hook(mh, ev_id)        
-        mh.dmsg(ev_id)
+        mh.demsg(ev_id)
         res = hlp.events[0]._id
       
       Validate: |  

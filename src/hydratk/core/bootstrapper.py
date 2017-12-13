@@ -183,18 +183,20 @@ def run_app():
             mh = MasterHead.get_head()                    
             mh.run_fn_hook('h_bootstrap')  # run level specific processing
             trn = mh.get_translator()
-            mh.dmsg('htk_on_debug_info', trn.msg('htk_app_exit'), mh.fromhere())
+            mh.demsg('htk_on_debug_info', trn.msg('htk_app_exit'), mh.fromhere())
         
         if profiler_mode:
             pr.finish()
             pr.create_profiler_stats(profiler_stats_file) 
             
-    except Exception as e:
-        import traceback
+    except Exception:        
+        from hydratk.core import event
         ex_type, ex, tb = sys.exc_info()
-        print("Exception type: {0}".format(ex_type))
-        print("Message: {0}".format(ex))
-        traceback.print_tb(tb)
+        ev = event.Event('htk_on_uncaught_exception', ex_type, ex, tb)
+        ev.set_data('type', ex_type)
+        ev.set_data('value', ex)
+        ev.set_data('traceback', tb)
+        mh.fire_event(ev)
         exit_code = 1
     
     sys.exit(exit_code)

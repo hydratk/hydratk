@@ -60,7 +60,7 @@ class Debugger(object):
     """
 
     _debug = False
-    _debug_level = 1
+    _debug_level = None
     _debug_channel = []
     _debug_channel_map = {
         1: [10, 11],
@@ -76,11 +76,50 @@ class Debugger(object):
         15: [1, 7],
         16: [1, 8]
     }
+    
+    _dbg_msg_format_vars = {       
+       'lrb' : '(',
+       'rrb' : ')'         
+    }
+     
+    @property
+    def dbg_msg_format_vars(self):
+        return self._dbg_msg_format_vars
+             
+    def dbg_class_has_method(self, class_type, method_name):
+        """Method returns class type if class has implemented selected method_name 
 
+        Dictionary {file, module, func, line, call_path}
+
+        Args:     
+           class_type (mixed): class type definition or tuple of class types
+           method_name (str): method name     
+
+        Returns:
+           type: class type - if class has implemented selected method_name        
+           bool: False
+        """        
+        result = False
+        if type(class_type).__name__ not in('type', 'tuple'): 
+            raise TypeError("Invalid input type for class_type")
+        if type(method_name).__name__ not in ('str') or method_name == '':
+            raise TypeError("Invalid input type for method_name")
+         
+        if type(class_type).__name__ == 'tuple':            
+            for cl in class_type:                               
+                if hasattr(cl, method_name) and inspect.ismethod(getattr(cl, method_name)):
+                    result = cl
+                    break
+        else:                     
+            if hasattr(class_type, method_name) and inspect.ismethod(getattr(class_type, method_name)):
+                result = class_type
+        
+        return result            
+        
     def fromhere(self, trace_level=1):
         """Method returns location of executed code 
 
-        Dictionary {file, module, func, line, call_path}
+        Dictionary {file, module, class, func, line, call_path}
 
         Args:     
            trace_level (int): level in stacktrace     
@@ -89,19 +128,31 @@ class Debugger(object):
            dict: code location       
 
         """
-
+        
         fname = sys._getframe(trace_level).f_code.co_filename
         modname = os.path.basename(fname)
         modarg = modname.split('.')
         frm = inspect.stack()[trace_level]
         mod = inspect.getmodule(frm[0])
+        class_name = None        
         call_path = mod.__name__ if hasattr(mod, '__name__') else '__main__'
-        return {'file': sys._getframe(trace_level).f_code.co_filename,
-                'line': sys._getframe(trace_level).f_lineno,
-                'module': modarg[0],
-                'func': sys._getframe(trace_level).f_code.co_name,
-                'call_path': call_path
+        
+        if 'self' in sys._getframe(trace_level).f_locals:
+            classes = list(sys._getframe(trace_level).f_locals["self"].__class__.__bases__)
+            classes.append(sys._getframe(trace_level).f_locals["self"].__class__)
+            
+            class_type = self.dbg_class_has_method(tuple(classes), sys._getframe(trace_level).f_code.co_name)
+            if class_type != False:
+                class_name = class_type.__name__                         
+        result = {
+                   'file': sys._getframe(trace_level).f_code.co_filename,
+                   'line': sys._getframe(trace_level).f_lineno,
+                   'module': modarg[0],
+                   'class' : class_name,
+                   'func': sys._getframe(trace_level).f_code.co_name,
+                   'call_path': call_path
                 }
+        return result
 
     def function(self):
         """Method returns executed function name
@@ -158,20 +209,55 @@ class Debugger(object):
         modarg = modname.split('.')
         return modarg[0]
 
-    def errmsg(self, *args):
-        """Method prints error message
+    def errmsg(self, msg):
+        """Method sends error message
 
         Args:
-           args (list): list of arguments       
+           msg (str): error message
+               
 
         Returns:
-           void      
-
+           void   
+     
         """
+        if self._error_info:
+            if type(msg).__name__ == 'tuple' and len(msg) > 0:
+                msg_key = msg[0]
+                msg_params = ()
+                if len(msg) > 1:
+                    msg_params = msg[1:]
+                    msg = self._trn.msg(msg_key, *msg_params)
+                else:
+                    msg = self._trn.msg(msg_key)
+            
+            self.fire_event(event.Event('htk_on_error', msg, self.fromhere(2)))
+     
+            
+    def warnmsg(self, msg):
+        """Method sends warning message
 
-        print(args)
+        Args:
+           msg (str): warning message
+               
 
-    def dmsg(self, event_id, *args):
+        Returns:
+           void   
+     
+        """
+        if self._warning_info:
+            if type(msg).__name__ == 'tuple' and len(msg) > 0:
+                msg_key = msg[0]
+                msg_params = ()
+                if len(msg) > 1:
+                    msg_params = msg[1:]
+                    msg = self._trn.msg(msg_key, *msg_params)
+                else:
+                    msg = self._trn.msg(msg_key)
+            
+            self.fire_event(event.Event('htk_on_warning', msg, self.fromhere(2))) 
+                  
+
+    def demsg(self, event_id, *args):
         """Method sends debug message via event
 
         Args:
@@ -184,151 +270,165 @@ class Debugger(object):
         Raises:
            event: event_id   
 
-        """
-
-        if (self._debug):
+        """        
+        if (self._debug):            
             self.fire_event(event.Event(event_id, *args))
 
-    def match_channel(self, channel):
+    
+    def dmsg(self, msg, level=1, channel=const.DEBUG_CHANNEL):
+        """Method sends debug message
+
+        Args:
+           msg (str): message
+           level (int): debug level
+           channel (list): debug channel        
+
+        Returns:
+           bool: True if message was send to processing otherwise False
+
+
+        """
+           
+        if self.debug is True:
+            if self.debug_level is not None and level > self.debug_level:                 
+                return False
+            if len(self._debug_channel) > 0 and self.match_channel(channel) == False:        
+                return False
+            
+            if type(msg).__name__ == 'tuple' and len(msg) > 0:
+                msg_key = msg[0]
+                msg_params = ()
+                if len(msg) > 1:
+                    msg_params = msg[1:]
+                    msg = self._trn.msg(msg_key, *msg_params)
+                else:
+                    msg = self._trn.msg(msg_key)                               
+            self.fire_event(event.Event('htk_on_debug_info', msg, self.fromhere(2), level, channel))
+            return True
+
+    def match_channel(self, channel, profile_channel = None):
         """Method checks if required channels are tracked by debugger
 
         Args:
-           channel (obj): required channel as int (channel id), list (channel ids)   
+           channel (obj): required channel as int (channel id), list (channel ids)
+           profile_channel (list): logger profile channels   
 
         Returns:
            bool: result   
 
         """
-
-        if len(self._debug_channel) == 0:  # channel filters off
+        debug_channel = profile_channel if type(profile_channel).__name__ == 'list' else self._debug_channel
+        if len(debug_channel) == 0:  # channel filters off
             return True
         else:
             if type(channel).__name__ == 'list':
-                return len(list(set(self._debug_channel).intersection(channel))) > 0
+                return len(list(set(debug_channel).intersection(channel))) > 0
 
             if type(channel).__name__ == 'int':
-                return channel in self._debug_channel
+                return channel in debug_channel
 
             return False  # unknown type
 
-    def dout(self, msg, location={'file': '', 'line': '', 'module': '', 'func': '', 'call_path': ''}, level=1, channel=[]):
-        """Method prints debug message
 
-        Configuration options:
-        System/Debug/msg_format
-        System/Debug/term_color
+    def dbg_format_exception_msg(self, profile, extype, msg, tb):
+        
+        # override message format if configured
+        if 'format' in profile:
+            msg_format = profile['format']
+        else:
+            msg_format = "[{timestamp}] EXCEPTION:[{thrid}): {msg}\n{trace}"
+                
+        thrid = '0' if multiprocessing.current_process().name == 'MainProcess' else multiprocessing.current_process().name
+        now = datetime.now()
+        now_ms = "{:.3f}".format(round(int(now.strftime("%f")).__float__() / 1000000, 3))
+        now_ms = now_ms.split('.')[1]
+        tb_lines = traceback.format_list(traceback.extract_tb(tb))
+        trace = ''
+        for tb_line in tb_lines:
+            trace += "\t{0}".format(tb_line)
+            
+        format_options = {
+           'timestamp' : now.strftime("%d/%m/%Y %H:%M:%S,{0}".format(now_ms)),
+           'shorttime' : now.strftime("%H:%M:%S.{0}".format(now_ms)),        
+            'thrid'    : thrid,
+            'msg'      : msg,
+            'extype'   : extype.__name__,
+            'trace'    : trace 
+        }
+        format_options.update(self._dbg_msg_format_vars)            
+        msg_text = msg_format.format(**format_options)
 
-        Args:
-           msg (str): message
-           location (dict): location of executed code as dictionary {file, line, module, func, call_path}
-                            format returned by method fromhere
-           level (int): required debug level, default 1
-           channel (obj): required channel as int, channels as list of int, default all    
+        # override message color if configured
+        if 'term_color' in profile and profile['term_color'] is not None and '#' == profile['term_color'][0]:
+            rgb_color = profile['term_color'].replace('#', '')
+            msg_text = colorize(msg_text, int(rgb_color, 16))
+        
+                
+        return msg_text
+        
+
+    def dbg_format_msg(self, profile, msg, location={'file': None, 'line': None, 'module': None, 'func': None, 'call_path': None, 'class' : None }, level=1, channel=[]):
+        """Method implements message formating
+
+        Args:     
+           profile (dict)  : logger dictionary profile
+           msg (string)    : message
+           location (dict) : message trace parameters
+           level (int)     : debug level
+           channel (list)  : channel filter list
 
         Returns:
-           void   
+           bool: result
 
-        """
-
-        if (self._debug and self._debug_level >= level and self.match_channel(channel) == True):
-            thrid = '0' if multiprocessing.current_process(
-            ).name == 'MainProcess' else multiprocessing.current_process().name
-            msg_format = '[{timestamp}] Debug({level}): {callpath}:{func}:{thrid}: {msg}'
+        """                  
+        msg_text = False
+        process_msg = False 
+        
+        if profile['log_type'] == 'debug':
+            debug_level = self._debug_level if self._debug_level is not None else profile['level']
+            debug_channel = self._debug_channel if len(self._debug_channel) > 0 else profile['channel']
+            if (debug_level >= level and self.match_channel(channel, debug_channel) == True):
+                process_msg = True
+        else:
+            process_msg = True
+        
+        if process_msg == True:
+            thrid = '0' if multiprocessing.current_process().name == 'MainProcess' else multiprocessing.current_process().name
+            
 
             # override message format if configured
-            if 'msg_format' in self.cfg['System']['Debug'] and self.cfg['System']['Debug']['msg_format'] != '':
-                msg_format = self.cfg['System']['Debug']['msg_format']
-
+            if 'format' in profile:
+                msg_format = profile['format']
+            else:
+                msg_format = '[{timestamp}] DEBUG({level}): {callpath}:{func}:{thrid}: {msg}{lf}'
+           
             now = datetime.now()
-            now_ms = "{0}".format(
-                round(int(now.strftime("%f")).__float__() / 1000000, 3))
+            now_ms = "{:.3f}".format(round(int(now.strftime("%f")).__float__() / 1000000, 3))
             now_ms = now_ms.split('.')[1]
-            msg_text = msg_format.format(
-                timestamp=now.strftime("%d/%m/%Y %H:%M:%S.{0}".format(now_ms)),
-                shorttime=now.strftime("%H:%M:%S.{0}".format(now_ms)),
-                level=level,
-                file=location['file'],
-                line=location['line'],
-                module=location['module'],
-                callpath=location['call_path'],
-                func=location['func'],
-                thrid=thrid,
-                msg=msg,
-                channel=channel
-            )
+            format_options = {
+               'timestamp' : now.strftime("%d/%m/%Y %H:%M:%S,{0}".format(now_ms)),
+               'shorttime' : now.strftime("%H:%M:%S.{0}".format(now_ms)),
+               'level'     : level,
+                'file'     : location['file'],
+                'line'     : location['line'],
+                'module'   : location['module'],
+                'callpath' : location['call_path'],
+                'func'     : "{0}.{1}".format(location['class'],location['func']) if location['class'] != None else location['func'],
+                'thrid'    : thrid,
+                'msg'      : msg,
+                'channel'  : channel,
+            }
+            format_options.update(self._dbg_msg_format_vars)            
+            msg_text = msg_format.format(**format_options)
 
             # override message color if configured
-            if 'term_color' in self.cfg['System']['Debug'] and self.cfg['System']['Debug']['term_color'] is not None and '#' == self.cfg['System']['Debug']['term_color'][0]:
-                rgb_color = self.cfg['System']['Debug'][
-                    'term_color'].replace('#', '')
+            if 'term_color' in profile and profile['term_color'] is not None and '#' == profile['term_color'][0]:
+                rgb_color = profile['term_color'].replace('#', '')
                 msg_text = colorize(msg_text, int(rgb_color, 16))
 
-            print(msg_text)
-            sys.stdout.flush()
-
-    def wout(self, msg, location={'file': '', 'line': '', 'module': '', 'func': '', 'call_path': ''}):
-        """Method prints warning message
-
-        Args:
-           msg (str): message
-           location (dict): location of executed code as dictionary {file, line, module, func, call_path}
-                            format returned by method fromhere
-
-        Returns:
-           void   
-
-        """
-
-        thrid = '0' if multiprocessing.current_process(
-        ).name == 'MainProcess' else multiprocessing.current_process().name
-        # self._stdio_lock.acquire()
-        print("Warning: %s:%s:%s: %s " %
-              (location['call_path'], location['func'], thrid, msg))
-        sys.stdout.flush()
-        # self._stdio_lock.release()
-
-    def errout(self, msg, location={'file': '', 'line': '', 'module': '', 'func': '', 'call_path': ''}):
-        """Method prints error message
-
-        Args:
-           msg (str): message
-           location (dict): location of executed code as dictionary {file, line, module, func, call_path}
-                            format returned by method fromhere
-
-        Returns:
-           void   
-
-        """
-
-        thrname = '0' if multiprocessing.current_process(
-        ).name == 'MainProcess' else multiprocessing.current_process().name
-        # self._stdio_lock.acquire()
-        print("Error: %s:%s:%s: %s " %
-              (location['call_path'], location['func'], thrname, msg))
-        sys.stdout.flush()
-        # self._stdio_lock.release()
-
-    def exout(self, exc_type, exc_msg, exc_traceback):
-        """Method prints exception including traceback
-
-        Args:
-           exc_type (str): type of exception
-           exc_msg (str): message
-           exc_traceback (obj): traceback
-
-        Returns:
-           void   
-
-        """
-
-        thrname = '0' if multiprocessing.current_process(
-        ).name == 'MainProcess' else multiprocessing.current_process().name
-        # self._stdio_lock.acquire()
-        print("Unhandled exception:%s: %s:\nmsg: %s\ntraceback:" %
-              (thrname, exc_type, exc_msg))
-        print("Traceback:")
-        traceback.print_tb(exc_traceback)
-
+        return msg_text            
+            
+    
     def _ec_parent_tell_signal(self, oevent):
         #current = multiprocessing.current_process()
         #print('somebody wants to kill me'+"\n")

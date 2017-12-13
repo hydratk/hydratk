@@ -37,7 +37,7 @@ def dmsg(msg, level=1, channel=const.DEBUG_CHANNEL):
             else:
                 msg = _mh._trn.msg(msg_key)
 
-        _mh.dmsg('htk_on_debug_info', msg, _mh.fromhere(2), level, channel)
+        _mh.demsg('htk_on_debug_info', msg, _mh.fromhere(2), level, channel)
 
 
 def wmsg(msg):

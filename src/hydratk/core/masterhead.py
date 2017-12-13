@@ -96,8 +96,11 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
 
         '''Setting up basic functionality hooks'''
         self._reg_self_fn_hooks()
+        
+        '''Initialize translator, import global langtexts, register hooks'''
+        self._core_base_init()
 
-    def exception_handler(self, extype, value, traceback):
+    def exception_handler(self, extype, value, traceb):
         """Exception handler hook
 
            This method is registered as sys.excepthook callback and transforms unhandled exceptions to the HydraTK Event  
@@ -105,7 +108,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         Args:
            extype (str): Exception type           
            value (str): Exception message info
-           traceback (obj) Exception traceback object   
+           traceb (obj) Exception traceback object   
 
         Returns:
            void
@@ -116,19 +119,23 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """
         try:
             ev = event.Event(
-                'htk_on_uncaught_exception', extype, value, traceback)
+                'htk_on_uncaught_exception', extype, value, traceb)
             ev.set_data('type', extype)
             ev.set_data('value', value)
-            ev.set_data('traceback', traceback)
+            ev.set_data('traceback', traceb)
             self.fire_event(ev)
 
-        except Exception as e:
+        except Exception:
             # import traceback
-            print(
-                'Fatal error - Unhandled exception thrown in exception handler:')
-            print('type: %s' % extype)
-            print('value: %s' % value)
-            # print(repr(traceback.format_tb(traceback)))
+            print('Fatal error - Unhandled exception thrown in exception handler:')
+            print('Exception type: {0}'.format(extype))
+            print('Exception message: {0}'.format(value))
+            tb_lines = traceback.format_list(traceback.extract_tb(traceb))
+            trace = ''
+            for tb_line in tb_lines:
+                trace += "\t{0}".format(tb_line)
+            print('Trace:\n{0}'.format(trace))
+                
 
     def get_translator(self):
         """Method returns current traslator object initialized from hydratrk.lib.translation.translator.Translator 
@@ -272,10 +279,10 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                         run_mode_changed = True
                         break
                     else:
-                        self.dmsg('htk_on_warning', self._trn.msg(
+                        self.demsg('htk_on_warning', self._trn.msg(
                             'htk_invalid_run_mode_set', mode), self.fromhere())
                 else:
-                    self.dmsg('htk_on_warning', self._trn.msg(
+                    self.demsg('htk_on_warning', self._trn.msg(
                         'htk_opt_ignore', 'run_mode', mode), self.fromhere())
             i = i + 1
         return run_mode_changed
@@ -304,10 +311,10 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                         language_changed = True
                         break
                     else:
-                        self.dmsg('htk_on_warning', self._trn.msg(
+                        self.demsg('htk_on_warning', self._trn.msg(
                             'htk_invalid_lang_set', lang), self.fromhere())
                 else:
-                    self.dmsg('htk_on_warning', self._trn.msg(
+                    self.demsg('htk_on_warning', self._trn.msg(
                         'htk_opt_ignore', 'Language', lang), self.fromhere())
             i = i + 1
         return language_changed
@@ -337,10 +344,10 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                         config_changed = True
                         break
                     else:
-                        self.dmsg('htk_on_warning', self._trn.msg(
+                        self.demsg('htk_on_warning', self._trn.msg(
                             'htk_conf_not_exists', config_file), self.fromhere())
                 else:
-                    self.dmsg('htk_on_warning', self._trn.msg(
+                    self.demsg('htk_on_warning', self._trn.msg(
                         'htk_opt_ignore', 'Config', ''), self.fromhere())
 
             i = i + 1
@@ -358,7 +365,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """
 
         i = 0
-        self.dmsg('htk_on_debug', "Checking profile option", self.fromhere())
+        self.dmsg("Checking profile option", 1)
         enable_profiler = False
         stats_file = ''
         for o in sys.argv:
@@ -369,10 +376,10 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                     stats_file = sys.argv[i + 1]
                     if stats_file is not None and stats_file != '':
                         enable_profiler = True
-                        self.dmsg('htk_on_debug', "Profiler enabled, stats will be written to the: {0}".format(
-                            stats_file), self.fromhere())
+                        self.dmsg("Profiler enabled, stats will be written to the: {0}".format(
+                            stats_file), 1)
                 else:
-                    self.dmsg('htk_on_warning', self._trn.msg(
+                    self.demsg('htk_on_warning', self._trn.msg(
                         'htk_opt_ignore', 'Profile', ''), self.fromhere())
 
             i = i + 1
@@ -399,14 +406,13 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                         self._debug_level = int(debug_level)
                         self._debug = True
                         self._trn.set_debug_level(debug_level)
-                        self.dmsg('htk_on_debug_info', self._trn.msg(
-                            'htk_debug_level_set', self._debug_level), self.fromhere())
+                        self.dmsg(self._trn.msg('htk_debug_level_set', self._debug_level), 1)
                         debug_changed = True
                     else:
-                        self.dmsg('htk_on_warning', self._trn.msg(
+                        self.demsg('htk_on_warning', self._trn.msg(
                             'htk_invalid_debug_level_set', debug_level), self.fromhere())
                 else:
-                    self.dmsg('htk_on_warning', self._trn.msg(
+                    self.demsg('htk_on_warning', self._trn.msg(
                         'htk_opt_ignore', 'Debug', ''), self.fromhere())
             i = i + 1
         return debug_changed
@@ -429,8 +435,8 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                     debug_channel = sys.argv[i + 1]
                     if debug_channel.encode('utf-8').isdigit():
                         self._debug_channel = [int(debug_channel)]
-                        self.dmsg('htk_on_debug_info', self._trn.msg(
-                            'htk_debug_channel_set', self._debug_channel[0]), self.fromhere())
+                        self.demsg(self._trn.msg(
+                            'htk_debug_channel_set', self._debug_channel[0]), 1)
                         debug_channel_changed = True
                     elif type(debug_channel).__name__ == 'str' and debug_channel != '' and ',' in debug_channel:
                         dch = debug_channel.split(',')
@@ -442,10 +448,10 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                         if debug_channel_changed:
                             self._debug_channel = new_filter
                     else:
-                        self.dmsg('htk_on_warning', self._trn.msg(
+                        self.demsg('htk_on_warning', self._trn.msg(
                             'htk_invalid_debug_channel_set', debug_channel), self.fromhere())
                 else:
-                    self.dmsg('htk_on_warning', self._trn.msg(
+                    self.demsg('htk_on_warning', self._trn.msg(
                         'htk_opt_ignore', 'debug-channel', ''), self.fromhere())
             i = i + 1
         return debug_channel_changed
@@ -651,6 +657,54 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         else:
             raise InputError(0, [], "help_title and cp_string have to be string type, got '{0}' '{1}'".format(
                 type(help_title).__name__, type(cp_string).__name__))
+            
+            
+    def register_log_output_profile(self, log_type, options = {}):
+        """Method adds logger output profile functionality hook
+
+           Only one callback can be registered.
+           This method is usable for functionality extending, replacement.
+
+        Args:
+           log_type (mixed): string log_type id or list of dictionaries in format {'log_type' : 'log_type_id', 'options' : { 'opt' : 'val'} }           
+           options (dict): Log profile options alse extended for specified output handler
+
+        Returns:
+           bool: register success in case that log_type is non-empty string
+           int: number of successfully registered handlers in case that log_type is list of dictionaries with multiple defined hooks            
+
+        Example:
+
+        .. code-block:: python  
+
+             from hydratk.core.MasterHead import MasterHead                                                        
+
+             mh = MasterHead.get_head()                                  
+             mh.register_log_output_handler('error', my_error_log_handler)              
+
+        """
+
+        result = False
+             
+        if (type(log_type).__name__ == 'list'):
+            result = 0
+            for fnh in log_type:
+                if (fnh['log_type'] != '' and type(fnh['options']).__name__ == 'dict'):                    
+                    if fnh['log_type'] not in self._log_profiles:
+                        self._log_profiles[fnh['log_type']] = []
+                                                       
+                    self._log_profiles[fnh['log_type']].append(options)
+                    result = result + 1
+
+        elif (log_type != '' and type(options).__name__ == 'dict'):
+            if log_type not in self._log_profiles:
+                self._log_profiles[log_type] = []
+                                                    
+            self._log_profiles[log_type].append(options)            
+            result = True
+            
+        return result
+                
 
     def register_fn_hook(self, fn_id, callback=''):
         """Method adds/replaces functionality hook
@@ -1073,7 +1127,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """
 
         fe_count = 0
-        event_id = oevent.id()
+        event_id = oevent.id
         before_event_id = '^{0}'.format(event_id.replace('^', ''))
         after_event_id = '${0}'.format(event_id.replace('$', ''))
 
@@ -1129,25 +1183,25 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                     self._debug_level = int(self._option_param['--debug'][0])
                 else:
                     self._debug = False
-                self.dmsg('htk_on_debug_info', self._trn.msg(
-                    'htk_opt_set', 'Debug', self._debug.__str__()), self.fromhere())
-                self.dmsg('htk_on_debug_info', self._trn.msg(
-                    'htk_opt_set', 'Debug level', self._debug_level.__str__()), self.fromhere())
+                self.dmsg(self._trn.msg(
+                    'htk_opt_set', 'Debug', self._debug.__str__()), 1)
+                self.dmsg(self._trn.msg(
+                    'htk_opt_set', 'Debug level', self._debug_level.__str__()))
             else:
                 debug_value = self._option_param[
                     '--debug'][0].__str__() if self._option_param['--debug'][0] != {} else ''
-                self.dmsg('htk_on_warning', self._trn.msg(
+                self.demsg('htk_on_warning', self._trn.msg(
                     'htk_opt_ignore', 'Debug', debug_value), self.fromhere())
 
         if ('--language' in self._option_param):
             if (type(self._option_param['--language'][0]).__name__ == 'str' and self._option_param['--language'][0] != {} and self._option_param['--language'][0] in info.languages):
                 self._language = self._option_param['--language'][0]
-                self.dmsg('htk_on_debug_info', self._trn.msg(
-                    'htk_opt_set', 'Language', self._language), self.fromhere())
+                self.demsg(self._trn.msg(
+                    'htk_opt_set', 'Language', self._language), 1)
             else:
                 lang_value = self._option_param[
                     '--language'][0].__str__() if self._option_param['--language'][0] != {} else ''
-                self.dmsg('htk_on_warning', self._trn.msg(
+                self.demsg('htk_on_warning', self._trn.msg(
                     'htk_opt_ignore', 'Debug level', lang_value), self.fromhere())
 
     def get_language(self):
@@ -1244,8 +1298,8 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         service.service_desc = description
         service.service_status = service_status
         self._app_service.append(service)
-        self.dmsg('htk_on_debug_info', self._trn.msg(
-            'htk_app_service_reg_ok', service_name, description), self.fromhere())
+        self.demsg(self._trn.msg(
+            'htk_app_service_reg_ok', service_name, description))
         return True
 
     def unregister_service(self, service_name):
@@ -1266,16 +1320,16 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             if service_name == service.name and not service.is_alive():
                 service.start()
                 if service.is_alive():
-                    self.dmsg('htk_on_debug_info', self._trn.msg(
-                        'htk_app_service_start_ok', service_name), self.fromhere())
+                    self.dmsg(self._trn.msg(
+                        'htk_app_service_start_ok', service_name), 1)
                     return True
                 else:
                     # raise Exception("Failed to start application service "+service_name)
-                    self.dmsg('htk_on_debug_info', self._trn(
-                        'htk_app_service_start_failed', service_name), self.fromhere())
+                    self.dmsg(self._trn(
+                        'htk_app_service_start_failed', service_name),1)
             else:
-                self.dmsg('htk_on_debug_info', self._trn.msg(
-                    'htk_app_service_start_ok', service_name), self.fromhere())
+                self.dmsg(self._trn.msg(
+                    'htk_app_service_start_ok', service_name),1)
 
         return False
 
@@ -1303,18 +1357,18 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 service_name = service.service_name
                 service.service_status.value = const.SERVICE_STATUS_STOPPED
                 os.kill(int(service.pid), signal.SIGINT)
-                self.dmsg('htk_on_debug_info', self._trn.msg(
-                    'htk_app_service_stop', service_name), self.fromhere())
+                self.dmsg(self._trn.msg(
+                    'htk_app_service_stop', service_name))
                 service.join(const.PROCESS_JOIN_TIMEOUT)
                 if service.is_alive():
-                    self.dmsg('htk_on_debug_info', self._trn.msg(
-                        'htk_app_service_stop_failed', service_name), self.fromhere())
-                    self.dmsg('htk_on_debug_info', self._trn.msg(
-                        'htk_app_service_stop_hard', service_name), self.fromhere())
+                    self.dmsg(self._trn.msg(
+                        'htk_app_service_stop_failed', service_name))
+                    self.dmsg(self._trn.msg(
+                        'htk_app_service_stop_hard', service_name))
                     os.kill(int(service.pid), signal.SIGKILL)
             else:
-                self.dmsg('htk_on_debug_info', self._trn.msg(
-                    'htk_app_service_inactive_skip', service.service_name), self.fromhere())
+                self.dmsg(self._trn.msg(
+                    'htk_app_service_inactive_skip', service.service_name),1)
 
     def init_core_threads(self):
         """Method initializes threads according to configuration
@@ -1346,8 +1400,8 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         for thread in self._thr:
             name = thread.name
             thread.status.value = const.CORE_THREAD_EXIT
-            self.dmsg('htk_on_debug_info', self._trn.msg(
-                'htk_cthread_destroy', name), self.fromhere())
+            self.dmsg(self._trn.msg(
+                'htk_cthread_destroy', name), 1)
             thread.join()
 
     def add_core_thread(self, i=None):
@@ -1379,8 +1433,8 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         current.is_alive_check = is_alive_check
         current.num = nexti
         self._thr.append(current)
-        self.dmsg('htk_on_debug_info', self._trn.msg(
-            'htk_cthread_init', nexti), self.fromhere())
+        self.dmsg(self._trn.msg(
+            'htk_cthread_init', nexti), 1)
         current.start()
 
     def get_thrid(self):
@@ -1508,7 +1562,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                         "{0}/{1}".format(ext_skel_path, create_path_str)).format(extension=ext_name)
                     if not os.path.exists(create_path):
                         self.dmsg(
-                            'htk_on_debug_info', "Creating path %s" % create_path, self.fromhere())
+                            "Creating path {0}".format(create_path), 1)
                         os.makedirs(create_path)
                 except:
                     raise
@@ -1519,8 +1573,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 try:
                     create_package_init_file = (
                         "{0}/{1}".format(ext_skel_path, create_package_init_file_str)).format(extension=ext_name)
-                    self.dmsg('htk_on_debug_info', "Creating package init file %s" %
-                              create_package_init_file, self.fromhere())
+                    self.dmsg("Creating package init file {0}".format(create_package_init_file), 1)
                     file_put_contents(
                         create_package_init_file, template.extension_package_init_content)
                 except:
@@ -1529,16 +1582,14 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             try:
                 ext_config_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.config'])).format(extension=ext_name)
-                self.dmsg('htk_on_debug_info', "Creating config file %s" %
-                          ext_config_file, self.fromhere())
+                self.dmsg("Creating config file {0}".format(ext_config_file), 1)
                 config_file_data = template.extension_config.format(
                     uc_extension=ext_ucname, extension=ext_name)
                 file_put_contents(ext_config_file, config_file_data)
 
                 ext_module_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.module'])).format(extension=ext_name)
-                self.dmsg('htk_on_debug_info', "Creating extension module file %s" %
-                          ext_module_file, self.fromhere())
+                self.dmsg("Creating extension module file {0}".format(ext_module_file), 1)
                 ext_module_file_data = template.extension.format(
                     ext_ucname=ext_ucname,
                     extension=ext_name,
@@ -1551,8 +1602,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
 
                 ext_bootstrapper_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.bootstrapper'])).format(extension=ext_name)
-                self.dmsg('htk_on_debug_info', "Creating extension bootstrapper file %s" %
-                          ext_module_file, self.fromhere())
+                self.dmsg("Creating extension bootstrapper file {0}".format(ext_module_file), 1)
                 ext_bootstrapper_file_data = template.extension_bootstrapper.format(
                     extension=ext_name,
                     author_name=author_name,
@@ -1563,8 +1613,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
 
                 ext_translation_en_messages_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.translation.en.messages'])).format(extension=ext_name)
-                self.dmsg('htk_on_debug_info', "Creating extension translation English messages file %s" %
-                          ext_translation_en_messages_file, self.fromhere())
+                self.dmsg("Creating extension translation English messages file {0}".format(ext_translation_en_messages_file), 1)
                 ext_translation_en_messages_file_data = template.extension_translation_en_messages.format(
                     ext_ucname=ext_ucname,
                     extension=ext_name,
@@ -1576,8 +1625,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
 
                 ext_translation_cs_messages_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.translation.cs.messages'])).format(extension=ext_name)
-                self.dmsg('htk_on_debug_info', "Creating extension translation Czech messages file %s" %
-                          ext_translation_cs_messages_file, self.fromhere())
+                self.dmsg("Creating extension translation Czech messages file {0}".format(ext_translation_cs_messages_file), 1)
                 ext_translation_cs_messages_file_data = template.extension_translation_cs_messages.format(
                     ext_ucname=ext_ucname,
                     extension=ext_name,
@@ -1589,8 +1637,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
 
                 ext_translation_en_help_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.translation.en.help'])).format(extension=ext_name)
-                self.dmsg('htk_on_debug_info', "Creating extension translation English help file %s" %
-                          ext_translation_en_help_file, self.fromhere())
+                self.dmsg("Creating extension translation English help file {0}".format(ext_translation_en_help_file), 1)
                 ext_translation_en_help_file_data = template.extension_translation_en_help.format(
                     ext_ucname=ext_ucname,
                     extension=ext_name,
@@ -1602,8 +1649,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
 
                 ext_translation_cs_help_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.translation.cs.help'])).format(extension=ext_name)
-                self.dmsg('htk_on_debug_info', "Creating extension translation Czech help file %s" %
-                          ext_translation_cs_help_file, self.fromhere())
+                self.dmsg("Creating extension translation Czech help file {0}".format(ext_translation_cs_help_file), 1)
                 ext_translation_cs_help_file_data = template.extension_translation_cs_help.format(
                     ext_ucname=ext_ucname,
                     extension=ext_name,
@@ -1615,8 +1661,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
 
                 ext_setup_py_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.setup.py'])).format(extension=ext_name)
-                self.dmsg('htk_on_debug_info', "Creating extension setup file %s" %
-                          ext_setup_py_file, self.fromhere())
+                self.dmsg("Creating extension setup file {0}".format(ext_setup_py_file), 1)
                 ext_setup_py_file_data = template.extension_setup_py.format(
                     extension=ext_name,
                     ext_ucname=ext_ucname,
@@ -1630,43 +1675,37 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
 
                 ext_setup_cfg_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.setup.cfg'])).format(extension=ext_name)
-                self.dmsg('htk_on_debug_info', "Creating extension additional setup config file %s" %
-                          ext_setup_cfg_file, self.fromhere())
+                self.dmsg("Creating extension additional setup config file {0}".format(ext_setup_cfg_file), 1)
                 file_put_contents(
                     ext_setup_cfg_file, template.extension_setup_cfg)
 
                 ext_license_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.license'])).format(extension=ext_name)
-                self.dmsg('htk_on_debug_info', "Creating extension license file %s" %
-                          ext_license_file, self.fromhere())
+                self.dmsg("Creating extension license file {0}".format(ext_license_file), 1)
                 file_put_contents(ext_license_file, template.extension_license[ext_license].format(
                     ext_year=ext_year, author_name=author_name, author_email=author_email))
 
                 ext_readme_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.readme'])).format(extension=ext_name)
-                self.dmsg('htk_on_debug_info', "Creating extension readme file %s" %
-                          ext_readme_file, self.fromhere())
+                self.dmsg("Creating extension readme file {0}".format(ext_readme_file), 1)
                 file_put_contents(ext_readme_file, template.extension_readme_rst.format(
                     ext_ucname=ext_ucname, ext_desc=ext_desc))
 
                 ext_requirements_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.requirements'])).format(extension=ext_name)
-                self.dmsg('htk_on_debug_info', "Creating extension requirements file %s" %
-                          ext_requirements_file, self.fromhere())
+                self.dmsg("Creating extension requirements file {0}".format(ext_requirements_file), 1)
                 file_put_contents(
                     ext_requirements_file, template.extension_requirements)
 
                 ext_manifest_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.manifest'])).format(extension=ext_name)
-                self.dmsg('htk_on_debug_info', "Creating extension manifest file %s" %
-                          ext_manifest_file, self.fromhere())
+                self.dmsg("Creating extension manifest file {0}".format(ext_manifest_file), 1)
                 file_put_contents(
                     ext_manifest_file, template.extension_manifest)
 
                 ext_manpage_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.manpage'])).format(extension=ext_name)
-                self.dmsg('htk_on_debug_info', "Creating extension manual page %s" %
-                          ext_manpage_file, self.fromhere())
+                self.dmsg("Creating extension manual page {0}".format(ext_manpage_file), 1)
                 ext_manpage_file_data = template.extension_manpage.format(
                     extension=ext_name,
                     ext_ucname=ext_ucname,
@@ -1798,8 +1837,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                     create_path = (
                         "{0}/{1}".format(lib_skel_path, create_path_str)).format(lib_name=lib_name)
                     if not os.path.exists(create_path):
-                        self.dmsg(
-                            'htk_on_debug_info', "Creating path %s" % create_path, self.fromhere())
+                        self.dmsg("Creating path {0}".format(create_path), 1)
                         os.makedirs(create_path)
                 except:
                     raise
@@ -1810,8 +1848,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 try:
                     create_package_init_file = (
                         "{0}/{1}".format(lib_skel_path, create_package_init_file_str)).format(lib_name=lib_name)
-                    self.dmsg('htk_on_debug_info', "Creating package init file %s" %
-                              create_package_init_file, self.fromhere())
+                    self.dmsg("Creating package init file {0}".format(create_package_init_file), 1)
                     file_put_contents(
                         create_package_init_file, template.lib_package_init_content)
                 except:
@@ -1820,8 +1857,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             try:
                 lib_module_file = (
                     "{0}/{1}".format(lib_skel_path, template.lib_data_files['lib.module'])).format(lib_name=lib_name)
-                self.dmsg('htk_on_debug_info', "Creating library module file %s" %
-                          lib_module_file, self.fromhere())
+                self.dmsg("Creating library module file {0}".format(lib_module_file), 1)
                 lib_module_file_data = template.library.format(
                     lib_ucname=lib_ucname,
                     lib_name=lib_name,
@@ -1834,8 +1870,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
 
                 lib_setup_py_file = (
                     "{0}/{1}".format(lib_skel_path, template.lib_data_files['lib.setup.py'])).format(lib_name=lib_name)
-                self.dmsg('htk_on_debug_info', "Creating library setup file %s" %
-                          lib_setup_py_file, self.fromhere())
+                self.dmsg("Creating library setup file {0}".format(lib_setup_py_file), 1)
                 lib_setup_py_file_data = template.lib_setup_py.format(
                     lib_name=lib_name,
                     lib_ucname=lib_ucname,
@@ -1847,35 +1882,30 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
 
                 lib_setup_cfg_file = (
                     "{0}/{1}".format(lib_skel_path, template.lib_data_files['lib.setup.cfg'])).format(lib_name=lib_name)
-                self.dmsg('htk_on_debug_info', "Creating library additional setup config file %s" %
-                          lib_setup_cfg_file, self.fromhere())
+                self.dmsg("Creating library additional setup config file {0}".format(lib_setup_cfg_file), 1)
                 file_put_contents(lib_setup_cfg_file, template.lib_setup_cfg)
 
                 lib_license_file = (
                     "{0}/{1}".format(lib_skel_path, template.lib_data_files['lib.license'])).format(lib_name=lib_name)
-                self.dmsg('htk_on_debug_info', "Creating lib license file %s" %
-                          lib_license_file, self.fromhere())
+                self.dmsg("Creating lib license file {0}".format(lib_license_file), 1)
                 file_put_contents(lib_license_file, template.lib_license[lib_license].format(
                     ext_year=lib_year, author_name=author_name, author_email=author_email))
 
                 lib_readme_file = (
                     "{0}/{1}".format(lib_skel_path, template.lib_data_files['lib.readme'])).format(lib_name=lib_name)
-                self.dmsg('htk_on_debug_info', "Creating library readme file %s" %
-                          lib_readme_file, self.fromhere())
+                self.dmsg("Creating library readme file {0}".format(lib_readme_file), 1)
                 file_put_contents(lib_readme_file, template.lib_readme_rst.format(
                     lib_ucname=lib_ucname, lib_desc=lib_desc))
 
                 lib_requirements_file = (
                     "{0}/{1}".format(lib_skel_path, template.lib_data_files['lib.requirements'])).format(lib_name=lib_name)
-                self.dmsg('htk_on_debug_info', "Creating library requirements file %s" %
-                          lib_requirements_file, self.fromhere())
+                self.dmsg("Creating library requirements file {0}".format(lib_requirements_file), 1)
                 file_put_contents(
                     lib_requirements_file, template.lib_requirements)
 
                 lib_manifest_file = (
                     "{0}/{1}".format(lib_skel_path, template.lib_data_files['lib.manifest'])).format(lib_name=lib_name)
-                self.dmsg('htk_on_debug_info', "Creating library manifest file %s" %
-                          lib_manifest_file, self.fromhere())
+                self.dmsg("Creating library manifest file {0}".format(lib_manifest_file), 1)
                 file_put_contents(lib_manifest_file, template.lib_manifest)
 
                 result = True

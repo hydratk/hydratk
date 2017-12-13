@@ -125,7 +125,7 @@ class DBO(object):
         return getattr(self._dbo_driver, name)
 
 
-class DBOException():
+class DBOException(Exception):
     """Class DBOException
     """
 

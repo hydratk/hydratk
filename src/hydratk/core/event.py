@@ -9,6 +9,7 @@
 """
 
 import pprint
+from __builtin__ import property
 
 
 class Event(object):
@@ -57,8 +58,11 @@ class Event(object):
         self._args = args
         if len(kwargs) > 0:
             for k, v in kwargs.items():
+    
                 self._data[k] = v
-
+                
+                
+    @property
     def id(self):
         """Method gets id attribute
 
@@ -188,6 +192,7 @@ class Event(object):
 
         self._propagate = False
 
+    
     @property
     def skip_before_hook(self):
         """ skip_before_hook property getter """

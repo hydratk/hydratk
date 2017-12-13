@@ -123,12 +123,12 @@ class Profiler(HTKProfiler,object):
             sortby = 'cumulative'
         else:
             sortby = sortby.split(',')
-        mh.dmsg('htk_on_debug_info', "Sorting stats using column(s): {0}".format(','.join(sortby)), mh.fromhere())
+        mh.demsg('htk_on_debug_info', "Sorting stats using column(s): {0}".format(','.join(sortby)), mh.fromhere())
         if type(sortby).__name__ == 'str':
             ps = pstats.Stats(self._pr, stream=s).sort_stats(sortby)
         elif type(sortby).__name__ == 'list':
             ps = pstats.Stats(self._pr, stream=s).sort_stats(*sortby)                                           
-        mh.dmsg('htk_on_debug_info', "Writing profiler stats output to {0}".format(self._output_file), mh.fromhere())
+        mh.demsg('htk_on_debug_info', "Writing profiler stats output to {0}".format(self._output_file), mh.fromhere())
         ps.dump_stats(self._output_file)
         if strip_dirs:
             ps.strip_dirs()

@@ -11,7 +11,7 @@
 from hydratk.core import hsignal
 
 
-class EventHandler:
+class EventHandler(object):
     """Class EventHandler
     """
 
@@ -52,5 +52,5 @@ class EventHandler:
     def _ec_sig_handler(self, oevent, signum):
         signal = hsignal.sigint2string[
             signum] if signum in hsignal.sigint2string else signum
-        self.dmsg('htk_on_debug_info', self._trn.msg(
+        self.demsg('htk_on_debug_info', self._trn.msg(
             'htk_sig_recv', signal), self.fromhere())

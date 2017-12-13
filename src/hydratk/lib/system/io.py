@@ -27,7 +27,7 @@ def cprint(data):
     from hydratk.core.masterhead import MasterHead  
 
     _mh = MasterHead.get_head()
-    _mh.dmsg('htk_on_cprint', data)
+    _mh.demsg('htk_on_cprint', data)
 
 
 def rprint(*args):

@@ -115,13 +115,13 @@ class Extension(extension.Extension):
         self._outfile = self._cfg['outfile'] if (not outfile) else outfile
         self._enable_gc = self._cfg['enable_gc'] if (not enable_gc) else True
         
-        self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('benchmark_start'), self._mh.fromhere())
+        self._mh.demsg('htk_on_debug_info', self._mh._trn.msg('benchmark_start'), self._mh.fromhere())
         ev = event.Event('benchmark_start')
         self._mh.fire_event(ev)
 
         self.run_test_groups()
 
-        self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('benchmark_finish'), self._mh.fromhere())
+        self._mh.demsg('htk_on_debug_info', self._mh._trn.msg('benchmark_finish'), self._mh.fromhere())
         ev = event.Event('benchmark_finish')
         self._mh.fire_event(ev)
         
@@ -141,7 +141,7 @@ class Extension(extension.Extension):
             if (group in self._test_groups):
                 result[group] = self.run_test_group(group)
             else:
-                self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('benchmark_unknown_group', group), self._mh.fromhere())
+                self._mh.demsg('htk_on_debug_info', self._mh._trn.msg('benchmark_unknown_group', group), self._mh.fromhere())
 
         self.gen_report(result)
             
@@ -156,7 +156,7 @@ class Extension(extension.Extension):
 
         """
         
-        self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('benchmark_group_start', group), self._mh.fromhere())
+        self._mh.demsg('htk_on_debug_info', self._mh._trn.msg('benchmark_group_start', group), self._mh.fromhere())
 
         mod = self._test_groups[group]
         lmod = import_module(mod)
@@ -165,7 +165,7 @@ class Extension(extension.Extension):
         for test in lmod.tests:
             result[test] = self.run_test(mod, test)
 
-        self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('benchmark_group_finish', group), self._mh.fromhere())
+        self._mh.demsg('htk_on_debug_info', self._mh._trn.msg('benchmark_group_finish', group), self._mh.fromhere())
 
         return result
 
@@ -181,7 +181,7 @@ class Extension(extension.Extension):
 
         """
 
-        self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('benchmark_test_start', test), self._mh.fromhere())
+        self._mh.demsg('htk_on_debug_info', self._mh._trn.msg('benchmark_test_start', test), self._mh.fromhere())
 
         setup = 'from {0} import {1}'.format(mod, test)
         if (self._enable_gc):
@@ -193,7 +193,7 @@ class Extension(extension.Extension):
             r = timer.timeit(1)
             result.append(round(r * 1000, 3))
 
-        self._mh.dmsg('htk_on_debug_info', self._mh._trn.msg('benchmark_test_finish', test), self._mh.fromhere())
+        self._mh.demsg('htk_on_debug_info', self._mh._trn.msg('benchmark_test_finish', test), self._mh.fromhere())
 
         return result
 
@@ -229,7 +229,7 @@ class Extension(extension.Extension):
                     f.write(report)
 
             except Exception as ex:
-                self._mh.dmsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
+                self._mh.demsg('htk_on_error', 'error: {0}'.format(ex), self._mh.fromhere())
 
         self.print_report(data)
 

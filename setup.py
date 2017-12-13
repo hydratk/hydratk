@@ -81,11 +81,12 @@ config = {
         {'module': 'pyzmq',        'version': '>=14.7.0'},
         {'module': 'psutil',       'version': '>=3.1.1'},
         {'module': 'pyyaml',       'version': '>=3.11'},
-        {'module': 'xtermcolor',   'version': '>=1.3'}
+        {'module': 'xtermcolor',   'version': '>=1.3'},
     ],
 
     'dirs': [
-        '{0}/hydratk/dbconfig'.format(syscfg.HTK_VAR_DIR)
+        '{0}/hydratk/dbconfig'.format(syscfg.HTK_VAR_DIR),
+        syscfg.HTK_LOG_DIR
     ],
 
     'files': {
