@@ -9,12 +9,14 @@
 """
 import sys
 import os
+import re
 
 HTK_ROOT_DIR = '/'
 HTK_ETC_DIR  = '/etc'
 HTK_VAR_DIR  = '/var/local'
 HTK_LOG_DIR  = "{0}/hydratk/logs".format(HTK_VAR_DIR)
 HTK_USR_DIR  = '/usr'
+HTK_TMP_DIR  = '/tmp'
 
 def update_htk_vars():
     """Function updates HTK config variables
@@ -28,6 +30,7 @@ def update_htk_vars():
     global HTK_VAR_DIR
     global HTK_LOG_DIR
     global HTK_USR_DIR
+    global HTK_TMP_DIR
         
     if is_virtualized():        
         HTK_ROOT_DIR = sys.prefix
@@ -35,6 +38,7 @@ def update_htk_vars():
         HTK_VAR_DIR  = "{0}/var/local".format(HTK_ROOT_DIR)
         HTK_LOG_DIR  = "{0}/hydratk/logs".format(HTK_VAR_DIR)
         HTK_USR_DIR  = "{0}/usr".format(HTK_ROOT_DIR)
+        HTK_TMP_DIR  = "{0}/tmp".format(HTK_ROOT_DIR)
     
 
     if 'HTK_ROOT_DIR' in os.environ or 'htk_root_dir' in os.environ:               
@@ -44,7 +48,8 @@ def update_htk_vars():
             HTK_ETC_DIR  = "{0}/etc".format(HTK_ROOT_DIR)
             HTK_VAR_DIR  = "{0}/var/local".format(HTK_ROOT_DIR)
             HTK_LOG_DIR  = "{0}/hydratk/logs".format(HTK_VAR_DIR)
-            HTK_USR_DIR  = "{0}/usr".format(HTK_ROOT_DIR)            
+            HTK_USR_DIR  = "{0}/usr".format(HTK_ROOT_DIR)
+            HTK_TMP_DIR  = "{0}/tmp".format(HTK_ROOT_DIR)            
                 
     if 'HTK_ETC_DIR' in os.environ or 'htk_etc_dir' in os.environ:
         tmp_dir = os.environ['HTK_ETC_DIR'] if 'HTK_ETC_DIR' in os.environ else os.environ['htk_etc_dir']
@@ -66,6 +71,10 @@ def update_htk_vars():
         if os.path.exists(tmp_dir):
             HTK_LOG_DIR = tmp_dir                         
    
+    if 'HTK_TMP_DIR' in os.environ or 'htk_tmp_dir' in os.environ:
+        tmp_dir = os.environ['HTK_TMP_DIR'] if 'HTK_TMP_DIR' in os.environ else os.environ['htk_tmp_dir']
+        if os.path.exists(tmp_dir):
+            HTK_TMP_DIR = tmp_dir                         
 
 def is_virtualized():
     """Function determines if there's virtualized Python environment
@@ -74,7 +83,7 @@ def is_virtualized():
        Bool : result
 
     """
-    return hasattr(sys, 'real_prefix') or (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix)
+    return hasattr(sys, 'real_prefix') or (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix) or re.search('\.pyenv/', sys.prefix)
 
     
 def get_supported_os():

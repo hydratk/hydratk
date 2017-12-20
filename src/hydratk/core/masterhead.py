@@ -2216,3 +2216,8 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                     "Undefined extension {0}".format(extension_name))
         else:
             raise TypeError("Extension name string expected")
+
+"""
+MasterHead instance
+"""
+htk = MasterHead.get_head()

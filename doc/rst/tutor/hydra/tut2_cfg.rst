@@ -128,23 +128,22 @@ Profile basic options:
 You can use log type specific default string format variables and of course your own variables can be added by accessing ``dbg_msg_format_vars`` dict property 
 Message format can be also mixed with config macros defined in ``hydratk.core.confighooks.hook_list``
 
-Available basic format string vars:
-  .. code-block:: python
-	log_type: all     {lrb}       : '('                                 
-	log_type: all     {rrb}       : ')'
-	log_type: all     {timestamp} : date format "%d/%m/%Y %H:%M:%S,ms"
-	log_type: all     {shorttime} : date format "%H:%M:%S,ms"
-	log_type: debug   {level}     : debug level,
-	log_type: all     {file}      : code location file
-	log_type: all     {line}      : code location line
-	log_type: all     {module}    : code location module
-	log_type: all     {callpath}  : code location call path
-	log_type: all     {func}      : code location func - Class.method name if class is available otherwise function name
-	log_type: all     {thrid}     : code location process/thread id
-	log_type: all     {msg}       : message content
-	log_type: debug   {channel}   : debug channel
-	log_type: exception {extype}  : exception type	   
-	log_type: exception {trace}   : exception traceback
+Available basic format string vars:  
+  log_type: all     {lrb}       : '('                                 
+  log_type: all     {rrb}       : ')'
+  log_type: all     {timestamp} : date format "%d/%m/%Y %H:%M:%S,ms"
+  log_type: all     {shorttime} : date format "%H:%M:%S,ms"
+  log_type: debug   {level}     : debug level,
+  log_type: all     {file}      : code location file
+  log_type: all     {line}      : code location line
+  log_type: all     {module}    : code location module
+  log_type: all     {callpath}  : code location call path
+  log_type: all     {func}      : code location func - Class.method name if class is available otherwise function name
+  log_type: all     {thrid}     : code location process/thread id
+  log_type: all     {msg}       : message content
+  log_type: debug   {channel}   : debug channel
+  log_type: exception {extype}  : exception type	   
+  log_type: exception {trace}   : exception traceback
 
 Log type ``debug`` profile options:                 
   level: [number] debug level

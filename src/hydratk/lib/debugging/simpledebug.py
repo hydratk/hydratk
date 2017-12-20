@@ -25,19 +25,23 @@ def dmsg(msg, level=1, channel=const.DEBUG_CHANNEL):
 
     """
 
-    from hydratk.core.masterhead import MasterHead
-    _mh = MasterHead.get_head()
-    if _mh.debug is True and level <= _mh.debug_level:
+    from hydratk.core.masterhead.MasterHead import htk
+    if htk.debug is True:
+        if htk.debug_level is not None and level > htk.debug_level:                 
+            return False
+        if len(htk.debug_channel) > 0 and htk.match_channel(channel) == False:        
+            return False
+        
         if type(msg).__name__ == 'tuple' and len(msg) > 0:
             msg_key = msg[0]
             msg_params = ()
             if len(msg) > 1:
                 msg_params = msg[1:]
-                msg = _mh._trn.msg(msg_key, *msg_params)
+                msg = htk._trn.msg(msg_key, *msg_params)
             else:
-                msg = _mh._trn.msg(msg_key)
+                msg = htk._trn.msg(msg_key)
 
-        _mh.demsg('htk_on_debug_info', msg, _mh.fromhere(2), level, channel)
+        htk.fire_event(event.Event('htk_on_debug_info', msg, htk.fromhere(2), level, channel))
 
 
 def wmsg(msg):
