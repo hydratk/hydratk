@@ -473,6 +473,7 @@ Test-Scenario-10:
       Desc: Disable debug
       
       Test: |
+        mh._debug = False
         mh._config['System']['Debug']['enabled'] = 0
         mh._apply_config()
         res = mh._debug
@@ -494,6 +495,7 @@ Test-Scenario-10:
       Test: |
         mh = MasterHead.get_head()
         mh._config['System']['Debug']['level'] = 2
+        mh._debug = False
         mh._debug_level = 1
         mh._apply_config()
         res = mh._debug_level
@@ -508,6 +510,7 @@ Test-Scenario-10:
       Desc: Set low debug level
       
       Test: |
+        mh._debug = False
         mh._config['System']['Debug']['level'] = 0
         mh._apply_config()
         res = mh._debug_level

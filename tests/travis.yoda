@@ -3,7 +3,6 @@ hydratk/core/corehead/01_methods_ut.jedi
 hydratk/core/corehead/02_methods_ut.jedi
 hydratk/core/corehead/03_methods_ut.jedi
 hydratk/core/dbconfig
-hydratk/core/debugger
 hydratk/core/event
 hydratk/core/extension
 hydratk/core/hookhead
@@ -17,11 +16,13 @@ hydratk/extensions/benchmark
 hydratk/lib/array
 hydratk/lib/console
 hydratk/lib/cycles
-hydratk/lib/data
+hydratk/lib/data/share
 hydratk/lib/debugging
 hydratk/lib/dynamic
 hydratk/lib/exceptions
 hydratk/lib/number
 hydratk/lib/string
-hydratk/lib/system
+hydratk/lib/system/auth
+hydratk/lib/system/fs
+hydratk/lib/system/utils
 hydratk/lib/translation

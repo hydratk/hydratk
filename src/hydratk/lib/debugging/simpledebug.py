@@ -25,7 +25,7 @@ def dmsg(msg, level=1, channel=const.DEBUG_CHANNEL):
 
     """
 
-    from hydratk.core.masterhead.MasterHead import htk
+    from hydratk.core.masterhead import htk
     if htk.debug is True:
         if htk.debug_level is not None and level > htk.debug_level:                 
             return False

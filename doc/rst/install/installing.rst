@@ -193,7 +193,7 @@ See installation example for Linux based on Debian distribution, Python 2.7.
      
 Application installs following (paths depend on your OS configuration)
 
-* commands htk, htkprof, htkuninstall in /usr/local/bin
+* commands htk, htkuninstall in /usr/local/bin
 * modules in /usr/local/lib/python2.7/dist-packages/hydratk-0.5.0-py2.7egg
 * configuration file in /etc/hydratk/hydratk.conf
 * application folder in /var/local/hydratk        

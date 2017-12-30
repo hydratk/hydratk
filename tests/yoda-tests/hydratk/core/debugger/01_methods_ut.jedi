@@ -26,7 +26,7 @@ Test-Scenario-1:
       Validate: |
         this.test_result = str(res)
         exp = {'file': '<string>', 'line': 2, 'module': '<string>', 
-               'func': '<module>', 'call_path': '__main__'}
+               'class': None, 'func': '<module>', 'call_path': '__main__'}
         assert (res == exp), 'fromhere = {0}'.format(exp)
         
     Test-Condition-2:
@@ -43,7 +43,7 @@ Test-Scenario-1:
         assert (res['line'] > 0), 'fromhere[line] > 0'
         del res['line']      
         exp = {'file': 'testengine.py', 'module': 'testengine', 
-               'func': 'execute', 'call_path': 'hydratk.extensions.yoda.testengine'}
+               'class': 'CodeStack', 'func': 'execute', 'call_path': 'hydratk.extensions.yoda.testengine'}
         assert (res == exp), 'fromhere = {0}'.format(exp) 
         
 Test-Scenario-2:

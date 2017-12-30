@@ -91,7 +91,7 @@ Test-Scenario-2:
       Test: | 
         hlp.events = []
         mh = MasterHead.get_head()
-        tup = type, value, tb = 'xxx', 'yyy', None
+        tup = type, value, tb = ValueError, 'yyy', None
         hlp.reg_ev_hook(mh, 'htk_on_uncaught_exception')
         mh.exception_handler(*tup)        
          
@@ -112,7 +112,7 @@ Test-Scenario-2:
       
       Test: |
         ex = False
-        mh.exception_handler(type, value, 'xxx')
+        mh.exception_handler(type, value, None)
         ex = True
 
       Validate: |

@@ -166,7 +166,7 @@ Test-Scenario-4:
       
         path = 'hydratk.extensions.benchmark'
         mh._import_extension_messages(path)
-        res = ('benchmark_test_msg' in mh._trn._messages.keys())
+        res = ('benchmark_start' in mh._trn._messages.keys())
       
       Validate: |
         this.test_result = res

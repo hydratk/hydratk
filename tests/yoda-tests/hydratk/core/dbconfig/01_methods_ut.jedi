@@ -167,7 +167,7 @@ Test-Scenario-4:
       
       Validate: |        
         res = this.test_result = len(db_cfg)
-        exp_len = len(db.cfg2db(file_cfg))-1
+        exp_len = len(db.cfg2db(file_cfg))-2
         assert (res == exp_len), 'db2cfg = {0} records'.format(exp_len)   
         
     Test-Condition-2: 

@@ -15,6 +15,7 @@ class TestHead(MasterHead):
         self.reset()
 
         self._reg_self_fn_hooks()
+        self._core_base_init()
         self.run_fn_hook('h_bootstrap')
 
     def reset(self):

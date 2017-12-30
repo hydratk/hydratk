@@ -83,6 +83,12 @@ class PropertyHead(object):
         return self._debug_level
 
     @property
+    def debug_channel(self):
+        """debug_channel property getter"""
+
+        return self._debug_channel
+
+    @property
     def ext_cfg(self):
         """extensions config property getter"""
 

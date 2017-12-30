@@ -103,31 +103,4 @@ Test-Scenario-2:
         out = this.test_result = system('htk')
       
       Validate: |
-        assert (out == 0), 'exit = 0'     
-      
-Test-Scenario-3:
-  Id: ts_03
-  Path: hydratk/core/bootstrapper/01_methods_ut.jedi
-  Name: ts_run_app_prof
-  Desc: Test method run_app_prof
-  Author: Petr Rasek <bowman@hydratk.org>
-  Version: 0.1
-  
-  Pre-Req: |
-    from os import system
-  
-  Test-Case-1:
-    Id: tc_01
-    Name: tc_run_cmd
-    Desc: Run command
-    
-    Test-Condition-1: 
-      Id: tco_01
-      Name: tco_htkprof
-      Desc: Run command htkprof
-    
-      Test: |
-        out = this.test_result = system('htkprof')
-      
-      Validate: |
-        assert (out == 0), 'exit = 0'            
+        assert (out == 0), 'exit = 0'             

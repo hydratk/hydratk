@@ -313,7 +313,7 @@ Test-Scenario-8:
         fn, cb = 'test', loop
         th.register_async_fn(fn, cb)
         id = th.async_ext_fn(('BenchMark','loop'), fn) 
-        msg = {'data': {'ticket_id': id, 'callback': {'ext_name':'BenchMark', 'method':'_print_test_info', 'args':{}, 'kwargs':{}}}}       
+        msg = {'data': {'ticket_id': id, 'callback': {'ext_name':'BenchMark', 'method':'_init_extension', 'args':{}, 'kwargs':{}}}}       
         res = th._msg_async_ext_fn(msg)
         
       Validate: |

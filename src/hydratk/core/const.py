@@ -15,7 +15,7 @@ from hydratk.lib.system import config
 APP_NAME = "HydraTK"
 APP_VERSION = "0.6.0dev1"
 APP_REVISION = ""
-APP_DEVEL_YEAR = "2009 - 2017"
+APP_DEVEL_YEAR = "2009 - 2018"
 APP_AUTHORS = "Petr Czaderna <pc@hydratk.org>, HydraTK team <team@hydratk.org>"
 CP_STRING = "(c) " + APP_DEVEL_YEAR + " " + APP_AUTHORS
 
