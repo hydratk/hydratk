@@ -9,7 +9,6 @@
 """
 
 import pprint
-from __builtin__ import property
 
 
 class Event(object):
