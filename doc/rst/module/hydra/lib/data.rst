@@ -72,3 +72,10 @@ Method resets _data to empty dictionary.
 Class **Pile**
 
 Empty class.
+
+shmm
+^^^^
+
+Module provides shared memory tools for parallel processing.
+
+* get_ctype_char_array - create synchronized char array

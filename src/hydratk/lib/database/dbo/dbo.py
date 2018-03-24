@@ -10,6 +10,7 @@
 
 import importlib
 from pkgutil import find_loader
+from hydratk.core.masterhead import MasterHead
 
 dbo_drivers = {
     'mssql': 'hydratk.lib.database.dbo.drivers.mssql',
@@ -46,16 +47,17 @@ class DBO(object):
 
         """
 
+        mh = MasterHead.get_head()
         driver_name = self._get_driver_from_dsn(dsn)
         if driver_name in dbo_drivers:
             if (driver_name != 'sqlite' and find_loader('hydratk.lib.network') == None):
-                raise DBOException('Library hydratk-lib-network not installed')
+                raise DBOException(mh._trn.msg('htk_lib_now_installed', 'hydratk-lib-network'))
             self._driver_name = driver_name
             dbo_driver_mod_str = '{0}.driver'.format(dbo_drivers[driver_name])
             dbo_driver_mod = self._import_dbo_driver(dbo_driver_mod_str)
 
         else:
-            raise DBOException('Not existing driver: {0}'.format(driver_name))
+            raise DBOException(mh._trn.msg('htk_lib_unknown_driver', driver_name))
 
         try:
             self._dbo_driver = dbo_driver_mod.DBODriver(
@@ -94,9 +96,6 @@ class DBO(object):
         """
 
         return dsn.split(':')[0]
-
-    def get_available_drivers(self):
-        pass
 
     def __getattr__(self, name):
         """Method gets attribute

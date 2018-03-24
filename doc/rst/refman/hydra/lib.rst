@@ -24,6 +24,18 @@ array
 .. automodule:: hydratk.lib.array.operation
    :member-order: bysource    
 
+.. _refman_hydra_lib_compat:
+
+compat
+^^^^^^
+
+.. _refman_hydra_lib_compat_contentfix:
+
+* contentfix
+
+.. automodule:: hydratk.lib.compat.contentfix
+   :member-order: bysource 
+
 .. _refman_hydra_lib_console:
 
 console
@@ -193,7 +205,31 @@ number
 * conversion
 
 .. automodule:: hydratk.lib.number.conversion
-   :member-order: bysource  
+   :member-order: bysource
+   
+.. _refman_hydra_lib_parser:
+
+parser
+^^^^^^
+
+.. _refman_hydra_lib_parser_smp:
+
+* smp
+
+.. automodule:: hydratk.lib.parser.smp
+   :member-order: bysource
+   
+.. _refman_hydra_lib_profiling:
+
+profiling
+^^^^^^^^^
+
+.. _refman_hydra_lib_profiling_profiler:
+
+* profiler
+
+.. automodule:: hydratk.lib.profiling.profiler
+   :member-order: bysource             
 
 .. _refman_hydra_lib_string:
 

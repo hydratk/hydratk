@@ -3,7 +3,7 @@
 
 .. module:: core.confighooks
    :platform: Unix
-   :synopsis: HydraTK core module
+   :synopsis: Macro parser config hooks
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
@@ -17,16 +17,27 @@ config_var_regexp = {
                     }
     
 class ConfigHooks:
+    """Class ConfigHooks
+    """
 
     @staticmethod
-    def colorize(text,color):                
+    def colorize(text, color):
+        """Method colorizes text in console
+
+        Args:
+           text (str): text content
+           color (str): RGB color code
+
+        Returns:
+           str
+
+        """
+
         rgb_color = color.replace('#', '')
         return colorize(text, int(rgb_color, 16))
 
-
-
 hook_list = {
-    'date'        : datetime.now().strftime,    
+   'date'         : datetime.now().strftime,
    'colorize'     : ConfigHooks.colorize,
    'htk_root_dir' : config.HTK_ROOT_DIR,
    'htk_etc_dir'  : config.HTK_ETC_DIR,

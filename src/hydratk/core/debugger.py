@@ -13,8 +13,6 @@ import os
 import multiprocessing
 import inspect
 import traceback
-import pprint
-import time
 from datetime import datetime
 from hydratk.core import const, event
 from xtermcolor import colorize
@@ -84,6 +82,8 @@ class Debugger(object):
      
     @property
     def dbg_msg_format_vars(self):
+        """ dbg_msg_format_vars property getter """
+
         return self._dbg_msg_format_vars
              
     def dbg_class_has_method(self, class_type, method_name):
@@ -98,12 +98,14 @@ class Debugger(object):
         Returns:
            type: class type - if class has implemented selected method_name        
            bool: False
+
         """        
+
         result = False
         if type(class_type).__name__ not in('type', 'tuple'): 
-            raise TypeError("Invalid input type for class_type")
+            raise TypeError('Invalid input type for class_type')
         if type(method_name).__name__ not in ('str') or method_name == '':
-            raise TypeError("Invalid input type for method_name")
+            raise TypeError('Invalid input type for method_name')
          
         if type(class_type).__name__ == 'tuple':            
             for cl in class_type:                               
@@ -427,10 +429,7 @@ class Debugger(object):
                 msg_text = colorize(msg_text, int(rgb_color, 16))
 
         return msg_text            
-            
-    
+
     def _ec_parent_tell_signal(self, oevent):
-        #current = multiprocessing.current_process()
-        #print('somebody wants to kill me'+"\n")
+
         pass
-    '''notify Observer about the received signal '''

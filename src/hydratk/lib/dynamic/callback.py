@@ -8,13 +8,14 @@
 
 """
 
-import sys
-
 try:
     import cPickle as pickle
 except ImportError:
     import pickle
 
+from hydratk.core.masterhead import MasterHead
+
+mh = MasterHead.get_head()
 
 class CallBackProcessor(object):
     """Class CallBackProcessor
@@ -65,16 +66,14 @@ class CallBackProcessor(object):
                 result = cbh.cb_run(self._current_cb)
             else:
                 if self._current_cb.async == True:
-                    raise Exception(
-                        "Asynchrounous callback handler not set, callback will be not processed")
+                    raise Exception(mh._trn.msg('htk_lib_cb_handler_not_set', 'Asynchronous'))
                 else:
-                    raise Exception(
-                        "Synchrounous callback handler not set, callback will be not processed")
+                    raise Exception(mh._trn.msg('htk_lib_cb_handler_not_set', 'Synchronous'))
 
             self._current_cb = None
             return result
         else:
-            raise Exception("There's nothing to process")
+            raise Exception(mh._trn.msg('htk_lib_nothing_to_process'))
 
     def _wrap_fn_dproxy(self, *args, **kwargs):
         """Method wraps functionality via proxy
@@ -98,8 +97,7 @@ class CallBackProcessor(object):
                 self._current_cb.kwargs = kwargs
                 ah.cb_run(self._current_cb)
             else:
-                raise Exception(
-                    "Asynchrounous callback handler not set, callback will be not processed")
+                raise Exception(mh._trn.msg('htk_lib_cb_handler_not_set', 'Asynchronous'))
         self._current_cb = None
 
     def __getattr__(self, fn_id):
@@ -124,11 +122,7 @@ class CallBackProcessor(object):
             self._current_cb = self._cb_dproxy[fn_id]
             return self._wrap_fn
 
-        raise NameError("{0} is not defined".format(fn_id))
-
-
-class CallBackTree(object):
-    pass
+        raise NameError(mh._trn.msg('htk_lib_undefined_fn', fn_id))
 
 
 class CallBack(object):
@@ -159,7 +153,7 @@ class CallBack(object):
         """
 
         if fn_id is None or fn_id == '':
-            raise TypeError("fn_id: expected nonempty string")
+            raise TypeError(mh._trn.msg('htk_invalid_data', 'fn_id', 'non-empty string'))
         self._fn_id = fn_id
         if type(callback).__name__ == 'tuple':
             obj, fn_name = callback
@@ -168,8 +162,7 @@ class CallBack(object):
         elif type(callback).__name__ in ('str', 'function'):
             self.set_fn(callback)
         else:
-            raise TypeError("callback: expected types: tuple,str,function, got {0}".format(
-                type(callback).__name__))
+            raise TypeError(mh._trn.msg('htk_invalid_data', 'callback', 'tuple|str|function'))
 
     @property
     def args(self):
@@ -226,7 +219,7 @@ class CallBack(object):
         if state in (True, False):
             self._shared = state
         else:
-            raise TypeError("shared state: expected boolean")
+            raise TypeError(mh._trn.msg('htk_invalid_data', 'state', 'bool'))
 
     @property
     def async(self):
@@ -241,7 +234,7 @@ class CallBack(object):
         if state in (True, False):
             self._async = state
         else:
-            raise TypeError("async state: expected boolean")
+            raise TypeError(mh._trn.msg('htk_invalid_data', 'state', 'bool'))
 
     def set_fn(self, fn_name):
         """Method sets functionality
@@ -258,7 +251,7 @@ class CallBack(object):
         """
 
         if type(fn_name).__name__ not in ('str', 'function'):
-            raise TypeError("fn_name: str expected")
+            raise TypeError(mh._trn.msg('htk_invalid_data', 'fn_name', 'str'))
         self._fn = fn_name if type(
             fn_name).__name__ == 'str' else pickle.dumps(fn_name)
 
@@ -360,7 +353,7 @@ class CallBackManager(object):
         """
 
         if type(cb_dict).__name__ != 'dict':
-            raise TypeError("cb_dict: dict expected")
+            raise TypeError(mh._trn.msg('htk_invalid_data', 'cb_dict', 'dict'))
         self._cb_dict = cb_dict
 
     def set_cb_dproxy(self, cb_dproxy):
@@ -380,7 +373,7 @@ class CallBackManager(object):
         if type(cb_dproxy).__name__ == 'DictProxy':
             self._cb_dproxy = cb_dproxy
         else:
-            raise TypeError("cb_dproxy: DictProxy object expected")
+            raise TypeError(mh._trn.msg('htk_invalid_data', 'cb_proxy', 'DictProxy'))
 
     def create_cb_dproxy(self):
         """Method creates callback dictionary proxy
@@ -425,9 +418,9 @@ class CallBackManager(object):
             if fn_id in self._cb_dproxy:
                 return self._cb_dproxy[fn_id]
 
-            raise KeyError("Undefined callback id: {0}".format(fn_id))
+            raise KeyError(mh._trn.msg('htk_lib_undefined_callback', fn_id))
         else:
-            raise TypeError("fn_id: expected nonempty string")
+            raise TypeError(mh._trn.msg('htk_invalid_data', 'fn_id', 'non-empty string'))
 
     def reg_cb(self, fn_id, callback, options=None):
         """Method registers callback
@@ -447,7 +440,7 @@ class CallBackManager(object):
         """
 
         if fn_id is None or fn_id == '':
-            raise TypeError("fn_id: expected nonempty string")
+            raise TypeError(mh._trn.msg('htk_invalid_data', 'fn_id', 'non-empty string'))
         rcb = CallBack(fn_id, callback)
         shared = False
         async = False
@@ -457,23 +450,18 @@ class CallBackManager(object):
                 if options['shared'] in (True, False):
                     shared = options['shared']
                 else:
-                    raise ValueError("options['shared'] expected boolean, got {0}". format(
-                        type(options['shared']).__name__))
+                    raise ValueError(mh._trn.msg('htk_invalid_data', 'options[shared]', 'bool'))
             if 'async' in options:
                 if options['async'] in (True, False):
                     async = options['async']
                 else:
-                    raise ValueError("options['async'] expected boolean, got {0}". format(
-                        type(options['async']).__name__))
+                    raise ValueError(mh._trn.msg('htk_invalid_data', 'options[async]', 'bool'))
         rcb.shared = shared
         rcb.async = async
         if shared == False:
             self._cb_dict[fn_id] = rcb
         else:
             self._cb_dproxy[fn_id] = rcb
-
-    def add_cb(self):
-        pass
 
     def update_cb(self, cb_obj):
         """Method updates callback
@@ -512,13 +500,9 @@ class SyncCallBackHandler(object):
 
         """
 
-        print("sync: running request {0}".format(
-            cb_obj.fn_id), cb_obj.args, cb_obj.kwargs)
+        print(mh._trn.msg('htk_lib_running_request', 'sync', cb_obj.fn_id), cb_obj.args, cb_obj.kwargs)
         if type(cb_obj.fn).__name__ == 'function':
             return cb_obj.fn(*cb_obj.args, **cb_obj.kwargs)
-
-    def cb_completed(self, req_id):
-        pass
 
 
 class AsyncCallBackHandler(object):
@@ -536,8 +520,4 @@ class AsyncCallBackHandler(object):
 
         """
 
-        print("async: running request {0}".format(
-            cb_obj.fn_id), cb_obj.args, cb_obj.kwargs)
-
-    def cb_completed(self, req_id):
-        pass
+        print(mh._trn.msg('htk_lib_running_request', 'async', cb_obj.fn_id), cb_obj.args, cb_obj.kwargs)

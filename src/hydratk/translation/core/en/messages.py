@@ -2,7 +2,7 @@
 
 """This code is a part of Hydra Toolkit
 
-.. module:: hydratk.translation.en.messages
+.. module:: hydratk.translation.core.en.messages
    :platform: Unix
    :synopsis: English language translation for global messages
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
@@ -42,6 +42,10 @@ msg = {
     'htk_opt_ignore': ["Option setting '{0}' was ignored, because of invalid value: '{0}'"],
     'htk_conf_opt_missing': ["Config error, section: '{0}', option: '{1}' is not defined"],
     'htk_conf_opt_val_err': ["Config error, section: '{0}', option: '{1}' incorrect value"],
+    'htk_conf_var_missing': ["Config: {0}.{1} doesn't contain variable {2}"],
+    'htk_conf_var_invalid': ["Invalid config variable {0}"],
+    'htk_conf_section_missing': ["Config group: {0} doesn't contain section {1}"],
+    'htk_conf_group_missing': ["Config doesn't contain group {0}"],
     'htk_debug_enabled': ["Starting application in debug mode"],
     'htk_lang_set': ["Language set to '{0}'"],
     'htk_run_mode_set': ["Run mode set to '{0} ({1})'"],
@@ -130,9 +134,11 @@ msg = {
     'htk_extension_wrong_cfg_file': ["Found not properly configured extension {0}, file {1} is not valid"],
     'htk_extension_wrong_cfg': ["Found not properly configured extension {0}"],
     'htk_help_cmd_def_missing': ["Missing help command {0} definition, languague {1}"],
+    'htk_option_missing': ["Missing option {0} in profile {1}"],
     'htk_option_def_missing': ["Missing option {0} definition, languague {1}"],
     'htk_cworker_process_msg': ["PONG from thread {0}, speed: {1}"],
     'htk_duplicate_extension': ["Extension '{0}' load duplicate"],
+    'htk_undefined_extension': ["Undefined extension name: {0}"],
     'htk_short_opt_registered': ["Short option {0} is already registered for matching"],
     'htk_short_opt_invalid': ["Short option {0} is not valid string"],
     'htk_long_opt_registered': ["Long option {0} is already registered for matching"],
@@ -144,5 +150,41 @@ msg = {
     'htk_app_service_registered': ["Service with name: {0} already registered"],
     'htk_app_service_desc_missing': ["Service description has to be specified"],
     'htk_cb_not_callable': ["Callback parameter must be a callable object"],
-    'htk_app_service_start_failed': ["Failed to start application service {0}"]
+    'htk_cb_not_registered': ["Callback fn_id: {0} is not registered"],
+    'htk_app_service_start_failed': ["Failed to start application service {0}"],
+    'htk_invalid_input_type': ["Invalid input type for {0}"],
+    'htk_invalid_data': ["Invalid {0} specified, {1} is required"],
+    'htk_unknown_attribute': ["Object has no attribute {0}"],
+    'htk_msg_unknown_ticket': ["Ticket id: {0} doesn't exists"],
+    'htk_msg_invalid_ticket': ["Invalid ticket_id: {0}"],
+    'htk_msg_invalid_message': ["Invalid message {0}"],
+    'htk_processing_message': ["Processing message: {0}"],
+    'htk_running_hook': ["Running hook {0}"],
+    'htk_msgq_binding': ["Binding to message queue {0} : socket type {1}"],
+    'htk_msgq_already_active': ["Service queue is active use MESSAGE_QUEUE_ACTION_CONNECT instead"],
+    'htk_msgq_connecting': ["Connecting to message queue {0} : socket type {1}"],
+    'htk_profiler_checking': ["Checking profile option"],
+    'htk_profiler_enabled': ["Profiler enabled, stats will be written to the: {0}"],
+    'htk_profiler_sorting_stats': ["Sorting stats using column(s): {0}"],
+    'htk_profiler_writing_stats': ["Writing profiler stats output to {0}"],
+    'htk_skeleton_wizard': ["This wizard will create HydraTK {0} development skeleton in following {1} steps"],
+    'htk_skeleton_default': ["Hit ENTER for default value, CTRL + C to exit"],
+    'htk_skeleton_dir_req': ["1. Enter the directory, where the {0} structure will be created"],
+    'htk_skeleton_dir_set': ["{0} skeleton directory set to: {1}"],
+    'htk_skeleton_name_req': ["2. Enter the {0} module name, must be one word short unique string"],
+    'htk_skeleton_name_set': ["{0} module name set to: {1}"],
+    'htk_skeleton_desc_req': ["3. Enter the {0} description"],
+    'htk_skeleton_desc_set': ["{0} description set to: {1}"],
+    'htk_skeleton_author_req': ["4. Enter the {0} author name"],
+    'htk_skeleton_author_set': ["{0} author name set to: {1}"],
+    'htk_skeleton_email_req': ["5. Enter the {0} author email"],
+    'htk_skeleton_email_set': ["{0} author email set to: {1}"],
+    'htk_skeleton_license_req': ["6. Select {0} usage and distribution license, currently supported are: BSD"],
+    'htk_skeleton_license_set': ["{0} usage and distribution license set to: {1}"],
+    'htk_skeleton_interrupted': ["\nInterrupted."],
+    'htk_skeleton_completed': ["Completed."],
+    'htk_skeleton_not_created': ["Cannot create {0} skeleton in path {1}"],
+    'htk_skeleton_dir_not_created': ["Cannot create directory {0}"],
+    'htk_skeleton_path_creating': ["Creating path {0}"],
+    'htk_skeleton_file_creating': ["Creating {0} file {1}"]
 }

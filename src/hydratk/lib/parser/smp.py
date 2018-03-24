@@ -7,16 +7,30 @@
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
+
 import re
 
 class MacroParser(object):
     """Class MacroParser
     """
+
+    _mh = None
     _regexp = []
     _hooks = {}
     _default_hook = None
 
     def __init__(self, regexp=None):
+        """Class constructor
+
+        Called when object is initialized
+
+        Args:
+           regexp (list): regexp matches required by add_regexp
+
+        """
+
+        from hydratk.core.masterhead import MasterHead
+
         if regexp == None:
             regexp = [
                       {'regexp' : r'\$\(([^\x28-\x29]+)\)', 'processor' : self._var_processor},                     
@@ -24,7 +38,9 @@ class MacroParser(object):
                      ]
         self.add_regexp(regexp)
 
-    def add_regexp(self, regexp, replace = False, prepend = False):
+        self._mh = MasterHead.get_head()
+
+    def add_regexp(self, regexp, replace=False, prepend=False):
         """Method adds list of regexp matches
         
         Args:
@@ -34,7 +50,8 @@ class MacroParser(object):
         Returns:
            void
 
-        """        
+        """
+
         if type(regexp).__name__ == 'list':
             if replace == True:
                 self._regexp = regexp
@@ -85,15 +102,23 @@ class MacroParser(object):
         elif type(name).__name__ == 'str' and callable(cb):
             self._hooks[name] = cb
             
-        
-
     def set_default_var_hook(self, cb):
+        """Method sets default hook
+
+        Args:
+           cb (callable): callback
+
+        Returns:
+           bool
+
+        """
+
         result = False
         if callable(cb):
             self._default_hook = cb
             result = True
-        return result
 
+        return result
 
     def parse(self, content):
         """Method parses macro string
@@ -102,9 +127,10 @@ class MacroParser(object):
            content (str): macro string
 
         Returns:
-           content (str): parsed string
+           str: parsed string
 
-        """        
+        """
+
         if len(self._regexp) > 0:            
             for regexp in self._regexp:                                
                 while True:
@@ -123,8 +149,11 @@ class MacroParser(object):
         Returns:
            mixed: callback result
                       
-        Raises:  
+        Raises:
+          Exception: Undefined hook
+
         """
+
         mdef = match.group(1).strip()
     
         if mdef in self._hooks:            
@@ -132,7 +161,7 @@ class MacroParser(object):
         elif callable(self._default_hook):
             return self._default_hook(mdef)
         else:
-            raise Exception('Undefined hook')
+            raise Exception(self._mh._trn.msg('htk_lib_undefined_hook'))
 
     def _fn_processor(self, match):
         """Method is processing macro function
@@ -147,6 +176,7 @@ class MacroParser(object):
            Exception: Undefined hook
               
         """
+
         fn = match.group(1).strip()
         args   = []
         kwargs = {}
@@ -168,4 +198,4 @@ class MacroParser(object):
         elif callable(self._default_hook):
             return self._default_hook(*args,**kwargs)
         else:
-            raise Exception('Undefined hook')
+            raise Exception(self._mh._trn.msg('htk_lib_undefined_hook'))

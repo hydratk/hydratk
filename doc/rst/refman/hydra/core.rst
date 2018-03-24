@@ -13,6 +13,14 @@ bootstrapper
 .. automodule:: hydratk.core.bootstrapper
    :member-order: bysource   
 
+.. _refman_hydra_core_confighooks:
+
+confighooks
+^^^^^^^^^^^
+
+.. automodule:: hydratk.core.confighooks
+   :member-order: bysource
+
 .. _refman_hydra_core_corehead:
 
 corehead

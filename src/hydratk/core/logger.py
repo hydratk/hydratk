@@ -10,7 +10,6 @@
 
 import sys
 import os
-import hydratk.lib.system.config as syscfg
 from hydratk.lib.system.fs import file_put_contents
 from hydratk.core import const
 
@@ -96,7 +95,6 @@ class Logger(object):
         self._log_handlers['screen']  = self._log_screen_handler
         self._log_handlers['logfile'] = self._log_file_handler
     
-    
     def _log_init_msg_formaters(self):
         """Method initialize default Logger output formaters
 
@@ -111,7 +109,6 @@ class Logger(object):
         self._log_formaters['error']     = self.dbg_format_msg
         self._log_formaters['warning']   = self.dbg_format_msg
         self._log_formaters['exception'] = self.dbg_format_exception_msg
-        #self._log_formaters['warning']  = self._log_file_handler        
             
     def _log_init_profiles(self):
         """Method loads active Logger profiles from config
@@ -122,16 +119,17 @@ class Logger(object):
         Returns:
            void
 
-        """        
+        """
+
         self._log_profiles = {}  #reset settings        
         for profile_name, profile in self._config['Logger'].items():           
             if profile['enabled'] == 1:                 
                 if 'format' in profile and 'format_cache' in profile and profile['format_cache'] == 1:                      
                     profile['format'] = self._config_mp.parse(profile['format']) #interpreting macros an caching macro results                                    
                 if not self.register_log_output_profile(profile['log_type'], profile):
-                    raise ValueError('Logger failed to register config profile: {0}'.format(profile_name)) 
+                    raise ValueError('Logger failed to register config profile: {0}'.format(profile_name))
     
-        self.dmsg("Initialized logger profiles") 
+        self.dmsg('Initialized logger profiles')
         
     def _log_event(self, ev, *args):
         """Method is transforming event data through the Logger profiles
@@ -143,7 +141,8 @@ class Logger(object):
         Returns:
            bool: result
 
-        """               
+        """
+
         result = False        
         if ev.id in self._log_event2log_type:
             log_type = self._log_event2log_type[ev.id]
@@ -168,12 +167,12 @@ class Logger(object):
         Returns:
            bool: result
 
-        """                     
+        """
+
         msg = self._log_formaters[profile['log_type']](profile, *args)
         if type(msg).__name__ == 'str' and msg != '':
             print(msg)
             sys.stdout.flush()
-
     
     def _log_file_handler(self, profile, *args): 
         """Method is default logfile output handler implementation
@@ -185,7 +184,8 @@ class Logger(object):
         Returns:
            bool: result
 
-        """                             
+        """
+
         if 'log_file' in profile and profile['log_file'] != '':
             log_file = self._config_mp.parse(profile['log_file'])
             log_dir = os.path.dirname(log_file)
@@ -208,9 +208,20 @@ class Logger(object):
         else:
             pass
             #todo warning logfile not configured
-        
-    
-    def log_rotate(self, source, dest, zip=True):        
+
+    def log_rotate(self, source, dest):
+        """Method rotates logfile to compressed archive
+
+        Args:
+           source (str): source path
+           dest (str): destination path
+
+        Returns:
+           void
+
+        """
+
+        import gzip
         os.rename(source, dest)
         f_in = open(dest, 'rb')
         f_out = gzip.open("%s.gz" % dest, 'wb')

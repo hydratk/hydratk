@@ -9,7 +9,7 @@
 """
 
 import time
-
+from hydratk.core.masterhead import MasterHead
 
 def do_until(call, until_call_result, delay=1, until_max_attempts=10, until_duration=None, until_exact_time=None):
     """Function emulates do..until condition loop
@@ -50,20 +50,21 @@ def do_until(call, until_call_result, delay=1, until_max_attempts=10, until_dura
 
 
     """
+
+    mh = MasterHead.get_head()
+
     if type(call).__name__ != 'tuple':
-        raise ValueError('callback: function or tuple expected')
+        raise ValueError(mh._trn.msg('htk_invalid_data', 'callback', 'tuple'))
     if not callable(call[0]):
-        raise ValueError('callback tuple: callable parameter expected')
+        raise ValueError(mh._trn.msg('htk_invalid_data', 'callback tuple', 'callable parameter'))
     if type(delay).__name__ not in ('int', 'float', 'NoneType'):
-        raise ValueError('delay: integer,float or None expected')
+        raise ValueError(mh._trn.msg('htk_invalid_data', 'delay', 'int|float|None'))
     if type(until_max_attempts).__name__ not in ('int', 'NoneType'):
-        raise ValueError('delay: integer or None expected')
+        raise ValueError(mh._trn.msg('htk_invalid_data', 'until_max_attempts', 'int|None'))
     if type(until_duration).__name__ not in ('int', 'float', 'NoneType'):
-        raise ValueError(
-            'until_duration: integer, float or None expected, got {0}'.format(until_duration))
+        raise ValueError(mh._trn.msg('htk_invalid_data', 'until_duration', 'int|float|None'))
     if type(until_exact_time).__name__ not in ('int', 'float', 'NoneType'):
-        raise ValueError(
-            'until_exact_time: integer, float or None expected, got {0}'.format(until_exact_time))
+        raise ValueError(mh._trn.msg('htk_invalid_data', 'until_exact_time', 'int|float|None'))
     if until_duration is not None:
         till_time = time.time() + until_duration
     attempts = 1

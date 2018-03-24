@@ -10,7 +10,6 @@
 
 import argparse
 
-
 class CmdOptParserUndefined(Exception):
     pass
 
@@ -64,17 +63,16 @@ class CmdOptParser(argparse.ArgumentParser):
 
         """
 
+        from hydratk.core.masterhead import MasterHead
+        mh = MasterHead.get_head()
+
         if group_name is not None:
             if group_name in self._options:
                 self._opt_group = group_name
             else:
-                raise CmdOptParserUndefined(
-                    'Undefined group {0}'.format(group_name))
+                raise CmdOptParserUndefined(mh._trn.msg('htk_lib_undefined_group', group_name))
         else:
-            raise TypeError('Group name cannot be NoneType')
-
-    def add_opt_groups(self, group_list):
-        pass
+            raise TypeError(mh._trn.msg('htk_invalid_data', 'group_name', 'not None'))
 
     def add_opt_group(self, group_name):
         """Method adds new option group
@@ -90,11 +88,14 @@ class CmdOptParser(argparse.ArgumentParser):
 
         """
 
+        from hydratk.core.masterhead import MasterHead
+        mh = MasterHead.get_head()
+
         if group_name is not None:
             if group_name not in self._options:
                 self._options[group_name] = {}
         else:
-            raise TypeError('Group name cannot be NoneType')
+            raise TypeError(mh._trn.msg('htk_invalid_data', 'group_name', 'not None'))
 
     def _add_opt(self, option, d_option=None, has_value=False, allow_multiple=False, opt_group='default'):
         """Method adds new option
@@ -115,6 +116,9 @@ class CmdOptParser(argparse.ArgumentParser):
 
         """
 
+        from hydratk.core.masterhead import MasterHead
+        mh = MasterHead.get_head()
+
         if opt_group not in self._options:
             self.add_opt_group(opt_group)
         if type(option).__name__ == 'list':
@@ -125,8 +129,7 @@ class CmdOptParser(argparse.ArgumentParser):
                     self._options[opt_group][kopt] = opt
                 else:
                     if self._silent == False:
-                        raise CmdOptParserError(
-                            'Option add duplicate {0}'.format(option))
+                        raise CmdOptParserError(mh._trn.msg('htk_lib_duplicate_option', option))
             result = True
 
         elif type(option).__name__ == 'str':
@@ -148,10 +151,9 @@ class CmdOptParser(argparse.ArgumentParser):
 
             else:
                 if self._silent == False:
-                    raise CmdOptParserError(
-                        'Option add duplicate {0}'.format(option))
+                    raise CmdOptParserError(mh._trn.msg('htk_lib_duplicate_option', option))
         else:
-            raise TypeError('Unsupported option type {0}'.format(type(option)))
+            raise TypeError(mh._trn.msg('htk_invalid_data', 'option', 'str|list'))
         return result
 
     def add_opt(self, option, d_option=None, has_value=False, allow_multiple=False, opt_group='default'):
@@ -226,9 +228,11 @@ class CmdOptParser(argparse.ArgumentParser):
 
         """
 
+        from hydratk.core.masterhead import MasterHead
+        mh = MasterHead.get_head()
+
         if opt_group not in self._options:
-            raise CmdOptParserUndefined(
-                'Undefined group {0}'.format(opt_group))
+            raise CmdOptParserUndefined(mh._trn.msg('htk_lib_undefined_group', opt_group))
         for opt_name, opt_args in self._options[opt_group].items():
             if (opt_name not in ['-h', '-v']):  # conflict with ArgumentParser
                 self.add_argument(opt_name, **opt_args)

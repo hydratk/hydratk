@@ -17,12 +17,6 @@ HS = chr(27) + chr(91) + "1m"
 US = chr(27) + chr(91) + "4m"
 EOS = chr(27) + chr(91) + "0m"
 
-
-def rprint(data):
-    sys.stdout.write(data)
-    sys.stdout.flush()
-
-
 class CommandlineTool():
     """Class CommandLineTool
     """
@@ -55,8 +49,7 @@ class CommandlineTool():
         if isinstance(translator, Translator):
             CommandlineTool._trn = translator
         else:
-            raise ValueError(
-                'translator must be a valid instance of hydratk.lib.translation.translator.Translator class')
+            raise ValueError("translator must be Translator instance")
 
     @staticmethod
     def set_possible_commands(commands):
@@ -234,8 +227,7 @@ class CommandlineTool():
         """
 
         if CommandlineTool._parser == None:
-            raise cmdoptparser.CmdOptParserError(
-                'Commandline needs to be parsed first')
+            raise cmdoptparser.CmdOptParserError(CommandlineTool._trn.msg('htk_lib_commandline_not_parsed'))
         opt_value = CommandlineTool._parser.get_opt(opt)
         if opt_value is None:
             opt_value = False
@@ -265,7 +257,7 @@ class CommandlineTool():
         result += "Syntax: " + sys.argv[0] + have_options + have_commands + \
             "\n" if CommandlineTool._trn == None else CommandlineTool._trn.msg(
                 'htk_help_syntax', cmd) + "\n"
-        result += "For list of all available commands and options type {h}" + cmd + \
+        result += CommandlineTool._trn.msg('htk_lib_short_help') + " {h}" + cmd + \
             " help{e}" if CommandlineTool._trn == None else CommandlineTool._trn.msg(
                 'htk_help_on_help', cmd)
 
@@ -285,7 +277,6 @@ class CommandlineTool():
 
         """
 
-        import pprint
         result = ''
         result += CommandlineTool._title + "\n"
         result += CommandlineTool._cp_string + "\n"
@@ -311,7 +302,6 @@ class CommandlineTool():
                     cmd_options = CommandlineTool.get_command_options_desc(cmd)
 
                     if len(cmd_options) > 0:
-                        # pprint.pprint(cmd_options)
                         result += "      Options:\n" if CommandlineTool._trn == None else "      " + \
                             CommandlineTool._trn.msg('htk_help_options') + "\n"
                         for cmd_opt in cmd_options:

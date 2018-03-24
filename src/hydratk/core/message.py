@@ -82,10 +82,13 @@ class FnCallBackMsg(Message):
 
         """
 
+        from hydratk.core.masterhead import MasterHead
+        mh = MasterHead.get_head()
+
         if callable(callback):
             self._callback = callback
         else:
-            raise TypeError('Callable object required')
+            raise TypeError(mh._trn.msg('htk_cb_not_callable'))
 
     def set_args(self, *args, **kwargs):
         """Method sets arguments

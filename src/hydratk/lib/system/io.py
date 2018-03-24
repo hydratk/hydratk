@@ -7,8 +7,8 @@
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
-import sys
 
+import sys
 
 stdout_flush = True
 emulate_print = True
@@ -24,6 +24,7 @@ def cprint(data):
        void
 
     """
+
     from hydratk.core.masterhead import MasterHead  
 
     _mh = MasterHead.get_head()

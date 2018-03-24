@@ -124,6 +124,14 @@ Method parses extension configuration file and merges it with current in-memory 
 
 Method adds new configuration items to current configuration.
 
+* config_var_default_hook
+
+Method calls macro hook.
+
+* config_var_default_processor
+
+Method is processing config variable definition from macro processor.
+
 * _load_base_config
 
 Method parses htk configuration and sets _config_file.

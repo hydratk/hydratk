@@ -18,6 +18,7 @@ def shell_exec(command, get_output = False):
        int command return code or tuple (return_code, stout, stderr)
 
     """    
+
     from subprocess import Popen, PIPE
     p = Popen(command , shell=True, stdout=PIPE, stderr=PIPE)
     out, err = p.communicate()    

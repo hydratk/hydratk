@@ -12,10 +12,16 @@ import codecs
 
 
 def slash_escape(err):
-    """ codecs error handler. err is UnicodeDecode instance. return
-    a tuple with a replacement for the unencodable part of the input
-    and a position where encoding should continue"""
-    # print err, dir(err), err.start, err.end, err.object[:err.start]
+    """Function escapes undecoded part of unicode data, codec error handler
+
+    Args:
+       err (obj): UnicodeDecode instance
+
+    Returns:
+       tuple: str (undecoded part), int (position where encoding should continue)
+
+    """
+
     thebyte = err.object[err.start:err.end]
     repl = u'\\x' + hex(ord(thebyte))[2:]
     return (repl, err.end)

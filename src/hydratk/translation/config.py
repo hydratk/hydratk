@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 packages_map = {
+    'hydratk.lib': 'hydratk.translation.lib',
     'hydratk.lib.network.dbi.client': 'hydratk.translation.lib.network.dbi.client',
     'hydratk.lib.network.email.client': 'hydratk.translation.lib.network.email.client',
     'hydratk.lib.network.ftp.client': 'hydratk.translation.lib.network.ftp.client',
@@ -13,5 +14,6 @@ packages_map = {
     'hydratk.lib.network.soap.client': 'hydratk.translation.lib.network.soap.client',
     'hydratk.lib.network.term.client': 'hydratk.translation.lib.network.term.client',
     'hydratk.lib.bridge.java': 'hydratk.translation.lib.bridge.java',
-    'hydratk.lib.bridge.selen': 'hydratk.translation.lib.bridge.selen'
+    'hydratk.lib.bridge.selen': 'hydratk.translation.lib.bridge.selen',
+    'hydratk.lib.data.loader': 'hydratk.translation.lib.data.loader'
 }

@@ -25,7 +25,6 @@ def mreplace(text, dic):
 
     """
 
-    import re
     # For each match, look-up corresponding value in dictionary
     regex = re.compile("(%s)" % "|".join(map(re.escape, dic.keys())))
     return regex.sub(lambda mo: str(dic[mo.string[mo.start():mo.end()]]), text)

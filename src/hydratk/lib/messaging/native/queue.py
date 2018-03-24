@@ -11,6 +11,7 @@
 from pyx.messaging import queue
 from multiprocessing import Queue
 from multiprocessing.managers import SyncManager
+from hydratk.core.masterhead import MasterHead
 
 
 class Queue():
@@ -21,6 +22,7 @@ class Queue():
     __manager = None
     __address = None
     __authkey = None
+    _mh = None
 
     def __init__(self, qtype, address, authkey=''):
         """Class constructor
@@ -37,10 +39,12 @@ class Queue():
 
         """
 
+        self._mh = MasterHead.get_head()
+
         if type in (queue.QUEUE_TYPE_SERVER, queue.QUEUE_TYPE_CLIENT):
             self.__type = qtype
         else:
-            raise ValueError('Invalid Queue type')
+            raise ValueError(self._mh._trn.msg('htk_lib_queue_invalid_type'))
 
         ''' Checking for address format AF_INET '''
         if address.find(':') > 0:
@@ -64,8 +68,7 @@ class Queue():
         """
 
         if self.__type != queue.QUEUE_TYPE_SERVER:
-            raise ValueError(
-                'This operation cannot be done on this queue type')
+            raise ValueError(self._mh._trn.msg('htk_lib_queue_invalid_operation'))
 
         q = Queue()
         SyncManager.register('get_queue', callable=lambda: q)
@@ -100,8 +103,7 @@ class Queue():
         """
 
         if self.__type != queue.QUEUE_TYPE_CLIENT:
-            raise ValueError(
-                'This operation cannot be done on this queue type')
+            raise ValueError(self._mh._trn.msg('htk_lib_queue_invalid_operation'))
 
         q = Queue()
         SyncManager.register('get_queue', callable=lambda: q)

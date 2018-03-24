@@ -9,10 +9,12 @@
 """
 
 from pyx.system.utils import Utils
+from hydratk.core.masterhead import MasterHead
 
 QUEUE_TYPE_SERVER = 1
 QUEUE_TYPE_CLIENT = 2
 
+mh = MasterHead.get_head()
 
 class Queue():
     """Class Queue
@@ -39,6 +41,8 @@ class Queue():
 
         """
 
+        self._mh = MasterHead.get_head()
+
         if Queue.is_available(qdriver):
             drv_call = 'pyx.messaging.' + qdriver + 'queue.Queue(*args)'
             q = None
@@ -47,8 +51,7 @@ class Queue():
             self.__qdriver = qdriver
             self.__qobj = q
         else:
-            raise ValueError(qdriver + ' queue is not available, it requires module ' +
-                             Queue.__impl_q[qdriver] + ' to be loaded first')
+            raise ValueError(mh._trn.msg('htk_lib_queue_not_loaded', qdriver, Queue.__impl_q[qdriver]))
 
     @staticmethod
     def is_available(qdriver):
@@ -69,5 +72,5 @@ class Queue():
             result = True if Utils.module_loaded(
                 Queue.__impl_q[qdriver]) else False
         else:
-            raise ValueError('Queue type: ' + qdriver + ' is not supported')
+            raise ValueError(mh._trn.msg('htk_lib_queue_not_supported', qdriver))
         return result

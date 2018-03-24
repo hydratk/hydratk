@@ -10,14 +10,9 @@
 """
 
 from hydratk.lib.string.operation import str_split
-from hydratk.lib.system.fs import file_get_contents
 import time
-import math
-import datetime as dt
 import json
 import sys
-import random
-import pprint
 import collections
 import hashlib
 from codecs import encode
@@ -121,10 +116,6 @@ class FirePot(object):
         """
 
         FirePot._items = []
-
-    @staticmethod
-    def push_item(item):
-        pass
 
     @staticmethod
     def get_headers():
