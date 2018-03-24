@@ -5,6 +5,13 @@ compat
 
 This sections contains module documentation of compat modules.
 
+contentfix
+^^^^^^^^^^
+
+Module provides methods for Python compatibility problems.
+
+* slash_escape - escaping undecoded unicode data
+
 types
 ^^^^^
 

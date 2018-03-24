@@ -313,12 +313,12 @@ Type command htk -d 1 start and see debug log.
      [17/11/2016 16:13:30.531] Debug(1): hydratk.core.corehead:_check_cw_activity:0: Checking live status on thread: 4, last activity before: 0.0701160430908
         
 Upgrade
-=======
+^^^^^^^
 
 Use same procedure as for installation. Use command option --upgrade for pip, easy_install, --force for setup.py.
 If configuration file differs from default settings the file is backuped (extension _old) and replaced by default. Adapt the configuration if needed.
 
 Uninstall
-=========    
+^^^^^^^^^   
 
 Run command htkuninstall. Use option -y if you want to uninstall also dependent Python modules (for advanced user).    

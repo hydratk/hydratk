@@ -10,19 +10,12 @@
 
 import sys
 import os
-import errno
 import signal
 import time
 import multiprocessing
-import pprint
-
-import inspect
-import imp
-
 import traceback
 import yaml
 import operator
-import threading
 
 from hydratk.lib.exceptions.inputerror import InputError
 
@@ -42,26 +35,10 @@ from hydratk.core.servicehead import ServiceHead
 from hydratk.core import const
 from hydratk.core import commandopt
 from hydratk.core import event
-from hydratk.core import events
-from hydratk.core import message
-from hydratk.core import messagerouter
-from hydratk.core.eventhandler import EventHandler
-from hydratk.core.extension import Extension
 from hydratk.lib.compat import types
 
-from hydratk.lib.profiling.profiler import Profiler
-from hydratk.lib.array import multidict
 from hydratk.lib.console.commandlinetool import CommandlineTool
-from hydratk.lib.number import conversion
 from hydratk.translation.core import info
-from hydratk.lib.translation import translator
-
-HIGHLIGHT_START = chr(27) + chr(91) + "1m"
-HIGHLIGHT_US = chr(27) + chr(91) + "4m"
-HIGHLIGHT_END = chr(27) + chr(91) + "0m"
-SHORT_DESC = HIGHLIGHT_START + const.APP_NAME + " v" + const.APP_VERSION + \
-    const.APP_REVISION + HIGHLIGHT_END + \
-    " load, performance and stress testing tool"
 
 
 class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
@@ -126,7 +103,6 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             self.fire_event(ev)
 
         except Exception:
-            # import traceback
             print('Fatal error - Unhandled exception thrown in exception handler:')
             print('Exception type: {0}'.format(extype))
             print('Exception message: {0}'.format(value))
@@ -135,7 +111,6 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             for tb_line in tb_lines:
                 trace += "\t{0}".format(tb_line)
             print('Trace:\n{0}'.format(trace))
-                
 
     def get_translator(self):
         """Method returns current traslator object initialized from hydratrk.lib.translation.translator.Translator 
@@ -237,13 +212,13 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                     if vvar in self._config[vgroup][vsection]:                        
                         return self._config_mp.parse(self._config[vgroup][vsection][vvar])
                     else:
-                        raise KeyError("Config: {0}.{1} doesn't contain variable {2}".format(vgroup, vsection, vvar))
+                        raise KeyError(self._trn.msg('htk_conf_var_missing', vgroup, vsection, vvar))
                 else:
-                    raise KeyError("Config group: {0} doesn't contain section {1}".format(vgroup, vsection))
+                    raise KeyError(self._trn.msg('htk_conf_section_missing', vgroup, vsection))
             else:
-                raise KeyError("Config doesn't contain group {0}".format(vgroup))
+                raise KeyError(self._trn.msg('htk_conf_group_missing', vgroup))
         else:
-            raise InputError("Invalid config variable {0}".format(cfg_var))
+            raise InputError(self._trn.msg('htk_conf_invalid_var', cfg_var))
         
         if type(bind_vars).__name__ == 'dict':
             self._config_mp.add_var_hook(bind_vars)
@@ -365,7 +340,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """
 
         i = 0
-        self.dmsg("Checking profile option", 1)
+        self.dmsg(self._trn.msg('htk_profiler_checking'), 1)
         enable_profiler = False
         stats_file = ''
         for o in sys.argv:
@@ -376,8 +351,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                     stats_file = sys.argv[i + 1]
                     if stats_file is not None and stats_file != '':
                         enable_profiler = True
-                        self.dmsg("Profiler enabled, stats will be written to the: {0}".format(
-                            stats_file), 1)
+                        self.dmsg(self._trn.msg('htk_profiler_enabled', stats_file), 1)
                 else:
                     self.demsg('htk_on_warning', self._trn.msg(
                         'htk_opt_ignore', 'Profile', ''), self.fromhere())
@@ -503,8 +477,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 }
 
         else:
-            raise TypeError('opt_group can be only of type list or str, got {0}'.format(
-                type(opt_group).__name__))
+            raise TypeError(self._trn.msg('htk_invalid_data', 'opt_group', 'list|str'))
 
     def match_long_option(self, opt, value_expected=False, d_opt=None, allow_multiple=False, opt_group='htk'):
         """Method registers command line long option check       
@@ -553,8 +526,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 }
 
         else:
-            raise TypeError('opt_group can be only of type list or str, got {0}'.format(
-                type(opt_group).__name__))
+            raise TypeError(self._trn.msg('htk_invalid_data', 'opt_group', 'list|str'))
 
     def match_cli_option(self, opt, value_expected=False, d_opt=None, allow_multiple=False, opt_group='htk'):
         """Method registers command option check       
@@ -572,8 +544,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """
 
         if type(opt).__name__ not in ('tuple, list'):
-            raise TypeError(
-                'option can be only of type tuple or list, got {0}'.format(type(opt).__name__))
+            raise TypeError(self._trn.msg('htk_invalid_data', 'option', 'tuple|list'))
 
         short_opt, long_opt = opt
         self.match_short_option(
@@ -633,8 +604,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 commandopt.short_opt[profile] = []
 
         else:
-            raise InputError(0, [], "Option profile have to be non empty string type, got '{0}' '{1}'".format(
-                profile, type(profile).__name__))
+            raise InputError(0, [], self._trn.msg('htk_invalid_data', 'option profile', 'non-empty string'))
 
     def set_cli_appl_title(self, help_title, cp_string):
         """Method sets custom application title    
@@ -655,8 +625,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             self._help_title = help_title
             self._cp_string = cp_string
         else:
-            raise InputError(0, [], "help_title and cp_string have to be string type, got '{0}' '{1}'".format(
-                type(help_title).__name__, type(cp_string).__name__))
+            raise InputError(0, [], self._trn.msg('htk_invalid_data', 'help_title|cp_string', 'str'))
             
             
     def register_log_output_profile(self, log_type, options = {}):
@@ -1085,9 +1054,9 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """
 
         if type(record).__name__ != 'dict':
-            raise Exception("Invalid record type, dictionary expected")
+            raise Exception(self._trn.msg('htk_invalid_data', 'record', 'dict'))
         if not hasattr(record['callback'], '__call__'):
-            raise Exception("Callback replacement is not callable")
+            raise Exception(self._trn.msg('htk_cb_not_callable'))
         result = 0
         if event in self._event_hooks:
             for priority, hooks in self._event_hooks[event].items():
@@ -1302,9 +1271,6 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             'htk_app_service_reg_ok', service_name, description))
         return True
 
-    def unregister_service(self, service_name):
-        pass
-
     def start_service(self, service_name):
         """Method starts service
 
@@ -1324,7 +1290,6 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                         'htk_app_service_start_ok', service_name), 1)
                     return True
                 else:
-                    # raise Exception("Failed to start application service "+service_name)
                     self.dmsg(self._trn(
                         'htk_app_service_start_failed', service_name),1)
             else:
@@ -1332,12 +1297,6 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                     'htk_app_service_start_ok', service_name),1)
 
         return False
-
-    def stop_service(self, service_name):
-        pass
-
-    def send_service_msg(self, service_name):
-        pass
 
     def stop_services(self):
         """Method stops all running services
@@ -1492,68 +1451,62 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 print('****************************************')
                 print('*   Extension skeleton create wizard   *')
                 print('****************************************')
-                print(
-                    'This wizard will create HydraTK extension development skeleton in following 6 steps')
-                print('Hit ENTER for default value, CTRL + C to exit')
+                print(self._trn.msg('htk_skeleton_wizard', 'extension', '6'))
+                print(self._trn.msg('htk_skeleton_default'))
 
-                print(
-                    '1. Enter the directory, where the extension structure will be created')
+                print(self._trn.msg('htk_skeleton_dir_req', 'extension'))
                 read_ext_skel_path = raw_input(
                     "[{0}]:".format(default_install_path))
                 ext_skel_path = read_ext_skel_path if len(
                     read_ext_skel_path) > 0 else ext_skel_path
-                print("Extension skeleton directory set to: %s" %
-                      ext_skel_path)
+                print(self._trn.msg('htk_skeleton_dir_set', 'extension', ext_skel_path))
 
-                print(
-                    '2. Enter the extension module name, must be one word short unique string')
+                print(self._trn.msg('htk_skeleton_name_req'), 'extension')
                 read_ext_name = raw_input(
                     "[{0}]:".format(template.extension_default_user_data['ext_name']))
                 ext_name = read_ext_name.lower() if len(read_ext_name) > 0 and read_ext_name.isalpha(
                 ) else template.extension_default_user_data['ext_name']
                 ext_ucname = ext_name.capitalize()
-                print("Extension module name set to: %s" % ext_name)
+                print(self._trn.msg('htk_skeleton_name_set', 'extension', ext_name))
 
-                print('3. Enter the extension description')
+                print(self._trn.msg('htk_skeleton_desc_req'))
                 read_ext_desc = raw_input(
                     "[{0}]:".format(template.extension_default_user_data['ext_desc']))
                 ext_desc = read_ext_desc if len(
                     read_ext_desc) > 0 else template.extension_default_user_data['ext_desc']
-                print("Extension description set to: %s" % ext_desc)
+                print(self._trn.msg('htk_skeleton_desc_set', 'extension', ext_desc))
 
-                print('4. Enter the extension author name')
+                print(self._trn.msg('htk_skeleton_author_req'))
                 read_author_name = raw_input(
                     "[{0}]:".format(template.extension_default_user_data['author_name']))
                 author_name = read_author_name if len(
                     read_author_name) > 0 else template.extension_default_user_data['author_name']
-                print("Extension author name set to: %s" % author_name)
+                print(self._trn.msg('htk_skeleton_author_set', 'extension', author_name))
 
-                print('5. Enter the extension author email')
+                print(self._trn.msg('htk_skeleton_email_req'))
                 read_author_email = raw_input(
                     "[{0}]:".format(template.extension_default_user_data['author_email']))
                 author_email = read_author_email if len(
                     read_author_email) > 0 else template.extension_default_user_data['author_email']
-                print("Extension author email set to: %s" % author_email)
+                print(self._trn.msg('htk_skeleton_email_set', 'extension', author_email))
 
                 # TODO put the dynamic listing here
-                print(
-                    '6. Select extension usage and distribution license, currently supported are: BSD')
+                print(self._trn.msg('htk_skeleton_license_req'))
                 read_ext_license = raw_input(
                     "[{0}]:".format(template.extension_default_user_data['ext_license']))
                 ext_license = read_ext_license if len(
                     read_ext_license) > 0 and read_ext_license in template.extension_license else template.extension_default_user_data['ext_license']
-                print(
-                    "Extension usage and distribution license set to: %s" % ext_license)
+                print(self._trn.msg('htk_skeleton_license_set', 'extension', ext_license))
 
             except:
-                print("\nInterrupted.")
+                print(self._trn.msg('htk_skeleton_interrupted'))
                 exit(1)
 
         if not os.path.exists(ext_skel_path):
             try:
                 os.makedirs(ext_skel_path)
             except:
-                print("Cannot create directory %s" % ext_skel_path)
+                print(self._trn.msg('htk_skeleton_dir_not_created', ext_skel_path))
 
         if os.access(ext_skel_path, os.W_OK):
             for create_path_str in template.extension_dir_struct:
@@ -1561,8 +1514,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                     create_path = (
                         "{0}/{1}".format(ext_skel_path, create_path_str)).format(extension=ext_name)
                     if not os.path.exists(create_path):
-                        self.dmsg(
-                            "Creating path {0}".format(create_path), 1)
+                        self.dmsg(self._trn.msg('htk_skeleton_path_creating', create_path), 1)
                         os.makedirs(create_path)
                 except:
                     raise
@@ -1573,7 +1525,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 try:
                     create_package_init_file = (
                         "{0}/{1}".format(ext_skel_path, create_package_init_file_str)).format(extension=ext_name)
-                    self.dmsg("Creating package init file {0}".format(create_package_init_file), 1)
+                    self.dmsg(self._trn.msg('htk_skeleton_file_creating', 'extension package init', create_package_init_file), 1)
                     file_put_contents(
                         create_package_init_file, template.extension_package_init_content)
                 except:
@@ -1582,14 +1534,14 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             try:
                 ext_config_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.config'])).format(extension=ext_name)
-                self.dmsg("Creating config file {0}".format(ext_config_file), 1)
+                self.dmsg(self._trn.msg('htk_skeleton_file_creating', 'extension config', ext_config_file), 1)
                 config_file_data = template.extension_config.format(
                     uc_extension=ext_ucname, extension=ext_name)
                 file_put_contents(ext_config_file, config_file_data)
 
                 ext_module_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.module'])).format(extension=ext_name)
-                self.dmsg("Creating extension module file {0}".format(ext_module_file), 1)
+                self.dmsg(self._trn.msg('htk_skeleton_file_creating', 'extension module', ext_module_file), 1)
                 ext_module_file_data = template.extension.format(
                     ext_ucname=ext_ucname,
                     extension=ext_name,
@@ -1602,7 +1554,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
 
                 ext_bootstrapper_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.bootstrapper'])).format(extension=ext_name)
-                self.dmsg("Creating extension bootstrapper file {0}".format(ext_module_file), 1)
+                self.dmsg(self._trn.msg('htk_skeleton_file_creating', 'extension bootstrapper', ext_bootstrapper_file), 1)
                 ext_bootstrapper_file_data = template.extension_bootstrapper.format(
                     extension=ext_name,
                     author_name=author_name,
@@ -1613,7 +1565,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
 
                 ext_translation_en_messages_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.translation.en.messages'])).format(extension=ext_name)
-                self.dmsg("Creating extension translation English messages file {0}".format(ext_translation_en_messages_file), 1)
+                self.dmsg(self._trn.msg('htk_skeleton_file_creating', 'extension translation English messages', ext_translation_en_messages_file), 1)
                 ext_translation_en_messages_file_data = template.extension_translation_en_messages.format(
                     ext_ucname=ext_ucname,
                     extension=ext_name,
@@ -1625,7 +1577,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
 
                 ext_translation_cs_messages_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.translation.cs.messages'])).format(extension=ext_name)
-                self.dmsg("Creating extension translation Czech messages file {0}".format(ext_translation_cs_messages_file), 1)
+                self.dmsg(self._trn.msg('htk_skeleton_file_creating', 'extension translation Czech message', ext_translation_cs_messages_file), 1)
                 ext_translation_cs_messages_file_data = template.extension_translation_cs_messages.format(
                     ext_ucname=ext_ucname,
                     extension=ext_name,
@@ -1637,7 +1589,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
 
                 ext_translation_en_help_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.translation.en.help'])).format(extension=ext_name)
-                self.dmsg("Creating extension translation English help file {0}".format(ext_translation_en_help_file), 1)
+                self.dmsg(self._trn.msg('htk_skeleton_file_creating', 'extension translation English help', ext_translation_en_help_file), 1)
                 ext_translation_en_help_file_data = template.extension_translation_en_help.format(
                     ext_ucname=ext_ucname,
                     extension=ext_name,
@@ -1649,7 +1601,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
 
                 ext_translation_cs_help_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.translation.cs.help'])).format(extension=ext_name)
-                self.dmsg("Creating extension translation Czech help file {0}".format(ext_translation_cs_help_file), 1)
+                self.dmsg(self._trn.msg('htk_skeleton_file_creating', 'extension translation Czech help', ext_translation_cs_help_file), 1)
                 ext_translation_cs_help_file_data = template.extension_translation_cs_help.format(
                     ext_ucname=ext_ucname,
                     extension=ext_name,
@@ -1661,7 +1613,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
 
                 ext_setup_py_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.setup.py'])).format(extension=ext_name)
-                self.dmsg("Creating extension setup file {0}".format(ext_setup_py_file), 1)
+                self.dmsg(self._trn.msg('htk_skeleton_file_creating', 'extension setup', ext_setup_py_file), 1)
                 ext_setup_py_file_data = template.extension_setup_py.format(
                     extension=ext_name,
                     ext_ucname=ext_ucname,
@@ -1675,37 +1627,37 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
 
                 ext_setup_cfg_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.setup.cfg'])).format(extension=ext_name)
-                self.dmsg("Creating extension additional setup config file {0}".format(ext_setup_cfg_file), 1)
+                self.dmsg(self._trn.msg('htk_skeleton_file_creating', 'extension setup config', ext_setup_cfg_file), 1)
                 file_put_contents(
                     ext_setup_cfg_file, template.extension_setup_cfg)
 
                 ext_license_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.license'])).format(extension=ext_name)
-                self.dmsg("Creating extension license file {0}".format(ext_license_file), 1)
+                self.dmsg(self._trn.msg('htk_skeleton_file_creating', 'extension license', ext_license_file), 1)
                 file_put_contents(ext_license_file, template.extension_license[ext_license].format(
                     ext_year=ext_year, author_name=author_name, author_email=author_email))
 
                 ext_readme_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.readme'])).format(extension=ext_name)
-                self.dmsg("Creating extension readme file {0}".format(ext_readme_file), 1)
+                self.dmsg(self._trn.msg('htk_skeleton_file_creating', 'extension readme', ext_readme_file), 1)
                 file_put_contents(ext_readme_file, template.extension_readme_rst.format(
                     ext_ucname=ext_ucname, ext_desc=ext_desc))
 
                 ext_requirements_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.requirements'])).format(extension=ext_name)
-                self.dmsg("Creating extension requirements file {0}".format(ext_requirements_file), 1)
+                self.dmsg(self._trn.msg('htk_skeleton_file_creating', 'extension requirements', ext_requirements_file), 1)
                 file_put_contents(
                     ext_requirements_file, template.extension_requirements)
 
                 ext_manifest_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.manifest'])).format(extension=ext_name)
-                self.dmsg("Creating extension manifest file {0}".format(ext_manifest_file), 1)
+                self.dmsg(self._trn.msg('htk_skeleton_file_creating', 'extension manifest', ext_manifest_file), 1)
                 file_put_contents(
                     ext_manifest_file, template.extension_manifest)
 
                 ext_manpage_file = (
                     "{0}/{1}".format(ext_skel_path, template.extension_data_files['ext.manpage'])).format(extension=ext_name)
-                self.dmsg("Creating extension manual page {0}".format(ext_manpage_file), 1)
+                self.dmsg(self._trn.msg('htk_skeleton_file_creating', 'extension manual page', ext_manpage_file), 1)
                 ext_manpage_file_data = template.extension_manpage.format(
                     extension=ext_name,
                     ext_ucname=ext_ucname,
@@ -1720,11 +1672,10 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 raise
 
         else:
-            print("Cannot create extension skeleton in path %s" %
-                  ext_skel_path)
+            print(self._trn.msg('htk_skeleton_not_created', 'extension', ext_skel_path))
             print(os.access(ext_skel_path, os.W_OK))
 
-        print("Completed.")
+        print(self._trn.msg('htk_skeleton_completed'))
         return result
 
     def create_lib_skel(self):
@@ -1769,67 +1720,62 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 print('**************************************')
                 print('*   Library skeleton create wizard   *')
                 print('**************************************')
-                print(
-                    'This wizard will create HydraTK shared library development skeleton in following 6 steps')
-                print('Hit ENTER for default value, CTRL + C to exit')
+                print(self._trn.msg('htk_skeleton_wizard', 'library', '6'))
+                print(self._trn.msg('htk_skeleton_default'))
 
-                print(
-                    '1. Enter the directory, where the library structure will be created')
+                print(self._trn.msg('htk_skeleton_dir_req', 'library'))
                 read_lib_skel_path = raw_input(
                     "[{0}]:".format(default_install_path))
                 lib_skel_path = read_lib_skel_path if len(
                     read_lib_skel_path) > 0 else lib_skel_path
-                print("Library skeleton directory set to: %s" % lib_skel_path)
+                print(self._trn.msg('htk_skeleton_dir_set', 'library', lib_skel_path))
 
-                print(
-                    '2. Enter the library module name, must be one word short unique string')
+                print(self._trn.msg('htk_skeleton_name_req', 'library'))
                 read_lib_name = raw_input(
                     "[{0}]:".format(template.lib_default_user_data['lib_name']))
                 lib_name = read_lib_name.lower() if len(read_lib_name) > 0 and read_lib_name.isalpha(
                 ) else template.lib_default_user_data['lib_name']
                 lib_ucname = lib_name.capitalize()
-                print("Library module name set to: %s" % lib_name)
+                print(self._trn.msg('htk_skeleton_name_set', 'library', lib_name))
 
-                print('3. Enter the library description')
+                print(self._trn.msg('htk_skeleton_desc_req', 'library'))
                 read_lib_desc = raw_input(
                     "[{0}]:".format(template.lib_default_user_data['lib_desc']))
                 lib_desc = read_lib_desc if len(
                     read_lib_desc) > 0 else template.lib_default_user_data['lib_desc']
-                print("Library description set to: %s" % lib_desc)
+                print(self._trn.msg('htk_skeleton_desc_set', 'library', lib_desc))
 
-                print('4. Enter the library author name')
+                print(self._trn.msg('htk_skeleton_author_req', 'library'))
                 read_author_name = raw_input(
                     "[{0}]:".format(template.lib_default_user_data['author_name']))
                 author_name = read_author_name if len(
                     read_author_name) > 0 else template.lib_default_user_data['author_name']
-                print("lib author name set to: %s" % author_name)
+                print(self._trn.msg('htk_skeleton_author_set', 'library', author_name))
 
-                print('5. Enter the library author email')
+                print(self._trn.msg('htk_skeleton_email_req', 'library'))
                 read_author_email = raw_input(
                     "[{0}]:".format(template.lib_default_user_data['author_email']))
                 author_email = read_author_email if len(
                     read_author_email) > 0 else template.lib_default_user_data['author_email']
-                print("Library author email set to: %s" % author_email)
+                print(self._trn.msg('htk_skeleton_email_set', 'library', author_email))
 
                 # TODO put the dynamic listing here
-                print(
-                    '6. Select library usage and distribution license, currently supported are: BSD')
+                print(self._trn.msg('htk_skeleton_license_req', 'library'))
                 read_lib_license = raw_input(
                     "[{0}]:".format(template.lib_default_user_data['lib_license']))
                 lib_license = read_lib_license if len(
                     read_lib_license) > 0 and read_lib_license in template.lib_license else template.lib_default_user_data['lib_license']
-                print("Library usage and distribution license set to: %s" %
-                      lib_license)
+                print(self._trn.msg('htk_skeleton_license_set', 'library', lib_license))
 
             except:
-                print("\nInterrupted.")
+                print(self._trn.msg('htk_skeleton_interrupted'))
                 exit(1)
 
         if not os.path.exists(lib_skel_path):
             try:
                 os.makedirs(lib_skel_path)
             except:
-                print("Cannot create directory %s" % lib_skel_path)
+                print(self._trn.msg('htk_skeleton_dir_not_created', lib_skel_path))
 
         if os.access(lib_skel_path, os.W_OK):
             for create_path_str in template.lib_dir_struct:
@@ -1837,7 +1783,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                     create_path = (
                         "{0}/{1}".format(lib_skel_path, create_path_str)).format(lib_name=lib_name)
                     if not os.path.exists(create_path):
-                        self.dmsg("Creating path {0}".format(create_path), 1)
+                        self.dmsg(self._trn.msg('htk_skeleton_path_creating', create_path), 1)
                         os.makedirs(create_path)
                 except:
                     raise
@@ -1848,7 +1794,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 try:
                     create_package_init_file = (
                         "{0}/{1}".format(lib_skel_path, create_package_init_file_str)).format(lib_name=lib_name)
-                    self.dmsg("Creating package init file {0}".format(create_package_init_file), 1)
+                    self.dmsg(self._trn.msg('htk_skeleton_file_creating', 'library package init', create_package_init_file), 1)
                     file_put_contents(
                         create_package_init_file, template.lib_package_init_content)
                 except:
@@ -1857,7 +1803,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             try:
                 lib_module_file = (
                     "{0}/{1}".format(lib_skel_path, template.lib_data_files['lib.module'])).format(lib_name=lib_name)
-                self.dmsg("Creating library module file {0}".format(lib_module_file), 1)
+                self.dmsg(self._trn.msg('htk_skeleton_file_creating', 'library module', lib_module_file), 1)
                 lib_module_file_data = template.library.format(
                     lib_ucname=lib_ucname,
                     lib_name=lib_name,
@@ -1870,7 +1816,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
 
                 lib_setup_py_file = (
                     "{0}/{1}".format(lib_skel_path, template.lib_data_files['lib.setup.py'])).format(lib_name=lib_name)
-                self.dmsg("Creating library setup file {0}".format(lib_setup_py_file), 1)
+                self.dmsg(self._trn.msg('htk_skeleton_file_creating', 'library setup', lib_setup_py_file), 1)
                 lib_setup_py_file_data = template.lib_setup_py.format(
                     lib_name=lib_name,
                     lib_ucname=lib_ucname,
@@ -1882,30 +1828,30 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
 
                 lib_setup_cfg_file = (
                     "{0}/{1}".format(lib_skel_path, template.lib_data_files['lib.setup.cfg'])).format(lib_name=lib_name)
-                self.dmsg("Creating library additional setup config file {0}".format(lib_setup_cfg_file), 1)
+                self.dmsg(self._trn.msg('htk_skeleton_file_creating', 'library setup config', lib_setup_cfg_file), 1)
                 file_put_contents(lib_setup_cfg_file, template.lib_setup_cfg)
 
                 lib_license_file = (
                     "{0}/{1}".format(lib_skel_path, template.lib_data_files['lib.license'])).format(lib_name=lib_name)
-                self.dmsg("Creating lib license file {0}".format(lib_license_file), 1)
+                self.dmsg(self._trn.msg('htk_skeleton_file_creating', 'library license', lib_license_file), 1)
                 file_put_contents(lib_license_file, template.lib_license[lib_license].format(
                     ext_year=lib_year, author_name=author_name, author_email=author_email))
 
                 lib_readme_file = (
                     "{0}/{1}".format(lib_skel_path, template.lib_data_files['lib.readme'])).format(lib_name=lib_name)
-                self.dmsg("Creating library readme file {0}".format(lib_readme_file), 1)
+                self.dmsg(self._trn.msg('htk_skeleton_file_creating', 'library readme', lib_readme_file), 1)
                 file_put_contents(lib_readme_file, template.lib_readme_rst.format(
                     lib_ucname=lib_ucname, lib_desc=lib_desc))
 
                 lib_requirements_file = (
                     "{0}/{1}".format(lib_skel_path, template.lib_data_files['lib.requirements'])).format(lib_name=lib_name)
-                self.dmsg("Creating library requirements file {0}".format(lib_requirements_file), 1)
+                self.dmsg(self._trn.msg('htk_skeleton_file_creating', 'library requirements', lib_requirements_file), 1)
                 file_put_contents(
                     lib_requirements_file, template.lib_requirements)
 
                 lib_manifest_file = (
                     "{0}/{1}".format(lib_skel_path, template.lib_data_files['lib.manifest'])).format(lib_name=lib_name)
-                self.dmsg("Creating library manifest file {0}".format(lib_manifest_file), 1)
+                self.dmsg(self._trn.msg('htk_skeleton_file_creating', 'library manifest', lib_manifest_file), 1)
                 file_put_contents(lib_manifest_file, template.lib_manifest)
 
                 result = True
@@ -1914,10 +1860,10 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 raise
 
         else:
-            print("Cannot create library skeleton in path %s" % lib_skel_path)
+            print(self._trn.msg('htk_skeleton_not_created', 'library', lib_skel_path))
             print(os.access(lib_skel_path, os.W_OK))
 
-        print("Completed.")
+        print(self._trn.msg('htk_skeleton_completed'))
         return result
 
     def async_fn_ex(self, fn_id, *args, **kwargs):
@@ -1934,9 +1880,9 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """
 
         if fn_id is None or fn_id == '':
-            raise TypeError("fn_id: expected nonempty string")
+            raise TypeError(self._trn.msg('htk_invalid_data', 'fn_id', 'non-empty string'))
         if fn_id not in self._async_fn_ex:
-            raise KeyError("fn_id: {0} is not registered".format(fn_id))
+            raise KeyError(self._trn.msg('htk_cb_not_registered', fn_id))
         thr_id = self.get_thrid()
         msg = {
             'type': "async_fn_ex",
@@ -1983,32 +1929,27 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """
 
         if type(callback).__name__ != 'tuple':
-            raise TypeError("callback: tuple expected")
+            raise TypeError(self._trn.msg('htk_invalid_data', 'callback', 'tuple'))
         obj, meth = callback
         if type(obj).__name__ not in ('Extension', 'str'):
-            raise TypeError(
-                "callback object: expected instance or str, got {0}".format(type(obj).__name__))
+            raise TypeError(self._trn.msg('htk_invalid_data', 'callback object', 'instance|str'))
         if type(meth).__name__ != 'str' or meth == '':
-            raise TypeError("callback method: expected nonempty str")
+            raise TypeError(self._trn.msg('htk_invalid_data', 'callback method', 'non-empty string'))
         ext_name = obj.get_ext_name() if type(
             obj).__name__ == 'Extension' else obj
         if ext_name not in self._ext:
-            raise KeyError(
-                "callback: undefined extension name: {0}".format(ext_name))
+            raise KeyError(self._trn.msg('htk_undefined_extension', ext_name))
 
         result_obj = None
         result_meth = None
         if result_callback is not None:
             if type(result_callback).__name__ not in ('str', 'tuple'):
-                raise TypeError(
-                    "result_callback object: expected str or tuple")
+                raise TypeError(self._trn.msg('htk_invalid_data', 'result callback object', 'str|tuple'))
             if type(result_callback).__name__ == 'str':
                 if result_callback == '':
-                    raise TypeError(
-                        "result_callback: empty string not acceptable")
+                    raise TypeError(self._trn.msg('htk_invalid_data', 'result callback', 'non-empty string'))
                 if result_callback not in self._async_fn:  # fn_id
-                    raise KeyError(
-                        "result_callback fn_id: {0} is not registered".format(result_callback))
+                    raise KeyError(self._trn.msg('htk_cb_not_registered', result_callback))
             else:  # tuple
                 pass
 
@@ -2050,13 +1991,9 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         if ticket_id is not None and ticket_id != '':
             if ticket_id in self._async_fn_tickets:
                 return self._async_fn_tickets[ticket_id]
-            raise KeyError("Ticket id: {0} doesn't exists".format(ticket_id))
+            raise KeyError(self._trn.msg('htk_msg_unknown_ticket', ticket_id))
         else:
-            raise TypeError(
-                "Invalid ticket_id: {0}".format(type(ticket_id).__name__))
-
-    def update_async_ticket_content(self, ticket_id, data):
-        pass
+            raise TypeError(self._trn.msg('htk_msg_invalid_ticket', type(ticket_id).__name__))
 
     def async_ticket_completed(self, ticket_id):
         """Method checks if ticket processing is completed
@@ -2076,10 +2013,9 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         if ticket_id is not None and ticket_id != '':
             if ticket_id in self._async_fn_tickets:
                 return self._async_fn_tickets[ticket_id]['completed']
-            raise KeyError("Ticket id: {0} doesn't exists".format(ticket_id))
+            raise KeyError(self._trn.msg('htk_msg_unknown_ticket', ticket_id))
         else:
-            raise TypeError(
-                "Invalid ticket_id: {0}".format(type(ticket_id).__name__))
+            raise TypeError(self._trn.msg('htk_msg_invalid_ticket', type(ticket_id).__name__))
 
     def delete_async_ticket(self, ticket_id):
         """Method deletes ticket
@@ -2111,7 +2047,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """
 
         if fn_id is None or fn_id == '':
-            raise TypeError("fn_id: expected nonempty string")
+            raise TypeError(self._trn.msg('htk_invalid_data', 'fn_id', 'non-empty string'))
         res_cb = None
         if result_callback is not None:
             if callable(result_callback) and type(result_callback).__name__ in ('function', 'instancemethod', 'method'):
@@ -2122,8 +2058,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                     res_cb['class_inst'] = result_callback.im_self
                     res_cb['func'] = result_callback.im_func
             else:
-                raise TypeError(
-                    'result_callback: expected callable function or instancemethod')
+                raise TypeError(self._trn.msg('htk_invalid_data', 'result_callback', 'function|instancemethod'))
         if callable(callback) and type(callback).__name__ in ('function', 'instancemethod', 'method'):
             cb = {}
             cb['class_inst'] = None
@@ -2137,11 +2072,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             }
             return True
         else:
-            raise TypeError(
-                'callback: expected callable function or instancemethod')
-
-    def bridge_fn_cb(self, fn_id_src, fn_id_dest):
-        pass
+            raise TypeError(self._trn.msg('htk_invalid_data', 'callback', 'function|instancemethod'))
 
     def reg_fn_cb(self, fn_id, callback, options=None):
         """Method is registering callback with specified fn_id.
@@ -2162,13 +2093,12 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """
 
         if fn_id is None or fn_id == '':
-            raise TypeError("fn_id: expected nonempty string")
+            raise TypeError(self._trn.msg('htk_invalid_data', 'fn_id', 'non-empty string'))
         if callable(callback):
             self._fn_callback[fn_id] = callback
             return True
         else:
-            raise TypeError('callback: expected callable')
-        # if self._run_mode >= const.CORE_RUN_MODE_PP_APP:
+            raise TypeError(self._trn.msg('htk_invalid_data', 'callback', 'callable'))
 
     def register_async_fn(self, fn_id, callback):
         """Method registers functionality hook in asynchronous way
@@ -2186,12 +2116,12 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
         """
 
         if fn_id is None or fn_id == '':
-            raise TypeError("fn_id: expected nonempty string")
+            raise TypeError(self._trn.msg('htk_invalid_data', 'fn_id', 'non-empty string'))
         if callable(callback):
             self._async_fn[fn_id] = callback
             return True
         else:
-            raise TypeError('callback: expected callable')
+            raise TypeError(self._trn.msg('htk_invalid_data', 'callback', 'callable'))
 
     def get_ext(self, extension_name):
         """Method gets extensions
@@ -2212,10 +2142,9 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             if extension_name in self._ext:
                 return self._ext[extension_name]
             else:
-                raise IndexError(
-                    "Undefined extension {0}".format(extension_name))
+                raise IndexError(self._trn.msg('htk_undefined_extension', extension_name))
         else:
-            raise TypeError("Extension name string expected")
+            raise TypeError(self._trn.msg('htk_invalid_data', 'extension_name', 'string'))
 
 """
 MasterHead instance

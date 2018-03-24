@@ -84,15 +84,16 @@ class MessageHead(object):
 
         """
 
+        from hydratk.core.masterhead import MasterHead
+        mh = MasterHead.get_head()
+
         if ticket_id is not None and ticket_id != '':
             if ticket_id in self._async_fn_tickets:
                 del self._async_fn_tickets[ticket_id]
             else:
-                raise KeyError(
-                    "Ticket id: {0} doesn't exists".format(ticket_id))
+                raise KeyError(mh._trn.msg('htk_msg_unknown_ticket', ticket_id))
         else:
-            raise TypeError(
-                "Invalid ticket_id: {0}".format(type(ticket_id).__name__))
+            raise TypeError(mh._trn.msg('htk_msg_invalid_ticket', type(ticket_id).__name__))
 
     def _reset_async_ticket_seq(self):
         """Method resets ticket id sequence
@@ -139,15 +140,18 @@ class MessageHead(object):
 
         """
 
+        from hydratk.core.masterhead import MasterHead
+        mh = MasterHead.get_head()
+
         pickled = base64.b64decode(msg)
         msg = pickle.loads(pickled)
-        dmsg("Processing message: {0}".format(msg))
+        dmsg(mh._trn.msg('htk_processing_message', msg))
         if type(msg).__name__ == 'dict' and 'type' in msg and msg['type'] is not None and msg['type'] != '':
             fn_id = "cmsg_{0}".format(msg['type'])
-            dmsg("Running hook {0}".format(fn_id), 3)
+            dmsg(mh._trn.msg('htk_running_hook', fn_id), 3)
             self.run_fn_hook(fn_id, msg)
         else:
-            dmsg("Invalid message {0}".format(str(msg)), 3)
+            dmsg(mh._trn.msg('htk_msg_invalid_message', str(msg)), 3)
 
     def _send_msg(self, msg):
         """Method sends message
@@ -170,13 +174,13 @@ class MessageHead(object):
             print(ex_type)
             print(ex)
             traceback.print_tb(tb)
-        #print("Message send successfully {0}".format(msg))
-        return True
 
+        return True
+    
     def _msg_async_fn(self, msg):
         print("Processing async_fn")
         return True
-
+ 
     def _msg_async_fn_ex(self, msg):
         print("Processing async_fn_ext")
         return True
@@ -191,6 +195,9 @@ class MessageHead(object):
            bool: True
 
         """
+
+        from hydratk.core.masterhead import MasterHead
+        mh = MasterHead.get_head()
 
         ext_name = msg['data']['callback']['ext_name']
         meth = msg['data']['callback']['method']
@@ -219,6 +226,6 @@ class MessageHead(object):
             ticket_content['error_msg'] = cb_error_msg
             self._async_fn_tickets[ticket_id] = ticket_content
         else:
-            print("Invalid async_ext_fn callback")
+            print(mh._trn.msg('htk_cb_not_callable'))
             print(msg)
         return True

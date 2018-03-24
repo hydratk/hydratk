@@ -97,6 +97,7 @@ Supported logging types are: Debug, Error, Warning, Exception
 Global configuration of logging types is defined in section ``System`` where you can turn it on/off
 
   .. code-block:: yaml
+  
      Debug:
        enabled: 0
        level: 5
@@ -157,6 +158,7 @@ Log output handler ``logfile`` profile options:
 Currently there two native output handlers: ``screen and logfile`` for logging to the screen and log files
 
   .. code-block:: yaml
+  
      Debug_Console:
        enabled: 1
        log_type: debug

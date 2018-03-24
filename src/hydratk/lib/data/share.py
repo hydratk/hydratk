@@ -8,6 +8,9 @@
 
 """
 
+from hydratk.core.masterhead import MasterHead
+
+mh = MasterHead.get_head()
 
 class My(object):
     """Class My
@@ -45,7 +48,7 @@ class My(object):
         """
 
         if pile_id is None or pile_id == '':
-            raise ValueError("Pile id cannot be NoneType or an empty string")
+            raise ValueError(mh._trn.msg('htk_invalid_data', 'pile_id', 'non-empty string'))
         else:
             if pile_id not in My._piles.items():
                 self._piles[pile_id] = Pile()
@@ -67,7 +70,7 @@ class My(object):
 
         result = False
         if pile_id is None or pile_id == '':
-            raise ValueError("Pile id cannot be NoneType or an empty string")
+            raise ValueError(mh._trn.msg('htk_invalid_data', 'pile_id', 'non-empty string'))
         else:
             if pile_id in self._piles.keys():
                 del self._piles[pile_id]
@@ -93,11 +96,11 @@ class Pocket(object):
 
         total_items = len(self._data)
         if len(self._data) > 0:
-            print("Pocket items: {0}".format(total_items))
+            print(mh._trn.msg('htk_lib_pocket_content', total_items))
             for v, k in self._data.items():
                 print("\t{0} : {1}".format(v, k))
         else:
-            print("Pocket is empty")
+            print(mh._trn.msg('htk_lib_pocket_empty'))
 
     @property
     def content(self):
@@ -110,7 +113,7 @@ class Pocket(object):
         """ content property setter """
 
         if type(data).__name__ != 'dict':
-            raise ValueError('Dictionary expected')
+            raise ValueError(mh._trn.msg('htk_invalid_data', 'data', 'dict'))
         self._data = data
 
     def __init__(self):

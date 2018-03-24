@@ -446,7 +446,7 @@ entry_points = {
 
 st_setup(
     name='hydratk',
-    version='0.6.0dev1',
+    version='0.6.0',
     description='Fully extendable object oriented application toolkit with nice modular architecture',
     long_description=readme,
     author='Petr Czaderna, HydraTK team',

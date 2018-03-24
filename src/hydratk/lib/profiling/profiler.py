@@ -10,6 +10,9 @@
 
 
 class Profiler(object):
+    """Class Profiler
+    """
+
     _profiling = False
     _pr = None
     _output_file = None

@@ -15,6 +15,17 @@ except ImportError:
 
 
 def get_ctype_char_array(int_keys, lock=True):
+    """Function creates synchronized char array
+
+    Args:
+       int_keys (int): array size
+       lock (bool): synchronization lock
+
+    Returns:
+       array
+
+    """
+
     from multiprocessing import Array
     from ctypes import c_char_p
     return Array(c_char_p, int_keys, lock=lock)

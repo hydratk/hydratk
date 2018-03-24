@@ -10,7 +10,6 @@
 
 import cProfile
 import sys
-import os
 from hydratk.lib.profiling.profiler import Profiler as HTKProfiler
 
 sort_by_keys = [
@@ -29,7 +28,8 @@ sort_by_keys = [
            'time',       #internal time
            'tottime'     #internal time      
            ]
-class Profiler(HTKProfiler,object):
+
+class Profiler(HTKProfiler, object):
     """Class Profiler
     """
 
@@ -42,19 +42,20 @@ class Profiler(HTKProfiler,object):
            none
 
         """        
+
         super(Profiler, self).__init__()
         
         self._pr = cProfile.Profile()
         self._configure_profiler_options()
     
     def check_profile_param(self):
-        """Method checks for home parameter presence --home or -h to replace htk_root_dir location
+        """Method checks if profiler options are present
         
         Args:
            none
         
         Returns:            
-           bool: htk_root_changed 
+           tuple: bool (result), str (option value)
         
         """
         
@@ -80,6 +81,7 @@ class Profiler(HTKProfiler,object):
            void
 
         """
+
         self._pr.enable()
 
     def finish(self):
@@ -92,6 +94,7 @@ class Profiler(HTKProfiler,object):
            void
 
         """
+
         self._pr.disable()
 
     def _configure_profiler_options(self):
@@ -100,13 +103,24 @@ class Profiler(HTKProfiler,object):
         Args:
            none
 
-        Returns:            
+        Returns:
            void
 
         """
+
         pass
 
-    def create_profiler_stats(self, stats_file=None):               
+    def create_profiler_stats(self, stats_file=None):
+        """Method creates file with profiler statistics
+
+        Args:
+           stats_file (str): file to write statistics
+
+        Returns:
+           void
+
+        """
+
         import StringIO
         import pstats
         from hydratk.core.masterhead import MasterHead
@@ -123,12 +137,12 @@ class Profiler(HTKProfiler,object):
             sortby = 'cumulative'
         else:
             sortby = sortby.split(',')
-        mh.demsg('htk_on_debug_info', "Sorting stats using column(s): {0}".format(','.join(sortby)), mh.fromhere())
+        mh.demsg(mh._trn.msg('htk_profiler_sorting_stats', ','.join(sortby)), mh.fromhere())
         if type(sortby).__name__ == 'str':
             ps = pstats.Stats(self._pr, stream=s).sort_stats(sortby)
         elif type(sortby).__name__ == 'list':
             ps = pstats.Stats(self._pr, stream=s).sort_stats(*sortby)                                           
-        mh.demsg('htk_on_debug_info', "Writing profiler stats output to {0}".format(self._output_file), mh.fromhere())
+        mh.demsg('htk_on_debug_info', mh._trn.msg('htk_profiler_writing_stats', self._output_file), mh.fromhere())
         ps.dump_stats(self._output_file)
         if strip_dirs:
             ps.strip_dirs()

@@ -10,6 +10,7 @@
 
 import zmq
 from pyx.messaging import queue
+from hydratk.core.masterhead import MasterHead
 
 
 class Queue(zmq):
@@ -22,6 +23,7 @@ class Queue(zmq):
     __address = None
     __authkey = None
     __socket_type = None
+    _mh = None
 
     def __init__(self, qtype, address, authkey=''):
         """Class constructor
@@ -38,10 +40,12 @@ class Queue(zmq):
 
         """
 
+        self._mh = MasterHead.get_head()
+
         if type in (queue.QUEUE_TYPE_SERVER, queue.QUEUE_TYPE_CLIENT):
             self.__type = qtype
         else:
-            raise ValueError('Invalid Queue type')
+            raise ValueError(self._mh._trn.msg('htk_lib_queue_invalid_type'))
 
         ''' Checking for address format AF_INET '''
         if address.find(':') > 0:
@@ -81,8 +85,7 @@ class Queue(zmq):
 
         """
         if self.__type != queue.QUEUE_TYPE_SERVER:
-            raise ValueError(
-                'This operation cannot be done on this queue type')
+            raise ValueError(self._mh._trn.msg('htk_lib_queue_invalid_operation'))
 
         socket_type = socket_type if socket_type != None else self.__options[
             'socket_type']
@@ -118,8 +121,7 @@ class Queue(zmq):
         """
 
         if self.__type != queue.QUEUE_TYPE_CLIENT:
-            raise ValueError(
-                'This operation cannot be done on this queue type')
+            raise ValueError(self._mh._trn.msg('htk_lib_queue_invalid_operation'))
 
         q = Queue()
         SyncManager.register('get_queue', callable=lambda: q)

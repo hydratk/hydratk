@@ -8,9 +8,6 @@
 
 """
 
-import pprint
-
-
 class Event(object):
     """ Class Event
     """
@@ -49,8 +46,7 @@ class Event(object):
             self._data['target_event'] = None
             self._data['source_event'] = None
         else:
-            raise ValueError(
-                "Invalid event id specified, nonempty string is required")
+            raise ValueError('Invalid event id specified, nonempty string is required')
 
         if isinstance(args, tuple):
             self._args = ()
@@ -145,8 +141,7 @@ class Event(object):
         if isinstance(key, str) and key != '':
             self._data[key] = value
         else:
-            raise ValueError(
-                "Invalid key specified, nonempty string is required")
+            raise ValueError('Invalid key specified, nonempty string is required')
 
     def argv(self, num):
         """Method gets request event argument

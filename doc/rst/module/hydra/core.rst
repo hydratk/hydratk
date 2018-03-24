@@ -19,6 +19,7 @@ This section contains module documentation of HydraTK core modules.
    core/logger
    core/masterhead
    core/messaging
+   core/profiler
    core/propertyhead
    core/servicehead
    core/template

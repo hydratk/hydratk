@@ -2,7 +2,7 @@
 
 """This code is a part of Hydra Toolkit
 
-.. module:: hydratk.translation.en.help
+.. module:: hydratk.translation.core.en.help
    :platform: Unix
    :synopsis: English language translation for help generator
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>

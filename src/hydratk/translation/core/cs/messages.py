@@ -2,7 +2,7 @@
 
 """This code is a part of Hydra Toolkit
 
-.. module:: hydratk.translation.cs.messages
+.. module:: hydratk.translation.core.cs.messages
    :platform: Unix
    :synopsis: Czech language translation for global messages
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
@@ -42,6 +42,10 @@ msg = {
     'htk_opt_ignore': ["Nastavení možnosti '{0}' bylo ignorováno, protože má nesprávnou hodnotu: '{1}'"],
     'htk_conf_opt_missing': ["Chyba konfigurace, sekce: '{0}', možnost: '{1}' není definována"],
     'htk_conf_opt_val_err': ["Chyba konfigurace, sekce: '{0}', možnost: '{1}' obsahuje špatnou hodnotu"],
+    'htk_conf_var_missing': ["Konfigurace: {0}.{1} neobsahuje proměnnou {2}"],
+    'htk_conf_var_invalid': ["Neplatná konfigurační proměnná {0}"],
+    'htk_conf_section_missing': ["Konfigurační skupina: {0} neobsahuje sekci {1}"],
+    'htk_conf_group_missing': ["Konfigurace neobsahuje skupinu {0}"],
     'htk_debug_enabled': ["Spouštím aplikaci v režimu ladění programu"],
     'htk_lang_set': ["Jazyk nastaven na '{0}'"],
     'htk_invalid_lang_set': ["Jazyk '{0}' není podporován"],
@@ -129,10 +133,12 @@ msg = {
     'htk_loading_extension': ["{0} je archív ... načítám z {1}"],
     'htk_extension_wrong_cfg_file': ["Nalezeno nesprávně nakonfigurované rozšíření {0}, soubor {1} je neplatný"],
     'htk_extension_wrong_cfg': ["Nalezeno nesprávně nakonfigurované rozšíření {0}"],
-    'htk_help_cmd_def_missing': ["Chybějící nápověda příkazu {0}, jatyk {1}"],
+    'htk_help_cmd_def_missing': ["Chybějící nápověda příkazu {0}, jazyk {1}"],
+    'htk_option_missing': ["Chybějící volba {0} v profilu {1}"],
     'htk_option_def_missing': ["Chybějící definice volby {0}, jazyk {1}"],
     'htk_cworker_process_msg': ["PONG od vlákna {0}, rychlost: {1}"],
     'htk_duplicate_extension': ["Pokus o načtení duplicitního rozšíření '{0}'"],
+    'htk_undefined_extension': ["Nedefinované rozšíření: {0}"],
     'htk_short_opt_registered': ["Krátká volba {0} je již zaregistrována"],
     'htk_short_opt_invalid': ["Krátká volba {0} není platný řetězec"],
     'htk_long_opt_registered': ["Dlouhá volba {0} je již zaregistrována"],
@@ -144,5 +150,41 @@ msg = {
     'htk_app_service_registered': ["Služba: {0} je již zaregistrována"],
     'htk_app_service_desc_missing': ["Není specifikován popis lužby"],
     'htk_cb_not_callable': ["Parametr callbacku musí být callable object"],
-    'htk_app_service_start_failed': ["Nepodařilo se spustit aplikační službu {0}"]
+    'htk_cb_not_registered': ["Callback fn_id: {0} není zaregistrován"],
+    'htk_app_service_start_failed': ["Nepodařilo se spustit aplikační službu {0}"],
+    'htk_invalid_input_type': ["Neplatný vstupní typ pro {0}"],
+    'htk_invalid_data': ["Specifikováno neplatné {0}, je vyžadováno {1}"],
+    'htk_unknown_attribute': ["Objekt nemá atribut {0}"],
+    'htk_msg_unknown_ticket': ["Tiket s id: {0} neexistuje"],
+    'htk_msg_invalid_ticket': ["Neplatné it tiketu: {0}"],
+    'htk_msg_invalid_message': ["Neplatná zpráva {0}"],
+    'htk_processing_message': ["Zpracovávám zprávu: {0}"],
+    'htk_running_hook': ["Spouštím hook {0}"],
+    'htk_msgq_binding': ["Svazuji se s frontou zpráv {0} : typ socketu {1}"],
+    'htk_msgq_already_active': ["Servisní fronta je již aktivní, použij MESSAGE_QUEUE_ACTION_CONNECT"],
+    'htk_msgq_connecting': ["Připojuji se do fronty zpráv {0} : typ socketu {1}"],
+    'htk_profiler_checking': ["Kontroluji bolbu profileru"],
+    'htk_profiler_enabled': ["Profiler je povolen, statistiky budou zapsány: {0}"],
+    'htk_profiler_sorting_stats': ["Řadím statistiky pomocí sloupců: {0}"],
+    'htk_profiler_writing_stats': ["Zapisuji statistiky profileru do {0}"],
+    'htk_skeleton_wizard': ["Tento průvodce vytvoří HydraTK {0} development skeleton v následujících {1} krocích"],
+    'htk_skeleton_default': ["Stiskni ENTER pro default nastavení, CTRL + C pro ukončení"],
+    'htk_skeleton_dir_req': ["1. Zadej adresář, kde bude vytvořena struktura {0}"],
+    'htk_skeleton_dir_set': ["Adresář skeletonu {0} nastaven na: {1}"],
+    'htk_skeleton_name_req': ["2. Zadej název modulu {0}, musí to být jednoslovný unikátní řetězec"],
+    'htk_skeleton_name_set': ["Název modulu {0} nastaven na: {1}"],
+    'htk_skeleton_desc_req': ["3. Zadej popis {0}"],
+    'htk_skeleton_desc_set': ["Popis {0} nastaven na: {1}"],
+    'htk_skeleton_author_req': ["4. Zadej jméno autora {0}"],
+    'htk_skeleton_author_set': ["Jméno autora {0} nastaveno na: {1}"],
+    'htk_skeleton_email_req': ["5. Zadej email {0}"],
+    'htk_skeleton_email_set': ["Email autora {0} nastaven na: {1}"],
+    'htk_skeleton_license_req': ["6. Vyber účel a distribuční licenci {0}, aktuálně jsou podporované: BSD"],
+    'htk_skeleton_license_set': ["Účel a distribuční licence {0} nastavena na: {1}"],
+    'htk_skeleton_interrupted': ["\nPřerušeno."],
+    'htk_skeleton_completed': ["Dokončeno."],
+    'htk_skeleton_not_created': ["Nelze vytvořit skeleton {0} na cestě {1}"],
+    'htk_skeleton_dir_not_created': ["Nelze vytvořit adresář {0}"],
+    'htk_skeleton_path_creating': ["Vytvářím cestu {0}"],
+    'htk_skeleton_file_creating': ["Vytvářím {0} soubor {1}"]
 }

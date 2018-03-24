@@ -20,9 +20,7 @@ import traceback
 import pprint
 import time
 import zmq
-import threading
 from os import makedirs
-import hydratk.lib.system.config as syscfg
 
 from hydratk.lib.parser import smp
 
@@ -81,9 +79,6 @@ class AsyncCallBackHandler(object):
 
         }
         self._hc.send_msg(msg)
-
-    def cb_completed(self, req_id):
-        pass
 
 
 class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
@@ -220,9 +215,6 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
 
         return result
 
-    def _get_asyn_req_ticket(self):
-        pass
-
     def _c_observer(self, init_by_start = False):
         """Method creates observer process and watches it during its lifecycle
 
@@ -287,11 +279,6 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
 
                     # initialize process as message queue sender
                     try:
-                        #current.msgq   = self._msg_router.get_queue(self._core_msg_service_id, messagerouter.MESSAGE_QUEUE_ACTION_BIND, {'socket_type' : zmq.PULL} )
-                        #self.demsg('htk_on_debug_info', "Message queue {0} : socket type zmq.PULL connected".format(self._core_msg_service_id), self.fromhere())
-
-                        #current.msgq = self._msg_router.get_queue(self._core_msg_service_id, messagerouter.MESSAGE_QUEUE_ACTION_CONNECT, {'socket_type' : zmq.PUSH} )
-                        #self.demsg('htk_on_debug_info', "Message queue {0} : socket type zmq.PUSH connected {1}".format(self._core_msg_service_id, type(current.msgq).__name__), self.fromhere())
                         context = zmq.Context()
                         sender = context.socket(zmq.PUSH)
                         # TODO workaround, will be changed in next version, by
@@ -301,8 +288,6 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                         sender.bind("ipc:///tmp/hydratk/core.socket")
                         current.msgq = sender
 
-                        #self.demsg('htk_on_debug_info', self._trn.msg(
-                        #    'htk_core_msgq_init_ok', self._msg_router.get_service_address(self._core_msg_service_id)), self.fromhere())
                     except zmq.ZMQBindError as desc:
                         ex_type, ex, tb = sys.exc_info()
                         print(ex_type)
@@ -369,12 +354,9 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                             traceback.print_tb(tb)
 
                         # sleep process, status will be checked again after
-                        # sleep time
                         self.dmsg(self._trn.msg(
                             'htk_observer_sleep'), 5)
                         time.sleep(const.CORE_OBSERVER_SLEEP_TIME)
-                        #res = current.msgq.send("SOME Message text")
-                        #print("Observer sent message {0}".format(res))
                         self.dmsg(self._trn.msg('htk_observer_awake'), 5)
 
                     # final cleanup
@@ -432,7 +414,6 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             current.status = status
             current.action_status = action_status
             current.is_alive_check = is_alive_check
-            #current.msgq = self._msg_router.get_queue(self._core_msg_service_id, messagerouter.MESSAGE_QUEUE_ACTION_CONNECT, options)
 
             # initialize process as message queue receiver
             context = zmq.Context()
@@ -490,7 +471,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
 
         """
 
-        self.dmsg('checking privmsg', 1)
+        self.dmsg(self._trn.msg('htk_cworker_check_priv_msg'), 1)
         try:
             for thr in self._thr:
                 pipe_conn = thr.pipe_conn
@@ -609,8 +590,6 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
         """
 
         for thr in self._thr:
-            # current.last_ping_response = 0
-            # current.response_alert_level = 1
             '''Last ping check'''
             if (thr.response_alert_level == const.CORE_THREAD_NORESPONSE):
                 '''Thread is not responding, trying to respawn'''
@@ -618,7 +597,6 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             else:
                 if thr.next_check_time >= time.time():
                     activity_time = time.time() - thr.is_alive_check.value
-                    # self.__send_ping(thr)
                     self.demsg('htk_on_debug_info', self._trn.msg('htk_cworker_check_activity', str(
                         thr.num), activity_time.__str__()), self.fromhere(), 1)
                 else:
@@ -790,6 +768,16 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                         self._config[gk][ok][kk] = kv
 
     def config_var_default_hook(self, *args):
+        """Method calls macro hook
+
+        Args:
+           args (list): arguments
+
+        Returns:
+           mixed: str or hook result
+
+        """
+
         result = ''
         strvar = args[0]
         if strvar != '':
@@ -822,11 +810,11 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                 if vvar in self._config[vgroup][vsection]:
                     return self._config_mp.parse(self._config[vgroup][vsection][vvar])
                 else:
-                    raise KeyError("Config: {0}.{1} doesn't contain variable {2}".format(vgroup, vsection, vvar))
+                    raise KeyError(self._trn.msg('htk_conf_var_missing', vgroup, vsection, vvar))
             else:
-                raise KeyError("Config group: {0} doesn't contain section {1}".format(vgroup, vsection))
+                raise KeyError(self._trn.msg('htk_conf_section_missing', vgroup, vsection))
         else:
-            raise KeyError("Config doesn't contain group {0}".format(vgroup))
+            raise KeyError(self._trn.msg('htk_conf_group_missing', vgroup))
          
     def _load_base_config(self):
         """Method loads base configuration from file
@@ -932,16 +920,6 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             self.demsg('htk_on_warning', self._trn.msg(
                 'htk_conf_opt_missing', 'General', 'language'), self.fromhere())
 
-        '''
-        TODO: temporary disabled, will be redesigned            
-        if 'extensions_dir' in self._config['System']['Extending'] and os.path.exists(self._config['System']['Extending']['extensions_dir']):
-            sys.path.append(self._config['System']['Extending']['extensions_dir'])
-        else: 
-            self._use_extensions = False
-                        
-            self.demsg('htk_on_warning', self._trn.msg('htk_ext_ext_dir_not_exists', self._config['System']['Extending']['extensions_dir']), self.fromhere())   
-        '''
-
         # get message router id from configuration
         try:
             msg_router_id = self._config['Core']['MessageRouter']['id']
@@ -1016,8 +994,6 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             except Exception as detail:
                 self.demsg('htk_on_error', self._trn.msg(
                     'htk_fail_load_int_ext', ext_name, detail), self.fromhere())
-                #tb = traceback.format_exc()
-                # pprint.pprint(tb)
                 sys.exit(1)
         self.demsg('htk_on_debug_info', self._trn.msg(
             'htk_fin_load_int_ext'), self.fromhere())
@@ -1058,16 +1034,11 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
                             'htk_load_int_ext_success', self._ext[ext_name].get_ext_info()), self.fromhere())
 
             except Exception as e:
-                import traceback
-                import pprint
                 self.demsg('htk_on_extension_error', self._trn.msg(
                     'htk_fail_init_int_ext', ext_name, str(e)), self.fromhere())
                 print(sys.exc_info())
                 ex_type, ex, tb = sys.exc_info()
                 traceback.print_tb(tb)
-                #tb = traceback.format_exc(e)
-                # pprint.pprint(tb)
-                # pprint.pprint(sys.path)
         else:
             raise Exception(self._trn.msg('htk_duplicate_extension', ext_name))
 
@@ -1101,8 +1072,6 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
 
         """
 
-        import pprint
-
         module = None
         expected_class = 'Extension'
         mod_name, file_ext = os.path.splitext(os.path.split(filepath)[-1])
@@ -1114,6 +1083,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
 
         if expected_class in dir(py_mod):
             module = py_mod
+
         return module
 
     def _import_extension_messages(self, ext_path):
@@ -1499,7 +1469,7 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             if opt in self._trn.help_mod.help_opt:
                 opt_text.update(self._trn.help_mod.help_opt[opt])
             else:
-                print("missing {0} in {1}".format(opt, self._opt_profile))
+                print(self._trn.msg('htk_option_missing', opt, self._opt_profile))
                 self.demsg('htk_on_warning', self._trn.msg(
                     'htk_option_def_missing', opt, self._language), self.fromhere())
 
@@ -1808,7 +1778,6 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
 
         """
 
-        # pprint.pprint(msg)
         self.fire_event(event.Event('h_privmsg_recv', msg))
         if msg['type'] == message.REQUEST:
             if msg['command'] == message.PING:

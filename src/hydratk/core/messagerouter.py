@@ -9,7 +9,6 @@
 """
 
 import os
-from hydratk.core import const, message
 from hydratk.lib.exceptions.inputerror import InputError
 import zmq
 
@@ -113,18 +112,15 @@ class MessageRouter():
                         if (not os.path.exists(file_path)):
                             os.makedirs(file_path)
                             ''' TODO set optimal default directory permission '''
-                    dmsg("Binding to message queue {0} : socket type {1}".format(
-                        addr_prefix + service_options['address'], options['socket_type']))
+                    dmsg(self._trn.msg('htk_msgq_binding', addr_prefix + service_options['address'], options['socket_type']))
                     q.bind(addr_prefix + service_options['address'])
                     service['active'] = True
                     self._service_list[service_id] = service
                 else:
-                    raise Exception(
-                        "Service queue is active use MESSAGE_QUEUE_ACTION_CONNECT instead")
+                    raise Exception(self._trn.msg('htk_msgq_already_active'))
             elif (action == MESSAGE_QUEUE_ACTION_CONNECT):
                 q.connect(addr_prefix + service_options['address'])
-                dmsg("Connecting to message queue {0} : socket type {1}".format(
-                    addr_prefix + service_options['address'], options['socket_type']))
+                dmsg(self._trn.msg('htk_msgq_connecting', addr_prefix + service_options['address'], options['socket_type']))
 
             else:
                 pass

@@ -12,6 +12,7 @@ from abc import ABCMeta, abstractmethod
 import inspect
 import sys
 import os
+from hydratk.core.masterhead import MasterHead
 
 
 class DBODriver(object):
@@ -57,6 +58,7 @@ class DBODriver(object):
 
         """
 
+        mh = MasterHead.get_head()
         self._dsn = dsn
         self._username = username
         self._password = password
@@ -64,8 +66,7 @@ class DBODriver(object):
             self._apply_driver_options(driver_options)
 
         if self._parse_dsn(dsn) is not True:
-            raise Exception(
-                "Error initialize database driver, dsn parse {0} error".format(dsn))
+            raise Exception(mh._trn.msg('htk_lib_db_dsn_error', dsn))
 
         try:
             if autoconnect == True:

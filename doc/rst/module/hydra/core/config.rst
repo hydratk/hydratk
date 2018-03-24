@@ -31,3 +31,12 @@ Configuration of various constants used in application.
 * run modes - list (single application, parallel)
 * thread - list of statuses, time intervals
 * run levels - list of run hierarchy levels
+
+confighooks
+^^^^^^^^^^^
+
+Macro parser config hooks.
+
+**Class ConfigHooks**
+
+* colorize - colorize text in console

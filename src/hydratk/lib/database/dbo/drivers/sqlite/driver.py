@@ -11,12 +11,14 @@
 import sqlite3
 import os
 from hydratk.lib.database.dbo import dbodriver
+from hydratk.core.masterhead import MasterHead
 
 
 class DBODriver(dbodriver.DBODriver):
     """Class DBODriver
     """
 
+    _mh = MasterHead.get_head()
     _mode = 'FILE'  # MEMORY
     _dbfile = None
     _driver_options = {
@@ -70,8 +72,7 @@ class DBODriver(dbodriver.DBODriver):
                 if dbfile != '':
                     self._dbfile = dbfile
                 else:
-                    raise Exception(
-                        "Error initialize database driver, dsn parse {0} error, database file cannot be an empty string".format(dsn))
+                    raise Exception(self._mh._trn.msg('htk_lib_db_dsn_error', dsn))
             elif self._mode == 'MEMORY':
                 self._dbfile = ':memory:'
 
@@ -129,7 +130,7 @@ class DBODriver(dbodriver.DBODriver):
         if type(self._dbcon).__name__ == 'Connection':
             self._dbcon.close()
         else:
-            raise dbodriver.DBODriverException('Not connected')
+            raise dbodriver.DBODriverException(self._mh._trn.msg('htk_lib_db_not_connected'))
 
     def commit(self):
         """Method commits transaction
@@ -148,7 +149,7 @@ class DBODriver(dbodriver.DBODriver):
         if type(self._dbcon).__name__ == 'Connection':
             self._dbcon.commit()
         else:
-            raise dbodriver.DBODriverException('Not connected')
+            raise dbodriver.DBODriverException(self._mh._trn.msg('htk_lib_db_not_connected'))
 
     def error_code(self):
         pass
@@ -208,7 +209,7 @@ class DBODriver(dbodriver.DBODriver):
         if type(self._dbcon).__name__ == 'Connection':
             self._dbcon.rollback()
         else:
-            raise dbodriver.DBODriverException('Not connected')
+            raise dbodriver.DBODriverException(self._mh._trn.msg('htk_lib_db_not_connected'))
 
     def set_attribute(self):
         pass
@@ -342,4 +343,4 @@ class DBODriver(dbodriver.DBODriver):
                 self._dbcon.row_factory = None
                 self._cursor = self._dbcon.cursor()
         else:
-            raise TypeError('Boolean value expected')
+            raise TypeError(self._mh._trn.msg('htk_invalid_data', 'state', 'bool'))

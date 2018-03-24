@@ -8,7 +8,7 @@
 
 """
 
-from socket import socket
+from socket import socket, error
 
 tests = [
     'request_single',
@@ -27,11 +27,13 @@ def request_single(size=1024 ** 2):
     """
 
     c = socket()
-    c.connect(('127.0.0.1', 22))
-
-    c.sendall(('0' * size).encode('utf-8'))
-
-    c.close()
+    try:
+        c.connect(('127.0.0.1', 22))
+        c.sendall(('0' * size).encode('utf-8'))
+    except error:
+        pass
+    finally:
+        c.close()
 
 def request_mult(n=100, size=1024):
     """Method sends multiple TCP requests
@@ -47,6 +49,10 @@ def request_mult(n=100, size=1024):
 
     for i in range(n):
         c = socket()
-        c.connect(('127.0.0.1', 22))
-        c.sendall(('0' * size).encode('utf-8'))
-        c.close()
+        try:
+            c.connect(('127.0.0.1', 22))
+            c.sendall(('0' * size).encode('utf-8'))
+        except error:
+            pass
+        finally:
+            c.close()
