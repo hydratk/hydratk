@@ -7,7 +7,6 @@
 .. moduleauthor:: Petr Czaderna <pc@hydratk.org>
 
 """
-
 import sys
 import os
 import hydratk.lib.system.config as syscfg
@@ -63,7 +62,9 @@ class Logger(object):
     _log_event2log_type   = {
        'htk_on_debug_info'         : 'debug',
        'htk_on_error'              : 'error',
+       'htk_on_extension_error'    : 'error',  
        'htk_on_warning'            : 'warning',
+       'htk_on_extension_warning'  : 'warning',
        'htk_on_uncaught_exception' : 'exception'            
     }
     

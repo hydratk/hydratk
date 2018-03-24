@@ -38,6 +38,7 @@ class EventHandler(object):
         self.wout(*args)
 
     def _eh_htk_on_error(self, oevent, *args):
+        print("missing htk_on_error mapping", args)
         self.errout(*args)
 
     def _eh_htk_on_exception(self, oevent, *args):

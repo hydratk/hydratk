@@ -69,8 +69,8 @@ def _check_dependencies(dep_modules=dep_modules, source='hydratk'):
 
     result = True
     for mod, modinfo in dep_modules.items():
-        try:
-            lmod = __import__(mod)
+        try:        
+            lmod = __import__(mod)            
             if ('min-version' in modinfo):
                 version = lmod.__version__ if (
                     hasattr(lmod, '__version__')) else Utils.module_version(modinfo['package'])

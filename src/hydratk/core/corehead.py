@@ -1677,9 +1677,9 @@ class CoreHead(MessageHead, EventHandler, Debugger, Profiler, Logger):
             {'event': 'htk_on_got_cmd_options',
                 'callback': self._eh_htk_on_got_cmd_options},
             {'event': 'htk_on_extension_error',
-                'callback': self._eh_htk_on_extension_error, 'unpack_args': True},
+                'callback': self._log_event, 'unpack_args': True},
             {'event': 'htk_on_extension_warning', 'callback':
-                self._eh_htk_on_extension_warning, 'unpack_args': True},
+                self._log_event, 'unpack_args': True},
             {'event': 'htk_on_uncaught_exception',
                 'callback': self._log_event, 'unpack_args': True},
             {'event': 'htk_on_cmsg_recv',

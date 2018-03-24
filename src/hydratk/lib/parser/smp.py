@@ -8,13 +8,15 @@
 
 """
 import re
+import time
 
 class MacroParser(object):
     """Class MacroParser
     """
-    _regexp = []
-    _hooks = {}
-    _default_hook = None
+    _regexp            = []
+    _hooks             = {}
+    _hook_result_cache = {}
+    _default_hook      = None
 
     def __init__(self, regexp=None):
         if regexp == None:
@@ -67,25 +69,32 @@ class MacroParser(object):
             if type(mdef).__name__ == 'str' and mdef != '' and callable(cb):
                 self._hooks[mdef] = cb
 
-    def add_var_hook(self, name, cb = None):
+    def add_var_hook(self, name, cb = None, hook_result_cache = False):
         """Method registers macro variable hook
 
         Args:
            name (str): macro
            cb (callable): callback
+           hook_result_cache (mixed) : False for none, otherwise dict
 
         Returns:
            void
 
         """
-
+        hook_set = False 
         if type(name).__name__ == 'dict':
-            self._hooks.update(name)
-            
-        elif type(name).__name__ == 'str' and callable(cb):
+            self._hooks.update(name)            
+            hook_set = True   
+        elif type(name).__name__ == 'str':
             self._hooks[name] = cb
+            hook_set = True
             
-        
+        if hook_set == True and type(hook_result_cache).__name__ == 'dict':
+            cache_data = {}
+            cache_data['ttl'] = hook_result_cache['ttl'] if 'ttl' in hook_result_cache else None
+            cache_data['created'] = False
+            self._hook_result_cache[name] = cache_data
+                             
 
     def set_default_var_hook(self, cb):
         result = False
@@ -126,9 +135,23 @@ class MacroParser(object):
         Raises:  
         """
         mdef = match.group(1).strip()
-    
-        if mdef in self._hooks:            
-            return self._hooks[mdef]() if callable(self._hooks[mdef]) else self._hooks[mdef]
+        if mdef in self._hooks:
+            if mdef in self._hook_result_cache: #we have cache definition
+                if self._hook_result_cache[mdef]['created'] == False:
+                    self._hook_result_cache[mdef]['value'] = self._hooks[mdef]() if callable(self._hooks[mdef]) else self._hooks[mdef]
+                    self._hook_result_cache[mdef]['created'] = True
+                    
+                elif 'expire' in self._hook_result_cache[mdef]:
+                    if self._hook_result_cache[mdef]['expire'] <= self._hook_result_cache[mdef]['ttl'] + time.time(): #expirec cache
+                        #rebuilding cache
+                        self._hook_result_cache[mdef]['value'] = self._hooks[mdef]() if callable(self._hooks[mdef]) else self._hooks[mdef]
+                        self._hook_result_cache[mdef]['expire'] = self._hook_result_cache[mdef]['ttl'] + time.time()
+                    
+                #valid cache
+                return self._hook_result_cache[mdef]['value']
+                    
+            else:                              
+                return self._hooks[mdef]() if callable(self._hooks[mdef]) else self._hooks[mdef]
         elif callable(self._default_hook):
             return self._default_hook(mdef)
         else:

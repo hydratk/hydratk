@@ -234,7 +234,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
             vvar     = vtok[2]
             if vgroup in self._config:                
                 if vsection in self._config[vgroup]:
-                    if vvar in self._config[vgroup][vsection]:
+                    if vvar in self._config[vgroup][vsection]:                        
                         return self._config_mp.parse(self._config[vgroup][vsection][vvar])
                     else:
                         raise KeyError("Config: {0}.{1} doesn't contain variable {2}".format(vgroup, vsection, vvar))
