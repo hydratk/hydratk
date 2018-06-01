@@ -123,7 +123,7 @@ class EventHandler(object):
 
         """
 
-        self.errout(*args)
+
 
     def _eh_htk_on_exception(self, oevent, *args):
         """Method handles exception event
