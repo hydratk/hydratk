@@ -26,6 +26,7 @@ lib_dir_struct = [
 ]
 
 lib_package_files = [
+    'hydratk-lib-{lib_name}/src/__init__.py',
     'hydratk-lib-{lib_name}/src/hydratk/__init__.py',
     'hydratk-lib-{lib_name}/src/hydratk/lib/__init__.py',
     'hydratk-lib-{lib_name}/src/hydratk/lib/{lib_name}/__init__.py',
@@ -99,7 +100,7 @@ classifiers = [
     "Topic :: Utilities"
 ]
 
-def version_update(cfg)
+def version_update(cfg):
     pass # Python version specific installation
 
 config = {{
@@ -266,6 +267,7 @@ extension_dir_struct = [
 ]
 
 extension_package_files = [
+    'hydratk-ext-{extension}/src/__init__.py',
     'hydratk-ext-{extension}/src/hydratk/__init__.py',
     'hydratk-ext-{extension}/src/hydratk/extensions/__init__.py',
     'hydratk-ext-{extension}/src/hydratk/extensions/{extension}/__init__.py',
@@ -322,7 +324,7 @@ class Extension(extension.Extension):
     def _check_dependencies(self):
         return True
         
-    def _uninstall(self)
+    def _uninstall(self):
         return []
         
     def _do_imports(self):
@@ -362,7 +364,8 @@ def run_app():
 '''
 
 extension_setup_py = '''# -*- coding: utf-8 -*-
-from setuptools import st_setup, st_find_packages
+from setuptools import st_setup
+from setuptools import find_packages as st_find_packages
 from sys import argv, version_info
 import hydratk.lib.install.task as task
 import hydratk.lib.system.config as syscfg
@@ -398,7 +401,7 @@ classifiers = [
     "Topic :: Utilities"
 ]
 
-def version_update(cfg)
+def version_update(cfg):
     pass # Python version specific installation
 
 config = {{
@@ -410,7 +413,7 @@ config = {{
 
   'post_tasks' : [
       task.set_config,
-      task.create_dirs
+      task.create_dirs,
       task.copy_files,
       task.set_manpage
   ],
@@ -426,7 +429,7 @@ config = {{
           
   'files' : {{
       'config' : {{
-          'etc/hydratk/conf.d/hydratk-ext-{extension}.conf' : '/etc/hydratk/conf.d'
+          'etc/hydratk/conf.d/hydratk-ext-{extension}.conf' : '{{0}}/hydratk/conf.d'.format(syscfg.HTK_ETC_DIR)
        }},
        'data' : {{
            'src filepath' : 'dst dirpath'
@@ -475,7 +478,7 @@ st_setup(
       author_email='{author_email}',
       url='http://extensions.hydratk.org/{ext_ucname}',
       license='BSD',
-      packages=st_find_packages('src')
+      packages=st_find_packages('src'),
       package_dir={{'' : 'src'}},
       classifiers=classifiers,
       zip_safe=False,
