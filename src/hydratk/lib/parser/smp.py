@@ -15,6 +15,7 @@ class MacroParser(object):
     """Class MacroParser
     """
 
+    _mh = None
     _regexp            = []
     _hooks             = {}
     _hook_result_cache = {}

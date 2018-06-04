@@ -12,3 +12,4 @@ This section provides tutorials for HydraTK functionalities.
    hydra/tut2_cfg
    hydra/tut3_lib
    hydra/tut4_ext
+   hydra/tut5_ext_advanced

@@ -191,6 +191,8 @@ def run_app():
             
     except Exception:        
         from hydratk.core import event
+        from hydratk.core.masterhead import MasterHead
+        mh = MasterHead.get_head()
         ex_type, ex, tb = sys.exc_info()
         ev = event.Event('htk_on_uncaught_exception', ex_type, ex, tb)
         ev.set_data('type', ex_type)

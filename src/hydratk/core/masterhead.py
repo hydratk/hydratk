@@ -1461,7 +1461,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                     read_ext_skel_path) > 0 else ext_skel_path
                 print(self._trn.msg('htk_skeleton_dir_set', 'extension', ext_skel_path))
 
-                print(self._trn.msg('htk_skeleton_name_req'), 'extension')
+                print(self._trn.msg('htk_skeleton_name_req', 'extension'))
                 read_ext_name = raw_input(
                     "[{0}]:".format(template.extension_default_user_data['ext_name']))
                 ext_name = read_ext_name.lower() if len(read_ext_name) > 0 and read_ext_name.isalpha(
@@ -1469,21 +1469,21 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 ext_ucname = ext_name.capitalize()
                 print(self._trn.msg('htk_skeleton_name_set', 'extension', ext_name))
 
-                print(self._trn.msg('htk_skeleton_desc_req'))
+                print(self._trn.msg('htk_skeleton_desc_req', 'extension'))
                 read_ext_desc = raw_input(
                     "[{0}]:".format(template.extension_default_user_data['ext_desc']))
                 ext_desc = read_ext_desc if len(
                     read_ext_desc) > 0 else template.extension_default_user_data['ext_desc']
                 print(self._trn.msg('htk_skeleton_desc_set', 'extension', ext_desc))
 
-                print(self._trn.msg('htk_skeleton_author_req'))
+                print(self._trn.msg('htk_skeleton_author_req', 'extension'))
                 read_author_name = raw_input(
                     "[{0}]:".format(template.extension_default_user_data['author_name']))
                 author_name = read_author_name if len(
                     read_author_name) > 0 else template.extension_default_user_data['author_name']
                 print(self._trn.msg('htk_skeleton_author_set', 'extension', author_name))
 
-                print(self._trn.msg('htk_skeleton_email_req'))
+                print(self._trn.msg('htk_skeleton_email_req', 'extension'))
                 read_author_email = raw_input(
                     "[{0}]:".format(template.extension_default_user_data['author_email']))
                 author_email = read_author_email if len(
@@ -1491,7 +1491,7 @@ class MasterHead(PropertyHead, ServiceHead, CoreHead, ModuleLoader):
                 print(self._trn.msg('htk_skeleton_email_set', 'extension', author_email))
 
                 # TODO put the dynamic listing here
-                print(self._trn.msg('htk_skeleton_license_req'))
+                print(self._trn.msg('htk_skeleton_license_req', 'extension'))
                 read_ext_license = raw_input(
                     "[{0}]:".format(template.extension_default_user_data['ext_license']))
                 ext_license = read_ext_license if len(
