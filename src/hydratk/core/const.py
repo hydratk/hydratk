@@ -22,6 +22,7 @@ CP_STRING = "(c) " + APP_DEVEL_YEAR + " " + APP_AUTHORS
 ''' Default configuration '''
 CONFIG_FILE = "{0}/hydratk/hydratk.conf".format(config.HTK_ETC_DIR)
 EXT_CONFIG_DIR = "{0}/hydratk/conf.d".format(config.HTK_ETC_DIR)
+EXT_INSTALL_DATA_DIR = "{0}/hydratk/install".format(config.HTK_ETC_DIR)
 NUM_CORE_THREADS = 4
 DEFAULT_LANGUAGE = "en"
 DEBUG_LEVEL = 1

@@ -143,10 +143,10 @@ def copy_file(src, dst):
     create_dir(dst)
 
     print ('Copying file {0} to {1}'.format(src, dst))
-    cmd = 'cp {0} {1}'.format(src, dst)
+    cmd = 'cp -r {0} {1}'.format(src, dst)
     result, _, err = shell_exec(cmd, True)
     if (result != 0):
-        print('Failed to copy {0} to {1}'.format(src, dst))
+        print('Failed to copy {0} to {1} ({2})'.format(src, dst, result))
         print(err)
 
 def move_file(src, dst):

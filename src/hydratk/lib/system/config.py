@@ -101,7 +101,7 @@ def get_supported_os():
        'status' : '',
        'pckm' : ''
     }
-    supported_systems = ('Linux', 'FreeBSD','Windows')
+    supported_systems = ('Linux', 'FreeBSD','Windows','Darwin')
     c_os = platform.system()
     if c_os not in supported_systems:
         raise SystemError('Unsupported operating system platform {0}'.format(c_os))
@@ -141,7 +141,7 @@ def get_supported_os():
             os_result['pckm'] = 'pacman'
         else:
             raise SystemError('Unsupported Linux distribution {0}'.format(os_result['name']))
-    elif c_os == 'FreeBSD':
+    if c_os == 'FreeBSD':
         os_result['compat'] = 'freebsd'
         os_result['pckm'] = 'pkg'
         
@@ -151,7 +151,9 @@ def get_supported_os():
         os_result['version'] = distinfo[1] 
         os_result['status']  = distinfo[2]
         os_result['compat']  = 'windows'
-            
+    
+    if c_os == 'Darwin':
+        pass        
     return os_result
               
 update_htk_vars()

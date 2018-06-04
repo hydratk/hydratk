@@ -74,8 +74,7 @@ class Translator():
     def help_mod(self, help_module):
         """ help_mod property setter """
 
-        self._help_mod = help_module
-        pprint.pprint(self._help_mod.help_cmd)
+        self._help_mod = help_module        
 
     def set_help_mod(self, help_module):
         """Methods sets help module
@@ -168,19 +167,19 @@ class Translator():
 
         return self._messages[lang][key] % args if self._messages[lang][key] != {} else None
 
-    def msg(self, key, *args):
+    def msg(self, key, *args, **kwargs):
         """Methods resolves langtext according to debug level
 
         Args:
            key (str): langtext
-           args (ags): langtext arguments
+           args (mixed): langtext arguments *args, **kwargs
 
         Returns:
            str: resolved langtext
 
         """
 
-        return self._messages[key][:self._debug_level][-1].format(*args) if key in self._messages else key
+        return self._messages[key][:self._debug_level][-1].format(*args,**kwargs) if key in self._messages else key
 
     def add_msg(self, msg, id=''):
         """Methods adds new messages
