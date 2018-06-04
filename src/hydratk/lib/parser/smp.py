@@ -14,18 +14,12 @@ import time
 class MacroParser(object):
     """Class MacroParser
     """
-<<<<<<< HEAD
+
+    _mh = None
     _regexp            = []
     _hooks             = {}
     _hook_result_cache = {}
     _default_hook      = None
-=======
-
-    _mh = None
-    _regexp = []
-    _hooks = {}
-    _default_hook = None
->>>>>>> refs/remotes/origin/develop
 
     def __init__(self, regexp=None):
         """Class constructor
@@ -112,16 +106,12 @@ class MacroParser(object):
             self._hooks[name] = cb
             hook_set = True
             
-<<<<<<< HEAD
         if hook_set == True and type(hook_result_cache).__name__ == 'dict':
             cache_data = {}
             cache_data['ttl'] = hook_result_cache['ttl'] if 'ttl' in hook_result_cache else None
             cache_data['created'] = False
             self._hook_result_cache[name] = cache_data
                              
-
-=======
->>>>>>> refs/remotes/origin/develop
     def set_default_var_hook(self, cb):
         """Method sets default hook
 
