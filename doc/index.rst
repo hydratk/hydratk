@@ -28,13 +28,15 @@ Check complete list of extensions and libraries.
 Extensions:
 
 * Yoda: Engine for execution of automated test scripts. Extension defines own script format with hierarchical structure and embedded Python code. It also provides reporting database.
+* Client: Graphical client for hydratk. Yoda tests editor
 
 Libraries:
 
 * Network: Clients for most of protocols and interfaces which are used to communicate with contemporary enterprise applications. Database, email, FTP, JMS, HTTP REST, Selenium API, SOAP, SSH, TCP/IP.
 
 If you would like to try HydraTK, read installation instructions. 
-In order to learn how to use HydraTK, it is recommended to follow tutorials which will demonstrate basic features using simple examples. 
+In order to learn how to use HydraTK, it is recommended to follow tutorials which will demonstrate basic features using simple examples.
+Some tutorials are also available on YouTube video channel `hydratk <https://www.youtube.com/channel/UCXr4I4bpN5u8d3pp5_f6H5A>`_ 
 Once done, you can browse through module documentation to find out what features are available and how it works. 
 When you would like to develop own application or extend existing module, browse programmer's guide and reference manual. 
 
