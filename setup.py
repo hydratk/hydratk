@@ -109,7 +109,7 @@ config = {
                         'errmsg' : 'Required g++ compiler not found in path'
                     },                   
                     'libzmq-dev' : {
-                        'cmd' : '/sbin/ldconfig -p | grep libzmq || locate libzmq',
+                        'cmd' : '/sbin/ldconfig -p | grep libzmq || locate -b libzmq | grep {0}'.format(syscfg.HTK_ROOT_DIR),
                         'errmsg' : 'Unable to locate shared library libzmq'
                     }                           
                 }           
@@ -130,7 +130,7 @@ config = {
                         'errmsg' : 'Required g++ compiler not found in path'
                     },
                     'zeromq' : {
-                        'cmd' : '/sbin/ldconfig -p | grep libzmq || locate libzmq',
+                        'cmd' : '/sbin/ldconfig -p | grep libzmq || locate -b libzmq | grep {0}'.format(syscfg.HTK_ROOT_DIR),
                         'errmsg' : 'Unable to locate shared library libzmq'
                     }                                                 
                 }        
@@ -146,7 +146,7 @@ config = {
                         'errmsg' : 'Required g++ compiler not found in path'
                     },
                     'zeromq' : {
-                        'cmd' : '/sbin/ldconfig -p | grep libzmq || locate libzmq',
+                        'cmd' : '/sbin/ldconfig -p | grep libzmq || locate -b libzmq | grep {0}'.format(syscfg.HTK_ROOT_DIR),
                         'errmsg' : 'Unable to locate shared library libzmq'
                     }
                 }
@@ -162,7 +162,7 @@ config = {
                         'errmsg' : 'Required g++ compiler not found in path'
                     },
                     'zeromq-devel' : {
-                        'cmd' : '/sbin/ldconfig -p | grep libzmq || locate libzmq',
+                        'cmd' : '/sbin/ldconfig -p | grep libzmq || locate -b libzmq | grep {0}'.format(syscfg.HTK_ROOT_DIR),
                         'errmsg' : 'Unable to locate shared library libzmq'
                     }
                 }
@@ -198,10 +198,8 @@ config = {
     }
 }
 if os_info['compat'] != 'windows':
-    config['modules'].extend(
-            [
-              {'module': 'setproctitle', 'version': '>=1.1.9'}
-            ]
+    config['modules'].insert(0,
+            {'module': 'setproctitle', 'version': '>=1.1.9'}
     )
     config['libs'].update(
       { 
@@ -232,15 +230,15 @@ if os_info['compat'] != 'windows':
                         'errmsg' : 'Required tar compressor not found in path'
                     },                                                                                                   
                     'python-dev' : { 
-                        'cmd' : 'dpkg --get-selections | grep python-dev',
+                        'cmd' : 'dpkg --get-selections | grep python-dev || locate -b python-dev | grep {0}'.format(syscfg.HTK_ROOT_DIR),
                         'errmsg' : 'Unable to locate package python-dev'
                     },  
                     'python2.6-dev' : {
-                        'cmd' : 'dpkg --get-selections | grep python2.6-dev',
+                        'cmd' : 'dpkg --get-selections | grep python2.6-dev || locate -b python2.6-dev | grep {0}'.format(syscfg.HTK_ROOT_DIR),
                         'errmsg' : 'Unable to locate package python2.6-dev'
                     },
                     'python3-dev' : {
-                        'cmd' : 'dpkg --get-selections | grep python3-dev',
+                        'cmd' : 'dpkg --get-selections | grep python3-dev || locate -b python3-dev | grep {0}'.format(syscfg.HTK_ROOT_DIR),
                         'errmsg' : 'Unable to locate package python3-dev'
                     }
                  }           
@@ -276,15 +274,15 @@ if os_info['compat'] != 'windows':
                         'errmsg' : 'Unable to locate package redhat-rpm-config not found'
                     },
                     'python-devel' : { 
-                        'cmd' : 'yum list installed | grep python-devel',
+                        'cmd' : 'yum list installed | grep python-devel || locate -b python-devel | grep {0}'.format(syscfg.HTK_ROOT_DIR),
                         'errmsg' : 'Unable to locate package python-devel'
                     },  
                     'python2.6-devel' : {
-                        'cmd' : 'yum list installed | grep python2.6-devel',
+                        'cmd' : 'yum list installed | grep python2.6-devel || locate -b python2.6-devel | grep {0}'.format(syscfg.HTK_ROOT_DIR),
                         'errmsg' : 'Unable to locate package python2.6-devel'
                     },
                     'python3-devel' : {
-                        'cmd' : 'yum list installed | grep python3-devel',
+                        'cmd' : 'yum list installed | grep python3-devel || locate -b python3-devel | grep {0}'.format(syscfg.HTK_ROOT_DIR),
                         'errmsg' : 'Unable to locate package python3-devel'
                     }
                 }           
@@ -320,15 +318,15 @@ if os_info['compat'] != 'windows':
                         'errmsg' : 'Unable to locate package redhat-rpm-config not found'
                     },
                     'python-devel' : {
-                        'cmd' : 'dnf list installed | grep python-devel',
+                        'cmd' : 'dnf list installed | grep python-devel || locate -b python-devel | grep {0}'.format(syscfg.HTK_ROOT_DIR),
                         'errmsg' : 'Unable to locate package python-devel'
                     },
                     'python2.6-devel' : {
-                        'cmd' : 'dnf list installed | grep python2.6-devel',
+                        'cmd' : 'dnf list installed | grep python2.6-devel || locate -b python2.6-devel | grep {0}'.format(syscfg.HTK_ROOT_DIR),
                         'errmsg' : 'Unable to locate package python2.6-devel'
                     },
                     'python3-devel' : {
-                        'cmd' : 'dnf list installed | grep python3-devel',
+                        'cmd' : 'dnf list installed | grep python3-devel || locate -b python3-devel | grep {0}'.format(syscfg.HTK_ROOT_DIR),
                         'errmsg' : 'Unable to locate package python3-devel'
                     }
                 }
@@ -359,15 +357,15 @@ if os_info['compat'] != 'windows':
                         'errmsg' : 'Required tar compressor not found in path'
                     },
                     'python-devel' : {
-                        'cmd' : 'rpm -qa | grep python-devel',
+                        'cmd' : 'rpm -qa | grep python-devel || locate -b libpython2.7 | grep {0}'.format(syscfg.HTK_ROOT_DIR),
                         'errmsg' : 'Unable to locate package python-devel'
                     },
                     'python2.6-devel' : {
-                        'cmd' : 'rpm -qa | grep python2.6-devel',
+                        'cmd' : 'rpm -qa | grep python2.6-devel || locate -b libpython2.6 | grep {0}'.format(syscfg.HTK_ROOT_DIR),
                         'errmsg' : 'Unable to locate package python2.6-devel'
                     },
                     'python3-devel' : {
-                        'cmd' : 'rpm -qa | grep python3-devel',
+                        'cmd' : 'rpm -qa | grep python3-devel || locate -b libpython3 | grep {0}'.format(syscfg.HTK_ROOT_DIR),
                         'errmsg' : 'Unable to locate package python3-devel'
                     }
                 }

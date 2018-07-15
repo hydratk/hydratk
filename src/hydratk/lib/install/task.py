@@ -249,7 +249,7 @@ def set_manpage(cfg, *args):
 
     """
 
-    manpage_dir = '/usr/share/man/man1/'
+    manpage_dir = '{0}/share/man/man1/'.format(syscfg.HTK_USR_DIR)
     create_dir(manpage_dir)
     manpage = cfg['files']['manpage']
     call('gzip -c {0} > {1}'.format(manpage,
