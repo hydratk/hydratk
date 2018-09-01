@@ -111,7 +111,7 @@ def install_libs(cfg, profiles, *args):
     """
 
     pckm = os_info['pckm']
-    if (not is_installed(pckm)):
+    if (pckm != '' and not is_installed(pckm)):
         raise SystemError('Missing default package manager {0} for {1} distribution'.format(pckm, os['name']))
 
     libs, modules = cfg['libs'], cfg['modules']
